@@ -1,13 +1,13 @@
 {
-  "name": "route_api",
+  "name": "nextjs14_and_docker_base",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "d-dev": "docker-compose up --build",
+    "dev": "docker-compose up --build",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "watch": "docker compose watch"
   },
   "dependencies": {
     "react": "^18",

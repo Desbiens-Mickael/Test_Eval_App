@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # Start the app in dev mode
-CMD ["npm", "run", "dev"]
+CMD ["npx", "next", "dev"]

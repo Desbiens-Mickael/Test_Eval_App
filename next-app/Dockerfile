@@ -11,10 +11,13 @@ COPY package*.json .
 # Install dependencies and clean cache to reduce image size
 RUN npm ci && npm cache clean --force
 
+COPY prisma ./prisma
+
+RUN npx prisma generate
 
 COPY . .
 
 EXPOSE 3000
 
 # Start the app in dev mode
-CMD ["npx", "next", "dev"]
+CMD ["npm", "run", "dev"]

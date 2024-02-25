@@ -17,7 +17,7 @@ services:
 
   next:
     build:
-      context: .
+      context: ./next-app
       dockerfile: Dockerfile
     ports:
       - 3000:3000
@@ -25,15 +25,15 @@ services:
       db:
         condition: service_healthy
     environment:
-      DB_HOST: db
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/postgres?schema=public
     develop:
       watch:
-        - path: ./package.json
+        - path: ./next-app/package.json
           action: rebuild
-        - path: ./next.config.js
+        - path: ./next-app/next.config.js
           action: rebuild
-        - path: ./package-lock.json
+        - path: ./next-app/package-lock.json
           action: rebuild
-        - path: .
+        - path: ./next-app
           target: /app
           action: sync

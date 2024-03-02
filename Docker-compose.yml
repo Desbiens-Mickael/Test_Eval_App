@@ -30,10 +30,28 @@ services:
       watch:
         - path: ./next-app/package.json
           action: rebuild
-        - path: ./next-app/next.config.js
+        - path: ./next-app/next.config.mjs
           action: rebuild
         - path: ./next-app/package-lock.json
           action: rebuild
         - path: ./next-app
           target: /app
           action: sync
+
+  upload-service:
+    build:
+      context: ./upload-image-service
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    develop:
+      watch:
+        - path: ./upload-image-service/requirement.txt
+          action: rebuild
+        - path: ./upload-image-service
+          target: /app
+          action: sync
+          ignore:
+            - uploads/images
+    volumes:
+      - ./upload-image-service/uploads/images:/app/uploads/images

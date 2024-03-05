@@ -10,7 +10,7 @@ Ce template sert de base solide pour les projets utilisant Next.js dans un envir
 - [Prérequis](#prérequis-)
 - [Installation](#installation-)
   - [Dépendances Next.js](#installation-des-dépendances)
-  - [Configuration PostgreSQL](#configuration-de-postgresql-avec-docker)
+  - [Configuration PostgreSQL](#configuration-de-postgresql-avec-docker-)
   - [Migration Prisma](#lancer-la-migration-avec-prisma-)
   - [Variables d'Environnement](#création-des-fichiers-de-variables-denvironnement-)
   - [Docker et Conteneurs](#création-de-limage-docker-et-démarrage-des-conteneurs-)

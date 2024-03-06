@@ -1,6 +1,6 @@
 "use client";
 
-import FileInput from "./components/file-input";
+import FileInput from "../components/file-input";
 
 export default function Home() {
   return (

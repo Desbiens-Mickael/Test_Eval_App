@@ -1,6 +1,7 @@
 "use client";
 
-import { ListCollapse, ListTodo, LogOut, Trello, WholeWord } from "lucide-react";
+import LogoutButton from "@/components/authentification/logout-button";
+import { LayoutDashboard, ListCollapse, ListTodo, Trello, User, WholeWord } from "lucide-react";
 import { usePathname } from "next/navigation";
 import UserItem from "../../user-item";
 import LinkSidebar from "./link-sidebar";
@@ -9,13 +10,18 @@ const user = {
   firstname: "Mélinda",
   lastname: "Desbiens",
   email: "desbiens.melinda@gmail.com",
-  avatarUrl: "http://upload-service:8000/image/135fbb96-216a-4a25-8fa2-59c25245f1db.webp",
+  avatarUrl: "http://upload-service:8000/image/54356ef6-c01b-41c7-b2b6-6cceb1dee169.webp",
 };
 
 const menus = [
   {
     group: "General",
     items: [
+      {
+        icone: <LayoutDashboard />,
+        title: "Dashboard",
+        link: "/admin/dashboard",
+      },
       {
         icone: <Trello />,
         title: "Jeu de carte",
@@ -42,15 +48,10 @@ const menus = [
     group: "Settings",
     items: [
       {
-        icone: "",
+        icone: <User />,
         title: "Mon compte",
-        link: "/me",
+        link: "/admin/me",
       },
-      // {
-      //   icone: "",
-      //   title: "",
-      //   link: "",
-      // },
     ],
   },
 ];
@@ -61,20 +62,17 @@ export default function Sidebar() {
   return (
     <div className="fixed flex flex-col bg-primary p-4 w-[300px] min-w-[300px] min-h-screen">
       <UserItem {...user} />
-      <div className="flex flex-col gap-4 grow py-4 text-primary-foreground">
+      <nav className="flex flex-col gap-8 grow py-8 text-primary-foreground">
         {menus.map((group, groupKey) => (
           <div className="flex flex-col gap-2 bg-primary-foreground rounded-md p-2" key={groupKey}>
             <h2 className="text-primary font-bold text-xl px-2">{group.group}</h2>
             {group.items.map((menu, menuKey) => (
-              <LinkSidebar href={menu.link} title={menu.title} icon={menu.icone} className={pathName === menu.link ? "bg-slate-200 " : ""} key={menuKey} />
+              <LinkSidebar href={menu.link} title={menu.title} icon={menu.icone} className={pathName === menu.link ? "bg-primary text-primary-foreground hover:bg-primary" : ""} key={menuKey} />
             ))}
           </div>
         ))}
-      </div>
-      <div className="flex text-primary-foreground ">
-        <LogOut className="mr-4" />
-        Déconnéxion
-      </div>
+      </nav>
+      <LogoutButton />
     </div>
   );
 }

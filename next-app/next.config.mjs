@@ -6,6 +6,10 @@ const nextConfig = {
         protocol: "http",
         hostname: "upload-service",
       },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
     ],
   },
 };

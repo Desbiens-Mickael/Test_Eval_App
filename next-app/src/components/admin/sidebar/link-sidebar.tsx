@@ -8,14 +8,16 @@ interface LinkSidebarProps {
   icon: React.ReactNode;
   title: string;
   className?: string;
+  callback?: () => number | undefined;
 }
 
-export default function LinkSidebar({ href, icon, title, className }: LinkSidebarProps) {
+export default function LinkSidebar({ href, icon, title, className, callback }: LinkSidebarProps) {
   const styleMain = "text-primary font-bold rounded-md hover:bg-slate-200 transition-all p-2";
+  const infos = callback ? callback() : null;
   return (
     <Link href={href} className={cn(styleMain, className)}>
       <span className="flex gap-3">
-        {icon} {title}
+        {icon} <span className="grow">{title}</span> {infos && infos}
       </span>
     </Link>
   );

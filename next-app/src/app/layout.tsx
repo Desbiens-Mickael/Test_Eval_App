@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
@@ -24,6 +25,7 @@ export default function RootLayout({
       <html lang="fr">
         <body className={cn(inter.className, "flex flex-col h-screen")}>
           {children}
+          <Toaster position="top-right" />
         </body>
       </html>
     </SessionProvider>

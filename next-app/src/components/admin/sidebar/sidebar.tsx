@@ -1,19 +1,12 @@
 "use client";
 
-import LogoutButton from "@/components/authentification/logout-button";
+import LogoutButton from "@/components/auth/logout-button";
+import { UserItemSkeleton } from "@/components/skeleton/user-item-skeleton";
 import { LayoutDashboard, ListCollapse, ListTodo, Trello, User, Users, WholeWord } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import UserItem from "../../user-item";
 import LinkSidebar from "./link-sidebar";
-import { UserItemSkeleton } from "@/components/skeleton/user-item-skeleton";
-
-// const user = {
-//   firstname: "Mélinda",
-//   lastname: "Desbiens",
-//   email: "desbiens.melinda@gmail.com",
-//   avatarUrl: "http://upload-service:8000/image/54356ef6-c01b-41c7-b2b6-6cceb1dee169.webp",
-// };
 
 const menus = [
   {
@@ -78,7 +71,7 @@ const menus = [
 ];
 
 export default function Sidebar() {
-  const { data, status } = useSession();
+  const { data } = useSession();
   const pathName = usePathname();
   const user = data?.user;
 

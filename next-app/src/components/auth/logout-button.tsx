@@ -1,7 +1,7 @@
 "use client";
 
 import { LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 import { Button } from "../ui/button";
 
 interface LogoutButtonProps {
@@ -12,18 +12,8 @@ interface LogoutButtonProps {
 }
 
 export default function LogoutButton({ text = "Déconnexion", className, icon, theme = "secondary" }: LogoutButtonProps) {
-  const router = useRouter();
-  const handleLogout = (id: number) => {
-    try {
-      alert(`utilisateur ${id} déconecter`);
-      router.push("/");
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   return (
-    <Button variant={theme} className={className} onClick={() => handleLogout(2)}>
+    <Button variant={theme} className={className} onClick={() => signOut()}>
       {!icon ? <LogOut className="mr-4" /> : icon}
       <span className="text-lg font-bold">{text}</span>
     </Button>

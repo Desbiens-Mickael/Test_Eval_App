@@ -5,7 +5,7 @@ export default async function Header() {
   const session = await auth();
 
   return (
-    <header className="w-full h-20 shadow-md">
+    <header className="sticky top-0 z-[100] w-full h-20 shadow-md backdrop-blur  py-4 px-6">
       <div className="me-5">
         <Link href={"/admin/dashboard"}>Tableau de bord</Link>
       </div>

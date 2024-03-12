@@ -20,27 +20,19 @@ declare module "next-auth/jwt" {
 }
 
 const credentialsConfig = CredentialsProvider({
-  name: "Credentials",
-  credentials: {
-    username: { label: "Nom d'utilisateur", type: "text", placeholder: "jsmith" },
-    password: { label: "Mot de passe", type: "password" },
-  },
-  async authorize({ username, password }, req) {
+  // credentials: {
+  //   username: { label: "Nom d'utilisateur", type: "text", placeholder: "jsmith" },
+  //   password: { label: "Mot de passe", type: "password" },
+  // },
+  async authorize({ email, password }, req) {
     const user = { id: "1", name: "J Smith", email: "jsmith@example.com", role: "User" };
 
-    if (user) {
-      return user;
-    } else {
-      return null;
-    }
+    return null;
   },
 });
 
 export default {
   providers: [credentialsConfig, Google],
-  events: {
-    signIn({ isNewUser }) {},
-  },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {

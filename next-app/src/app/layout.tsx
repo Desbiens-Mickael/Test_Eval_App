@@ -22,8 +22,8 @@ export default function RootLayout({
 }>) {
   return (
     <SessionProvider>
-      <html lang="fr">
-        <body className={cn(inter.className, "flex flex-col h-screen")}>
+      <html lang="fr" className="h-full">
+        <body className={cn(inter.className, "flex flex-col h-full")}>
           {children}
           <Toaster position="top-right" />
         </body>

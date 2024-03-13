@@ -39,7 +39,7 @@ export default function FormRegister({}) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-[70%] h-1/2 space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full xl:w-[80%] lg:h-1/2 space-y-8">
         <FormField
           control={form.control}
           name="email"
@@ -49,11 +49,12 @@ export default function FormRegister({}) {
               <FormControl>
                 <Input placeholder="exemple@gmail.com" {...field} />
               </FormControl>
-              <FormDescription>Votre addresse email doit être unique</FormDescription>
+              <FormDescription className="text-xs">Entrez une adresse e-mail valide</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="password"
@@ -63,7 +64,7 @@ export default function FormRegister({}) {
               <FormControl>
                 <Input type="password" placeholder="******" {...field} />
               </FormControl>
-              <FormDescription>Minimum 6 caractère</FormDescription>
+              <FormDescription className="text-xs text-center">{"min 12 caractères, mélange de majuscules, minuscules, chiffres, et symboles (ex. @, é, ;)"}</FormDescription>
               <FormMessage />
             </FormItem>
           )}

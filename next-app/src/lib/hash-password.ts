@@ -1,9 +1,6 @@
-import { Options, argon2id, hash, verify } from "argon2";
+import { compare, hash } from "bcryptjs";
 
-const hashOptions: Options & { raw?: false } = {
-  type: argon2id,
-  memoryCost: 2 ** 16,
-};
+const saltRound = 10;
 
 /**
  *
@@ -12,11 +9,11 @@ const hashOptions: Options & { raw?: false } = {
  * @example const hashedPassword = await hashPassword(password);
  */
 export const hashPassword = async (plain: string): Promise<string> => {
-  const hashedPassword = await hash(plain, hashOptions);
+  const hashedPassword = await hash(plain, saltRound);
 
   return hashedPassword;
 };
 
 export const verifyPassword = async (hashPassword: string, plain: string): Promise<boolean> => {
-  return await verify(hashPassword, plain);
+  return await compare(plain, hashPassword);
 };

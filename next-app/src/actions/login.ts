@@ -11,7 +11,6 @@ const login = async (credentials: z.infer<typeof loginFormSchema>) => {
   if (!isCredentialsValide.success) return { error: "Données non valide!" };
 
   const { email, password } = isCredentialsValide.data;
-  console.log(email, password);
   try {
     await signIn("credentials", {
       email,

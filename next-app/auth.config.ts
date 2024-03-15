@@ -1,7 +1,7 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 
-import { getUserByEmail } from "@/data/user-data";
+import { UpdateUser, getUserByEmail } from "@/data/user-data";
 import { verifyPassword } from "@/lib/hash-password";
 import { loginFormSchema } from "@/schema/shema-zod";
 import type { NextAuthConfig } from "next-auth";
@@ -23,10 +23,13 @@ declare module "next-auth/jwt" {
 }
 
 export default {
+  pages: {
+    signIn: "/auth/login",
+    error: "/auth/error",
+  },
   providers: [
     CredentialsProvider({
       async authorize(credentials) {
-        console.log(credentials);
         const isCredentialsValide = loginFormSchema.safeParse(credentials);
 
         if (isCredentialsValide.success) {
@@ -64,7 +67,9 @@ export default {
       };
     },
   },
-  pages: {
-    signIn: "/auth/login",
+  events: {
+    async linkAccount({ user }) {
+      await UpdateUser(user.id, { emailVerified: new Date() });
+    },
   },
 } satisfies NextAuthConfig;

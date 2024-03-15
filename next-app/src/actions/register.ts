@@ -1,5 +1,6 @@
 "use server";
 
+import { createUser } from "@/data/user-data";
 import prisma from "@/lib/db";
 import { hashPassword } from "@/lib/hash-password";
 import { loginFormSchema } from "@/schema/shema-zod";
@@ -12,7 +13,7 @@ const createNewUser = async ({ email, password }: z.infer<typeof loginFormSchema
 
   try {
     const hashedPassword = await hashPassword(password);
-    await prisma.user.create({ data: { email, password: hashedPassword } });
+    await createUser({ email, hashedPassword });
     return { success: "compte créer avec succes !" };
   } catch (err) {
     return { error: "Une erreur c'est produite !" };

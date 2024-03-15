@@ -6,3 +6,11 @@ export const loginFormSchema = z
     password: z.string().min(6, { message: "minimum 6 caractère" }),
   })
   .required();
+
+export const verificationTokenShema = z
+  .object({
+    identifier: z.string().email(),
+    token: z.string(),
+    expires: z.date(),
+  })
+  .required();

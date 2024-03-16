@@ -1,5 +1,8 @@
 "use server";
 
+import { getUserByEmail } from "@/data/user-data";
+import { sendVerificationEmail } from "@/lib/mail";
+import { generateVerificationToken } from "@/lib/tokens";
 import { loginFormSchema } from "@/schema/shema-zod";
 import { signIn } from "auth";
 import { AuthError } from "next-auth";
@@ -11,6 +14,19 @@ const login = async (credentials: z.infer<typeof loginFormSchema>) => {
   if (!isCredentialsValide.success) return { error: "Données non valide!" };
 
   const { email, password } = isCredentialsValide.data;
+
+  const existingUser = await getUserByEmail(email);
+
+  if (!existingUser || !existingUser.email || !existingUser.password) {
+    return { error: "identifiant invalide!" };
+  }
+
+  if (!existingUser.emailVerified) {
+    const verificationToken = await generateVerificationToken(existingUser.email);
+    await sendVerificationEmail(existingUser.email, verificationToken.token);
+    return { success: "Un email de comfirmation viens d'être envoyé à cette adresse!" };
+  }
+
   try {
     await signIn("credentials", {
       email,

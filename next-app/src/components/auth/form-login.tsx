@@ -27,6 +27,7 @@ export default function FormLogin({}) {
       setIsLoading(true);
       const res = await login(values);
       if (res?.error) toast.error(res.error);
+      if (res?.success) toast.error(res.success);
     } catch (err) {
       console.error(err);
     } finally {

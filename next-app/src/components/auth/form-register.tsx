@@ -27,10 +27,10 @@ export default function FormRegister({}) {
     try {
       setIsLoading(true);
       const res = await createNewUser(values);
-      if (res.success) toast.success(res.success);
+      if (res?.success) toast.success(res.success);
       if (res.error) toast.error(res.error);
     } catch (error) {
-      console.error(error);
+      if (error instanceof Error) toast.error(error.message);
     } finally {
       form.reset();
       setIsLoading(false);

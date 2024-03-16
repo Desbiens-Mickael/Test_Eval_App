@@ -1,11 +1,12 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 
-import { UpdateUser, getUserByEmail } from "@/data/user-data";
+import { UpdateUser, getUserByEmail, getUserById } from "@/data/user-data";
 import { verifyPassword } from "@/lib/hash-password";
 import { loginFormSchema } from "@/schema/shema-zod";
 import type { NextAuthConfig } from "next-auth";
 import "next-auth/jwt";
+import { deleteVerificationTokenByToken, getVerificationTokenByIdentifier } from "@/data/verification-token-data";
 
 declare module "next-auth" {
   interface User {
@@ -50,6 +51,26 @@ export default {
     Google,
   ],
   callbacks: {
+    async signIn({ user, account }) {
+      // Allow OAuth without email verification
+      if (account?.provider !== "credentials") return true;
+
+      if (!user) return false;
+
+      const existingUser = await getUserById(user.id as string);
+
+      // Prevent sign in without email verification
+      if (!existingUser?.email || !existingUser?.emailVerified) return false;
+
+      const existingVerification = await getVerificationTokenByIdentifier(existingUser.email);
+
+      // Deletion of the token if the email has been verified
+      if (existingVerification) await deleteVerificationTokenByToken(existingVerification.token);
+
+      //TODO: ajouter 2FA check
+
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
@@ -69,7 +90,7 @@ export default {
   },
   events: {
     async linkAccount({ user }) {
-      await UpdateUser(user.id, { emailVerified: new Date() });
+      await UpdateUser(user.id as string, { emailVerified: new Date() });
     },
   },
 } satisfies NextAuthConfig;

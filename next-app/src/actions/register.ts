@@ -1,26 +1,23 @@
 "use server";
 
-import { createUser } from "@/data/user-data";
-import prisma from "@/lib/db";
-import { hashPassword } from "@/lib/hash-password";
+import { createUser, getUserByEmail } from "@/data/user-data";
+import { sendVerificationEmail } from "@/lib/mail";
 import { generateVerificationToken } from "@/lib/tokens";
 import { loginFormSchema } from "@/schema/shema-zod";
 import { z } from "zod";
 
 const createNewUser = async ({ email, password }: z.infer<typeof loginFormSchema>) => {
-  const isExistingUser = await prisma.user.findUnique({ where: { email: email } });
+  const isExistingUser = await getUserByEmail(email);
 
   if (isExistingUser) return { error: "Cette addresse email existe déjà !" };
 
   try {
-    const hashedPassword = await hashPassword(password);
-    await createUser({ email, hashedPassword });
-    // TODO generate verification email
-    const token = await generateVerificationToken(email);
-    // TODO sent email verification
+    await createUser(email, password);
+    const verificationToken = await generateVerificationToken(email);
+    await sendVerificationEmail(email, verificationToken.token);
     return { success: "Un email de comfirmation viens d'être envoyé à cette adresse!" };
   } catch (err) {
-    return { error: "Une erreur c'est produite !" };
+    throw err;
   }
 };
 

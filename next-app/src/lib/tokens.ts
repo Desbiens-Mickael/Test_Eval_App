@@ -1,4 +1,4 @@
-import { createVerificationtoken, deleteVerificationTokenByToken, getVerificationTokenByIdentifier } from "@/data/verification-token";
+import { createVerificationtoken, deleteVerificationTokenByToken, getVerificationTokenByIdentifier } from "@/data/verification-token-data";
 import { v4 as uuidV4 } from "uuid";
 
 export const generateVerificationToken = async (email: string) => {

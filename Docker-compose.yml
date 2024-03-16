@@ -55,3 +55,10 @@ services:
             - uploads/images
     volumes:
       - ./upload-image-service/uploads/images:/app/uploads/images
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025" # Port SMTP
+      - "8025:8025" # Interface Web
+

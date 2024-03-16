@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { string, z } from "zod";
 
 export const loginFormSchema = z
   .object({
@@ -7,6 +7,10 @@ export const loginFormSchema = z
   })
   .required();
 
+export const resetPasswordSendFormSchema = loginFormSchema.pick({ email: true });
+
+export const resetPasswordFormSchema = loginFormSchema.pick({ password: true });
+
 export const verificationTokenShema = z
   .object({
     identifier: z.string().email(),
@@ -14,3 +18,5 @@ export const verificationTokenShema = z
     expires: z.date(),
   })
   .required();
+
+export const resetPasswordTokenShema = verificationTokenShema;

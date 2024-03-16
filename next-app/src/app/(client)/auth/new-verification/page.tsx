@@ -52,7 +52,7 @@ export default function NewVerification() {
           {success && <p className="text-green-600">{success}</p>}
         </CardContent>
         <CardFooter className="flex justify-center items-center">
-          <Button asChild>
+          <Button asChild variant={"link"}>
             <Link href={"/auth/login"}>
               <Undo2 size={20} className="mr-2" />
               Retour à la connexion

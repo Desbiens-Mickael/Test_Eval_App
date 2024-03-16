@@ -37,3 +37,18 @@ export async function sendVerificationEmail(email: string, token: string) {
     throw new Error("Echec lors de l'envoi de l'email.");
   }
 }
+
+export async function sendResetPasswordEmail(email: string, token: string) {
+  const confirmLink = `${NEXT_BASE_URL}/auth/new-password?token=${token}`;
+
+  try {
+    await transporter.sendMail({
+      from: MAILER_FROM_ADDRESS, // L'adresse d'envoi
+      to: email, // Le destinataire
+      subject: "Modification du mot de passe",
+      html: `<p>Cliquez sur le lien pour <a href=${confirmLink}>modifier votre mot de passe<a>.<p>`,
+    });
+  } catch (error) {
+    throw new Error("Echec lors de l'envoi de l'email.");
+  }
+}

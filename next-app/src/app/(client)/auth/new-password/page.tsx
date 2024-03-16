@@ -1,17 +1,17 @@
 import AuthenticationWrapper from "@/components/auth/authentication-wrapper";
-import FormRegister from "@/components/auth/form-register";
+import FormResetPassword from "@/components/auth/form-reset-password";
 import { LogIn } from "lucide-react";
 
-export default function RegisterPage() {
+export default function NewPasswordPage() {
   return (
     <AuthenticationWrapper
-      title="Créer un compte"
-      texte="Entrez votre email et un mot de passe ci-dessous pour créer votre compte"
+      title="Réinitialisation du mot de passe"
+      texte="Entrez votre nouveau mot de passe."
       backButtonHref="/auth/login"
       backButtonText="Connexion"
       backButtonIcon={<LogIn size={20} />}
     >
-      <FormRegister />
+      <FormResetPassword />
     </AuthenticationWrapper>
   );
 }

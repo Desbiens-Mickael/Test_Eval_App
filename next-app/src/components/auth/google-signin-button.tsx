@@ -11,7 +11,7 @@ interface GoogleSIgninButtonProps {
 
 export default function GoogleSIgnInButton({ className }: GoogleSIgninButtonProps) {
   return (
-    <Button className={cn("w-full xl:w-[80%] bg-slate-50 border shadow hover:bg-slate-100", className)} onClick={async () => await signIn("google")}>
+    <Button className={cn("w-full bg-slate-50 border shadow hover:bg-slate-100", className)} onClick={async () => await signIn("google")}>
       <Image src={"/assets/images/google.svg"} width={80} height={30} alt="icone google" className="w-[85px] h-auto" />
     </Button>
   );

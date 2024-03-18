@@ -8,39 +8,41 @@ import { usePathname } from "next/navigation";
 import UserItem from "../../user-item";
 import LinkSidebar from "./link-sidebar";
 
-const menus = [
+interface MenuItem {
+  icon: JSX.Element;
+  title: string;
+  href: string;
+  infos?: string;
+}
+
+const menus: Array<{ group: string; items: MenuItem[] }> = [
   {
     group: "General",
     items: [
       {
         icon: <LayoutDashboard />,
         title: "Tableau de bord",
-        link: "/admin/dashboard",
-        callback: undefined,
+        href: "/admin/dashboard",
       },
       {
         icon: <Trello />,
         title: "Jeux de carte",
-        link: "/admin/card-game",
-        callback: undefined,
+        href: "/admin/card-game",
       },
       {
         icon: <WholeWord />,
         title: "Jeux à trou",
-        link: "/admin/hole-game",
-        callback: undefined,
+        href: "/admin/hole-game",
       },
       {
         icon: <ListTodo />,
         title: "Jeux vrai / faux",
-        link: "/admin/boolean-game",
-        callback: undefined,
+        href: "/admin/boolean-game",
       },
       {
         icon: <ListCollapse />,
         title: "Jeux à liste",
-        link: "/admin/list-game",
-        callback: undefined,
+        href: "/admin/list-game",
       },
     ],
   },
@@ -50,10 +52,8 @@ const menus = [
       {
         icon: <Users />,
         title: "Inscrits",
-        link: "/admin/registered",
-        callback: () => {
-          return 3;
-        },
+        href: "/admin/registered",
+        infos: "3", // Rendre dynamique
       },
     ],
   },
@@ -63,8 +63,7 @@ const menus = [
       {
         icon: <User />,
         title: "Mon profil",
-        link: "/admin/me",
-        callback: undefined,
+        href: "/admin/me",
       },
     ],
   },
@@ -77,7 +76,7 @@ export default function Sidebar() {
 
   return (
     <div className="fixed flex flex-col bg-primary p-4 w-[300px] min-w-[300px] min-h-screen">
-      {user ? <UserItem firstname={user.name ?? ""} lastname="" email={user.email ?? ""} avatarUrl={user.image ?? ""} /> : <UserItemSkeleton />}
+      {user ? <UserItem fullName={user.name ?? ""} email={user.email ?? ""} avatarUrl={user.image ?? ""} /> : <UserItemSkeleton />}
 
       <nav className="flex flex-col gap-8 grow py-8 text-primary-foreground">
         {menus.map(({ group, items }, groupKey) => (
@@ -85,14 +84,7 @@ export default function Sidebar() {
             <h2 className="text-primary font-bold text-xl px-2">{group}</h2>
 
             {items.map((menu, menuKey) => (
-              <LinkSidebar
-                key={menuKey}
-                href={menu.link}
-                title={menu.title}
-                icon={menu.icon}
-                callback={menu.callback}
-                className={pathName === menu.link ? "bg-primary text-primary-foreground hover:bg-primary" : ""}
-              />
+              <LinkSidebar key={menuKey} {...menu} className={pathName === menu.href ? "bg-primary text-primary-foreground hover:bg-primary" : ""} />
             ))}
           </div>
         ))}

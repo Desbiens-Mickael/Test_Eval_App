@@ -21,11 +21,11 @@ export default function LoginPage() {
     <AuthenticationWrapper
       title="Connexion"
       texte="Entrez votre email et votre mot de passe ci-dessous pour vous connecter"
+      imagePath="/assets/images/login.webp"
       backButtonHref="/auth/register"
       backButtonText="Pas encore de compte ?"
       sociale
-    >
-      <FormLogin />
-    </AuthenticationWrapper>
+      form={<FormLogin />}
+    />
   );
 }

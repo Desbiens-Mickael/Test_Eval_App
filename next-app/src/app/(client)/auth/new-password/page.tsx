@@ -10,8 +10,7 @@ export default function NewPasswordPage() {
       backButtonHref="/auth/login"
       backButtonText="Connexion"
       backButtonIcon={<LogIn size={20} />}
-    >
-      <FormResetPassword />
-    </AuthenticationWrapper>
+      form={<FormResetPassword />}
+    />
   );
 }

@@ -10,8 +10,7 @@ export default function RegisterPage() {
       backButtonHref="/auth/login"
       backButtonText="Connexion"
       backButtonIcon={<LogIn size={20} />}
-    >
-      <FormRegister />
-    </AuthenticationWrapper>
+      form={<FormRegister />}
+    />
   );
 }

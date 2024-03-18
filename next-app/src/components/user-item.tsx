@@ -1,18 +1,18 @@
 "use client";
 
-import { capitalize } from "@/utils/stringUtils";
 import Image from "next/image";
 
 interface UserItemProps {
-  firstname: string;
-  lastname: string;
+  fullName: string;
   email: string;
   avatarUrl?: string;
 }
 
-export default function UserItem({ firstname, lastname, email, avatarUrl }: UserItemProps) {
-  const fullName = capitalize(firstname) + " " + capitalize(lastname);
-  const initialTitle = firstname.charAt(0).toUpperCase() + lastname.charAt(0).toUpperCase();
+export default function UserItem({ fullName, email, avatarUrl }: UserItemProps) {
+  const initialTitle = fullName
+    .split(" ")
+    .map((word) => word.charAt(0))
+    .join("");
 
   return (
     <div className="flex items-center gap-2 w-full border rounded-md p-2 bg-primary-foreground">

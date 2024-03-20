@@ -1,5 +1,5 @@
-import Sidebar from "@/components/admin/sidebar/sidebar";
 import Header from "@/components/header";
+import Sidebar from "@/components/sidebar/sidebar";
 import { cn } from "@/lib/utils";
 import { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className={cn(inter.className, "flex h-screen w-full")}>
       <Sidebar />

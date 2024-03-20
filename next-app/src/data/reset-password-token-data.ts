@@ -1,16 +1,16 @@
 import prisma from "@/lib/db";
-import { resetPasswordTokenShema } from "@/schema/shema-zod";
+import { verificationTokenShema } from "@/schema/shema-zod";
 import { z } from "zod";
 
-export const createResetPasswordToken = async (resetPasswordToken: z.infer<typeof resetPasswordTokenShema>) => {
-  return await prisma.resetPasswordToken.create({ data: { ...resetPasswordToken } });
+const TYPE = "ResetPassword";
+
+export const createResetPasswordToken = async (resetPasswordToken: z.infer<typeof verificationTokenShema>) => {
+  return await prisma.verificationToken.create({ data: { type: TYPE, ...resetPasswordToken } });
 };
 
 export const getResetPasswordTokenByIdentifier = async (email: string) => {
   try {
-    const resetPasswordToken = await prisma.resetPasswordToken.findFirst({ where: { identifier: email } });
-
-    return resetPasswordToken;
+    return prisma.verificationToken.findFirst({ where: { identifier: email, type: TYPE } });
   } catch (err) {
     return null;
   }
@@ -18,14 +18,12 @@ export const getResetPasswordTokenByIdentifier = async (email: string) => {
 
 export const getResetPasswordTokenByToken = async (token: string) => {
   try {
-    const resetPasswordToken = await prisma.resetPasswordToken.findUnique({ where: { token: token } });
-
-    return resetPasswordToken;
+    return await prisma.verificationToken.findUnique({ where: { token: token, type: TYPE } });
   } catch (err) {
     return null;
   }
 };
 
-export const deleteResetPasswordTokenByToken = async (token: string) => {
-  await prisma.resetPasswordToken.delete({ where: { token } });
+export const deleteResetPasswordTokenById = async (id: string) => {
+  await prisma.verificationToken.delete({ where: { id } });
 };

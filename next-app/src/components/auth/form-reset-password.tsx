@@ -1,7 +1,6 @@
 "use client";
 
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import { resetPasswordFormSchema } from "@/schema/shema-zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
@@ -12,6 +11,7 @@ import SubmitButton from "@/components/form/submit-button";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { z } from "zod";
+import PasswordInput from "../form/password-input";
 
 export default function FormResetPassword({}) {
   const searchParams = useSearchParams();
@@ -41,19 +41,7 @@ export default function FormResetPassword({}) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full xl:w-[80%] lg:h-1/2 space-y-8">
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="font-bold text-lg">Mot de passe</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="******" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <PasswordInput control={form.control} name="password" label="Mot de passe" placeholder="******" />
         <SubmitButton texte="Modifier" isLoading={isLoading} loadindText="Création en cour" />
       </form>
     </Form>

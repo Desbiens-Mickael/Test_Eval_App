@@ -52,3 +52,16 @@ export async function sendResetPasswordEmail(email: string, token: string) {
     throw new Error("Echec lors de l'envoi de l'email.");
   }
 }
+
+export async function sendTwoFactorCodeEmail(email: string, code: string) {
+  try {
+    await transporter.sendMail({
+      from: MAILER_FROM_ADDRESS, // L'adresse d'envoi
+      to: email, // Le destinataire
+      subject: "Double authentification",
+      html: `<p>Votre code pour la double authentification: ${code}<p>`,
+    });
+  } catch (error) {
+    throw new Error("Echec lors de l'envoi de l'email.");
+  }
+}

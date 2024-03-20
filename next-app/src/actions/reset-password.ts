@@ -1,6 +1,6 @@
 "use server";
 
-import { deleteResetPasswordTokenByToken, getResetPasswordTokenByToken } from "@/data/reset-password-token-data";
+import { deleteResetPasswordTokenById, getResetPasswordTokenByToken } from "@/data/reset-password-token-data";
 import { UpdateUser, getUserByEmail } from "@/data/user-data";
 import { hashPassword } from "@/lib/hash-password";
 import { sendResetPasswordEmail } from "@/lib/mail";
@@ -26,7 +26,7 @@ export const newResetPassword = async (token: string | null, newPassword: z.infe
   const newPasswordHashed = await hashPassword(password);
 
   await UpdateUser(existingUser.id, { password: newPasswordHashed });
-  await deleteResetPasswordTokenByToken(existingResetPasswordToken.token);
+  await deleteResetPasswordTokenById(existingResetPasswordToken.id);
 
   return { success: "Votre mot de passe à été modifier avec success." };
 };

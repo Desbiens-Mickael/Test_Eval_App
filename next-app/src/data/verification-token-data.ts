@@ -2,13 +2,15 @@ import prisma from "@/lib/db";
 import { verificationTokenShema } from "@/schema/shema-zod";
 import { z } from "zod";
 
+const TYPE = "VerificationEmail";
+
 export const createVerificationtoken = async (vericationToken: z.infer<typeof verificationTokenShema>) => {
-  return await prisma.verificationToken.create({ data: { ...vericationToken } });
+  return await prisma.verificationToken.create({ data: { type: TYPE, ...vericationToken } });
 };
 
 export const getVerificationTokenByIdentifier = async (email: string) => {
   try {
-    const verificationToken = await prisma.verificationToken.findFirst({ where: { identifier: email } });
+    const verificationToken = await prisma.verificationToken.findFirst({ where: { identifier: email, type: TYPE } });
 
     return verificationToken;
   } catch (err) {
@@ -18,7 +20,7 @@ export const getVerificationTokenByIdentifier = async (email: string) => {
 
 export const getVerificationTokenByToken = async (token: string) => {
   try {
-    const verificationToken = await prisma.verificationToken.findUnique({ where: { token: token } });
+    const verificationToken = await prisma.verificationToken.findUnique({ where: { token: token, type: TYPE } });
 
     return verificationToken;
   } catch (err) {
@@ -26,6 +28,6 @@ export const getVerificationTokenByToken = async (token: string) => {
   }
 };
 
-export const deleteVerificationTokenByToken = async (token: string) => {
-  await prisma.verificationToken.delete({ where: { token } });
+export const deleteVerificationTokenById = async (id: string) => {
+  await prisma.verificationToken.delete({ where: { id } });
 };

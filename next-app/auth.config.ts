@@ -1,12 +1,13 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 
+import { deleteTwoFactorComfirmationById, getTwoFactorComfirmationByUserId } from "@/data/two-factor-comfirmation";
 import { UpdateUser, getUserByEmail, getUserById } from "@/data/user-data";
+import { deleteVerificationTokenById, getVerificationTokenByIdentifier } from "@/data/verification-token-data";
 import { verifyPassword } from "@/lib/hash-password";
 import { loginFormSchema } from "@/schema/shema-zod";
 import type { NextAuthConfig } from "next-auth";
 import "next-auth/jwt";
-import { deleteVerificationTokenByToken, getVerificationTokenByIdentifier } from "@/data/verification-token-data";
 
 declare module "next-auth" {
   interface User {
@@ -32,7 +33,6 @@ export default {
     CredentialsProvider({
       async authorize(credentials) {
         const isCredentialsValide = loginFormSchema.safeParse(credentials);
-
         if (isCredentialsValide.success) {
           const { email, password } = isCredentialsValide.data;
 
@@ -65,9 +65,15 @@ export default {
       const existingVerification = await getVerificationTokenByIdentifier(existingUser.email);
 
       // Deletion of the token if the email has been verified
-      if (existingVerification) await deleteVerificationTokenByToken(existingVerification.token);
+      if (existingVerification) await deleteVerificationTokenById(existingVerification.id);
 
-      //TODO: ajouter 2FA check
+      if (existingUser.isTwoFactorEnabled) {
+        const twoFactorComfirmation = await getTwoFactorComfirmationByUserId(existingUser.id);
+
+        if (!twoFactorComfirmation) return false;
+
+        await deleteTwoFactorComfirmationById(twoFactorComfirmation.id);
+      }
 
       return true;
     },

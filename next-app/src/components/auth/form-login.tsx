@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@/components/ui/input-otp";
 import { loginFormSchema } from "@/schema/shema-zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -40,7 +41,10 @@ export default function FormLogin({}) {
         toast.error(res.success);
         form.reset();
       }
-      if (res?.twoFactor) setShowTwoFactor(true);
+      if (res?.twoFactor) {
+        setShowTwoFactor(true);
+        toast.success("Un code viens de vous être envoyer.");
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -52,46 +56,46 @@ export default function FormLogin({}) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full xl:w-[80%] lg:h-1/2 space-y-8">
         {showTwoFactor && (
-          <>
-            <Button type="button" variant={"secondary"} onClick={() => setShowTwoFactor(false)} className="hover:bg-primary hover:text-primary-foreground">
-              {"<- Retout"}
-            </Button>
-            <FormField
-              control={form.control}
-              name="code"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="inline-flex w-full justify-center mb-3">Code de comfirmation</FormLabel>
-                  <FormControl className="flex justify-center items-center">
-                    <InputOTP
-                      maxLength={6}
-                      render={({ slots }) => (
-                        <>
-                          <InputOTPGroup>
-                            {slots.slice(0, 3).map((slot, index) => (
-                              <InputOTPSlot key={index} {...slot} />
-                            ))}
-                          </InputOTPGroup>
-                          <InputOTPSeparator />
-                          <InputOTPGroup>
-                            {slots.slice(3).map((slot, index) => (
-                              <InputOTPSlot key={index + 3} {...slot} />
-                            ))}
-                          </InputOTPGroup>
-                        </>
-                      )}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription className="text-center pt-1 text-xs">Veuillez saisir le code à usage unique qui vous a été envoyé par mail.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </>
+          <AnimatePresence>
+            <motion.div initial={{ x: 100, opacity: 1 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 100, opacity: 0 }} transition={{ type: "spring" }}>
+              <FormField
+                control={form.control}
+                name="code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="inline-flex w-full justify-center mb-3">Code de comfirmation</FormLabel>
+                    <FormControl className="flex justify-center items-center">
+                      <InputOTP
+                        maxLength={6}
+                        render={({ slots }) => (
+                          <>
+                            <InputOTPGroup>
+                              {slots.slice(0, 3).map((slot, index) => (
+                                <InputOTPSlot key={index} {...slot} />
+                              ))}
+                            </InputOTPGroup>
+                            <InputOTPSeparator />
+                            <InputOTPGroup>
+                              {slots.slice(3).map((slot, index) => (
+                                <InputOTPSlot key={index + 3} {...slot} />
+                              ))}
+                            </InputOTPGroup>
+                          </>
+                        )}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription className="text-center pt-1 text-xs">Veuillez saisir le code à usage unique qui vous a été envoyé par mail.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </motion.div>
+          </AnimatePresence>
         )}
         {!showTwoFactor && (
           <>
+            <p className="text-sm text-center">Entrez votre email et votre mot de passe ci-dessous pour vous connecter</p>
             <FormField
               control={form.control}
               name="email"

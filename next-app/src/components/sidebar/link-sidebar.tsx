@@ -5,7 +5,7 @@ import Link from "next/link";
 
 interface LinkSidebarProps {
   href: string;
-  icon: JSX.Element;
+  icon: JSX.Element | null;
   title: string;
   className?: string;
   infos?: string;
@@ -17,7 +17,7 @@ export default function LinkSidebar({ href, icon, title, className, infos }: Lin
   return (
     <Link href={href} className={cn(styleMain, className)}>
       <span className="flex gap-3">
-        {icon} <span className="grow">{title}</span> {infos && infos}
+        {icon && icon} <span className="grow">{title}</span> {infos && infos}
       </span>
     </Link>
   );

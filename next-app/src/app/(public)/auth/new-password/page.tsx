@@ -5,8 +5,8 @@ import { LogIn } from "lucide-react";
 export default function NewPasswordPage() {
   return (
     <AuthenticationWrapper
-      title="Réinitialisation du mot de passe"
-      texte="Entrez votre nouveau mot de passe."
+      title="Créer un nouveau mot de passe"
+      texte="Pour protéger votre compte, choisissez un mot de passe de plus de 6 caractères."
       backButtonHref="/auth/login"
       backButtonText="Connexion"
       backButtonIcon={<LogIn size={20} />}

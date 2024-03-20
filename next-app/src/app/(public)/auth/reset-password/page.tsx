@@ -5,8 +5,8 @@ import { LogIn } from "lucide-react";
 export default function ResetPasswordPage() {
   return (
     <AuthenticationWrapper
-      title="Réinitialisation du mot de passe 2"
-      texte="Entrez votre votre email."
+      title="Réinitialiser le mot de passe"
+      texte="Un lien va être envoyé à votre adresse e-mail afin de réinitialiser votre mot de passe."
       backButtonHref="/auth/login"
       backButtonText="Connexion"
       backButtonIcon={<LogIn size={20} />}

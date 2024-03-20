@@ -52,11 +52,13 @@ const login = async (credentials: z.infer<typeof loginFormSchema>) => {
     }
   }
 
+  const urlRedirect = existingUser.role === "ADMIN" ? "/admin/dashboard" : "/user/dashboard";
+
   try {
     await signIn("credentials", {
       email,
       password,
-      redirectTo: existingUser.role === "ADMIN" ? "/admin/dashboard" : "/",
+      redirectTo: urlRedirect,
     });
   } catch (err) {
     if (err instanceof AuthError) {

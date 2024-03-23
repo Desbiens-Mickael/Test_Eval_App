@@ -48,7 +48,7 @@ const adminMenus: MenuSideBar = [
       {
         icon: "User",
         title: "Mon profil",
-        href: "/admin/me",
+        href: "/acount/profile",
       },
     ],
   },

@@ -8,7 +8,7 @@ import { generateResetPasswordToken } from "@/lib/tokens";
 import { resetPasswordFormSchema, resetPasswordSendFormSchema } from "@/schema/shema-zod";
 import { z } from "zod";
 
-export const newResetPassword = async (token: string | null, newPassword: z.infer<typeof resetPasswordFormSchema>) => {
+export const newResetPassword = async ({ token, newPassword }: { token: string | null; newPassword: z.infer<typeof resetPasswordFormSchema> }) => {
   if (!token) return { error: "Token manquant!" };
 
   const isResetPaswordToken = resetPasswordFormSchema.safeParse(newPassword);

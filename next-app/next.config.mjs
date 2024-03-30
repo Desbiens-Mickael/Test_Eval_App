@@ -7,6 +7,11 @@ const nextConfig = {
         hostname: "upload-service",
       },
       {
+        protocol: "http",
+        hostname: "localhost:8000",
+        // port: "8000",
+      },
+      {
         protocol: "https",
         hostname: "lh3.googleusercontent.com",
       },

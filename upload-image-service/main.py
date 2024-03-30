@@ -22,7 +22,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Route pour exposer les fichiers static
 app.mount("/image", StaticFiles(directory="./uploads/images"), name="image")
+
 
 # Validation du type de fichier
 def valider_type_fichier(file):

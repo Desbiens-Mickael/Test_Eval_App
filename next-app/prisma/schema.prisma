@@ -63,6 +63,7 @@ enum TokenType {
   VerificationEmail
   ResetPassword
   TwoFactor
+  ResetEmail
 }
 model VerificationToken {
   id                      String    @id @default(cuid())

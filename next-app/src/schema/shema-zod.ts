@@ -16,6 +16,8 @@ export const resetPasswordSendFormSchema = registerFormSchema.pick({ email: true
 
 export const resetPasswordFormSchema = registerFormSchema.pick({ password: true });
 
+export const resetEmailFormSchema = registerFormSchema.pick({ email: true });
+
 export const verificationTokenShema = z
   .object({
     identifier: z.string().email(),

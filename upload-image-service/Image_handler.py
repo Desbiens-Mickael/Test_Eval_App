@@ -19,4 +19,7 @@ class ImageHandler:
 
         self.image.save(save_path, format="WEBP", quality=quality)
         return save_path
+    
+    #  TODO créer une méthode de suppression d'un fichier
+    #  TODO créer une méthode de suppression de plusieur fichiers
             

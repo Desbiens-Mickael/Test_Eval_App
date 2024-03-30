@@ -85,16 +85,16 @@ export default {
     async jwt({ token, account, trigger }) {
       if (!token.sub) return token;
 
+      if (trigger === "signIn") token.isOAuth = !!account?.access_token;
+
       if (trigger === "signIn" || trigger === "update") {
         const existingUser = await getUserById(token.sub);
         if (!existingUser) return token;
-
         token.name = existingUser.name;
         token.email = existingUser.email;
         token.picture = existingUser.image;
         token.role = existingUser.role;
         token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
-        token.isOAuth = !!account?.access_token;
       }
 
       return token;

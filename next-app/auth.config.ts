@@ -6,13 +6,16 @@ import { UpdateUser, getUserByEmail, getUserById } from "@/data/user-data";
 import { deleteVerificationTokenById, getVerificationTokenByIdentifier } from "@/data/verification-token-data";
 import { verifyPassword } from "@/lib/hash-password";
 import { loginFormSchema } from "@/schema/shema-zod";
+import { UserRole } from "@prisma/client";
 import type { NextAuthConfig } from "next-auth";
 import "next-auth/jwt";
 
 declare module "next-auth" {
   interface User {
     /** The user role. */
-    role: string;
+    role: UserRole;
+    isTwoFactorEnabled: boolean;
+    isOAuth?: boolean;
   }
 }
 
@@ -20,7 +23,9 @@ declare module "next-auth/jwt" {
   /** Returned by the `jwt` callback and `auth`, when using JWT sessions */
   interface JWT {
     /** The user role. */
-    role: string;
+    role: UserRole;
+    isTwoFactorEnabled: boolean;
+    isOAuth: boolean;
   }
 }
 
@@ -77,9 +82,19 @@ export default {
 
       return true;
     },
-    async jwt({ token, user }) {
-      if (user) {
-        token.role = user.role;
+    async jwt({ token, account, trigger }) {
+      if (!token.sub) return token;
+
+      if (trigger === "signIn") token.isOAuth = !!account?.access_token;
+
+      if (trigger === "signIn" || trigger === "update") {
+        const existingUser = await getUserById(token.sub);
+        if (!existingUser) return token;
+        token.name = existingUser.name;
+        token.email = existingUser.email;
+        token.picture = existingUser.image;
+        token.role = existingUser.role;
+        token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
       }
 
       return token;
@@ -90,6 +105,9 @@ export default {
         user: {
           ...session.user,
           role: token.role,
+          isTwoFactorEnabled: token.isTwoFactorEnabled,
+          isOAuth: token.isOAuth,
+          id: token.sub,
         },
       };
     },

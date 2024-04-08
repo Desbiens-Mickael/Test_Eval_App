@@ -3,11 +3,11 @@
 import { Form } from "@/components/ui/form";
 import { resetPasswordFormSchema } from "@/schema/shema-zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { newResetPassword } from "@/actions/reset-password";
 import SubmitButton from "@/components/form/submit-button";
+import { useMutation } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -16,7 +16,16 @@ import PasswordInput from "../form/password-input";
 export default function FormResetPassword({}) {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: newResetPassword,
+    onSuccess: (data) => {
+      if (data?.error) toast.error(data.error);
+      if (data?.success) toast.error(data.success);
+      form.reset();
+    },
+  });
+
   const form = useForm<z.infer<typeof resetPasswordFormSchema>>({
     resolver: zodResolver(resetPasswordFormSchema),
     defaultValues: {
@@ -26,15 +35,9 @@ export default function FormResetPassword({}) {
 
   async function onSubmit(values: z.infer<typeof resetPasswordFormSchema>) {
     try {
-      setIsLoading(true);
-      const res = await newResetPassword(token, values);
-      if (res?.error) toast.error(res.error);
-      if (res?.success) toast.error(res.success);
+      mutate({ token, newPassword: values });
     } catch (err) {
       console.error(err);
-    } finally {
-      form.reset();
-      setIsLoading(false);
     }
   }
 
@@ -42,7 +45,7 @@ export default function FormResetPassword({}) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full xl:w-[80%] lg:h-1/2 space-y-8">
         <PasswordInput control={form.control} name="password" label="Mot de passe" placeholder="******" />
-        <SubmitButton texte="Modifier" isLoading={isLoading} loadindText="Création en cour" />
+        <SubmitButton texte="Modifier" isLoading={isPending} loadindText="Création en cour" />
       </form>
     </Form>
   );

@@ -8,7 +8,25 @@ import { generateResetPasswordToken } from "@/lib/tokens";
 import { resetPasswordFormSchema, resetPasswordSendFormSchema } from "@/schema/shema-zod";
 import { z } from "zod";
 
-export const newResetPassword = async (token: string | null, newPassword: z.infer<typeof resetPasswordFormSchema>) => {
+// Envoie d'un mail pour reset le password
+export const resetPassword = async (userEmail: z.infer<typeof resetPasswordSendFormSchema>) => {
+  const isEmailValide = resetPasswordSendFormSchema.safeParse(userEmail);
+  if (!isEmailValide.success) return { error: "Données non valide!" };
+
+  const { email } = isEmailValide.data;
+
+  const existingUser = await getUserByEmail(email);
+  if (!existingUser) return { error: "Email non valide!" };
+
+  const { token } = await generateResetPasswordToken(email);
+
+  await sendResetPasswordEmail(email, token);
+
+  return { success: "Un email viens de vous être envoyer" };
+};
+
+// Reset du password
+export const newResetPassword = async ({ token, newPassword }: { token: string | null; newPassword: z.infer<typeof resetPasswordFormSchema> }) => {
   if (!token) return { error: "Token manquant!" };
 
   const isResetPaswordToken = resetPasswordFormSchema.safeParse(newPassword);
@@ -29,20 +47,4 @@ export const newResetPassword = async (token: string | null, newPassword: z.infe
   await deleteResetPasswordTokenById(existingResetPasswordToken.id);
 
   return { success: "Votre mot de passe à été modifier avec success." };
-};
-
-export const resetPassword = async (userEmail: z.infer<typeof resetPasswordSendFormSchema>) => {
-  const isEmailValide = resetPasswordSendFormSchema.safeParse(userEmail);
-  if (!isEmailValide.success) return { error: "Données non valide!" };
-
-  const { email } = isEmailValide.data;
-
-  const existingUser = await getUserByEmail(email);
-  if (!existingUser) return { error: "Email non valide!" };
-
-  const { token } = await generateResetPasswordToken(email);
-
-  await sendResetPasswordEmail(email, token);
-
-  return { success: "Un email viens de vous être envoyer" };
 };

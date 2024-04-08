@@ -4,16 +4,24 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { resetPasswordSendFormSchema } from "@/schema/shema-zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { resetPassword } from "@/actions/reset-password";
 import SubmitButton from "@/components/form/submit-button";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { z } from "zod";
 
 export default function PasswordResetSubmissionForm({}) {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { mutate, isPending } = useMutation({
+    mutationFn: resetPassword,
+    onSuccess: (data) => {
+      if (data.error) toast.error(data.error);
+      if (data.success) toast.error(data.success);
+      form.reset();
+    },
+  });
+
   const form = useForm<z.infer<typeof resetPasswordSendFormSchema>>({
     resolver: zodResolver(resetPasswordSendFormSchema),
     defaultValues: {
@@ -23,15 +31,9 @@ export default function PasswordResetSubmissionForm({}) {
 
   async function onSubmit(values: z.infer<typeof resetPasswordSendFormSchema>) {
     try {
-      setIsLoading(true);
-      const res = await resetPassword(values);
-      if (res?.error) toast.error(res.error);
-      if (res?.success) toast.error(res.success);
+      mutate(values);
     } catch (err) {
       console.error(err);
-    } finally {
-      form.reset();
-      setIsLoading(false);
     }
   }
 
@@ -51,7 +53,7 @@ export default function PasswordResetSubmissionForm({}) {
             </FormItem>
           )}
         />
-        <SubmitButton texte="Modifier" isLoading={isLoading} loadindText="Création en cour" />
+        <SubmitButton texte="Modifier" isLoading={isPending} loadindText="Création en cour" />
       </form>
     </Form>
   );

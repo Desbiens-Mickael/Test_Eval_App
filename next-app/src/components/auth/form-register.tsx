@@ -5,16 +5,23 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { registerFormSchema } from "@/schema/shema-zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import SubmitButton from "@/components/form/submit-button";
+import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import PasswordInput from "../form/password-input";
 
 export default function FormRegister({}) {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { mutate, isPending } = useMutation({
+    mutationFn: createNewUser,
+    onSuccess: (data) => {
+      if (data.success) toast.success(data.success);
+      if (data.error) toast.error(data.error);
+      form.reset();
+    },
+  });
 
   const form = useForm<z.infer<typeof registerFormSchema>>({
     resolver: zodResolver(registerFormSchema),
@@ -28,15 +35,9 @@ export default function FormRegister({}) {
 
   async function onSubmit(values: z.infer<typeof registerFormSchema>) {
     try {
-      setIsLoading(true);
-      const res = await createNewUser(values);
-      if (res?.success) toast.success(res.success);
-      if (res.error) toast.error(res.error);
+      mutate(values);
     } catch (error) {
-      if (error instanceof Error) toast.error(error.message);
-    } finally {
-      form.reset();
-      setIsLoading(false);
+      toast.error("Une erreur c'est produite!");
     }
   }
 
@@ -89,7 +90,7 @@ export default function FormRegister({}) {
         />
 
         <PasswordInput control={form.control} name="password" label="Mot de passe" placeholder="******" description="Min 6 caractères" />
-        <SubmitButton texte="Créer mon compte" isLoading={isLoading} loadindText="Création en cour" />
+        <SubmitButton texte="Créer mon compte" isLoading={isPending} loadindText="Création en cour" />
       </form>
     </Form>
   );

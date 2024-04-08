@@ -3,10 +3,10 @@
 import LogoutButton from "@/components/auth/logout-button";
 import LinkSidebar from "@/components/sidebar/link-sidebar";
 import { UserItemSkeleton } from "@/components/skeleton/user-item-skeleton";
-import UserItem from "@/components/user-item";
+import UserItem from "@/components/user/user-item";
 import adminMenus from "@/config/admin-menu";
 import userMenus from "@/config/user-menu";
-import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useCurrentUser } from "@/hooks/use-current-user";
 import { LayoutDashboard, ListCollapse, ListTodo, Trello, User, Users, WholeWord } from "lucide-react";
 import { usePathname } from "next/navigation";
 

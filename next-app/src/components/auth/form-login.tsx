@@ -13,13 +13,31 @@ import login from "@/actions/login";
 import PasswordInput from "@/components/form/password-input";
 import SubmitButton from "@/components/form/submit-button";
 import { Button } from "@/components/ui/button";
+import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { toast } from "sonner";
 import { z } from "zod";
 
 export default function FormLogin({}) {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const mutation = useMutation({
+    mutationFn: login,
+    onSuccess: (data) => {
+      if (data?.twoFactor) {
+        setShowTwoFactor(true);
+        toast.success("Un code viens de vous être envoyer.");
+      }
+      if (data?.success) {
+        toast.error(data.success);
+        form.reset();
+      }
+      if (data?.error) {
+        toast.error(data.error);
+        form.reset();
+      }
+    },
+  });
   const [showTwoFactor, setShowTwoFactor] = useState(false);
+
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -31,24 +49,9 @@ export default function FormLogin({}) {
 
   async function onSubmit(values: z.infer<typeof loginFormSchema>) {
     try {
-      setIsLoading(true);
-      const res = await login(values);
-      if (res?.error) {
-        toast.error(res.error);
-        form.reset();
-      }
-      if (res?.success) {
-        toast.error(res.success);
-        form.reset();
-      }
-      if (res?.twoFactor) {
-        setShowTwoFactor(true);
-        toast.success("Un code viens de vous être envoyer.");
-      }
+      mutation.mutate(values);
     } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
+      toast.error("Une erreur c'est produite!");
     }
   }
 
@@ -119,7 +122,7 @@ export default function FormLogin({}) {
           </>
         )}
 
-        <SubmitButton texte={showTwoFactor ? "Comfirmer" : "Connexion"} isLoading={isLoading} loadindText="Vérification en cour" />
+        <SubmitButton texte={showTwoFactor ? "Comfirmer" : "Connexion"} isLoading={mutation.isPending} loadindText="Vérification en cour" />
       </form>
     </Form>
   );

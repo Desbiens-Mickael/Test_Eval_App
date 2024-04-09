@@ -28,7 +28,7 @@ export default function AvatarUpload({ image }: DragAndDropFileProps) {
       try {
         const formData = new FormData();
         formData.append("file", file);
-        await mutate(formData);
+        mutate(formData);
         setOpen(false);
       } catch (error) {
         toast.error("une erreur c'est produite!");

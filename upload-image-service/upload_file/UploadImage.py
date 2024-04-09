@@ -17,7 +17,8 @@ class UploadImage():
             destination_path: the destination path for the processed file
             quality: the quality of the image (default is 85)
         """
-        self.destination_path = self.__generate_security_name(file, destination_path)
+        self.destination_path = destination_path
+        self.file_name = self.__generate_security_name(file)
         self.quality = quality
         self.temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.webp', mode='w+b')
         self.read_file_content(file)
@@ -61,7 +62,7 @@ class UploadImage():
             temp_file.seek(0)
 
 
-    def __generate_security_name(self, file, destination_path):
+    def __generate_security_name(self, file):
         """
         Generates a secure name for the given file and returns the path to the destination directory with the secure name.
         
@@ -72,8 +73,7 @@ class UploadImage():
         Returns:
             str: The path to the destination directory with the secure name.
         """
-        secure_name = f"{uuid.uuid4()}.{file.filename.split('.')[-1]}" 
-        return os.path.join(destination_path, secure_name)
+        return f"{uuid.uuid4()}.{file.filename.split('.')[-1]}" 
     
 
     def __change_extension(self, new_extension):
@@ -83,8 +83,8 @@ class UploadImage():
         Parameters:
             new_extension (str): New file extension (e.g., 'jpg', 'png').
         """
-        base = os.path.splitext(self.destination_path)[0]
-        self.destination_path = f"{base}.{new_extension}"
+        base = os.path.splitext(self.file_name)[0]
+        self.file_name = f"{base}.{new_extension}"
 
 
     def save(self):
@@ -92,14 +92,15 @@ class UploadImage():
         Save the image to the destination path with a specified quality.
         """
         try:
-            os.makedirs(os.path.dirname(self.destination_path), exist_ok=True)
-            self.image.save(self.destination_path)
+            final_path = os.path.join(self.destination_path, self.file_name)
+            os.makedirs(os.path.dirname(final_path), exist_ok=True)
+            self.image.save(final_path)
         except Exception as e:
             raise ValueError("500: Failed to save image")
         finally:
             self.cleanup()
 
-        return self.destination_path
+        return self.file_name
 
 
     def cleanup(self):
@@ -162,7 +163,7 @@ class UploadImage():
         self.__convert_image('WEBP')
     
 
-    def convert_to_jpg(self):
+    def convert_to_jpeg(self):
         """
         Convert the image to JPEG format.
         """

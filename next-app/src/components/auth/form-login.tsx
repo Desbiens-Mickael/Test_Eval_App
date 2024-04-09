@@ -19,7 +19,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 export default function FormLogin({}) {
-  const mutation = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
       if (data?.twoFactor) {
@@ -32,7 +32,6 @@ export default function FormLogin({}) {
       }
       if (data?.error) {
         toast.error(data.error);
-        form.reset();
       }
     },
   });
@@ -49,9 +48,11 @@ export default function FormLogin({}) {
 
   async function onSubmit(values: z.infer<typeof loginFormSchema>) {
     try {
-      mutation.mutate(values);
+      mutate(values);
     } catch (err) {
       toast.error("Une erreur c'est produite!");
+    } finally {
+      form.reset();
     }
   }
 
@@ -122,7 +123,7 @@ export default function FormLogin({}) {
           </>
         )}
 
-        <SubmitButton texte={showTwoFactor ? "Comfirmer" : "Connexion"} isLoading={mutation.isPending} loadindText="Vérification en cour" />
+        <SubmitButton texte={showTwoFactor ? "Comfirmer" : "Connexion"} isLoading={isPending} loadindText="Vérification en cour" />
       </form>
     </Form>
   );

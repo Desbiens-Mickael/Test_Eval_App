@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useUserByEmail = (userEmail: string | null | undefined) => {
   return useQuery({
-    queryKey: ["userById", userEmail],
+    queryKey: ["userByEmail", userEmail],
     queryFn: ({ queryKey }) => {
       const [, email] = queryKey;
       if (typeof email === "string") {

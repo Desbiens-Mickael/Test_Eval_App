@@ -1,12 +1,11 @@
 import Header from "@/components/header";
 import Sidebar from "@/components/sidebar/sidebar";
 import { cn } from "@/lib/utils";
-import { Metadata } from "next";
 import { Inter } from "next/font/google";
 
-export const metadata: Metadata = {
-  title: "Dashbord",
-};
+// export const metadata: Metadata = {
+//   title: "Dashbord",
+// };
 
 const inter = Inter({ subsets: ["latin"] });
 

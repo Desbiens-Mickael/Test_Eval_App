@@ -29,15 +29,16 @@ export default function AvatarUpload({ image }: DragAndDropFileProps) {
         const formData = new FormData();
         formData.append("file", file);
         mutate(formData);
-        setOpen(false);
       } catch (error) {
         toast.error("une erreur c'est produite!");
+      } finally {
+        setOpen(false);
       }
     }
   };
 
   const handleShowformUpload = () => {
-    setOpen(!open);
+    setOpen((prev) => !prev);
   };
 
   const onDrop = useCallback(
@@ -85,12 +86,13 @@ export default function AvatarUpload({ image }: DragAndDropFileProps) {
         </div>
       </div>
 
-      {open && (
-        <AnimatePresence>
+      <AnimatePresence>
+        {open && (
           <motion.form
             initial={{ y: -100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -100, opacity: 0 }}
+            exit={{ y: -100, opacity: 0, transition: { duration: 0.2 } }}
+            key="avatar"
             transition={{ type: "spring" }}
             onSubmit={(e) => onSubmit(e, file)}
             ref={ref}
@@ -114,8 +116,8 @@ export default function AvatarUpload({ image }: DragAndDropFileProps) {
             </div>
             <SubmitButton texte="Modifier" loadindText="Traitement en cour" isLoading={isPending} className="mt-5" />
           </motion.form>
-        </AnimatePresence>
-      )}
+        )}
+      </AnimatePresence>
     </>
   );
 }

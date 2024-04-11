@@ -27,11 +27,12 @@ export default function FormLogin({}) {
         toast.success("Un code viens de vous être envoyer.");
       }
       if (data?.success) {
-        toast.error(data.success);
+        toast.success(data.success);
         form.reset();
       }
       if (data?.error) {
         toast.error(data.error);
+        form.reset();
       }
     },
   });
@@ -51,16 +52,14 @@ export default function FormLogin({}) {
       mutate(values);
     } catch (err) {
       toast.error("Une erreur c'est produite!");
-    } finally {
-      form.reset();
     }
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full xl:w-[80%] lg:h-1/2 space-y-8">
-        {showTwoFactor && (
-          <AnimatePresence>
+        <AnimatePresence>
+          {showTwoFactor && (
             <motion.div initial={{ x: 100, opacity: 1 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 100, opacity: 0 }} transition={{ type: "spring" }}>
               <FormField
                 control={form.control}
@@ -95,8 +94,8 @@ export default function FormLogin({}) {
                 )}
               />
             </motion.div>
-          </AnimatePresence>
-        )}
+          )}
+        </AnimatePresence>
         {!showTwoFactor && (
           <>
             <p className="text-sm text-center">Entrez votre email et votre mot de passe ci-dessous pour vous connecter</p>

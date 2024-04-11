@@ -1,3 +1,9 @@
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Tableau de bord",
+};
+
 export default function Dashboard() {
   return (
     <div className="bg-secondary w-full max-w-[1500px]">

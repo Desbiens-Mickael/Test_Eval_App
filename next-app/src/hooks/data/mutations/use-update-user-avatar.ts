@@ -1,5 +1,5 @@
 import updateAvatar from "@/actions/update-avatar";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 
@@ -11,6 +11,7 @@ import { toast } from "sonner";
  */
 export const useUpdateUserAvatar = () => {
   const { update, data } = useSession();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (formData: FormData) => {
       const img = data?.user?.image?.split("/").pop();
@@ -32,6 +33,7 @@ export const useUpdateUserAvatar = () => {
       if (data.error) toast.error(data.error);
       if (data.success) {
         toast.success(data.success);
+        queryClient.invalidateQueries({ queryKey: ["userByEmail"] });
         update({});
       }
     },

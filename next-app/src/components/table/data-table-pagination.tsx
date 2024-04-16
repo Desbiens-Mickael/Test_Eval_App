@@ -18,11 +18,11 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
   return (
     <div className="flex items-center justify-between px-2">
       <div className="flex-1 text-sm text-muted-foreground">
-        {table.getFilteredSelectedRowModel().rows.length} sur {table.getFilteredRowModel().rows.length} rangée(s) sélectionné.
+        {table.getFilteredSelectedRowModel().rows.length} / {table.getFilteredRowModel().rows.length} sélectionné.
       </div>
       <div className="flex items-center space-x-6 lg:space-x-8">
         <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">Nombre de lignes par page</p>
+          <p className="text-sm font-medium">Lignes par page</p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {

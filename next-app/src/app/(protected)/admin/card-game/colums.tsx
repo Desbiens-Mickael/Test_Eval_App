@@ -39,6 +39,7 @@ export const columns: ColumnDef<Exercice>[] = [
   {
     id: "Niveau",
     accessorKey: "level",
+    filterFn: "arrIncludesSome",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Niveau" />,
   },
   {
@@ -49,13 +50,12 @@ export const columns: ColumnDef<Exercice>[] = [
   {
     id: "Matière",
     accessorKey: "subject",
+    filterFn: "arrIncludesSome",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Matière" />,
   },
   {
     id: "actions",
-    header: "Actions",
     cell: ({ row }) => {
-      // Récupère les données de la rangée ex : { id: 1, title: "Exercice 1", level: 1, lesson: "Leçon 1" }
       const exercice = row.original;
 
       return (
@@ -68,6 +68,7 @@ export const columns: ColumnDef<Exercice>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
+
             <DropdownMenuItem onClick={() => console.log("Voir plus de l'exercice " + exercice.id)}>Voir plus</DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {

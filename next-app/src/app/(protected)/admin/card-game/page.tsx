@@ -1,58 +1,98 @@
 import { DataTable } from "@/components/table/data-table";
 import { Metadata } from "next";
 
-import { columns } from "@/app/(protected)/admin/card-game/colums";
+import { Exercice, columns } from "@/app/(protected)/admin/card-game/colums";
 
 export const metadata: Metadata = {
   title: "Jeu de cartes",
 };
 
-const data = [
+const data: Exercice[] = [
   {
     id: "1",
-    lesson: "Leçon 1",
-    title: "Exercice 1",
-    level: "Facile",
+    lesson: "Le theorème de pythagore",
+    title: "Trouve la bonne reponse pour le theoreme de pythagore",
+    level: "🟢 Facile",
     subject: "Maths",
   },
   {
     id: "2",
-    lesson: "Leçon 1",
-    title: "Exercice 2",
-    level: "Facile",
+    lesson: "Les verbes irreguliers",
+    title: "Replace les verbes irreguliers",
+    level: "🟢 Facile",
     subject: "Français",
   },
   {
     id: "3",
-    lesson: "Leçon 3",
-    title: "Exercice 3",
-    level: "Difficile",
+    lesson: "L'histoire de la troisime guerre mondiale",
+    title: "Retrouve l'histoire de la troisième guerre mondiale",
+    level: "🟡 Difficile",
     subject: "Histoire",
   },
   {
     id: "4",
-    lesson: "Leçon 4",
-    title: "Exercice 4",
-    level: "Tres difficile",
+    lesson: "La phusion nucleaire",
+    title: "Trouve la bonne reponse pour la phusion nucleaire",
+    level: "🔴Très difficile",
     subject: "Physique",
   },
   {
     id: "5",
-    lesson: "Leçon 5",
-    title: "Exercice 5",
-    level: "Tres difficile",
+    lesson: "Le participe passe",
+    title: "Trouve la bonne reponse pour le participe passe",
+    level: "🔴Très difficile",
     subject: "Français",
+  },
+  {
+    id: "6",
+    lesson: "L'histoire de la deuxieme guerre mondiale",
+    title: "Retrouve l'histoire de la deuxième guerre mondiale",
+    level: "🟡 Difficile",
+    subject: "Histoire",
+  },
+  {
+    id: "7",
+    lesson: "La phusion nucleaire",
+    title: "Trouve la bonne reponse pour la phusion nucleaire",
+    level: "🔴Très difficile",
+    subject: "Physique",
+  },
+  {
+    id: "8",
+    lesson: "Le participe passe",
+    title: "Trouve la bonne reponse pour le participe passe",
+    level: "🔴Très difficile",
+    subject: "Français",
+  },
+  {
+    id: "9",
+    lesson: "Le theorème de pythagore",
+    title: "Trouve la bonne reponse pour le theoreme de pythagore",
+    level: "🟢 Facile",
+    subject: "Maths",
+  },
+  {
+    id: "10",
+    lesson: "Les verbes irreguliers",
+    title: "Replace les verbes irreguliers",
+    level: "🟢 Facile",
+    subject: "Français",
+  },
+  {
+    id: "11",
+    lesson: "L'histoire de la troisime guerre mondiale",
+    title: "Retrouve l'histoire de la troisième guerre mondiale",
+    level: "🟡 Difficile",
+    subject: "Histoire",
   },
 ];
 
 export default function CardGamePage() {
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center">
-      <h1 className="text-6xl">Jeu de cartes</h1>
+    <div className="w-full h-full flex flex-col items-center max-w-[1200px]">
+      <h1 className="text-6xl font-bold mb-10">Jeu de cartes</h1>
 
-      <div className="w-full h-full mt-10">
-        <DataTable columns={columns} data={data} />
-      </div>
+      <DataTable columns={columns} data={data} filterColumnIds={["Matière", "Niveau"]} inputSearch viewOptionsButton />
     </div>
   );
 }

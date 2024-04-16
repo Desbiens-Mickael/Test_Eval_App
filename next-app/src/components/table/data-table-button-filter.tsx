@@ -11,18 +11,24 @@ import { useCallback, useState } from "react";
 
 interface DataTAbleBUttonFilterProps<TData> {
   table: Table<TData>;
-  title: string;
   columnId: string;
 }
 
-export default function DataTAbleBUttonFilter<TData>({ table, title, columnId }: DataTAbleBUttonFilterProps<TData>) {
+/**
+ * Renders a button filter component for a data table.
+ *
+ * @param {Table<TData>} table - The table instance to which the filter belongs.
+ * @param {string} columnId - The ID of the column for which the filter is applied.
+ * @return {JSX.Element} The JSX element representing the button filter component.
+ */
+export default function DataTAbleBUttonFilter<TData>({ table, columnId }: DataTAbleBUttonFilterProps<TData>) {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
 
   const column = table.getColumn(columnId);
   const filters = column?.getFilterValue() as string[] | undefined;
   const valuesofSelection: string[] = Array.from(new Set(column?.getFacetedRowModel().rows.map((row) => row.getValue(columnId))));
-  const isChecked = useCallback((title: string) => filters?.includes(title) ?? false, [filters]);
+  const isChecked = useCallback((columnId: string) => filters?.includes(columnId) ?? false, [filters]);
 
   const onResetfilterColumn = useCallback(() => {
     column?.setFilterValue(undefined);
@@ -41,10 +47,10 @@ export default function DataTAbleBUttonFilter<TData>({ table, title, columnId }:
     <div className="flex items-center border border-dashed rounded-sm group hover:bg-secondary">
       <DropdownMenu open={open}>
         <DropdownMenuTrigger asChild>
-          <Button title={`Filtrer par ${title}`} variant="ghost" className="h-8 px-2" onClick={() => setOpen(!open)}>
+          <Button title={`Filtrer par ${columnId}`} variant="ghost" className="h-8 px-2" onClick={() => setOpen(!open)}>
             <span className="sr-only">Open menu</span>
             <Filter className="h-4 w-4" />
-            <span className="ml-2">{title}</span>
+            <span className="ml-2">{columnId}</span>
             {filters !== undefined && filters?.length > 0 && <Separator orientation="vertical" className="mx-2 bg-secondary" />}
             <div className="space-x-1">
               {filters !== undefined && filters.length > 2 ? (
@@ -72,7 +78,7 @@ export default function DataTAbleBUttonFilter<TData>({ table, title, columnId }:
               onChange={(e) => {
                 setSearch(e.target.value);
               }}
-              placeholder={`Filtrer par ${title}`}
+              placeholder={`Filtrer par ${columnId}`}
             />
           </DropdownMenuItem>
           <DropdownMenuSeparator />

@@ -10,6 +10,14 @@ interface DataTableColumnHeaderProps<TData, TValue> extends React.HTMLAttributes
   title: string;
 }
 
+/**
+ * Renders the header of a column in a data table.
+ *
+ * @param {DataTableColumnHeaderProps<TData, TValue>} column - The column object.
+ * @param {string} title - The title of the column.
+ * @param {string} className - The CSS class name for the header element.
+ * @return {JSX.Element} The rendered column header.
+ */
 export function DataTableColumnHeader<TData, TValue>({ column, title, className }: DataTableColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort()) {
     return <div className={cn(className)}>{title}</div>;

@@ -2,13 +2,12 @@
 
 import { ColumnDef, ColumnFiltersState, SortingState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ListRestart } from "lucide-react";
 import { useState } from "react";
-import DataTAbleBUttonFilter from "./data-table-button-filter";
+import DataTAbleButtonFilter from "./data-table-button-filter";
+import DataTAbleButtonReset from "./data-table-button-reset";
 import DataTAbleDEleteSElectionButton from "./data-table-delete-selection-button";
+import DataTAbleInputFilter from "./data-table-input-filter";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableViewOptions } from "./data-table-view-options";
 
@@ -20,11 +19,22 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   filterColumnIds?: string[];
-  inputSearch?: boolean;
+  inputSearchColumnId?: string[];
   viewOptionsButton?: boolean;
 }
 
-export function DataTable<TData extends Identifier, TValue>({ columns, data, filterColumnIds, inputSearch, viewOptionsButton }: DataTableProps<TData, TValue>) {
+/**
+ * Renders a DataTable component with the given data and columns.
+ *
+ * @param {DataTableProps<TData, TValue>} props - The props object containing the data, columns, filterColumnIds, inputSearchColumnId, and viewOptionsButton.
+ * @param {TData[]} props.data - The array of data to be displayed in the table.
+ * @param {ColumnDef<TData, TValue>[]} props.columns - The array of column definitions for the table.
+ * @param {string[]} [props.filterColumnIds] - The array of column IDs to be used for filtering.
+ * @param {string[]} [props.inputSearchColumnId] - The array of column IDs to be used for input search.
+ * @param {boolean} [props.viewOptionsButton] - A boolean indicating whether to display the view options button.
+ * @return {JSX.Element} The rendered DataTable component.
+ */
+export function DataTable<TData extends Identifier, TValue>({ columns, data, filterColumnIds, inputSearchColumnId, viewOptionsButton }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -53,35 +63,23 @@ export function DataTable<TData extends Identifier, TValue>({ columns, data, fil
     },
   });
 
-  function onResetFilters() {
-    table.resetColumnFilters();
-    table.resetSorting();
-    table.resetRowSelection();
-    table.resetColumnVisibility();
-  }
-
   return (
     <div className="w-full space-y-4">
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          {inputSearch && (
-            <Input
-              placeholder="Filtrer par titre..."
-              value={(table.getColumn("Titre")?.getFilterValue() as string) ?? ""}
-              onChange={(event) => table.getColumn("Titre")?.setFilterValue(event.target.value)}
-              className="max-w-sm h-8"
-            />
-          )}
+          {inputSearchColumnId?.map((columnId) => (
+            <DataTAbleInputFilter key={columnId} table={table} columnId={columnId} />
+          ))}
 
-          {filterColumnIds && filterColumnIds.map((columnId) => <DataTAbleBUttonFilter key={columnId} table={table} title={columnId} columnId={columnId} />)}
+          {filterColumnIds?.map((columnId) => (
+            <DataTAbleButtonFilter key={columnId} table={table} columnId={columnId} />
+          ))}
         </div>
         <div className="flex items-center space-x-2">
           <DataTAbleDEleteSElectionButton table={table} />
 
           {viewOptionsButton && <DataTableViewOptions table={table} />}
-          <Button title="Reinitialiser les filtres" variant="ghost" className="h-8 w-8 p-0 border" onClick={() => onResetFilters()}>
-            <ListRestart />
-          </Button>
+          <DataTAbleButtonReset table={table} />
         </div>
       </div>
       <div className="rounded-md border">

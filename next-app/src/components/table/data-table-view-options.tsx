@@ -11,6 +11,13 @@ interface DataTableViewOptionsProps<TData> {
   table: Table<TData>;
 }
 
+/**
+ * Renders a drop-down menu for selecting the columns to be displayed.
+ *
+ * @param {DataTableViewOptionsProps<TData>} props - The props object containing the table data.
+ * @param {Table<TData>} props.table - The table object containing the columns.
+ * @return {JSX.Element} The rendered dropdown menu component.
+ */
 export function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps<TData>) {
   return (
     <DropdownMenu>

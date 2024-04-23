@@ -1,15 +1,28 @@
 "use client";
 
-import { ColumnDef, ColumnFiltersState, SortingState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+  flexRender,
+  getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useState } from "react";
-import DataTAbleButtonFilter from "./data-table-button-filter";
 import DataTAbleButtonReset from "./data-table-button-reset";
 import DataTAbleDEleteSElectionButton from "./data-table-delete-selection-button";
 import DataTAbleInputFilter from "./data-table-input-filter";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableViewOptions } from "./data-table-view-options";
+import FilterBUttonLevel from "./filter-button/filter-button-level";
+import FilterBUttonSubject from "./filter-button/filter-button-subject";
 
 export interface Identifier {
   id: string;
@@ -48,6 +61,8 @@ export function DataTable<TData extends Identifier, TValue>({ columns, data, fil
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+    getFacetedRowModel: getFacetedRowModel(),
     getRowId(originalRow) {
       return originalRow.id;
     },
@@ -71,13 +86,12 @@ export function DataTable<TData extends Identifier, TValue>({ columns, data, fil
             <DataTAbleInputFilter key={columnId} table={table} columnId={columnId} />
           ))}
 
-          {filterColumnIds?.map((columnId) => (
-            <DataTAbleButtonFilter key={columnId} table={table} columnId={columnId} />
-          ))}
+          {filterColumnIds?.length && filterColumnIds.includes("Niveau") && <FilterBUttonLevel column={table.getColumn("Niveau")} />}
+
+          {filterColumnIds?.length && filterColumnIds.includes("Matière") && <FilterBUttonSubject column={table.getColumn("Matière")} />}
         </div>
         <div className="flex items-center space-x-2">
           <DataTAbleDEleteSElectionButton table={table} />
-
           {viewOptionsButton && <DataTableViewOptions table={table} />}
           <DataTAbleButtonReset table={table} />
         </div>

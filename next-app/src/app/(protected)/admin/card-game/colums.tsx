@@ -1,11 +1,14 @@
 "use client";
 
+import LevelLayout from "@/components/level-layout";
+import SubjectLayout from "@/components/subject-layout";
 import { DataTableColumnHeader } from "@/components/table/data-table-column-header";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
+import { levelData, subjectData } from "./data";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -15,6 +18,7 @@ export type Exercice = {
   title: string;
   level: string;
   subject: string;
+  subjectColor: string;
 };
 
 export const columns: ColumnDef<Exercice>[] = [
@@ -41,6 +45,14 @@ export const columns: ColumnDef<Exercice>[] = [
     accessorKey: "level",
     filterFn: "arrIncludesSome",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Niveau" />,
+    cell: ({ row }) => {
+      // const level = row.original.level;
+      const level = levelData.find((level) => level.label === row.original.level);
+
+      if (!level) return null;
+
+      return <LevelLayout color={level.color} label={level.label} />;
+    },
   },
   {
     id: "Leçon",
@@ -52,6 +64,12 @@ export const columns: ColumnDef<Exercice>[] = [
     accessorKey: "subject",
     filterFn: "arrIncludesSome",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Matière" />,
+    cell: ({ row }) => {
+      const subject = subjectData.find((subject) => subject.label === row.original.subject);
+
+      if (!subject) return null;
+      return <SubjectLayout label={subject.label} color={subject.color} />;
+    },
   },
   {
     id: "actions",

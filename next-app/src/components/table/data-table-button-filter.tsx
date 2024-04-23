@@ -5,29 +5,35 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Table } from "@tanstack/react-table";
+import { Column } from "@tanstack/react-table";
 import { Filter } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
-interface DataTAbleBUttonFilterProps<TData> {
-  table: Table<TData>;
-  columnId: string;
+type TemplateComponentProps = {
+  label: string;
+  color?: string;
+  icon?: JSX.Element | null;
+};
+
+interface DataTAbleBUttonFilterProps<TData, TValue> {
+  column: Column<TData, TValue> | undefined;
+  title: string;
+  templateComponent: React.ElementType<TemplateComponentProps>;
+  data: {
+    label: string;
+    color?: string;
+    icon?: JSX.Element | null;
+  }[];
 }
 
-/**
- * Renders a button filter component for a data table.
- *
- * @param {Table<TData>} table - The table instance to which the filter belongs.
- * @param {string} columnId - The ID of the column for which the filter is applied.
- * @return {JSX.Element} The JSX element representing the button filter component.
- */
-export default function DataTAbleBUttonFilter<TData>({ table, columnId }: DataTAbleBUttonFilterProps<TData>) {
+export default function DataTAbleBUttonFilter<TData, TValue>({ column, title, data, templateComponent: TemplateComponent }: DataTAbleBUttonFilterProps<TData, TValue>) {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
 
-  const column = table.getColumn(columnId);
   const filters = column?.getFilterValue() as string[] | undefined;
-  const valuesofSelection: string[] = Array.from(new Set(column?.getFacetedRowModel().rows.map((row) => row.getValue(columnId))));
+  const valuesofSelection = column?.getFacetedUniqueValues();
+  const matchingFilter = useMemo(() => data.filter((value) => value.label.toLowerCase().includes(search.toLowerCase())), [data, search]);
+
   const isChecked = useCallback((columnId: string) => filters?.includes(columnId) ?? false, [filters]);
 
   const onResetfilterColumn = useCallback(() => {
@@ -47,10 +53,10 @@ export default function DataTAbleBUttonFilter<TData>({ table, columnId }: DataTA
     <div className="flex items-center border border-dashed rounded-sm group hover:bg-secondary">
       <DropdownMenu open={open}>
         <DropdownMenuTrigger asChild>
-          <Button title={`Filtrer par ${columnId}`} variant="ghost" className="h-8 px-2" onClick={() => setOpen(!open)}>
+          <Button title={`Filtrer par ${title}`} variant="ghost" className="h-8 px-2" onClick={() => setOpen(!open)}>
             <span className="sr-only">Open menu</span>
             <Filter className="h-4 w-4" />
-            <span className="ml-2">{columnId}</span>
+            <span className="ml-2">{title}</span>
             {filters !== undefined && filters?.length > 0 && <Separator orientation="vertical" className="mx-2 bg-secondary" />}
             <div className="space-x-1">
               {filters !== undefined && filters.length > 2 ? (
@@ -78,34 +84,49 @@ export default function DataTAbleBUttonFilter<TData>({ table, columnId }: DataTA
               onChange={(e) => {
                 setSearch(e.target.value);
               }}
-              placeholder={`Filtrer par ${columnId}`}
+              placeholder={`Filtrer par ${title}`}
             />
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          {search
-            ? valuesofSelection
-                .filter((value) => value.toLowerCase().includes(search.toLowerCase()))
-                .map((value, index) => (
+          {search.length ? (
+            matchingFilter.length > 0 ? (
+              matchingFilter.map((value, index) => {
+                const label = value.label;
+                const valueCount = valuesofSelection?.get(label) ?? 0;
+                return (
                   <DropdownMenuCheckboxItem
                     slot="item"
                     key={index}
-                    onCheckedChange={() => handleFilter(value)}
-                    checked={isChecked(value)}
+                    onCheckedChange={() => handleFilter(label)}
+                    checked={isChecked(label)}
                     className={"hover:bg-slate-100 data-[state=checked]:bg-slate-100 data-[state=checked]:text-slate-900"}
                   >
-                    {value}
+                    <TemplateComponent className="h-4 w-4 grow" label={label} color={value.color} />
+                    <span className="ml-auto">{valueCount}</span>
                   </DropdownMenuCheckboxItem>
-                ))
-            : valuesofSelection.map((value, index) => (
+                );
+              })
+            ) : (
+              <DropdownMenuItem className="text-slate-400">Aucun resultat</DropdownMenuItem>
+            )
+          ) : (
+            data.map((value, index) => {
+              const label = value.label;
+              const valueCount = valuesofSelection?.get(label) ?? 0;
+              return valueCount > 0 ? (
                 <DropdownMenuCheckboxItem
+                  slot="item"
                   key={index}
-                  onCheckedChange={() => handleFilter(value)}
-                  checked={isChecked(value)}
+                  onCheckedChange={() => handleFilter(label)}
+                  checked={isChecked(label)}
                   className={"hover:bg-slate-100 data-[state=checked]:bg-slate-100 data-[state=checked]:text-slate-900"}
                 >
-                  {value}
+                  <TemplateComponent className="h-4 w-4 grow" label={label} color={value.color} />
+                  <span className="ml-auto">{valueCount}</span>
                 </DropdownMenuCheckboxItem>
-              ))}
+              ) : null;
+            })
+          )}
           {filters !== undefined && filters?.length > 0 && (
             <DropdownMenuItem className="text-slate-400">
               <Button variant="outline" className="w-full" onClick={() => onResetfilterColumn()}>

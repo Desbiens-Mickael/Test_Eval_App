@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 
 interface SubjectLayoutProps {
   label: string;
-  color: string;
+  color?: string;
 }
 
 export default function SubjectLayout({ label, color }: SubjectLayoutProps) {

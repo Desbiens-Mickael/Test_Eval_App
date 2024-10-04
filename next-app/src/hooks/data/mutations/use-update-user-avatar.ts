@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 
 /**
- * Function for updating user avatar.
+ * Hook for updating user avatar.
  *
  * @param {FormData} formData - the form data for the new avatar
  * @return {Promise} a promise resolving to the updated avatar

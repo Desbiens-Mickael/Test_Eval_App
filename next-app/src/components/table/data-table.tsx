@@ -21,8 +21,8 @@ import DataTAbleDEleteSElectionButton from "./data-table-delete-selection-button
 import DataTAbleInputFilter from "./data-table-input-filter";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableViewOptions } from "./data-table-view-options";
+import FilterBUttonLessonSubject from "./filter-button/filter-button-lesson-subject";
 import FilterBUttonLevel from "./filter-button/filter-button-level";
-import FilterBUttonSubject from "./filter-button/filter-button-subject";
 
 export interface Identifier {
   id: string;
@@ -88,7 +88,7 @@ export function DataTable<TData extends Identifier, TValue>({ columns, data, fil
 
           {filterColumnIds?.length && filterColumnIds.includes("Niveau") && <FilterBUttonLevel column={table.getColumn("Niveau")} />}
 
-          {filterColumnIds?.length && filterColumnIds.includes("Matière") && <FilterBUttonSubject column={table.getColumn("Matière")} />}
+          {filterColumnIds?.length && filterColumnIds.includes("Matière") && <FilterBUttonLessonSubject column={table.getColumn("Matière")} />}
         </div>
         <div className="flex items-center space-x-2">
           <DataTAbleDEleteSElectionButton table={table} />

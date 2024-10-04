@@ -29,7 +29,7 @@ export default function Sidebar() {
   const menus = user?.role === "ADMIN" ? adminMenus : userMenus;
 
   return (
-    <div className="fixed flex flex-col bg-primary p-4 w-[300px] min-w-[300px] min-h-screen">
+    <div className="fixed flex flex-col bg-primary p-4 w-[300px] min-w-[300px] top-0 bottom-0 overflow-auto scrollbar-hide scrollbar-thin">
       {user ? <UserItem fullName={user.name ?? ""} email={user.email ?? ""} avatarUrl={user.image ?? ""} /> : <UserItemSkeleton />}
 
       <nav className="flex flex-col gap-8 grow py-8 text-primary-foreground">

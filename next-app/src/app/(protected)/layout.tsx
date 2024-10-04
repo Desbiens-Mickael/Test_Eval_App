@@ -11,11 +11,12 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className={cn(inter.className, "flex h-screen w-full")}>
+    // h-screen
+    <div className={cn(inter.className, "flex w-full relative")}>
       <Sidebar />
       <div className="flex flex-col items-center w-full ml-[300px]">
         <Header />
-        <main className="relative flex flex-col items-center p-8 w-full h-full mt-20">{children}</main>
+        <main className=" flex flex-col items-center p-8 w-full h-full">{children}</main>
       </div>
     </div>
   );

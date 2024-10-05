@@ -17,7 +17,7 @@ const adminMenus: MenuSideBar = [
       {
         icon: "WholeWord",
         title: "Jeux à trou",
-        href: "/admin/hole-game",
+        href: "/admin/fill-blank-game",
       },
       {
         icon: "ListTodo",

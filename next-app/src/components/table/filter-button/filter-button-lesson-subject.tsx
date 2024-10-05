@@ -2,7 +2,7 @@
 
 import SubjectLayout from "../../subject-layout";
 
-import useGetAllLessonsSubject from "@/hooks/data/queries/use-get-all-lesson-subjects";
+import useGetAllLessonsSubject from "@/hooks/queries/use-get-all-lesson-subjects";
 import { Column } from "@tanstack/react-table";
 import DataTAbleBUttonFilter from "./data-table-button-filter";
 

@@ -9,9 +9,8 @@ import { DataTableColumnHeader } from "@/components/table/data-table-column-head
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import useGetAllExerciceLevels from "@/hooks/data/queries/use-get-all-exercice-levels";
-import getAllExercice from "@/hooks/data/queries/use-get-all-exercices-card";
-import useGetAllLessonsSubject from "@/hooks/data/queries/use-get-all-lesson-subjects";
+import useGetAllExerciceLevels from "@/hooks/queries/use-get-all-exercice-levels";
+import useGetAllLessonsSubject from "@/hooks/queries/use-get-all-lesson-subjects";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
@@ -23,13 +22,11 @@ export type Exercice = {
   title: string;
   level: string;
   subject: string;
-  // subjectColor: string;
 };
 
-export default function TableCards() {
-  const { data: subjectData } = useGetAllLessonsSubject();
-  const { data: levelData } = useGetAllExerciceLevels();
-  const { data: exerciceData } = getAllExercice();
+export default function ExercicesTable({ exerciceData }: { exerciceData: Exercice[] }) {
+  const { data: subjectData, isLoading: isLoadingSubjectData } = useGetAllLessonsSubject();
+  const { data: levelData, isLoading: isLoadingLevelData } = useGetAllExerciceLevels();
   const filterColumnIds = ["Matière", "Niveau"];
   const inputSearchColumnId = ["Titre"];
 
@@ -116,7 +113,7 @@ export default function TableCards() {
     },
   ];
 
-  if (!exerciceData) return <Loader />;
+  if (isLoadingSubjectData || isLoadingLevelData) return <Loader />;
 
   return <DataTable columns={columns} data={exerciceData} filterColumnIds={filterColumnIds} inputSearchColumnId={inputSearchColumnId} viewOptionsButton />;
 }

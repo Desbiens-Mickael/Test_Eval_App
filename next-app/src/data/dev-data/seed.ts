@@ -133,6 +133,38 @@ const seed = async () => {
         type: "Card",
         description: "Trouve la bonne reponse pour le theoreme de pythagore",
       },
+      {
+        title: "Trouve les bonnes reponses",
+        levelID: levels[2].id,
+        authorId: userAdmin.id,
+        lessonID: lessons[3].id,
+        type: "Fill_blank",
+        description: "Trouve la bonne reponse pour le theoreme de pythagore",
+      },
+      {
+        title: "Trouve les bonnes reponses",
+        levelID: levels[1].id,
+        authorId: userAdmin.id,
+        lessonID: lessons[3].id,
+        type: "Fill_blank",
+        description: "Trouve la bonne reponse pour le theoreme de pythagore",
+      },
+      {
+        title: "Trouve les bonnes reponses",
+        levelID: levels[0].id,
+        authorId: userAdmin.id,
+        lessonID: lessons[3].id,
+        type: "True_or_False",
+        description: "Trouve la bonne reponse pour le theoreme de pythagore",
+      },
+      {
+        title: "Trouve les bonnes reponses",
+        levelID: levels[2].id,
+        authorId: userAdmin.id,
+        lessonID: lessons[3].id,
+        type: "List",
+        description: "Trouve la bonne reponse pour le theoreme de pythagore",
+      },
     ],
   });
 

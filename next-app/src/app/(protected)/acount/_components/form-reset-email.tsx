@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import SubmitButton from "@/components/form/submit-button";
-import useResetEmail from "@/hooks/data/mutations/use-reset-email";
+import useResetEmail from "@/hooks/mutations/use-reset-email";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";

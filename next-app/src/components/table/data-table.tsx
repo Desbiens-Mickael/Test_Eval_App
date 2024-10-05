@@ -118,8 +118,8 @@ export function DataTable<TData extends Identifier, TValue>({ columns, data, fil
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  Aucun résultat.
+                <TableCell colSpan={columns.length} className="h-24 text-center text-2xl font-bold">
+                  Aucun résultat trouvé.
                 </TableCell>
               </TableRow>
             )}

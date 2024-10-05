@@ -2,7 +2,7 @@
 
 import LevelLayout from "../../level-layout";
 
-import useGetAllExerciceLevels from "@/hooks/data/queries/use-get-all-exercice-levels";
+import useGetAllExerciceLevels from "@/hooks/queries/use-get-all-exercice-levels";
 import { Column } from "@tanstack/react-table";
 import DataTAbleBUttonFilter from "./data-table-button-filter";
 

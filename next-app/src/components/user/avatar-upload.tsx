@@ -1,7 +1,7 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { useUpdateUserAvatar } from "@/hooks/data/mutations/use-update-user-avatar";
+import { useUpdateUserAvatar } from "@/hooks/mutations/use-update-user-avatar";
 import { AnimatePresence, motion } from "framer-motion";
 import { Pencil, UserRound } from "lucide-react";
 import Image from "next/image";

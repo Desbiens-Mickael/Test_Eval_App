@@ -1,11 +1,12 @@
 "use server";
 
-import { Exercice } from "@/app/(protected)/admin/card-game/_components/table-cards";
+import { Exercice } from "@/components/table/exercice-table/exercices-table";
 import { getAllExerciceByType } from "@/data/exercice/exercice-data";
+import { ExerciceType } from "@prisma/client";
 
-const getAllExercicesCard = async () => {
+const getAllExercicesByType = async (type: ExerciceType) => {
   try {
-    const exercices = await getAllExerciceByType("Card");
+    const exercices = await getAllExerciceByType(type);
 
     const exercicesCard: Exercice[] = exercices.map((exercice) => ({
       id: exercice.id,
@@ -22,4 +23,4 @@ const getAllExercicesCard = async () => {
   }
 };
 
-export default getAllExercicesCard;
+export default getAllExercicesByType;

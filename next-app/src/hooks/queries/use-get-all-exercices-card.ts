@@ -1,4 +1,4 @@
-import getAllExercicesCard from "@/actions/exercice/get-all-exercices-card";
+import getAllExercicesByType from "@/actions/exercice/get-all-exercices-by-type";
 import { useQuery } from "@tanstack/react-query";
 
 /**
@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 const useGetAllExercicesCard = () => {
   return useQuery({
     queryKey: ["allExercicesCard"],
-    queryFn: async () => getAllExercicesCard(),
+    queryFn: async () => getAllExercicesByType("Card"),
   });
 };
 

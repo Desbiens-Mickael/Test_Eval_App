@@ -2,7 +2,7 @@
 
 import Loader from "@/components/loader";
 import { Button } from "@/components/ui/button";
-import { useUserByEmail } from "@/hooks/data/queries/use-get-user-by-email";
+import { useUserByEmail } from "@/hooks/queries/use-get-user-by-email";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { cn } from "@/lib/utils";
 import { useState } from "react";

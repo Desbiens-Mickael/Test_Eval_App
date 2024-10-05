@@ -25,9 +25,14 @@ export default function DataTAbleDEleteSElectionButton<TData extends Identifier>
   };
   return (
     <AnimatePresence>
-      {table.getIsSomeRowsSelected() && (
+      {(table.getIsSomeRowsSelected() || table.getIsAllRowsSelected()) && (
         <motion.div initial={{ opacity: 0, translateY: -10 }} animate={{ opacity: 1, translateY: 0, transition: { duration: 0.2 } }} exit={{ opacity: 0, translateY: -10 }}>
-          <Button title="Reinitialiser les filtres" variant="outline" className="h-8 w-8 p-0 border-none text-destructive hover:bg-destructive hover:text-white" onClick={() => deleteSelectedRows()}>
+          <Button
+            title="Supprimer toute la séléction"
+            variant="outline"
+            className="h-8 w-8 p-0 border-none text-destructive hover:bg-destructive hover:text-white"
+            onClick={() => deleteSelectedRows()}
+          >
             <Trash2 />
           </Button>
         </motion.div>

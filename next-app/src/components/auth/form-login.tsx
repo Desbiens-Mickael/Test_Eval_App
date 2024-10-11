@@ -6,7 +6,7 @@ import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@/comp
 import { loginFormSchema } from "@/schema/shema-zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import login from "@/actions/login";
@@ -15,6 +15,7 @@ import SubmitButton from "@/components/form/submit-button";
 import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -37,6 +38,15 @@ export default function FormLogin({}) {
     },
   });
   const [showTwoFactor, setShowTwoFactor] = useState(false);
+  const [error, setError] = useState<string>("");
+  const urlError = useSearchParams().get("error") === "OAuthAccountNotLinked" ? "Action impossible avec cet email." : "";
+
+  useEffect(() => {
+    if (urlError) {
+      setError(urlError);
+      toast.error(error);
+    }
+  }, [urlError, error]);
 
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),

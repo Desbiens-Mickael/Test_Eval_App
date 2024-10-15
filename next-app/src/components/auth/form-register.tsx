@@ -3,7 +3,7 @@
 import createNewUser from "@/actions/register";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { registerFormSchema } from "@/schema/shema-zod";
+import { registerFormSchema } from "@/type/shema-zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";

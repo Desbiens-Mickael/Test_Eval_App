@@ -1,7 +1,7 @@
 "use client";
 
 import { Form } from "@/components/ui/form";
-import { resetPasswordFormSchema } from "@/schema/shema-zod";
+import { resetPasswordFormSchema } from "@/type/shema-zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 

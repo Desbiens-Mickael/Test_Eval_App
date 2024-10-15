@@ -3,10 +3,10 @@
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@/components/ui/input-otp";
-import { loginFormSchema } from "@/schema/shema-zod";
+import { loginFormSchema } from "@/type/shema-zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import login from "@/actions/login";
@@ -15,6 +15,7 @@ import SubmitButton from "@/components/form/submit-button";
 import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -27,15 +28,25 @@ export default function FormLogin({}) {
         toast.success("Un code viens de vous être envoyer.");
       }
       if (data?.success) {
-        toast.error(data.success);
+        toast.success(data.success);
         form.reset();
       }
       if (data?.error) {
         toast.error(data.error);
+        form.reset();
       }
     },
   });
   const [showTwoFactor, setShowTwoFactor] = useState(false);
+  const [error, setError] = useState<string>("");
+  const urlError = useSearchParams().get("error") === "OAuthAccountNotLinked" ? "Action impossible avec cet email." : "";
+
+  useEffect(() => {
+    if (urlError) {
+      setError(urlError);
+      toast.error(error);
+    }
+  }, [urlError, error]);
 
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
@@ -51,16 +62,14 @@ export default function FormLogin({}) {
       mutate(values);
     } catch (err) {
       toast.error("Une erreur c'est produite!");
-    } finally {
-      form.reset();
     }
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full xl:w-[80%] lg:h-1/2 space-y-8">
-        {showTwoFactor && (
-          <AnimatePresence>
+        <AnimatePresence>
+          {showTwoFactor && (
             <motion.div initial={{ x: 100, opacity: 1 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 100, opacity: 0 }} transition={{ type: "spring" }}>
               <FormField
                 control={form.control}
@@ -95,8 +104,8 @@ export default function FormLogin({}) {
                 )}
               />
             </motion.div>
-          </AnimatePresence>
-        )}
+          )}
+        </AnimatePresence>
         {!showTwoFactor && (
           <>
             <p className="text-sm text-center">Entrez votre email et votre mot de passe ci-dessous pour vous connecter</p>

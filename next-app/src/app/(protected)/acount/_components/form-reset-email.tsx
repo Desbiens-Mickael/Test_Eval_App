@@ -1,12 +1,12 @@
 "use client";
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { resetEmailFormSchema } from "@/schema/shema-zod";
+import { resetEmailFormSchema } from "@/type/shema-zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import SubmitButton from "@/components/form/submit-button";
-import useResetEmail from "@/hooks/data/mutations/use-reset-email";
+import useResetEmail from "@/hooks/mutations/use-reset-email";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";

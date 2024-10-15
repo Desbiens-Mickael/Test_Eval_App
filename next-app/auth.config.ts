@@ -5,7 +5,7 @@ import { deleteTwoFactorComfirmationById, getTwoFactorComfirmationByUserId } fro
 import { UpdateUser, getUserByEmail, getUserById } from "@/data/user-data";
 import { deleteVerificationTokenById, getVerificationTokenByIdentifier } from "@/data/verification-token-data";
 import { verifyPassword } from "@/lib/hash-password";
-import { loginFormSchema } from "@/schema/shema-zod";
+import { loginFormSchema } from "@/type/shema-zod";
 import { UserRole } from "@prisma/client";
 import type { NextAuthConfig } from "next-auth";
 import "next-auth/jwt";

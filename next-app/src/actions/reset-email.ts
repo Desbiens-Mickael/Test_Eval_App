@@ -4,7 +4,7 @@ import { deleteResetEmailTokenById, getResetEmailTokenByToken } from "@/data/res
 import { UpdateUser, getUserByEmail } from "@/data/user-data";
 import { sendResetEmail } from "@/lib/mail";
 import { generateResetEmailToken } from "@/lib/tokens";
-import { resetEmailFormSchema } from "@/schema/shema-zod";
+import { resetEmailFormSchema } from "@/type/shema-zod";
 import { z } from "zod";
 
 // Envoie d'un mail pour reset le Email

@@ -3,7 +3,7 @@
 import { UpdateUser, getUserByEmail, getUserById } from "@/data/user-data";
 import { currentUser } from "@/lib/auth";
 import { capitalize } from "@/lib/utils";
-import { userInfosFormSchema } from "@/schema/shema-zod";
+import { userInfosFormSchema } from "@/type/shema-zod";
 import { z } from "zod";
 
 const updateUserInfos = async (infos: z.infer<typeof userInfosFormSchema>) => {

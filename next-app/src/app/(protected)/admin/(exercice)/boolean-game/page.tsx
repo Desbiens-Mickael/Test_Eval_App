@@ -1,5 +1,6 @@
+import PageTitle from "@/components/page-title";
+import ExercicesTable from "@/components/table/exercice-table/exercices-table";
 import { Metadata } from "next";
-import BooleanTable from "./_components/boolean-table";
 
 export const metadata: Metadata = {
   title: "Jeu Vrai / Faux",
@@ -8,8 +9,8 @@ export const metadata: Metadata = {
 export default function BooleanGamePage() {
   return (
     <div className="w-full h-full flex flex-col items-center max-w-[1200px]">
-      <h1 className="text-6xl font-bold mb-10">Jeu Vrai / Faux</h1>
-      <BooleanTable />
+      <PageTitle title="Jeu Vrai / Faux" />
+      <ExercicesTable exerciceType="True_or_False" />
     </div>
   );
 }

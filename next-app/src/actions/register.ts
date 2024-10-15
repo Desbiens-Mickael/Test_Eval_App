@@ -4,7 +4,7 @@ import { createUser, getUserByEmail } from "@/data/user-data";
 import { sendVerificationEmail } from "@/lib/mail";
 import { generateVerificationToken } from "@/lib/tokens";
 import { capitalize } from "@/lib/utils";
-import { registerFormSchema } from "@/schema/shema-zod";
+import { registerFormSchema } from "@/type/shema-zod";
 import { z } from "zod";
 
 const createNewUser = async (credentials: z.infer<typeof registerFormSchema>) => {

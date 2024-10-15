@@ -14,7 +14,7 @@ interface DataTAbleButtonResetProps<TData> {
  * @param {DataTAbleButtonResetProps<TData>} props - The props object containing the table to reset.
  * @return {JSX.Element} The button component for resetting the table.
  */
-export default function DataTAbleButtonReset<TData>({ table }: DataTAbleButtonResetProps<TData>) {
+export default function DataTableButtonReset<TData>({ table }: DataTAbleButtonResetProps<TData>) {
   function onResetFilters() {
     table.resetColumnFilters();
     table.resetSorting();

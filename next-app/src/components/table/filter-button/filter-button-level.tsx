@@ -2,6 +2,7 @@
 
 import LevelLayout from "../../level-layout";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import useGetAllExerciceLevels from "@/hooks/queries/use-get-all-exercice-levels";
 import { Column } from "@tanstack/react-table";
 import DataTAbleBUttonFilter from "./data-table-button-filter";
@@ -14,11 +15,11 @@ export default function FilterBUttonLevel<TData, TValue>({ column }: FilterBUtto
   const { isLoading, isError, data, error } = useGetAllExerciceLevels();
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Skeleton className="w-[80px] h-[32px]" />;
   }
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
+  if (isError) {
+    return;
   }
 
   if (data) return <DataTAbleBUttonFilter column={column} title="Niveau" templateComponent={LevelLayout} data={data} />;

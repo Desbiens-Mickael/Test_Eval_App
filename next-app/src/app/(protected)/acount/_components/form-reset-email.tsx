@@ -1,7 +1,7 @@
 "use client";
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { resetEmailFormSchema } from "@/schema/shema-zod";
+import { resetEmailFormSchema } from "@/type/shema-zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 

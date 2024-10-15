@@ -33,11 +33,11 @@ export default function Sidebar() {
       {user ? <UserItem fullName={user.name ?? ""} email={user.email ?? ""} avatarUrl={user.image ?? ""} /> : <UserItemSkeleton />}
 
       <nav className="flex flex-col gap-8 grow py-8 text-primary-foreground">
-        {menus.map(({ group, items }, groupKey) => (
+        {menus.map(({ group, menus }, groupKey) => (
           <div className="flex flex-col gap-2 bg-primary-foreground rounded-md p-2" key={groupKey}>
             <h2 className="text-primary font-bold text-xl px-2">{group}</h2>
 
-            {items.map((item, menuKey) => {
+            {menus.map((item, menuKey) => {
               const IconComponent = item.icon in iconMap ? iconMap[item.icon as IconName] : null;
               const newItem = { ...item, icon: IconComponent };
 

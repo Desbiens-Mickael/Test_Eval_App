@@ -4,7 +4,7 @@ import { Table } from "@tanstack/react-table";
 import { AnimatePresence, motion } from "framer-motion";
 import { Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
-import { Identifier } from "./data-table";
+import { Identifier } from "./exercice-table/exercice-table-template";
 
 interface DataTAbleDEleteSElectionButtonProps<TData> {
   table: Table<TData>;
@@ -16,7 +16,7 @@ interface DataTAbleDEleteSElectionButtonProps<TData> {
  * @param {DataTAbleDEleteSElectionButtonProps<TData>} table - The table component with selected rows
  * @return {void}
  */
-export default function DataTAbleDEleteSElectionButton<TData extends Identifier>({ table }: DataTAbleDEleteSElectionButtonProps<TData>) {
+export default function DataTableDEleteSElectionButton<TData extends Identifier>({ table }: DataTAbleDEleteSElectionButtonProps<TData>) {
   const deleteSelectedRows = () => {
     table
       .getSelectedRowModel()

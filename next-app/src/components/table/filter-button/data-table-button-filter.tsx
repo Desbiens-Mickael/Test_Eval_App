@@ -9,21 +9,16 @@ import { Column } from "@tanstack/react-table";
 import { Filter } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
-type TemplateComponentProps = {
+export type TemplateComponentProps = {
   label: string;
   color?: string;
-  icon?: JSX.Element | null;
 };
 
-interface DataTAbleBUttonFilterProps<TData, TValue> {
+export interface DataTAbleBUttonFilterProps<TData, TValue> {
   column: Column<TData, TValue> | undefined;
   title: string;
   templateComponent: React.ElementType<TemplateComponentProps>;
-  data: {
-    label: string;
-    color?: string;
-    icon?: JSX.Element | null;
-  }[];
+  data: TemplateComponentProps[];
 }
 
 /**

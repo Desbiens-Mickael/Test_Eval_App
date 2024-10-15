@@ -1,4 +1,4 @@
-import { MenuSideBar } from "@/type/sidebar-type";
+import { MenuSideBar } from "@/type/sidebar";
 
 const userMenus: MenuSideBar = [
   {

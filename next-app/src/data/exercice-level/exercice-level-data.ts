@@ -1,6 +1,7 @@
 import prisma from "@/lib/db";
+import { Level } from "@/type/level";
 
-export const getAllExerciceLevelsWithLabelAndColorOnly = async () => {
+export const getAllExerciceLevelsWithLabelAndColorOnly = async (): Promise<Level[]> => {
   try {
     return await prisma.exerciceLevel.findMany({ select: { label: true, color: true } });
   } catch (er) {

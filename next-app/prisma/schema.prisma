@@ -13,6 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Authentication
 model Account {
   id                 String  @id @default(cuid())
   userId             String
@@ -40,29 +41,11 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-enum UserRole {
-  ADMIN 
-  USER
-} 
-
-model User {
-  id                      String    @id @default(cuid())
-  name                    String?
-  email                   String?   @unique
-  password                String?
-  emailVerified           DateTime?
-  image                   String?
-  role                    UserRole @default(USER)
-  isTwoFactorEnabled      Boolean @default(false)
-  accounts                Account[]
-  sessions                Session[]
-  twoFactorComfirmation   TwoFactorComfirmation?
-}
-
 enum TokenType {
   VerificationEmail
   ResetPassword
   TwoFactor
+  ResetEmail
 }
 model VerificationToken {
   id                      String    @id @default(cuid())
@@ -82,4 +65,123 @@ model TwoFactorComfirmation {
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade) 
 
   @@unique([userId])
+}
+
+// User
+enum UserRole {
+  ADMIN 
+  USER
+} 
+
+model User {
+  id                      String    @id @default(cuid())
+  name                    String?
+  email                   String?   @unique
+  password                String?
+  emailVerified           DateTime?
+  image                   String?
+  role                    UserRole  @default(USER)
+  isTwoFactorEnabled      Boolean   @default(false)
+  accounts                Account[]
+  sessions                Session[]
+  twoFactorComfirmation   TwoFactorComfirmation?
+  ownedGroup              Group? 
+  ownedLessons            Lesson[]
+  ownedExercice           Exercice[]
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+
+  groupId                 String?  @unique
+  groupUser               Group?   @relation(name: "users", fields: [groupId], references: [id], onDelete: SetNull)
+  
+}
+
+model Group {
+  id                      String @id @default(cuid())
+  name                    String
+  users                   User[] @relation(name: "users")
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  authorId                String @unique
+  author                  User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@unique([name, authorId])
+}
+
+model LessonSubject {
+  id                      String @id @default(cuid())
+  label                   String @unique
+  color                   String
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  lessons                 Lesson[]
+
+  @@unique([label, color])
+}
+
+model Lesson {
+  id                      String @id @default(cuid())
+  name                    String 
+  content                 String
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+  
+  authorId                String
+  author                  User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  LessonSubjectID         String
+  LessonSubject           LessonSubject @relation(fields: [LessonSubjectID], references: [id], onDelete: Cascade)
+
+  exercices               Exercice[]
+  
+  @@unique([name, authorId])
+}
+
+model ExerciceLevel {
+  id                      String @id @default(cuid())
+  label                   String @unique
+  color                   String
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  exercices               Exercice[]
+
+  @@unique([label, color])
+}
+
+// Exercice
+enum ExerciceType {
+  Card
+  True_or_False
+  List
+  Fill_blank
+}
+model Exercice {
+  id                      String   @id @default(cuid())
+  title                   String
+  description             String
+  levelID                 String
+  level                   ExerciceLevel @relation(fields: [levelID], references: [id], onDelete: Cascade)
+  type                    ExerciceType
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  authorId                String
+  author                  User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  lessonID                String
+  lesson                  Lesson   @relation(fields: [lessonID], references: [id], onDelete: Cascade)
+  ContentExerciceCardID   ContentExerciceCard?
+}
+
+model ContentExerciceCard {
+  id                      String   @id @default(cuid())
+  content                 Json
+  correctAnswer           Json
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  exerciceID              String @unique
+  exercice                Exercice @relation(fields: [exerciceID], references: [id], onDelete: Cascade)
 }

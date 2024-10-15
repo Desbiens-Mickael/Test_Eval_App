@@ -1,4 +1,4 @@
-import { MenuSideBar } from "@/type/sidebar-type";
+import { MenuSideBar } from "@/type/sidebar";
 
 const userMenus: MenuSideBar = [
   {
@@ -17,7 +17,7 @@ const userMenus: MenuSideBar = [
       {
         icon: "User",
         title: "Mon profil",
-        href: "/user/me",
+        href: "/acount/profile",
       },
     ],
   },

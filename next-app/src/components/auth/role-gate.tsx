@@ -1,5 +1,5 @@
 "use client";
-import { useCurrentRole } from "@/hooks/useCurrentRole";
+import { useCurrentRole } from "@/hooks/use-current-role";
 import { UserRole } from "@prisma/client";
 
 interface RoleGateProps {

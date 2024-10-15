@@ -31,7 +31,7 @@ export async function sendVerificationEmail(email: string, token: string) {
       from: MAILER_FROM_ADDRESS, // L'adresse d'envoi
       to: email, // Le destinataire
       subject: "Comfirmez votre email",
-      html: `<p>Cliquez sur le lien pour <a href=${confirmLink}>confirmer votre adresse email<a>.<p>`,
+      html: `<p>Cliquez sur le lien pour <a href=${confirmLink}>confirmer votre adresse email<a> .<p>`,
     });
   } catch (error) {
     throw new Error("Echec lors de l'envoi de l'email.");
@@ -46,7 +46,22 @@ export async function sendResetPasswordEmail(email: string, token: string) {
       from: MAILER_FROM_ADDRESS, // L'adresse d'envoi
       to: email, // Le destinataire
       subject: "Modification du mot de passe",
-      html: `<p>Cliquez sur le lien pour <a href=${confirmLink}>modifier votre mot de passe<a>.<p>`,
+      html: `<p>Cliquez sur le lien pour <a href=${confirmLink}>modifier votre mot de passe<a> .<p>`,
+    });
+  } catch (error) {
+    throw new Error("Echec lors de l'envoi de l'email.");
+  }
+}
+
+export async function sendResetEmail(email: string, token: string) {
+  const confirmLink = `${NEXT_BASE_URL}/auth/reset-email?token=${token}`;
+
+  try {
+    await transporter.sendMail({
+      from: MAILER_FROM_ADDRESS, // L'adresse d'envoi
+      to: email, // Le destinataire
+      subject: "Modification de l'adresse email",
+      html: `<p>Cliquez sur le lien pour <a href=${confirmLink}>modifier votre adresse email<a> .<p>`,
     });
   } catch (error) {
     throw new Error("Echec lors de l'envoi de l'email.");

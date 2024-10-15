@@ -1,9 +1,9 @@
-import { MenuSideBar } from "@/type/sidebar-type";
+import { MenuSideBar } from "@/type/sidebar";
 
 const adminMenus: MenuSideBar = [
   {
     group: "General",
-    items: [
+    menus: [
       {
         icon: "LayoutDashboard",
         title: "Tableau de bord",
@@ -17,7 +17,7 @@ const adminMenus: MenuSideBar = [
       {
         icon: "WholeWord",
         title: "Jeux à trou",
-        href: "/admin/hole-game",
+        href: "/admin/fill-blank-game",
       },
       {
         icon: "ListTodo",
@@ -33,22 +33,21 @@ const adminMenus: MenuSideBar = [
   },
   {
     group: "Utilisateurs",
-    items: [
+    menus: [
       {
         icon: "Users",
         title: "Inscrits",
         href: "/admin/registered",
-        infos: "3", // Rendre dynamique
       },
     ],
   },
   {
     group: "Paramètres",
-    items: [
+    menus: [
       {
         icon: "User",
         title: "Mon profil",
-        href: "/admin/me",
+        href: "/acount/profile",
       },
     ],
   },

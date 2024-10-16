@@ -1,7 +1,9 @@
+import { LucideIcon } from "lucide-react";
+
 export type MenuItem = {
-  icon: string;
+  icon: LucideIcon;
   title: string;
-  href: string;
+  href?: string;
   submenus?: MenuItem[];
 };
 

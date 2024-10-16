@@ -1,11 +1,12 @@
 import { MenuSideBar } from "@/type/sidebar";
+import { LayoutDashboard, User } from "lucide-react";
 
 const userMenus: MenuSideBar = [
   {
     group: "General",
-    items: [
+    menus: [
       {
-        icon: "LayoutDashboard",
+        icon: LayoutDashboard,
         title: "Tableau de bord",
         href: "/user/dashboard",
       },
@@ -13,9 +14,9 @@ const userMenus: MenuSideBar = [
   },
   {
     group: "Paramètres",
-    items: [
+    menus: [
       {
-        icon: "User",
+        icon: User,
         title: "Mon profil",
         href: "/acount/profile",
       },

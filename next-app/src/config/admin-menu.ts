@@ -1,33 +1,40 @@
 import { MenuSideBar } from "@/type/sidebar";
+import { LayoutDashboard, ListCollapse, ListTodo, NotebookPen, Trello, User, Users, WholeWord } from "lucide-react";
 
 const adminMenus: MenuSideBar = [
   {
     group: "General",
     menus: [
       {
-        icon: "LayoutDashboard",
+        icon: LayoutDashboard,
         title: "Tableau de bord",
         href: "/admin/dashboard",
       },
       {
-        icon: "Trello",
-        title: "Jeux de carte",
-        href: "/admin/card-game",
-      },
-      {
-        icon: "WholeWord",
-        title: "Jeux à trou",
-        href: "/admin/fill-blank-game",
-      },
-      {
-        icon: "ListTodo",
-        title: "Jeux vrai / faux",
-        href: "/admin/boolean-game",
-      },
-      {
-        icon: "ListCollapse",
-        title: "Jeux à liste",
-        href: "/admin/list-game",
+        icon: NotebookPen,
+        title: "Exercices",
+        submenus: [
+          {
+            icon: Trello,
+            title: "Jeux de carte",
+            href: "/admin/card-game",
+          },
+          {
+            icon: WholeWord,
+            title: "Jeux à trou",
+            href: "/admin/fill-blank-game",
+          },
+          {
+            icon: ListTodo,
+            title: "Jeux vrai / faux",
+            href: "/admin/boolean-game",
+          },
+          {
+            icon: ListCollapse,
+            title: "Jeux à liste",
+            href: "/admin/list-game",
+          },
+        ],
       },
     ],
   },
@@ -35,7 +42,7 @@ const adminMenus: MenuSideBar = [
     group: "Utilisateurs",
     menus: [
       {
-        icon: "Users",
+        icon: Users,
         title: "Inscrits",
         href: "/admin/registered",
       },
@@ -45,7 +52,7 @@ const adminMenus: MenuSideBar = [
     group: "Paramètres",
     menus: [
       {
-        icon: "User",
+        icon: User,
         title: "Mon profil",
         href: "/acount/profile",
       },

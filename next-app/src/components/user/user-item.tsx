@@ -1,5 +1,6 @@
 "use client";
 
+import { generateUserInitials } from "@/lib/utils";
 import Image from "next/image";
 
 interface UserItemProps {
@@ -9,10 +10,7 @@ interface UserItemProps {
 }
 
 export default function UserItem({ fullName, email, avatarUrl }: UserItemProps) {
-  const initialTitle = fullName
-    .split(" ")
-    .map((word) => word.charAt(0))
-    .join("");
+  const initialTitle = generateUserInitials(fullName);
 
   return (
     <div className="flex items-center gap-2 w-full border rounded-md p-2 bg-primary-foreground">

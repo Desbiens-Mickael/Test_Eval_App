@@ -1,6 +1,11 @@
-"use client";
+// "use client";
 
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Erreur d'authentification",
+};
 
 export default function AuthErrorPage() {
   return (

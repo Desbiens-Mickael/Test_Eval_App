@@ -18,7 +18,7 @@ const userMenus: MenuSideBar = [
       {
         icon: User,
         title: "Mon profil",
-        href: "/acount/profile",
+        href: "/profil",
       },
     ],
   },

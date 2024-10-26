@@ -1,4 +1,4 @@
-import prisma from "@/lib/db";
+import { prisma } from "@/lib/db";
 import { hashPassword } from "@/lib/hash-password";
 
 const seed = async () => {

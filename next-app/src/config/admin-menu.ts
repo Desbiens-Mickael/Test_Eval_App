@@ -1,5 +1,5 @@
 import { MenuSideBar } from "@/type/sidebar";
-import { LayoutDashboard, ListCollapse, ListTodo, NotebookPen, Trello, User, Users, WholeWord } from "lucide-react";
+import { Atom, BookOpenText, Calculator, CaseUpper, Hourglass, LayoutDashboard, ListCollapse, ListTodo, NotebookPen, Trello, User, Users, WholeWord } from "lucide-react";
 
 const adminMenus: MenuSideBar = [
   {
@@ -11,28 +11,54 @@ const adminMenus: MenuSideBar = [
         href: "/admin/dashboard",
       },
       {
+        icon: BookOpenText,
+        title: "Leçons",
+        submenus: [
+          {
+            icon: Calculator,
+            title: "Mathématique",
+            href: "/admin/lecons/mathematique",
+          },
+          {
+            icon: CaseUpper,
+            title: "Français",
+            href: "/admin/lecons/francais",
+          },
+          {
+            icon: Hourglass,
+            title: "Histoire",
+            href: "/admin/lecons/histoire",
+          },
+          {
+            icon: Atom,
+            title: "Physique",
+            href: "/admin/lecons/physique",
+          },
+        ],
+      },
+      {
         icon: NotebookPen,
         title: "Exercices",
         submenus: [
           {
             icon: Trello,
-            title: "Jeux de carte",
-            href: "/admin/card-game",
+            title: "Carte",
+            href: "/admin/exercices/carte",
           },
           {
             icon: WholeWord,
-            title: "Jeux à trou",
-            href: "/admin/fill-blank-game",
+            title: "A trou",
+            href: "/admin/exercices/a-trous",
           },
           {
             icon: ListTodo,
-            title: "Jeux vrai / faux",
-            href: "/admin/boolean-game",
+            title: "Vrai / faux",
+            href: "/admin/exercices/vrai-faux",
           },
           {
             icon: ListCollapse,
-            title: "Jeux à liste",
-            href: "/admin/list-game",
+            title: "Liste",
+            href: "/admin/exercices/liste",
           },
         ],
       },
@@ -44,7 +70,7 @@ const adminMenus: MenuSideBar = [
       {
         icon: Users,
         title: "Inscrits",
-        href: "/admin/registered",
+        href: "/admin/utilisateurs",
       },
     ],
   },
@@ -54,7 +80,7 @@ const adminMenus: MenuSideBar = [
       {
         icon: User,
         title: "Mon profil",
-        href: "/acount/profile",
+        href: "/profil",
       },
     ],
   },

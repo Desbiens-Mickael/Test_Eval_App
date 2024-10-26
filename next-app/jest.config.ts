@@ -19,6 +19,7 @@ const config: Config = {
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
     // "^auth$": "<rootDir>/auth",
+    // "^@auth/prisma-adapter$": "<rootDir>/node_modules/@auth/prisma-adapter",
     // "^next-auth/react$": "<rootDir>/node_modules/next-auth/react",
   },
 

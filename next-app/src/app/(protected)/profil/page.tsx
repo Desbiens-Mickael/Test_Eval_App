@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import UserPRofileManager from "../_components/user-profile-manager";
+import UserPRofileManager from "./_components/user-profile-manager";
 
 export const metadata: Metadata = {
   title: "Profil",

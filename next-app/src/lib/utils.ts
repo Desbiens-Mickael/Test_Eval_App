@@ -8,3 +8,11 @@ export function cn(...inputs: ClassValue[]) {
 export const capitalize = (word: string) => {
   return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 };
+
+export const generateUserInitials = (fullName: string) => {
+  return fullName
+    .split(" ")
+    .map((word) => word.charAt(0))
+    .join("")
+    .toUpperCase();
+};

@@ -7,6 +7,12 @@ describe("Home page component", () => {
     const title = screen.getByRole("heading", { level: 1 });
 
     expect(title).toBeInTheDocument();
-    expect(title).toHaveTextContent("Hello world !!");
+  });
+
+  it("should display a welcome message", () => {
+    render(<Home />);
+    const title = screen.getByRole("heading", { level: 1 });
+
+    expect(title).toHaveTextContent("Bienvenue sur Test Eval !!!");
   });
 });

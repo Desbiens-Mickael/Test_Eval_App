@@ -1,4 +1,4 @@
-import prisma from "@/lib/db";
+import { prisma } from "@/lib/db";
 import { verificationTokenShema } from "@/type/shema-zod";
 import { z } from "zod";
 

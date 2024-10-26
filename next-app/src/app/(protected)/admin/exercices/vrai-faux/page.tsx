@@ -3,13 +3,13 @@ import ExercicesTable from "@/components/table/exercice-table/exercices-table";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Jeu Vrai / Faux",
+  title: "Exercices Vrai / Faux",
 };
 
 export default function BooleanGamePage() {
   return (
     <div className="w-full h-full flex flex-col items-center max-w-[1200px]">
-      <PageTitle title="Jeu Vrai / Faux" />
+      <PageTitle title="Exercices Vrai / Faux" />
       <ExercicesTable exerciceType="True_or_False" />
     </div>
   );

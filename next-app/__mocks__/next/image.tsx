@@ -11,8 +11,8 @@
  *
  * @returns {JSX.Element} <img> element representing the image.
  */
-const NextImage = ({ src, alt, ...props }: { src: string; alt: string; [key: string]: any }) => {
-  return <img src={src} alt={alt} {...props} />;
+const NextImage = ({ src, alt }: { src: string; alt: string }) => {
+  return <img src={src} alt={alt} />;
 };
 
 export default NextImage;

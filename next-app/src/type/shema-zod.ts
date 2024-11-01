@@ -5,7 +5,7 @@ export const registerFormSchema = z
   .object({
     firstname: z.string(),
     lastname: z.string(),
-    email: z.string().email({ message: "addresse email invalide" }),
+    email: z.string().email({ message: "adresse email invalide" }),
     password: z.string().min(6, { message: "minimum 6 caractère" }),
   })
   .required();

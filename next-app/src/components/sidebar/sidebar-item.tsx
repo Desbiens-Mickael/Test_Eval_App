@@ -24,5 +24,5 @@ import SidebarDRopdownMenu from "./sidebar-dropdown-menu";
 export default function SidebarItem({ menu }: { menu: MenuItem }): JSX.Element {
   const pathName = usePathname();
 
-  return menu.href && !menu.submenus ? <LinkSidebar {...menu} className={pathName === menu.href ? "bg-primary text-primary-foreground hover:bg-primary" : ""} /> : <SidebarDRopdownMenu {...menu} />;
+  return menu.href && !menu.submenus ? <LinkSidebar {...menu} className={pathName === menu.href ? "active-sidebar-link" : ""} /> : <SidebarDRopdownMenu {...menu} />;
 }

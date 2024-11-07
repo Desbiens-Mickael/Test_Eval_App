@@ -12,9 +12,7 @@ exports[`NotFound component matches the snapshot 1`] = `
     </h1>
     <img
       alt="not found"
-      height="500"
       src="/assets/images/not-found.png"
-      width="500"
     />
     <p
       class="text-primary text-2xl md:text-3xl lg:text-4xl font-bold text-center"

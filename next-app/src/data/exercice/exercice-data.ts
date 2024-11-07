@@ -1,4 +1,4 @@
-import prisma from "@/lib/db";
+import { prisma } from "@/lib/db";
 import { Exercice, ExerciceType } from "@prisma/client";
 
 export interface ExerciceOutput {

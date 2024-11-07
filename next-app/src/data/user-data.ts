@@ -1,6 +1,6 @@
 "use server";
 
-import prisma from "@/lib/db";
+import { prisma } from "@/lib/db";
 import { hashPassword } from "@/lib/hash-password";
 
 export const createUser = async (email: string, plainPassword: string, fullName: string) => {

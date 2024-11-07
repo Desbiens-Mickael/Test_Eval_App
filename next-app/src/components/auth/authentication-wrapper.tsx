@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "../ui/button";
@@ -10,14 +8,14 @@ interface AuthenticationWraperProps {
   title: string;
   texte?: string;
   imagePath?: string;
-  form: JSX.Element;
+  children: React.ReactNode;
   sociale?: boolean;
   backButtonText: string;
   backButtonHref: string;
   backButtonIcon?: JSX.Element;
 }
 
-export default function AuthenticationWrapper({ title, texte, imagePath, form, backButtonText, backButtonHref, backButtonIcon, sociale = false }: AuthenticationWraperProps) {
+export default function AuthenticationWrapper({ title, texte, imagePath, children, backButtonText, backButtonHref, backButtonIcon, sociale = false }: AuthenticationWraperProps) {
   return (
     <div className="lg:h-full w-full flex flex-col justify-center items-center md:p-16">
       <div className="overflow-hidden w-full h-auto max-w-[1350px] flex-col items-center justify-center bg-background border shadow-md sm:w-[80%] lg:w-full lg:min-h-[650px] lg:grid lg:grid-cols-2 lg:px-0 lg:rounded-lg">
@@ -29,7 +27,7 @@ export default function AuthenticationWrapper({ title, texte, imagePath, form, b
             <h1 className="text-4xl text-foreground font-bold text-center">🔐 {title}</h1>
             {texte && <p className="text-sm text-center">{texte}</p>}
           </div>
-          {form}
+          {children}
           {sociale && (
             <div className="w-full xl:w-[80%] flex flex-col gap-4">
               <div className="w-full flex items-center gap-4">

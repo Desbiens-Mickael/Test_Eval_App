@@ -4,10 +4,15 @@ import { newVerificationToken } from "@/actions/verificationToken";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Undo2 } from "lucide-react";
+import { Metadata } from "next";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { CircleLoader } from "react-spinners";
+
+export const metadata: Metadata = {
+  title: "Comfirmation de l'email",
+};
 
 export default function NewVerification() {
   const token = useSearchParams().get("token");
@@ -53,7 +58,7 @@ export default function NewVerification() {
         </CardContent>
         <CardFooter className="flex justify-center items-center">
           <Button asChild variant={"link"}>
-            <Link href={"/auth/login"}>
+            <Link href={"/auth/connexion"}>
               <Undo2 size={20} className="mr-2" />
               Retour à la connexion
             </Link>

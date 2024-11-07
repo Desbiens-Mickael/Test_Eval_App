@@ -31,7 +31,7 @@ declare module "next-auth/jwt" {
 
 export default {
   pages: {
-    signIn: "/auth/login",
+    signIn: "/auth/connexion",
     error: "/auth/error",
   },
   providers: [

@@ -1,4 +1,4 @@
-import prisma from "@/lib/db";
+import { prisma } from "@/lib/db";
 import { Level } from "@/type/level";
 
 export const getAllExerciceLevelsWithLabelAndColorOnly = async (): Promise<Level[]> => {

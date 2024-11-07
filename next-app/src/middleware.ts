@@ -10,14 +10,14 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth;
   const userRole = req.auth?.user?.role;
 
-  const authRoutes = ["/auth/register", "/auth/login", "/auth/new-password", "/auth/new-verification", "/auth/reset-password"];
+  const authRoutes = ["/auth/inscription", "/auth/connexion", "/auth/new-password", "/auth/new-verification", "/auth/reset-password"];
 
   const isAdminRoutes = !!req.nextUrl.pathname.match("^/admin");
   const isUserRoutes = !!req.nextUrl.pathname.match("^/user");
   const isAuthRoutes = !!authRoutes.includes(req.nextUrl.pathname); //!!req.nextUrl.pathname.match("^/auth");
-  const isAcountRoute = !!req.nextUrl.pathname.match("^/acount");
+  const isAcountRoute = !!req.nextUrl.pathname.match("^/profil");
 
-  const fixUrl = ["/api/auth/auth/login", "/api/auth/auth/error"];
+  const fixUrl = ["/api/auth/auth/connexion", "/api/auth/auth/error"];
 
   // Utilisateur non connecter
   if ((isAdminRoutes || isUserRoutes || isAcountRoute) && !isLoggedIn) return NextResponse.redirect(new URL("/", nextUrl));

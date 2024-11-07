@@ -3,14 +3,14 @@ import ExercicesTable from "@/components/table/exercice-table/exercices-table";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Jeu à liste",
+  title: "Exercices à trou",
 };
 
-export default function ListGamePage() {
+export default function HoleGamePage() {
   return (
     <div className="w-full h-full flex flex-col items-center max-w-[1200px]">
-      <PageTitle title="Jeu à liste" />
-      <ExercicesTable exerciceType="List" />
+      <PageTitle title="Exercices à trou" />
+      <ExercicesTable exerciceType="Fill_blank" />
     </div>
   );
 }

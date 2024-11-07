@@ -1,33 +1,66 @@
 import { MenuSideBar } from "@/type/sidebar";
+import { Atom, BookOpenText, Calculator, CaseUpper, Hourglass, LayoutDashboard, ListCollapse, ListTodo, NotebookPen, Trello, User, Users, WholeWord } from "lucide-react";
 
 const adminMenus: MenuSideBar = [
   {
     group: "General",
     menus: [
       {
-        icon: "LayoutDashboard",
+        icon: LayoutDashboard,
         title: "Tableau de bord",
         href: "/admin/dashboard",
       },
       {
-        icon: "Trello",
-        title: "Jeux de carte",
-        href: "/admin/card-game",
+        icon: BookOpenText,
+        title: "Leçons",
+        submenus: [
+          {
+            icon: Calculator,
+            title: "Mathématique",
+            href: "/admin/lecons/mathematique",
+          },
+          {
+            icon: CaseUpper,
+            title: "Français",
+            href: "/admin/lecons/francais",
+          },
+          {
+            icon: Hourglass,
+            title: "Histoire",
+            href: "/admin/lecons/histoire",
+          },
+          {
+            icon: Atom,
+            title: "Physique",
+            href: "/admin/lecons/physique",
+          },
+        ],
       },
       {
-        icon: "WholeWord",
-        title: "Jeux à trou",
-        href: "/admin/fill-blank-game",
-      },
-      {
-        icon: "ListTodo",
-        title: "Jeux vrai / faux",
-        href: "/admin/boolean-game",
-      },
-      {
-        icon: "ListCollapse",
-        title: "Jeux à liste",
-        href: "/admin/list-game",
+        icon: NotebookPen,
+        title: "Exercices",
+        submenus: [
+          {
+            icon: Trello,
+            title: "Carte",
+            href: "/admin/exercices/carte",
+          },
+          {
+            icon: WholeWord,
+            title: "A trou",
+            href: "/admin/exercices/a-trous",
+          },
+          {
+            icon: ListTodo,
+            title: "Vrai / faux",
+            href: "/admin/exercices/vrai-faux",
+          },
+          {
+            icon: ListCollapse,
+            title: "Liste",
+            href: "/admin/exercices/liste",
+          },
+        ],
       },
     ],
   },
@@ -35,9 +68,9 @@ const adminMenus: MenuSideBar = [
     group: "Utilisateurs",
     menus: [
       {
-        icon: "Users",
+        icon: Users,
         title: "Inscrits",
-        href: "/admin/registered",
+        href: "/admin/utilisateurs",
       },
     ],
   },
@@ -45,9 +78,9 @@ const adminMenus: MenuSideBar = [
     group: "Paramètres",
     menus: [
       {
-        icon: "User",
+        icon: User,
         title: "Mon profil",
-        href: "/acount/profile",
+        href: "/profil",
       },
     ],
   },

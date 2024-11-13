@@ -4,7 +4,7 @@ import { Table } from "@tanstack/react-table";
 import { AnimatePresence, motion } from "framer-motion";
 import { Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
-import { Identifier } from "./exercice-table/exercice-table-template";
+import { Identifier } from "./data-table";
 
 interface DataTAbleDEleteSElectionButtonProps<TData> {
   table: Table<TData>;

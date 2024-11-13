@@ -56,7 +56,7 @@ export default function SidebarDRopdownMenu({ icon: Icon, title, submenus }: Sid
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="w-full h-full">
-        <div className={cn(styleMain, isActive ? "active-sidebar-link" : "text-primary hover:bg-slate-200")}>
+        <div className={cn(styleMain, isActive ? "active-sidebar-link" : "text-foreground hover:bg-slate-200")}>
           <Icon />
           <h3>{title}</h3>
           <ChevronDown className="ml-auto" size={20} />

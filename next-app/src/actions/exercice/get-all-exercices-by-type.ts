@@ -8,7 +8,7 @@ const getAllExercicesByType = async (type: ExerciceType): Promise<Exercice[]> =>
   try {
     const exercicesData = await getAllExerciceByType(type);
 
-    const exercices: Exercice[] = exercicesData.map((exercice) => ({
+    return exercicesData.map((exercice) => ({
       id: exercice.id,
       title: exercice.title,
       lesson: exercice.lesson.name,
@@ -17,8 +17,6 @@ const getAllExercicesByType = async (type: ExerciceType): Promise<Exercice[]> =>
       subject: exercice.lesson.LessonSubject.label,
       subjectColor: exercice.lesson.LessonSubject.color,
     }));
-
-    return exercices;
   } catch (error) {
     console.error("Error fetching exercises:", error);
     throw Error("Échec de la récupération des exercices");

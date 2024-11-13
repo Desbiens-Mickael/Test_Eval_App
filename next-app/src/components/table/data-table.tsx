@@ -3,7 +3,6 @@
 import {
   ColumnDef,
   ColumnFiltersState,
-  SortingState,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -11,18 +10,18 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  SortingState,
+  Table,
   useReactTable,
 } from "@tanstack/react-table";
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useState } from "react";
-import DataTableButtonReset from "../data-table-button-reset";
-import DataTableDEleteSElectionButton from "../data-table-delete-selection-button";
-import DataTAbleInputFilter from "../data-table-input-filter";
-import { DataTablePagination } from "../data-table-pagination";
-import { DataTableViewOptions } from "../data-table-view-options";
-import FilterBUttonLessonSubject from "../filter-button/filter-button-lesson-subject";
-import FilterBUttonLevel from "../filter-button/filter-button-level";
+import { TableBody, TableCell, TableHead, TableHeader, TableRow, Table as TableUI } from "@/components/ui/table";
+import { ReactElement, useState } from "react";
+import DataTableButtonReset from "./data-table-button-reset";
+import DataTableDEleteSElectionButton from "./data-table-delete-selection-button";
+import DataTAbleInputFilter from "./data-table-input-filter";
+import { DataTablePagination } from "./data-table-pagination";
+import { DataTableViewOptions } from "./data-table-view-options";
 
 export interface Identifier {
   id: string;
@@ -31,9 +30,10 @@ export interface Identifier {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  filterColumnIds?: string[];
-  inputSearchColumnId?: string[];
+  // filterColumnIds?: string[];
+  inputSearchColumnId?: string;
   viewOptionsButton?: boolean;
+  children?: (table: Table<TData>) => ReactElement[];
 }
 
 /**
@@ -43,11 +43,13 @@ interface DataTableProps<TData, TValue> {
  * @param {TData[]} props.data - The array of data to be displayed in the table.
  * @param {ColumnDef<TData, TValue>[]} props.columns - The array of column definitions for the table.
  * @param {boolean} [props.viewOptionsButton] - A boolean indicating whether to display the view options button.
+ * @param {string} [props.inputSearchColumnId] - The id of the column to use for the input search.
+ * @param {ReactElement<{ table: Table<TData> }> | ReactElement<{ table: Table<TData> }>[]} [props.children] - The children components to be rendered within the table. If not provided, a default filter button will be rendered.
  * @return {JSX.Element} The rendered DataTable component.
  */
-export function ExerciceTableTemplate<TData extends Identifier, TValue>({ columns, data, viewOptionsButton }: DataTableProps<TData, TValue>) {
+export function DataTable<TData extends Identifier, TValue>({ columns, data, inputSearchColumnId, viewOptionsButton, children }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [rowSelection, setRowSelection] = useState({});
+  const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const table = useReactTable({
     data,
@@ -80,10 +82,8 @@ export function ExerciceTableTemplate<TData extends Identifier, TValue>({ column
     <div className="w-full space-y-4">
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <DataTAbleInputFilter key={"Titre"} table={table} columnId={"Titre"} />
-
-          <FilterBUttonLevel column={table.getColumn("Niveau")} />
-          <FilterBUttonLessonSubject column={table.getColumn("Matière")} />
+          {inputSearchColumnId && <DataTAbleInputFilter key={"Titre"} table={table} columnId={inputSearchColumnId} />}
+          {children && children(table).map((child, index) => <div key={index}>{child}</div>)}
         </div>
         <div className="flex items-center space-x-2">
           <DataTableDEleteSElectionButton table={table} />
@@ -92,7 +92,7 @@ export function ExerciceTableTemplate<TData extends Identifier, TValue>({ column
         </div>
       </div>
       <div className="rounded-md border">
-        <Table>
+        <TableUI>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -119,7 +119,7 @@ export function ExerciceTableTemplate<TData extends Identifier, TValue>({ column
               </TableRow>
             )}
           </TableBody>
-        </Table>
+        </TableUI>
       </div>
       <DataTablePagination table={table} />
     </div>

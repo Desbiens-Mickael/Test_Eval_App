@@ -55,7 +55,7 @@ export default function DataTAbleBUttonFilter<TData, TValue>({ column, title, da
   );
 
   return (
-    <div className="flex items-center border border-dashed rounded-sm group hover:bg-secondary">
+    <div className="flex items-center border border-dashed rounded-sm">
       <DropdownMenu open={open}>
         <DropdownMenuTrigger asChild>
           <Button title={`Filtrer par ${title}`} variant="ghost" className="h-8 px-2" onClick={() => setOpen(!open)}>

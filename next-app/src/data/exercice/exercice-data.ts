@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db";
 import { Exercice, ExerciceType } from "@prisma/client";
 
-export interface ExerciceOutput {
+export type ExerciceOutput = {
   id: string;
   title: string;
   lesson: {
@@ -15,7 +15,7 @@ export interface ExerciceOutput {
     label: string;
     color: string;
   };
-}
+};
 
 /**
  * Get all exercice

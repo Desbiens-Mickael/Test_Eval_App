@@ -32,11 +32,11 @@ interface LinkSidebarProps extends MenuItem {
  * />
  */
 export default function LinkSidebar({ href, icon: Icon, title, className }: LinkSidebarProps): JSX.Element {
-  const styleMain = "w-full text-primary font-bold rounded-md transition-all p-2";
-  const defaultStyle = "text-primary hover:bg-slate-200";
+  const styleMain = "w-full font-bold rounded-md transition-all p-2";
+  const defaultStyle = "hover:bg-slate-200";
 
   return (
-    <Link href={href ?? ""} className={cn(styleMain, className ? className : defaultStyle)}>
+    <Link href={href ?? ""} className={cn(styleMain, className ? className : defaultStyle, "text-foreground")}>
       <span className="flex gap-3">
         <Icon /> <span className="grow">{title}</span>
       </span>

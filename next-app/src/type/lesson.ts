@@ -3,4 +3,6 @@ export type Lesson = {
   title: string;
   subject: string;
   subjectColor: string;
+  gradeLevel: string;
+  gradeLevelColor: string;
 };

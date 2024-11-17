@@ -55,6 +55,19 @@ export default function LessonTable({ subject }: { subject: string }) {
       },
     },
     {
+      id: "Niveau",
+      accessorKey: "gradeLevel",
+      filterFn: "arrIncludesSome",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Niveau" />,
+      cell: ({ row }) => {
+        const gradeLevel = row.original.gradeLevel;
+        const color = row.original.gradeLevelColor;
+
+        if (!gradeLevel) return null;
+        return <SubjectLayout label={gradeLevel} color={color} />;
+      },
+    },
+    {
       id: "actions",
       cell: ({ row }) => {
         const exercice = row.original;

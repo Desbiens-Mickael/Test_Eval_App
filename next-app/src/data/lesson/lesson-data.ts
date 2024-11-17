@@ -1,9 +1,16 @@
 import { prisma } from "@/lib/db";
+import { createLessonSchema } from "@/shema-zod/lesson";
+import { Lesson } from "@/type/lesson";
+import { z } from "zod";
 
 export type LessonOutput = {
   id: string;
   name: string;
   LessonSubject: {
+    label: string;
+    color: string;
+  };
+  GradeLevels: {
     label: string;
     color: string;
   };
@@ -20,6 +27,9 @@ export const getAllLesson = async (): Promise<LessonOutput[]> => {
         id: true,
         name: true,
         LessonSubject: {
+          select: { label: true, color: true },
+        },
+        GradeLevels: {
           select: { label: true, color: true },
         },
       },
@@ -59,6 +69,22 @@ export const getAllLessonBySubject = async (subject: string): Promise<LessonOutp
       LessonSubject: {
         select: { label: true, color: true },
       },
+      GradeLevels: {
+        select: { label: true, color: true },
+      },
+    },
+  });
+};
+
+// create lesson
+export const createLesson = async (data: z.infer<typeof createLessonSchema>, userId: string) => {
+  return await prisma.lesson.create({
+    data: {
+      name: data.name,
+      LessonSubjectID: data.LessonSubjectID,
+      GradeLevelsID : data.GradeLevelsID,
+      authorId: userId,
+      content: data.content,
     },
   });
 };

@@ -13,6 +13,8 @@ export const getAllLessonsBySubject = async (subject: string): Promise<Lesson[]>
         title: lesson.name,
         subject: lesson.LessonSubject.label,
         subjectColor: lesson.LessonSubject.color,
+        gradeLevel: lesson.GradeLevels.label,
+        gradeLevelColor: lesson.GradeLevels.color,
       };
     });
   } catch (error) {

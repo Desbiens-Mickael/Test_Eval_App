@@ -1,16 +1,16 @@
 "use server";
 
-import { UpdateUser, getUserById } from "@/data/user-data";
+import { UpdateUserData, getUserByIdData } from "@/data/user-data";
 import { currentUser } from "@/lib/auth";
 import { hashPassword, verifyPassword } from "@/lib/hash-password";
 import { userSecurityFormSchema } from "@/type/shema-zod";
 import { z } from "zod";
 
-const updateUserSecurity = async (values: z.infer<typeof userSecurityFormSchema>) => {
+export const updateUserSecurityAction = async (values: z.infer<typeof userSecurityFormSchema>) => {
   const user = await currentUser();
   if (!user || !user.id) return { error: "Action non autorisé!" };
 
-  const dbUser = await getUserById(user.id);
+  const dbUser = await getUserByIdData(user.id);
   if (!dbUser || !dbUser.password) return { error: "Action non autorisé!" };
 
   if (values.password && values.newPassword) {
@@ -22,8 +22,6 @@ const updateUserSecurity = async (values: z.infer<typeof userSecurityFormSchema>
     values.newPassword = undefined;
   }
 
-  await UpdateUser(user.id, values);
+  await UpdateUserData(dbUser.id, values);
   return { success: "Vos infos de sécurité ont bien été mise à jour." };
 };
-
-export default updateUserSecurity;

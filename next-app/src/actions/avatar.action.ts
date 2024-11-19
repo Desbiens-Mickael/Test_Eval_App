@@ -1,17 +1,15 @@
 "use server";
 
-import { UpdateUser, getUserById } from "@/data/user-data";
+import { UpdateUserData, getUserByIdData } from "@/data/user-data";
 import { currentUser } from "@/lib/auth";
 
-const updateAvatar = async (imgPath: string) => {
+export const updateAvatarAction = async (imgPath: string) => {
   const user = await currentUser();
   if (!user || !user.id) return { error: "Action non autorisé!" };
 
-  const dbUser = await getUserById(user.id);
+  const dbUser = await getUserByIdData(user.id);
   if (!dbUser) return { error: "Action non autorisé!" };
 
-  await UpdateUser(dbUser.id, { image: imgPath });
+  await UpdateUserData(dbUser.id, { image: imgPath });
   return { success: "Image modifier avec succes." };
-};
-
-export default updateAvatar;
+}; 

@@ -1,6 +1,6 @@
 "use client";
 
-import { sendResetForEmail } from "@/actions/reset-email";
+import { sendResetForEmailAction } from "@/actions/reset-email.action";
 import SubmitButton from "@/components/form/submit-button";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -37,7 +37,7 @@ export function UserInfosForm({ name, email, isOAuth, role }: UserPreferencesFor
 
   const handleSendResetEmail = async (email: string) => {
     try {
-      const res = await sendResetForEmail({ email });
+      const res = await sendResetForEmailAction({ email });
       if (res.error) toast.error(res.error);
       if (res.success) toast.success(res.success);
     } catch (error) {

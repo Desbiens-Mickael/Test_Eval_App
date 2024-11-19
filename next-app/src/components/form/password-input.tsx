@@ -5,18 +5,11 @@ import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessa
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { Control } from "react-hook-form";
+import { CustomInputProps } from "./custom-input";
 
-interface PasswordInputProps {
-  control: Control<any[] | any>;
-  name: string;
-  label: string;
-  placeholder?: string;
-  description?: string;
-}
-
-export default function PasswordInput({ control, name, label, placeholder, description }: PasswordInputProps) {
+export default function PasswordInput({ control, name, label, placeholder, description }: CustomInputProps) {
   const [showPassword, setShowPassword] = useState(false);
+  
   return (
     <FormField
       control={control}

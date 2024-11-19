@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/db";
 import { createLessonSchema } from "@/shema-zod/lesson";
-import { Lesson } from "@/type/lesson";
 import { z } from "zod";
 
 export type LessonOutput = {
@@ -20,7 +19,7 @@ export type LessonOutput = {
  * Get all lessons
  * @returns lesson list
  */
-export const getAllLesson = async (): Promise<LessonOutput[]> => {
+export const getAllLessonData = async (): Promise<LessonOutput[]> => {
   try {
     return await prisma.lesson.findMany({
       select: {
@@ -56,7 +55,7 @@ export const getAllLesson = async (): Promise<LessonOutput[]> => {
  * - `name`: Le nom de la leçon
  * - `LessonSubject.label`: Le sujet de la leçon
  */
-export const getAllLessonBySubject = async (subject: string): Promise<LessonOutput[]> => {
+export const getAllLessonBySubjectData = async (subject: string): Promise<LessonOutput[]> => {
   return prisma.lesson.findMany({
     where: {
       LessonSubject: {
@@ -77,29 +76,29 @@ export const getAllLessonBySubject = async (subject: string): Promise<LessonOutp
 };
 
 // create lesson
-export const createLesson = async (data: z.infer<typeof createLessonSchema>, userId: string) => {
+export const createLessonData = async (data: z.infer<typeof createLessonSchema>) => {
   return await prisma.lesson.create({
     data: {
       name: data.name,
       LessonSubjectID: data.LessonSubjectID,
       GradeLevelsID : data.GradeLevelsID,
-      authorId: userId,
+      authorId: data.authorId,
       content: data.content,
     },
   });
 };
 
 // get lesson by id
-export const getLessonById = async (id: string) => {
+export const getLessonByIdData = async (id: string) => {
   return await prisma.lesson.findUnique({ where: { id } });
 };
 
 // update lesson
-export const updateLesson = async (id: string, data: object) => {
+export const updateLessonData = async (id: string, data: object) => {
   return await prisma.lesson.update({ where: { id: id }, data: { ...data } });
 };
 
 // delete lesson
-export const deleteLessonById = async (id: string) => {
+export const deleteLessonByIdData = async (id: string) => {
   return await prisma.lesson.delete({ where: { id } });
 };

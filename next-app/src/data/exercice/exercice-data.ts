@@ -21,7 +21,7 @@ export type ExerciceOutput = {
  * Get all exercice
  * @returns exercice list
  */
-export const getAllExercice = async (): Promise<ExerciceOutput[]> => {
+export const getAllExercicesData = async (): Promise<ExerciceOutput[]> => {
   try {
     return await prisma.exercice.findMany({
       select: {
@@ -67,7 +67,7 @@ export const getAllExercice = async (): Promise<ExerciceOutput[]> => {
  * - `lesson.LessonSubject.label`: Le sujet de la leçon
  * - `level.label`: Le niveau de difficulté de l'exercice
  */
-export const getAllExerciceByType = async (type: ExerciceType): Promise<ExerciceOutput[]> => {
+export const getAllExercicesByTypeData = async (type: ExerciceType): Promise<ExerciceOutput[]> => {
   return prisma.exercice.findMany({
     where: {
       type: type,
@@ -94,16 +94,16 @@ export const getAllExerciceByType = async (type: ExerciceType): Promise<Exercice
 };
 
 // get exercice by id
-export const getExerciceById = async (id: string): Promise<Exercice | null> => {
+export const getExerciceByIdData = async (id: string): Promise<Exercice | null> => {
   return await prisma.exercice.findUnique({ where: { id } });
 };
 
 // update exercice
-export const updateExercice = async (id: string, data: object): Promise<Exercice> => {
+export const updateExerciceData = async (id: string, data: object): Promise<Exercice> => {
   return await prisma.exercice.update({ where: { id: id }, data: { ...data } });
 };
 
 // delete exercice
-export const deleteExerciceById = async (id: string): Promise<Exercice> => {
+export const deleteExerciceByIdData = async (id: string): Promise<Exercice> => {
   return await prisma.exercice.delete({ where: { id } });
 };

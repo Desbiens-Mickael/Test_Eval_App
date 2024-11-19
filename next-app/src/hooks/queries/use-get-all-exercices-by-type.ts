@@ -1,7 +1,7 @@
-import getAllExercicesByType from "@/actions/exercice/get-all-exercices-by-type";
+import { getAllExercicesByTypeAction } from "@/actions/exercice.action";
+import { Exercice } from "@/type/exercice";
 import { ExerciceType } from "@prisma/client";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import { Exercice } from "@/type/exercice";
 
 /**
  * Hook for getting all exercices card.
@@ -10,7 +10,7 @@ import { Exercice } from "@/type/exercice";
 const useGetAllExercicesByType = (type: ExerciceType): UseQueryResult<Exercice[], Error> => {
   return useQuery({
     queryKey: ["allExercicesByType", type],
-    queryFn: async () => getAllExercicesByType(type),
+    queryFn: async () => getAllExercicesByTypeAction(type),
   });
 };
 

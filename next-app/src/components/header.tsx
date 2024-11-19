@@ -11,7 +11,7 @@ export default function Header() {
   const user = useCurrentUser();
 
   return (
-    <header className="sticky top-0 left-0 z-[100] flex justify-between items-center gap-2 w-full h-16 shadow-md backdrop-blur py-4 px-6">
+    <header className="sticky top-0 left-0 z-40 flex justify-between items-center gap-2 w-full h-16 shadow-md backdrop-blur py-4 px-6">
       <div className=" w-[150px]">
         <Link href={"/"} className="flex gap-2 items-center">
           <Logo width={150} height={200} type="horizontal" className="w-full h-auto md:ms-8" />

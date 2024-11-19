@@ -1,6 +1,6 @@
 "use client";
 
-import { newVerificationToken } from "@/actions/verificationToken";
+import { newVerificationTokenAction } from "@/actions/verificationToken.action";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Undo2 } from "lucide-react";
@@ -27,7 +27,7 @@ export default function NewVerification() {
       setLoading(false);
       return;
     }
-    newVerificationToken(token)
+    newVerificationTokenAction(token)
       .then((data) => {
         if (data.success) setSucces(data.success);
         if (data.error) setError(data.error);

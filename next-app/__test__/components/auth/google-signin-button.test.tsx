@@ -1,8 +1,8 @@
-import signInProvider from "@/actions/signIn"; // Import direct pour le mock
+import signInAction from "@/actions/signIn.action"; // Import direct pour le mock
 import GoogleSignInButton from "@/components/auth/google-signin-button";
 import { fireEvent, render, screen } from "@testing-library/react";
 
-jest.mock("@/actions/signIn", () => jest.fn()); // Mock la fonction signInProvider
+jest.mock("@/actions/signIn.action", () => jest.fn()); // Mock la fonction signInAction
 
 beforeEach(() => {
   render(<GoogleSignInButton />);
@@ -19,9 +19,9 @@ describe("GoogleSignInButton", () => {
     expect(image).toHaveAttribute("src", "/assets/images/google.svg");
   });
 
-  it("should call signInProvider with 'google' when button is clicked", () => {
+  it("should call signInAction with 'google' when button is clicked", () => {
     const button = screen.getByRole("button");
     fireEvent.click(button);
-    expect(signInProvider).toHaveBeenCalledWith("google"); // Vérifie l'appel avec "google"
+    expect(signInAction).toHaveBeenCalledWith("google"); // Vérifie l'appel avec "google"
   });
 });

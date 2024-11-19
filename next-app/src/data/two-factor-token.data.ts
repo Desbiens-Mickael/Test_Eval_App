@@ -4,11 +4,11 @@ import { z } from "zod";
 
 const TYPE = "TwoFactor";
 
-export const createTwoFactorToken = async (TwoFactorToken: z.infer<typeof verificationTokenShema>) => {
+export const createTwoFactorTokenData = async (TwoFactorToken: z.infer<typeof verificationTokenShema>) => {
   return await prisma.verificationToken.create({ data: { type: TYPE, ...TwoFactorToken } });
 };
 
-export const getTwoFactorTokenByIdentifier = async (email: string) => {
+export const getTwoFactorTokenByIdentifierData = async (email: string) => {
   try {
     const TwoFactorToken = await prisma.verificationToken.findFirst({ where: { identifier: email, type: TYPE } });
 
@@ -18,7 +18,7 @@ export const getTwoFactorTokenByIdentifier = async (email: string) => {
   }
 };
 
-export const getTwoFactorTokenByToken = async (token: string) => {
+export const getTwoFactorTokenByTokenData = async (token: string) => {
   try {
     const TwoFactorToken = await prisma.verificationToken.findUnique({ where: { token: token, type: TYPE } });
 
@@ -28,6 +28,6 @@ export const getTwoFactorTokenByToken = async (token: string) => {
   }
 };
 
-export const deleteTwoFactorTokenById = async (id: string) => {
+export const deleteTwoFactorTokenByIdData = async (id: string) => {
   await prisma.verificationToken.delete({ where: { id } });
 };

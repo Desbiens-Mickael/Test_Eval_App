@@ -1,4 +1,4 @@
-import { logout } from "@/actions/logout";
+import { logoutAction } from "@/actions/logout.action";
 import { LogOut } from "lucide-react";
 import { Button } from "../ui/button";
 
@@ -11,7 +11,7 @@ interface LogoutButtonProps {
 
 export default function LogoutButton({ text = "Déconnexion", className, icon, theme = "secondary" }: LogoutButtonProps) {
   return (
-    <Button variant={theme} className={className} onClick={() => logout()}>
+    <Button variant={theme} className={className} onClick={() => logoutAction()}>
       {!icon ? <LogOut data-testid="logout-icon" className="mr-4" /> : icon}
       <span className="text-lg font-bold">{text}</span>
     </Button>

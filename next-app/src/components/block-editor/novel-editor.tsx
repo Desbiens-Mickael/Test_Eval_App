@@ -16,9 +16,9 @@ import { ColorSelector } from "./selectors/color-selector";
 import { LinkSelector } from "./selectors/link-selector";
 import { MathSelector } from "./selectors/math-selector";
 import { NodeSelector } from "./selectors/node-selector";
+import { TableSelector } from "./selectors/table-selector";
 import { TextButtons } from "./selectors/text-buttons";
 import { slashCommand, suggestionItems } from "./slash-command";
-import { TableSelector } from "./selectors/table-selector";
 
 const hljs = require("highlight.js");
 
@@ -35,7 +35,7 @@ export const defaultEditorContent = {
 };
 
 interface EditorProps {
-  initialValue?: JSONContent;
+  initialValue?: string;
   onChange: (content: string) => void;
 }
 
@@ -45,6 +45,24 @@ export default function Editor({ initialValue, onChange }: EditorProps) {
   const [openColor, setOpenColor] = useState(false);
   const [openLink, setOpenLink] = useState(false);
   const [openTable, setOpenTable] = useState(false);
+
+  const stringToJSONContent = (content?: string): JSONContent | undefined => {
+    if (!content) return undefined;
+    return {
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [
+            {
+              type: 'text',
+              text: content
+            }
+          ]
+        }
+      ]
+    };
+  };
 
   //Apply Codeblock Highlighting on the HTML from editor.getHTML()
   const highlightCodeblocks = (content: string) => {
@@ -62,7 +80,7 @@ export default function Editor({ initialValue, onChange }: EditorProps) {
       <EditorRoot>
         <EditorContent
           immediatelyRender={false}
-          initialContent={initialValue}
+          initialContent={stringToJSONContent(initialValue)}
           extensions={extensions}
           className="min-h-96 rounded-xl border p-4"
           editorProps={{

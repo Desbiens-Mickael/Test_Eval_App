@@ -5,5 +5,5 @@ export const getAllLessonsSubjectData = async () => {
 };
 
 export const getALLLessonSubjectswithLabelAndColorOnlyData = async () => {
-  return await prisma.lessonSubject.findMany({ select: { label: true, color: true } });
+  return await prisma.lessonSubject.findMany({ select: {id: true, label: true, color: true } });
 };

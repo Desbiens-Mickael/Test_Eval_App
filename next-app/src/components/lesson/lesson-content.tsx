@@ -1,15 +1,14 @@
 "use client";
 
-import parse from "html-react-parser";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
+  DialogTrigger
+} from "@/components/ui/dialog";
+import parse from "html-react-parser";
 
 interface LessonContentProps {
   content: string | null | undefined;
@@ -19,12 +18,12 @@ interface LessonContentProps {
 export default function LessonContent({ content, className }: LessonContentProps) {
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger asChild>
       <Button variant="secondary">Prévisualiser</Button>
         </DialogTrigger>
       <DialogContent className={`${className} max-w-screen-xl max-h-full lg:max-h-[90vh] overflow-auto`}>
         <DialogHeader>
-          <DialogTitle className="">Visuel de votre leçon qui sera affiché sur la page de votre leçon.</DialogTitle>
+          <DialogTitle className="">Visuel de votre leçon qui sera affiché aux apprenants.</DialogTitle>
         </DialogHeader>
         <article className="tiptap prose lg:prose-lg max-w-full rounded-xl border p-4">{parse(`${content}`)}</article>
       </DialogContent>

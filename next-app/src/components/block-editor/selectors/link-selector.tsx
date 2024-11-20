@@ -43,7 +43,7 @@ export const LinkSelector = ({ open, onOpenChange }: LinkSelectorProps) => {
   return (
     <Popover modal={true} open={open} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
-        <Button size="sm" variant="ghost" className="gap-2 rounded-none border-none">
+        <Button type="button" size="sm" variant="ghost" className="gap-2 rounded-none border-none">
           <p className="text-base">↗</p>
           <p
             className={cn("underline decoration-stone-400 underline-offset-4", {
@@ -59,6 +59,7 @@ export const LinkSelector = ({ open, onOpenChange }: LinkSelectorProps) => {
           onSubmit={(e) => {
             const target = e.currentTarget as HTMLFormElement;
             e.preventDefault();
+            e.stopPropagation();
             const input = target[0] as HTMLInputElement;
             const url = getUrlFromString(input.value);
             if (url) {

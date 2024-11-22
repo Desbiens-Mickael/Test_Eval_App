@@ -5,7 +5,7 @@ export type ExerciceOutput = {
   id: string;
   title: string;
   lesson: {
-    name: string;
+    title: string;
     LessonSubject: {
       label: string;
       color: string;
@@ -29,7 +29,7 @@ export const getAllExercicesData = async (): Promise<ExerciceOutput[]> => {
         title: true,
         lesson: {
           select: {
-            name: true,
+            title: true,
             LessonSubject: {
               select: { label: true, color: true },
             },
@@ -77,7 +77,7 @@ export const getAllExercicesByTypeData = async (type: ExerciceType): Promise<Exe
       title: true,
       lesson: {
         select: {
-          name: true,
+          title: true,
           LessonSubject: {
             select: { label: true, color: true },
           },

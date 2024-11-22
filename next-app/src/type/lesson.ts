@@ -1,5 +1,5 @@
 export type CreateLessonType = {
-  name: string;
+  title: string;
   content: string;
   authorId: string;
   LessonSubjectID: string;
@@ -9,6 +9,7 @@ export type CreateLessonType = {
 export type Lesson = {
   id: string;
   title: string;
+  slug: string;
   subject: string;
   subjectColor: string;
   gradeLevel: string;

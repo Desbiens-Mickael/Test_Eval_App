@@ -125,13 +125,10 @@ export default function Editor({ initialValue, onChange }: EditorProps) {
 
               <Separator orientation="vertical" className="h-auto" />
               <AlignSelector />
-
-              {/* <Separator orientation="vertical" className="h-auto" /> */}
             </div>
 
             <div className="flex">
               <NodeSelector open={openNode} onOpenChange={setOpenNode} />
-              {/* <Separator orientation="vertical" className="h-auto" /> */}
 
               <Separator orientation="vertical" className="h-auto" />
               <ColorSelector open={openColor} onOpenChange={setOpenColor} />

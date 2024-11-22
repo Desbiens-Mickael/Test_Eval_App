@@ -35,7 +35,8 @@ export const getAllLessonsBySubjectAction = async (subject: string): Promise<Les
     return lessonsData.map((lesson) => {
       return {
         id: lesson.id,
-        title: lesson.name,
+        title: lesson.title,
+        slug: lesson.slug,
         subject: lesson.LessonSubject.label,
         subjectColor: lesson.LessonSubject.color,
         gradeLevel: lesson.GradeLevels.label,

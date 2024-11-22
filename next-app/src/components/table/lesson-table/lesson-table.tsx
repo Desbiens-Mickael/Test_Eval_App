@@ -9,11 +9,13 @@ import useGetAllLessonsBySubject from "@/hooks/queries/use-get-all-lessons-by-su
 import { Lesson } from "@/type/lesson";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { DataTable } from "../data-table";
 import TableSkeleton from "../table-skeleton";
 
 export default function LessonTable({ subject }: { subject: string }) {
   const { data: exerciceData, isLoading, isError, error } = useGetAllLessonsBySubject(subject);
+  const router = useRouter();
 
   const hanldeDelete = (id: string) => {
     const res = confirm("Voulez-vous supprimer cet exercice ? " + id);
@@ -84,7 +86,7 @@ export default function LessonTable({ subject }: { subject: string }) {
               {/* TODO: ajouter le bouton de modification d'exercice */}
               <DropdownMenuItem
                 onClick={() => {
-                  console.log("Mise à jour de l'exercice " + exercice.id);
+                  router.push(`/lesson/${exercice.slug}`);
                 }}
               >
                 Modifier

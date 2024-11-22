@@ -11,7 +11,7 @@ export const getAllExercicesByTypeAction = async (type: ExerciceType): Promise<E
     return exercicesData.map((exercice) => ({
       id: exercice.id,
       title: exercice.title,
-      lesson: exercice.lesson.name,
+      lesson: exercice.lesson.title,
       level: exercice.level.label,
       levelColor: exercice.level.color,
       subject: exercice.lesson.LessonSubject.label,

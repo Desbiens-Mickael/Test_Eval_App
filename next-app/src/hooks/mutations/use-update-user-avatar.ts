@@ -15,10 +15,11 @@ export const useUpdateUserAvatar = () => {
   return useMutation({
     mutationFn: async (formData: FormData) => {
       const img = data?.user?.image?.split("/").pop();
-
-      await fetch(`http://localhost:8000/avatar/${img}`, {
-        method: "DELETE",
-      });
+      if (img) {
+        await fetch(`http://localhost:8000/avatar/${img}`, {
+          method: "DELETE",
+        });
+      }
 
       const res = await fetch(`http://localhost:8000/avatar`, {
         method: "POST",

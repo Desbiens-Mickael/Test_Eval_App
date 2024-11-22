@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { hashPassword } from "@/lib/hash-password";
+import { stringToSlug } from "@/lib/utils";
 
 const seed = async () => {
   // Creating admin and user users
@@ -94,32 +95,36 @@ const seed = async () => {
   await prisma.lesson.createMany({
     data: [
       {
-        name: "Le theorème de pythagore",
+        title: "Le theorème de pythagore",
         LessonSubjectID: subjects[0].id,
         GradeLevelsID : gradeLevels[0].id,
         authorId: userAdmin.id,
-        content: "Le theoreme de pythagore est un theoreme de geometrie.",
+        content: "<h1>Le theoreme de pythagore est un theoreme de geometrie</h1>",
+        slug: stringToSlug("Le theorème de pythagore"),
       },
       {
-        name: "Les verbes irreguliers",
+        title: "Les verbes irreguliers",
         LessonSubjectID: subjects[1].id,
         GradeLevelsID : gradeLevels[2].id,
         authorId: userAdmin.id,
-        content: "Les verbes irreguliers sont des verbes qui ne sont pas uniques",
+        content: "<h1>Les verbes irreguliers sont des verbes qui ne sont pas uniques.</h1>",
+        slug: stringToSlug("Les verbes irreguliers"),
       },
       {
-        name: "L'histoire de la troisième guerre mondiale",
+        title: "L'histoire de la troisième guerre mondiale",
         LessonSubjectID: subjects[2].id,
         GradeLevelsID : gradeLevels[3].id,
         authorId: userAdmin.id,
-        content: "La troisième guerre mondiale est une guerre mondiale de 1939 à 1945.",
+        content: "<h1>La troisième guerre mondiale est une guerre mondiale de 1939 à 1945.</h1>",
+        slug: stringToSlug("L'histoire de la troisième guerre mondiale"),
       },
       {
-        name: "La phusion nucleaire",
+        title: "La phusion nucleaire",
         LessonSubjectID: subjects[3].id,
         GradeLevelsID : gradeLevels[6].id,
         authorId: userAdmin.id,
-        content: "La phusion nucleaire est un processus de fusion nucleaire qui consiste en la fusion des atomes.",
+        content: "<h1>La phusion nucleaire est un processus de fusion nucleaire qui consiste en la fusion des atomes.</h1>",
+        slug: stringToSlug("La phusion nucleaire"),
       },
     ],
   });

@@ -1,14 +1,14 @@
 import { createImageUpload } from "novel/plugins";
 import { toast } from "sonner";
 
+const NEXT_PUBLIC_UPLOAD_API_URL = process.env.NEXT_PUBLIC_UPLOAD_API_URL;
+
 const onUpload = (file: File) => {
-  const promise = fetch("/api/upload", {
+  const formData = new FormData();
+  formData.append("file", file);
+  const promise = fetch(`${NEXT_PUBLIC_UPLOAD_API_URL}/lesson`, {
     method: "POST",
-    headers: {
-      "content-type": file?.type || "application/octet-stream",
-      "x-vercel-filename": file?.name || "image.png",
-    },
-    body: file,
+    body: formData,
   });
 
   return new Promise((resolve, reject) => {
@@ -16,25 +16,26 @@ const onUpload = (file: File) => {
       promise.then(async (res) => {
         // Successfully uploaded image
         if (res.status === 200) {
-          const { url } = (await res.json()) as { url: string };
+          const { image_path } = (await res.json()) as { image_path: string };
           // preload the image
           const image = new Image();
-          image.src = url;
+          const src = `${NEXT_PUBLIC_UPLOAD_API_URL}/lesson/${image_path}`;
+          image.src = src;
           image.onload = () => {
-            resolve(url);
+            resolve(src);
           };
           // No blob store configured
         } else if (res.status === 401) {
           resolve(file);
-          throw new Error("`BLOB_READ_WRITE_TOKEN` environment variable not found, reading image locally instead.");
+          throw new Error("`NEXT_PUBLIC_UPLOAD_API_URL` environment variable not found, reading image locally instead.");
           // Unknown error
         } else {
-          throw new Error("Error uploading image. Please try again.");
+          throw new Error("Erreur de téléchargement de l'image. Veuillez réessayer.");
         }
       }),
       {
         loading: "Uploading image...",
-        success: "Image uploaded successfully.",
+        success: "Image uploader avec succès.",
         error: (e) => {
           reject(e);
           return e.message;
@@ -48,11 +49,11 @@ export const uploadFn = createImageUpload({
   onUpload,
   validateFn: (file) => {
     if (!file.type.includes("image/")) {
-      toast.error("File type not supported.");
+      toast.error("Type de fichier incorrect (accepte uniquement des images).");
       return false;
     }
     if (file.size / 1024 / 1024 > 20) {
-      toast.error("File size too big (max 20MB).");
+      toast.error("Taille du fichier trop grande (max 20MB).");
       return false;
     }
     return true;

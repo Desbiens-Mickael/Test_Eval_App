@@ -30,7 +30,7 @@ export default function CreateLesson() {
   const form = useForm<z.infer<typeof createLessonSchema>>({
     resolver: zodResolver(createLessonSchema),
     defaultValues: {
-      name: "",
+      title: "",
       content: "",
       LessonSubjectID: "",
       GradeLevelsID: "",
@@ -69,7 +69,7 @@ export default function CreateLesson() {
             {/* Input pour le titre */}
             <CustomInput
               control={form.control}
-              name="name"
+              name="title"
               label="Titre"
               placeholder="Entrez le nom de la leçon"
             />

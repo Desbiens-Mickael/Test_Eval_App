@@ -1,9 +1,11 @@
 import { prisma } from "@/lib/db";
+import { stringToSlug } from "@/lib/utils";
 import { CreateLessonType } from "@/type/lesson";
 
 export type LessonOutput = {
   id: string;
-  name: string;
+  title: string;
+  slug: string;
   LessonSubject: {
     label: string;
     color: string;
@@ -23,7 +25,8 @@ export const getAllLessonData = async (): Promise<LessonOutput[]> => {
     return await prisma.lesson.findMany({
       select: {
         id: true,
-        name: true,
+        title: true,
+        slug: true,
         LessonSubject: {
           select: { label: true, color: true },
         },
@@ -63,7 +66,8 @@ export const getAllLessonBySubjectData = async (subject: string): Promise<Lesson
     },
     select: {
       id: true,
-      name: true,
+      title: true,
+      slug: true,
       LessonSubject: {
         select: { label: true, color: true },
       },
@@ -78,14 +82,15 @@ export const getAllLessonBySubjectData = async (subject: string): Promise<Lesson
 export const createLessonData = async (data: CreateLessonType) => {
   return await prisma.lesson.create({
     data: {
-      name: data.name,
+      title: data.title,
       content: data.content,
+      slug: stringToSlug(data.title),
       authorId: data.authorId,
       LessonSubjectID: data.LessonSubjectID,
       GradeLevelsID: data.GradeLevelsID,
     },select: {
       id: true,
-      name: true,
+      title: true,
       LessonSubject: {
         select: { label: true, color: true },
       },

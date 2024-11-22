@@ -1,3 +1,7 @@
 {
-  "eslint.workingDirectories": ["./next-app"]
+  "eslint.workingDirectories": [
+    "./next-app"
+  ],
+  "workbench.editor.languageDetection": true,
+  "workbench.editor.preferHistoryBasedLanguageDetection": false
 }

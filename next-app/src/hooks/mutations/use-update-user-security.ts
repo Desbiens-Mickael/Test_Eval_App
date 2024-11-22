@@ -1,4 +1,4 @@
-import updateUserSecurity from "@/actions/update-user-security";
+import { updateUserSecurityAction } from "@/actions/user-security.action";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -9,7 +9,7 @@ import { toast } from "sonner";
 export const useUpdateUserSecurity = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: updateUserSecurity,
+    mutationFn: updateUserSecurityAction,
     onSuccess: (data) => {
       if (data.error) toast.error(data.error);
       if (data.success) toast.success(data.success);

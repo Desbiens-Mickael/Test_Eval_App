@@ -15,14 +15,14 @@ const adminMenus: MenuSideBar = [
         title: "Leçons",
         submenus: [
           {
-            icon: Calculator,
-            title: "Mathématique",
-            href: "/admin/lecons/mathematique",
-          },
-          {
             icon: CaseUpper,
             title: "Français",
             href: "/admin/lecons/francais",
+          },
+          {
+            icon: Calculator,
+            title: "Mathématique",
+            href: "/admin/lecons/mathematique",
           },
           {
             icon: Hourglass,

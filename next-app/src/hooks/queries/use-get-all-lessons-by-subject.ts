@@ -1,10 +1,10 @@
-import { getAllLessonsBySubject } from "@/actions/lesson/get-all-lesson-by-subject";
+import { getAllLessonsBySubjectAction } from "@/actions/lesson.action";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
 const useGetAllLessonsBySubject = (subject: string): UseQueryResult<any, Error> => {
   return useQuery({
     queryKey: ["allLessonsBySubject", subject],
-    queryFn: async () => getAllLessonsBySubject(subject),
+    queryFn: async () => getAllLessonsBySubjectAction(subject),
   });
 };
 

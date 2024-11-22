@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db";
 
-export const createTwoFactorComfirmationByUserId = async (userId: string) => {
+export const createTwoFactorComfirmationByUserIdData = async (userId: string) => {
   try {
     return await prisma.twoFactorComfirmation.create({ data: { userId } });
   } catch (error) {
@@ -8,7 +8,7 @@ export const createTwoFactorComfirmationByUserId = async (userId: string) => {
   }
 };
 
-export const getTwoFactorComfirmationByUserId = async (userId: string) => {
+export const getTwoFactorComfirmationByUserIdData = async (userId: string) => {
   try {
     return await prisma.twoFactorComfirmation.findUnique({ where: { userId } });
   } catch (error) {
@@ -16,6 +16,6 @@ export const getTwoFactorComfirmationByUserId = async (userId: string) => {
   }
 };
 
-export const deleteTwoFactorComfirmationById = async (id: string) => {
+export const deleteTwoFactorComfirmationByIdData = async (id: string) => {
   await prisma.twoFactorComfirmation.delete({ where: { id } });
 };

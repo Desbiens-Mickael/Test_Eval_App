@@ -1,6 +1,5 @@
 "use client";
 
-import createNewUser from "@/actions/register";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { registerFormSchema } from "@/type/shema-zod";
@@ -8,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
+import createNewUserAction from "@/actions/register.action";
 import SubmitButton from "@/components/form/submit-button";
 import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
@@ -15,7 +15,7 @@ import PasswordInput from "../form/password-input";
 
 export default function FormRegister({}) {
   const { mutate, isPending } = useMutation({
-    mutationFn: createNewUser,
+    mutationFn: createNewUserAction,
     onSuccess: (data) => {
       if (data.success) toast.success(data.success);
       if (data.error) toast.error(data.error);

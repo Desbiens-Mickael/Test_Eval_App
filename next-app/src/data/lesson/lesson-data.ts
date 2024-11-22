@@ -1,9 +1,16 @@
 import { prisma } from "@/lib/db";
+import { stringToSlug } from "@/lib/utils";
+import { CreateLessonType } from "@/type/lesson";
 
 export type LessonOutput = {
   id: string;
-  name: string;
+  title: string;
+  slug: string;
   LessonSubject: {
+    label: string;
+    color: string;
+  };
+  GradeLevels: {
     label: string;
     color: string;
   };
@@ -13,13 +20,17 @@ export type LessonOutput = {
  * Get all lessons
  * @returns lesson list
  */
-export const getAllLesson = async (): Promise<LessonOutput[]> => {
+export const getAllLessonData = async (): Promise<LessonOutput[]> => {
   try {
     return await prisma.lesson.findMany({
       select: {
         id: true,
-        name: true,
+        title: true,
+        slug: true,
         LessonSubject: {
+          select: { label: true, color: true },
+        },
+        GradeLevels: {
           select: { label: true, color: true },
         },
       },
@@ -46,7 +57,7 @@ export const getAllLesson = async (): Promise<LessonOutput[]> => {
  * - `name`: Le nom de la leçon
  * - `LessonSubject.label`: Le sujet de la leçon
  */
-export const getAllLessonBySubject = async (subject: string): Promise<LessonOutput[]> => {
+export const getAllLessonBySubjectData = async (subject: string): Promise<LessonOutput[]> => {
   return prisma.lesson.findMany({
     where: {
       LessonSubject: {
@@ -55,8 +66,35 @@ export const getAllLessonBySubject = async (subject: string): Promise<LessonOutp
     },
     select: {
       id: true,
-      name: true,
+      title: true,
+      slug: true,
       LessonSubject: {
+        select: { label: true, color: true },
+      },
+      GradeLevels: {
+        select: { label: true, color: true },
+      },
+    },
+  });
+};
+
+// create lesson
+export const createLessonData = async (data: CreateLessonType) => {
+  return await prisma.lesson.create({
+    data: {
+      title: data.title,
+      content: data.content,
+      slug: stringToSlug(data.title),
+      authorId: data.authorId,
+      LessonSubjectID: data.LessonSubjectID,
+      GradeLevelsID: data.GradeLevelsID,
+    },select: {
+      id: true,
+      title: true,
+      LessonSubject: {
+        select: { label: true, color: true },
+      },
+      GradeLevels: {
         select: { label: true, color: true },
       },
     },
@@ -64,16 +102,16 @@ export const getAllLessonBySubject = async (subject: string): Promise<LessonOutp
 };
 
 // get lesson by id
-export const getLessonById = async (id: string) => {
+export const getLessonByIdData = async (id: string) => {
   return await prisma.lesson.findUnique({ where: { id } });
 };
 
 // update lesson
-export const updateLesson = async (id: string, data: object) => {
+export const updateLessonData = async (id: string, data: object) => {
   return await prisma.lesson.update({ where: { id: id }, data: { ...data } });
 };
 
 // delete lesson
-export const deleteLessonById = async (id: string) => {
+export const deleteLessonByIdData = async (id: string) => {
   return await prisma.lesson.delete({ where: { id } });
 };

@@ -1,9 +1,9 @@
-import { logout } from "@/actions/logout";
+import { logoutAction } from "@/actions/logout.action";
 import LogoutButton from "@/components/auth/logout-button";
 import { fireEvent, render, screen } from "@testing-library/react";
 
-jest.mock("@/actions/logout", () => ({
-  logout: jest.fn(),
+jest.mock("@/actions/logout.action", () => ({
+  logoutAction: jest.fn(),
 }));
 
 describe("LogoutButton", () => {
@@ -32,7 +32,7 @@ describe("LogoutButton", () => {
       const logoutButton = screen.getByRole("button");
       expect(logoutButton).toBeInTheDocument();
       fireEvent.click(logoutButton);
-      expect(logout).toHaveBeenCalled();
+      expect(logoutAction).toHaveBeenCalled();
     });
   });
   describe("with full props", () => {

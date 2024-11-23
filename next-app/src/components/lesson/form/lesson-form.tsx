@@ -6,40 +6,65 @@ import CustomSelect from "@/components/form/custom-select";
 import SubmitButton from "@/components/form/submit-button";
 import { Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useCreateLesson } from "@/hooks/mutations/lesson/use-create-lesson";
+import { useUpdateLesson } from "@/hooks/mutations/lesson/use-update-lesson";
 import useGetAllGradeLevels from "@/hooks/queries/use-get-all-grade-levels";
 import useGetAllLessonsSubject from "@/hooks/queries/use-get-all-lesson-subjects";
 import { stringToSlug } from "@/lib/utils";
-import { createLessonSchema } from "@/shema-zod/lesson";
+import { CreateLessonFormInput, createLessonFormSchema } from "@/shema-zod/lesson.shema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { JSONContent } from "novel";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 import LessonContent from "../lesson-content";
 
-export default function CreateLesson() {
+interface EditLessonProps {
+  id?: string;
+  title?: string;
+  content?: JSONContent | undefined;
+  LessonSubjectID?: string;
+  GradeLevelsID?: string;
+}
+
+export default function LessonForm({id, title, content, LessonSubjectID, GradeLevelsID}: EditLessonProps) {
+  //queries
   const { data: allLessonsSubject, isLoading: isLoadingLessonsSubject } = useGetAllLessonsSubject();
   const { data: allGradeLevels, isLoading: isLoadingGradeLevels } = useGetAllGradeLevels();
-  const {isPending, mutateAsync} = useCreateLesson();
+  
+  // mutations
+  const { isPending: isPendingCreate, mutateAsync: mutateAsyncCreate } = useCreateLesson();
+  const { isPending: isPendingUpdate, mutateAsync: mutateAsyncUpdate } = useUpdateLesson();
 
-  const [previewContent, setPreviewContent] = useState("");
+  const [previewContent, setPreviewContent] = useState<JSONContent | undefined>(content);
 
   const router = useRouter();
 
-  const form = useForm<z.infer<typeof createLessonSchema>>({
-    resolver: zodResolver(createLessonSchema),
+  const form = useForm<CreateLessonFormInput>({
+    resolver: zodResolver(createLessonFormSchema),
     defaultValues: {
-      title: "",
-      content: "",
-      LessonSubjectID: "",
-      GradeLevelsID: "",
+      title: title ?? "",
+      content: content,
+      LessonSubjectID: LessonSubjectID ?? "",
+      GradeLevelsID: GradeLevelsID ?? "",
     },
   });
   
   const onSubmit = async () => {
     try {
-      const data = await mutateAsync(form.getValues());
+      const values = form.getValues();
+      // Sérialiser le contenu avant l'envoi
+      const serializedData = {
+        ...values,
+        content: JSON.stringify(values.content)
+      };
+
+      let data;
+      if (id) {
+        data = await mutateAsyncUpdate({lessonId: id, data: serializedData});
+      } else {
+        data = await mutateAsyncCreate(serializedData);
+      }
 
       if (data?.error) toast.error(data.error);
       if (data?.success) {
@@ -123,10 +148,10 @@ export default function CreateLesson() {
           <div className="w-full flex justify-end items-center gap-4">
             {/* Bouton de soumission */}
             <SubmitButton
-              texte="Créer la leçon"
+              texte={`${id ? "Modifier" : "Créer"} la leçon`}
               className="w-fit"
-              isLoading={isPending}
-              loadindText="Création en cours..."
+              isLoading={isPendingCreate || isPendingUpdate}
+              loadindText={`${id ? "Modification" : "Création"} en cours...`}
             />
 
             {/* Preview de la leçon */}

@@ -1,7 +1,10 @@
+import { JSONContent } from "novel";
+
 export type CreateLessonType = {
   title: string;
-  content: string;
+  content: JSONContent;
   authorId: string;
+  slug: string;
   LessonSubjectID: string;
   GradeLevelsID: string;
 };

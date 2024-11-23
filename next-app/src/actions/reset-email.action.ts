@@ -4,7 +4,7 @@ import { deleteResetEmailTokenByIdData, getResetEmailTokenByTokenData } from "@/
 import { UpdateUserData, getUserByEmailData } from "@/data/user-data";
 import { sendResetEmail } from "@/lib/mail";
 import { generateResetEmailToken } from "@/lib/tokens";
-import { resetEmailFormSchema } from "@/type/shema-zod";
+import { resetEmailFormSchema } from "@/shema-zod/auth.shema";
 import { z } from "zod";
 
 // Envoie d'un mail avec un token pour modifier l'adresse email

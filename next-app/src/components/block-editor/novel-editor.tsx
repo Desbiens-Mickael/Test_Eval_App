@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { EditorCommand, EditorCommandEmpty, EditorCommandItem, EditorCommandList, EditorContent, EditorRoot, type JSONContent } from "novel";
+import { EditorCommand, EditorCommandEmpty, EditorCommandItem, EditorCommandList, EditorContent, EditorRoot, JSONContent } from "novel";
 
 import { ImageResizer, handleCommandNavigation } from "novel/extensions";
 import { handleImageDrop, handleImagePaste } from "novel/plugins";
@@ -35,11 +35,12 @@ export const defaultEditorContent = {
 };
 
 interface EditorProps {
-  initialValue?: string;
-  onChange: (content: string) => void;
+  initialValue?: JSONContent;
+  editable?: boolean;
+  onChange: (content: JSONContent) => void;
 }
 
-export default function Editor({ initialValue, onChange }: EditorProps) {
+export default function Editor({ initialValue, onChange, editable=true }: EditorProps) {
   const [openAI, setOpenAI] = useState(false);
   const [openNode, setOpenNode] = useState(false);
   const [openColor, setOpenColor] = useState(false);
@@ -79,8 +80,9 @@ export default function Editor({ initialValue, onChange }: EditorProps) {
     <div className="relative w-full max-w-screen-xl">
       <EditorRoot>
         <EditorContent
+          editable={editable}
           immediatelyRender={false}
-          initialContent={stringToJSONContent(initialValue)}
+          initialContent={initialValue}
           extensions={extensions}
           className="min-h-96 rounded-xl border p-4"
           editorProps={{
@@ -94,7 +96,7 @@ export default function Editor({ initialValue, onChange }: EditorProps) {
             },
           }}
           onUpdate={({ editor }) => {
-            onChange(editor.getHTML());
+            onChange(editor.getJSON());
           }}
           slotAfter={<ImageResizer />}
         >

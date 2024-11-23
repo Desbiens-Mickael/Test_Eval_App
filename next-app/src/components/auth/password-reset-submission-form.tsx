@@ -2,7 +2,7 @@
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { resetPasswordSendFormSchema } from "@/type/shema-zod";
+import { resetPasswordSendFormSchema } from "@/shema-zod/auth.shema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 

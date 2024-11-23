@@ -136,7 +136,7 @@ model GradeLevels  {
 model Lesson {
   id                      String @id @default(cuid())
   title                   String 
-  content                 String
+  content                 Json
   slug                    String
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
@@ -153,6 +153,7 @@ model Lesson {
   exercices               Exercice[]
   
   @@unique([title, authorId])
+  @@unique([slug, authorId])
 }
 
 model ExerciceLevel {

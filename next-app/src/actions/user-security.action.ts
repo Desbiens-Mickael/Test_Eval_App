@@ -3,7 +3,7 @@
 import { UpdateUserData, getUserByIdData } from "@/data/user-data";
 import { currentUser } from "@/lib/auth";
 import { hashPassword, verifyPassword } from "@/lib/hash-password";
-import { userSecurityFormSchema } from "@/type/shema-zod";
+import { userSecurityFormSchema } from "@/shema-zod/auth.shema";
 import { z } from "zod";
 
 export const updateUserSecurityAction = async (values: z.infer<typeof userSecurityFormSchema>) => {

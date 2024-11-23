@@ -5,7 +5,7 @@ import { DataTableColumnHeader } from "@/components/table/data-table-column-head
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import useGetAllLessonsBySubject from "@/hooks/queries/use-get-all-lessons-by-subject";
+import useGetAllLessonsBySubject from "@/hooks/queries/lesson/use-get-all-lessons-by-subject";
 import { Lesson } from "@/type/lesson";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
@@ -86,7 +86,7 @@ export default function LessonTable({ subject }: { subject: string }) {
               {/* TODO: ajouter le bouton de modification d'exercice */}
               <DropdownMenuItem
                 onClick={() => {
-                  router.push(`/lesson/${exercice.slug}`);
+                  router.push(`/admin/lecons/edition/${exercice.slug}`);
                 }}
               >
                 Modifier

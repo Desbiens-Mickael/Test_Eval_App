@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useUpdateUserInfos } from "@/hooks/mutations/use-update-user-infos";
-import { userInfosFormSchema } from "@/type/shema-zod";
+import { userInfosFormSchema } from "@/shema-zod/auth.shema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserRole } from "@prisma/client";
 import { useForm } from "react-hook-form";

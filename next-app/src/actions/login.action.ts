@@ -5,7 +5,7 @@ import { deleteTwoFactorTokenByIdData, getTwoFactorTokenByIdentifierData } from 
 import { getUserByEmailData } from "@/data/user-data";
 import { sendTwoFactorCodeEmail, sendVerificationEmail } from "@/lib/mail";
 import { generateTwoFactorToken, generateVerificationToken } from "@/lib/tokens";
-import { loginFormSchema } from "@/type/shema-zod";
+import { loginFormSchema } from "@/shema-zod/auth.shema";
 import { signIn } from "auth";
 import { AuthError } from "next-auth";
 import { z } from "zod";

@@ -34,6 +34,7 @@
     "@tiptap/extension-table-header": "^2.9.1",
     "@tiptap/extension-table-row": "^2.9.1",
     "@tiptap/extension-text-align": "^2.9.1",
+    "@tiptap/html": "^2.10.2",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.0",

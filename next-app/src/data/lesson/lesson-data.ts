@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/db";
-import { stringToSlug } from "@/lib/utils";
 import { CreateLessonType } from "@/type/lesson";
 
 export type LessonOutput = {
@@ -16,10 +15,7 @@ export type LessonOutput = {
   };
 };
 
-/**
- * Get all lessons
- * @returns lesson list
- */
+// Récupération de toutes les leçons
 export const getAllLessonData = async (): Promise<LessonOutput[]> => {
   try {
     return await prisma.lesson.findMany({
@@ -33,7 +29,7 @@ export const getAllLessonData = async (): Promise<LessonOutput[]> => {
         GradeLevels: {
           select: { label: true, color: true },
         },
-      },
+      }, orderBy: { createdAt: "desc" },
     });
   } catch (error) {
     console.error("Error fetching lessons:", error);
@@ -41,22 +37,8 @@ export const getAllLessonData = async (): Promise<LessonOutput[]> => {
   }
 };
 
-/**
- * Récupère tous les leçons selon leur sujet
- *
- * @param {string} subject - Le sujet de la leçon à récupérer. Valeurs possibles : "Mathématiques" | "Sciences" | "Histoire" | "Arts".
- * @returns {Promise<LessonOutput[]>} - Une promesse qui résout à une liste de leçons contenant l'ID, le nom et le sujet.
- *
- * @example
- * // Récupérer toutes les leçons d'histoire
- * const lessons = await getAllLessonBySubject("Histoire");
- *
- * @description
- * La fonction récupère une liste de leçons filtrée par le sujet donné. Les champs retournés pour chaque leçon sont :
- * - `id`: L'identifiant unique de la leçon
- * - `name`: Le nom de la leçon
- * - `LessonSubject.label`: Le sujet de la leçon
- */
+
+ // Récupèration de toutes les leçons selon leur sujet
 export const getAllLessonBySubjectData = async (subject: string): Promise<LessonOutput[]> => {
   return prisma.lesson.findMany({
     where: {
@@ -74,44 +56,53 @@ export const getAllLessonBySubjectData = async (subject: string): Promise<Lesson
       GradeLevels: {
         select: { label: true, color: true },
       },
-    },
+    }, orderBy: { createdAt: "desc" },
   });
 };
 
-// create lesson
+// Récupération de la leçon par son ID
+export const getLessonByIdData = async (id: string) => {
+  return await prisma.lesson.findUnique({ where: { id } });
+};
+
+// Récupération de la leçon par son slug
+export const getLessonBySlugData = async (slug: string, authorId: string) => {
+  return await prisma.lesson.findUnique({ where: { slug_authorId: { slug, authorId } } });
+};
+
+// Création d'une nouvelle leçon
 export const createLessonData = async (data: CreateLessonType) => {
   return await prisma.lesson.create({
     data: {
       title: data.title,
       content: data.content,
-      slug: stringToSlug(data.title),
+      slug: data.slug,
       authorId: data.authorId,
       LessonSubjectID: data.LessonSubjectID,
       GradeLevelsID: data.GradeLevelsID,
     },select: {
-      id: true,
-      title: true,
       LessonSubject: {
-        select: { label: true, color: true },
-      },
-      GradeLevels: {
-        select: { label: true, color: true },
+        select: { label: true },
       },
     },
   });
 };
 
-// get lesson by id
-export const getLessonByIdData = async (id: string) => {
-  return await prisma.lesson.findUnique({ where: { id } });
+// Mise à jour de la leçon
+export const updateLessonData = async (LessonId: string, data: CreateLessonType) => {
+  return await prisma.lesson.update({ 
+    where: { id: LessonId },
+    data: { ...data }, 
+    select: {
+      slug: true,
+      LessonSubject: {
+        select: { label: true },
+      },
+    } 
+  });
 };
 
-// update lesson
-export const updateLessonData = async (id: string, data: object) => {
-  return await prisma.lesson.update({ where: { id: id }, data: { ...data } });
-};
-
-// delete lesson
+// Suppression de la leçon
 export const deleteLessonByIdData = async (id: string) => {
   return await prisma.lesson.delete({ where: { id } });
 };

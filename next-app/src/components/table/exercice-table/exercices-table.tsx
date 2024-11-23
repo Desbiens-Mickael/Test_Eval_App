@@ -7,7 +7,7 @@ import { DataTableColumnHeader } from "@/components/table/data-table-column-head
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import useGetAllExercicesByType from "@/hooks/queries/use-get-all-exercices-by-type";
+import useGetAllExercicesByType from "@/hooks/queries/exercice/use-get-all-exercices-by-type";
 import { Exercice } from "@/type/exercice";
 import { ExerciceType } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";

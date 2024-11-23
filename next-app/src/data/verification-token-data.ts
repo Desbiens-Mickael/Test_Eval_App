@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { verificationTokenShema } from "@/type/shema-zod";
+import { verificationTokenShema } from "@/shema-zod/auth.shema";
 import { z } from "zod";
 
 const TYPE = "VerificationEmail";

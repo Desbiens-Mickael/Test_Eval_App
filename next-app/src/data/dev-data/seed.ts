@@ -97,38 +97,115 @@ const seed = async () => {
       {
         title: "Le theorème de pythagore",
         LessonSubjectID: subjects[0].id,
-        GradeLevelsID : gradeLevels[0].id,
+        GradeLevelsID: gradeLevels[0].id,
         authorId: userAdmin.id,
-        content: "<h1>Le theoreme de pythagore est un theoreme de geometrie</h1>",
+        content: {
+          type: "doc",
+          content: [
+            {
+              type: "heading",
+              attrs: { level: 1 },
+              content: [{ type: "text", text: "Le théorème de Pythagore" }],
+            },
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  text: "Le théorème de Pythagore est un théorème de géométrie.",
+                },
+              ],
+            },
+          ],
+        },
         slug: stringToSlug("Le theorème de pythagore"),
       },
       {
-        title: "Les verbes irreguliers",
+        title: "Les verbes irréguliers",
         LessonSubjectID: subjects[1].id,
-        GradeLevelsID : gradeLevels[2].id,
+        GradeLevelsID: gradeLevels[2].id,
         authorId: userAdmin.id,
-        content: "<h1>Les verbes irreguliers sont des verbes qui ne sont pas uniques.</h1>",
-        slug: stringToSlug("Les verbes irreguliers"),
+        content: {
+          type: "doc",
+          content: [
+            {
+              type: "heading",
+              attrs: { level: 1 },
+              content: [{ type: "text", text: "Les verbes irréguliers" }],
+            },
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  text: "Les verbes irréguliers sont des verbes qui ne suivent pas une règle unique.",
+                },
+              ],
+            },
+          ],
+        },
+        slug: stringToSlug("Les verbes irréguliers"),
       },
       {
-        title: "L'histoire de la troisième guerre mondiale",
+        title: "L'histoire de la troisième guerre mondiale",
         LessonSubjectID: subjects[2].id,
-        GradeLevelsID : gradeLevels[3].id,
+        GradeLevelsID: gradeLevels[3].id,
         authorId: userAdmin.id,
-        content: "<h1>La troisième guerre mondiale est une guerre mondiale de 1939 à 1945.</h1>",
-        slug: stringToSlug("L'histoire de la troisième guerre mondiale"),
+        content: {
+          type: "doc",
+          content: [
+            {
+              type: "heading",
+              attrs: { level: 1 },
+              content: [
+                {
+                  type: "text",
+                  text: "L'histoire de la troisième guerre mondiale",
+                },
+              ],
+            },
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  text: "La troisième guerre mondiale est une guerre mondiale de 1939 à 1945.",
+                },
+              ],
+            },
+          ],
+        },
+        slug: stringToSlug("L'histoire de la troisième guerre mondiale"),
       },
       {
-        title: "La phusion nucleaire",
+        title: "La fusion nucléaire",
         LessonSubjectID: subjects[3].id,
-        GradeLevelsID : gradeLevels[6].id,
+        GradeLevelsID: gradeLevels[6].id,
         authorId: userAdmin.id,
-        content: "<h1>La phusion nucleaire est un processus de fusion nucleaire qui consiste en la fusion des atomes.</h1>",
-        slug: stringToSlug("La phusion nucleaire"),
+        content: {
+          type: "doc",
+          content: [
+            {
+              type: "heading",
+              attrs: { level: 1 },
+              content: [{ type: "text", text: "La fusion nucléaire" }],
+            },
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  text: "La fusion nucléaire est un processus dans lequel deux atomes fusionnent.",
+                },
+              ],
+            },
+          ],
+        },
+        slug: stringToSlug("La fusion nucléaire"),
       },
     ],
   });
-
+  
   const lessons = await prisma.lesson.findMany();
 
   // create Level

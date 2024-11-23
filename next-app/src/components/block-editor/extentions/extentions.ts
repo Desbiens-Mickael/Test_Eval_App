@@ -1,3 +1,4 @@
+import { generateHTML } from '@tiptap/html';
 import {
   AIHighlight,
   CharacterCount,
@@ -31,6 +32,7 @@ import TextAlign from "@tiptap/extension-text-align";
 
 import { cx } from "class-variance-authority";
 import { common, createLowlight } from "lowlight";
+import { JSONContent } from 'novel';
 
 //TODO I am using cx here to get tailwind autocomplete working, idk if someone else can write a regex to just capture the class key in objects
 const aiHighlight = AIHighlight;
@@ -167,7 +169,7 @@ const characterCount = CharacterCount.configure();
 
 const table = Table.configure({
   resizable: true,
-});
+})
 
 export const defaultExtensions = [
   starterKit,
@@ -197,3 +199,13 @@ export const defaultExtensions = [
   TableHeader,
   TableRow,
 ];
+
+// Fonction de conversion JSONContent en HTML
+export const JSONContentToHTML = (JSONContent?: JSONContent): string | undefined => {
+  if (!JSONContent) {
+    // Retourner un contenu vide au cas où la valeur HTML est undefined ou vide
+    return undefined;
+  }
+  // Utiliser generateHTML pour convertir le JSONContent en HTML, en incluant les extensions nécessaires
+  return generateHTML(JSONContent, defaultExtensions);
+  };

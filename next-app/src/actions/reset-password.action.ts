@@ -5,7 +5,7 @@ import { UpdateUserData, getUserByEmailData } from "@/data/user-data";
 import { hashPassword } from "@/lib/hash-password";
 import { sendResetPasswordEmail } from "@/lib/mail";
 import { generateResetPasswordToken } from "@/lib/tokens";
-import { resetPasswordFormSchema, resetPasswordSendFormSchema } from "@/type/shema-zod";
+import { resetPasswordFormSchema, resetPasswordSendFormSchema } from "@/shema-zod/auth.shema";
 import { z } from "zod";
 
 // Envoie d'un mail pour reset le password

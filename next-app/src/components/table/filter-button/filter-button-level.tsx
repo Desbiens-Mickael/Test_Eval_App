@@ -8,7 +8,6 @@ import { Table } from "@tanstack/react-table";
 import DataTAbleBUttonFilter from "./data-table-button-filter";
 
 interface FilterBUttonLevelProps<TData> {
-  // column: Column<TData, TValue> | undefined;
   table: Table<TData>;
 }
 

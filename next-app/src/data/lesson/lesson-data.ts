@@ -70,6 +70,20 @@ export const getLessonBySlugData = async (slug: string, authorId: string) => {
   return await prisma.lesson.findUnique({ where: { slug_authorId: { slug, authorId } } });
 };
 
+export const getLessonsWithAuthor = async (lessonIds: string[]) => {
+  return await prisma.lesson.findMany({
+    where: {
+      id: {
+        in: lessonIds
+      }
+    },
+    select: {
+      id: true,
+      authorId: true
+    }
+  });
+};
+
 // Création d'une nouvelle leçon
 export const createLessonData = async (data: CreateLessonType) => {
   return await prisma.lesson.create({
@@ -103,6 +117,28 @@ export const updateLessonData = async (LessonId: string, data: CreateLessonType)
 };
 
 // Suppression de la leçon
-export const deleteLessonByIdData = async (id: string) => {
-  return await prisma.lesson.delete({ where: { id } });
+export const deleteLessonsData = async (lessonIds: string[]) => {
+  return await prisma.lesson.deleteMany({
+    where: {
+      id: {
+        in: lessonIds
+      }
+    },
+  });
+};
+
+export const getLessonsInfoBeforeDelete = async (lessonIds: string[]) => {
+  return await prisma.lesson.findMany({
+    where: {
+      id: {
+        in: lessonIds
+      }
+    },
+    select: {
+      slug: true,
+      LessonSubject: {
+        select: { label: true }
+      }
+    }
+  });
 };

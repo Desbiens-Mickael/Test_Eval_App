@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import Image from "next/image";
 
 interface LogoProps {
@@ -13,6 +14,20 @@ const logoType = {
   vertical: "/assets/images/logo-vertical.png",
 };
 
-export default function Logo({ width, height, className, type = "mobile" }: LogoProps) {
-  return <Image src={logoType[type]} alt="logo" width={width} height={height} className={className} />;
+export default function Logo({
+  width,
+  height,
+  className,
+  type = "mobile",
+}: LogoProps) {
+  return (
+    <Image
+      src={logoType[type]}
+      alt="logo EduCraft"
+      width={width}
+      height={height}
+      className={cn("w-auto h-auto", className)}
+      priority={true}
+    />
+  );
 }

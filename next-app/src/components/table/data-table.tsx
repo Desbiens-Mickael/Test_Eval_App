@@ -17,8 +17,9 @@ import {
 
 import { TableBody, TableCell, TableHead, TableHeader, TableRow, Table as TableUI } from "@/components/ui/table";
 import { ReactElement, useState } from "react";
+import DataTAbleBUttonCreate from "./data-table-button-create";
 import DataTableButtonReset from "./data-table-button-reset";
-import DataTableDEleteSElectionButton from "./data-table-delete-selection-button";
+import DataTableDeleteSelectionButton from "./data-table-delete-selection-button";
 import DataTAbleInputFilter from "./data-table-input-filter";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableViewOptions } from "./data-table-view-options";
@@ -30,9 +31,10 @@ export interface Identifier {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  // filterColumnIds?: string[];
   inputSearchColumnId?: string;
   viewOptionsButton?: boolean;
+  createLink?: string;
+  handleDelete: (ids: string[]) => Promise<void>;
   children?: (table: Table<TData>) => ReactElement[];
 }
 
@@ -47,7 +49,7 @@ interface DataTableProps<TData, TValue> {
  * @param {ReactElement<{ table: Table<TData> }> | ReactElement<{ table: Table<TData> }>[]} [props.children] - The children components to be rendered within the table. If not provided, a default filter button will be rendered.
  * @return {JSX.Element} The rendered DataTable component.
  */
-export function DataTable<TData extends Identifier, TValue>({ columns, data, inputSearchColumnId, viewOptionsButton, children }: DataTableProps<TData, TValue>) {
+export function DataTable<TData extends Identifier, TValue>({ columns, data, inputSearchColumnId, viewOptionsButton, createLink, handleDelete, children }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -86,7 +88,12 @@ export function DataTable<TData extends Identifier, TValue>({ columns, data, inp
           {children && children(table).map((child, index) => <div key={index}>{child}</div>)}
         </div>
         <div className="flex items-center space-x-2">
-          <DataTableDEleteSElectionButton table={table} />
+          <DataTableDeleteSelectionButton handleDelete={handleDelete} table={table} />
+          {createLink && (
+            <DataTAbleBUttonCreate
+              createLink={createLink}
+            />
+          )}
           {viewOptionsButton && <DataTableViewOptions table={table} />}
           <DataTableButtonReset table={table} />
         </div>

@@ -2,6 +2,7 @@
 
 import useGetLessonBySlug from "@/hooks/queries/lesson/use-get-lesson-by-slug";
 import { notFound } from "next/navigation";
+import LessonFormSkeleton from "../skeleton/lesson-form-skeleton";
 import LessonForm from "./form/lesson-form";
 
 interface EditLessonProps {
@@ -9,10 +10,10 @@ interface EditLessonProps {
 }
 
 export default function EditLesson({ slug }: EditLessonProps) {
-  const { data, isLoading, isError } = useGetLessonBySlug(slug);
+  const { data, isLoading } = useGetLessonBySlug(slug);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LessonFormSkeleton />;
   }
 
   if (data?.error) {

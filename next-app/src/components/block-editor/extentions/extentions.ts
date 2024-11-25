@@ -1,4 +1,4 @@
-import { generateHTML } from '@tiptap/html';
+import { generateHTML } from "@tiptap/html";
 import {
   AIHighlight,
   CharacterCount,
@@ -7,7 +7,6 @@ import {
   CustomKeymap,
   GlobalDragHandle,
   HighlightExtension,
-  HorizontalRule,
   MarkdownExtension,
   Mathematics,
   Placeholder,
@@ -32,7 +31,7 @@ import TextAlign from "@tiptap/extension-text-align";
 
 import { cx } from "class-variance-authority";
 import { common, createLowlight } from "lowlight";
-import { JSONContent } from 'novel';
+import { JSONContent } from "novel";
 
 //TODO I am using cx here to get tailwind autocomplete working, idk if someone else can write a regex to just capture the class key in objects
 const aiHighlight = AIHighlight;
@@ -42,7 +41,9 @@ const placeholder = Placeholder.configure({
 });
 const tiptapLink = TiptapLink.configure({
   HTMLAttributes: {
-    class: cx("text-muted-foreground underline underline-offset-[3px] hover:text-primary transition-colors cursor-pointer"),
+    class: cx(
+      "text-muted-foreground underline underline-offset-[3px] hover:text-primary transition-colors cursor-pointer"
+    ),
   },
 });
 
@@ -101,11 +102,14 @@ const starterKit = StarterKit.configure({
       class: cx("border-l-4 border-primary"),
     },
   },
-  codeBlock: {
-    HTMLAttributes: {
-      class: cx("rounded-md bg-muted text-muted-foreground border p-5 font-mono font-medium"),
-    },
-  },
+  // codeBlock: {
+  //   HTMLAttributes: {
+  //     class: cx(
+  //       "rounded-md bg-muted text-muted-foreground border p-5 font-mono font-medium"
+  //     ),
+  //   },
+  // },
+  codeBlock: false,
   code: {
     HTMLAttributes: {
       class: cx("rounded-md bg-muted  px-1.5 py-1 font-mono font-medium"),
@@ -169,7 +173,7 @@ const characterCount = CharacterCount.configure();
 
 const table = Table.configure({
   resizable: true,
-})
+});
 
 export const defaultExtensions = [
   starterKit,
@@ -179,7 +183,6 @@ export const defaultExtensions = [
   updatedImage,
   taskList,
   taskItem,
-  HorizontalRule,
   aiHighlight,
   codeBlockLowlight,
   youtube,
@@ -201,11 +204,13 @@ export const defaultExtensions = [
 ];
 
 // Fonction de conversion JSONContent en HTML
-export const JSONContentToHTML = (JSONContent?: JSONContent): string | undefined => {
+export const JSONContentToHTML = (
+  JSONContent?: JSONContent
+): string | undefined => {
   if (!JSONContent) {
     // Retourner un contenu vide au cas où la valeur HTML est undefined ou vide
     return undefined;
   }
   // Utiliser generateHTML pour convertir le JSONContent en HTML, en incluant les extensions nécessaires
   return generateHTML(JSONContent, defaultExtensions);
-  };
+};

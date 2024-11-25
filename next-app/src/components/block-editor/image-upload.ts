@@ -27,10 +27,14 @@ const onUpload = (file: File) => {
           // No blob store configured
         } else if (res.status === 401) {
           resolve(file);
-          throw new Error("`NEXT_PUBLIC_UPLOAD_API_URL` environment variable not found, reading image locally instead.");
+          throw new Error(
+            "`NEXT_PUBLIC_UPLOAD_API_URL` environment variable not found, reading image locally instead."
+          );
           // Unknown error
         } else {
-          throw new Error("Erreur de téléchargement de l'image. Veuillez réessayer.");
+          throw new Error(
+            "Erreur de téléchargement de l'image. Veuillez réessayer."
+          );
         }
       }),
       {

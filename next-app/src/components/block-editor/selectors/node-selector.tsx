@@ -1,4 +1,16 @@
-import { Check, CheckSquare, ChevronDown, Code, Heading1, Heading2, Heading3, ListOrdered, type LucideIcon, TextIcon, TextQuote } from "lucide-react";
+import {
+  Check,
+  CheckSquare,
+  ChevronDown,
+  Code,
+  Heading1,
+  Heading2,
+  Heading3,
+  ListOrdered,
+  type LucideIcon,
+  TextIcon,
+  TextQuote,
+} from "lucide-react";
 import { EditorBubbleItem, useEditor } from "novel";
 
 import { Button } from "@/components/ui/button";
@@ -17,54 +29,70 @@ const items: SelectorItem[] = [
     name: "Text",
     icon: TextIcon,
     command: (editor) => editor?.chain().focus().clearNodes().run(),
-    isActive: (editor) => (editor ? editor.isActive("paragraph") && !editor.isActive("bulletList") && !editor.isActive("orderedList") : false),
+    isActive: (editor) =>
+      editor
+        ? editor.isActive("paragraph") &&
+          !editor.isActive("bulletList") &&
+          !editor.isActive("orderedList")
+        : false,
   },
   {
     name: "Heading 1",
     icon: Heading1,
-    command: (editor) => editor?.chain().focus().clearNodes().toggleHeading({ level: 1 }).run(),
-    isActive: (editor) => (editor ? editor.isActive("heading", { level: 1 }) : false),
+    command: (editor) =>
+      editor?.chain().focus().clearNodes().toggleHeading({ level: 1 }).run(),
+    isActive: (editor) =>
+      editor ? editor.isActive("heading", { level: 1 }) : false,
   },
   {
     name: "Heading 2",
     icon: Heading2,
-    command: (editor) => editor?.chain().focus().clearNodes().toggleHeading({ level: 2 }).run(),
-    isActive: (editor) => (editor ? editor.isActive("heading", { level: 2 }) : false),
+    command: (editor) =>
+      editor?.chain().focus().clearNodes().toggleHeading({ level: 2 }).run(),
+    isActive: (editor) =>
+      editor ? editor.isActive("heading", { level: 2 }) : false,
   },
   {
     name: "Heading 3",
     icon: Heading3,
-    command: (editor) => editor?.chain().focus().clearNodes().toggleHeading({ level: 3 }).run(),
-    isActive: (editor) => (editor ? editor.isActive("heading", { level: 3 }) : false),
+    command: (editor) =>
+      editor?.chain().focus().clearNodes().toggleHeading({ level: 3 }).run(),
+    isActive: (editor) =>
+      editor ? editor.isActive("heading", { level: 3 }) : false,
   },
   {
     name: "To-do List",
     icon: CheckSquare,
-    command: (editor) => editor?.chain().focus().clearNodes().toggleTaskList().run(),
+    command: (editor) =>
+      editor?.chain().focus().clearNodes().toggleTaskList().run(),
     isActive: (editor) => (editor ? editor.isActive("taskItem") : false),
   },
   {
     name: "Bullet List",
     icon: ListOrdered,
-    command: (editor) => editor?.chain().focus().clearNodes().toggleBulletList().run(),
+    command: (editor) =>
+      editor?.chain().focus().clearNodes().toggleBulletList().run(),
     isActive: (editor) => (editor ? editor.isActive("bulletList") : false),
   },
   {
     name: "Numbered List",
     icon: ListOrdered,
-    command: (editor) => editor?.chain().focus().clearNodes().toggleOrderedList().run(),
+    command: (editor) =>
+      editor?.chain().focus().clearNodes().toggleOrderedList().run(),
     isActive: (editor) => (editor ? editor.isActive("orderedList") : false),
   },
   {
     name: "Quote",
     icon: TextQuote,
-    command: (editor) => editor?.chain().focus().clearNodes().toggleBlockquote().run(),
+    command: (editor) =>
+      editor?.chain().focus().clearNodes().toggleBlockquote().run(),
     isActive: (editor) => (editor ? editor.isActive("blockquote") : false),
   },
   {
     name: "Code",
     icon: Code,
-    command: (editor) => editor?.chain().focus().clearNodes().toggleCodeBlock().run(),
+    command: (editor) =>
+      editor?.chain().focus().clearNodes().toggleCodeBlock().run(),
     isActive: (editor) => (editor ? editor.isActive("codeBlock") : false),
   },
 ];
@@ -82,7 +110,10 @@ export const NodeSelector = ({ open, onOpenChange }: NodeSelectorProps) => {
 
   return (
     <Popover modal={true} open={open} onOpenChange={onOpenChange}>
-      <PopoverTrigger asChild className="gap-2 rounded-none border-none hover:bg-accent focus:ring-0">
+      <PopoverTrigger
+        asChild
+        className="gap-2 rounded-none border-none hover:bg-accent focus:ring-0"
+      >
         <Button size="sm" variant="ghost" className="gap-2">
           <span className="whitespace-nowrap text-sm">{activeItem.name}</span>
           <ChevronDown className="h-4 w-4" />

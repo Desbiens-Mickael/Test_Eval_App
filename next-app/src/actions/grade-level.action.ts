@@ -1,13 +1,14 @@
-"use server"
+"use server";
 
-import { getAllGradeLevelData } from "@/data/grade-level.data";
+import { getAllGradeLevelsWithLabelAndColorOnlyData } from "@/data/grade-level.data";
 
 export const getAllGradeLevelsAction = async () => {
   try {
-    return await getAllGradeLevelData();
+    return await getAllGradeLevelsWithLabelAndColorOnlyData();
   } catch (error) {
     console.error(error);
-    throw new Error("Une erreur est survenue lors de la récupération des niveaux.");
+    throw new Error(
+      "Une erreur est survenue lors de la récupération des niveaux."
+    );
   }
 };
-  

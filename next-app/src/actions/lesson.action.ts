@@ -1,10 +1,22 @@
-"use server"
+"use server";
 
 import { getAuthorIdOfGroupByUserId } from "@/data/group.data";
-import { createLessonData, getAllLessonBySubjectData, getLessonByIdData, getLessonBySlugData, updateLessonData } from "@/data/lesson/lesson-data";
+import {
+  createLessonData,
+  deleteLessonsData,
+  getAllLessonBySubjectData,
+  getLessonByIdData,
+  getLessonBySlugData,
+  getLessonsInfoBeforeDelete,
+  getLessonsWithAuthor,
+  updateLessonData,
+} from "@/data/lesson/lesson-data";
 import { currentUser } from "@/lib/auth";
 import { stringToSlug } from "@/lib/utils";
-import { CreateLessonInput, createLessonSchema } from "@/shema-zod/lesson.shema";
+import {
+  CreateLessonInput,
+  createLessonSchema,
+} from "@/shema-zod/lesson.shema";
 import { Lesson } from "@/type/lesson";
 import { Prisma } from "@prisma/client";
 
@@ -16,7 +28,10 @@ import { Prisma } from "@prisma/client";
 const serializeLessonContent = (data: CreateLessonInput) => {
   return {
     ...data,
-    content: typeof data.content === 'string' ? JSON.parse(data.content) : data.content
+    content:
+      typeof data.content === "string"
+        ? JSON.parse(data.content)
+        : data.content,
   };
 };
 
@@ -26,7 +41,9 @@ const serializeLessonContent = (data: CreateLessonInput) => {
  * @returns {Promise<Lesson[]>} Un tableau des leçons formatées
  * @throws {Error} Si la récupération échoue
  */
-export const getAllLessonsBySubjectAction = async (subject: string): Promise<Lesson[]> => {
+export const getAllLessonsBySubjectAction = async (
+  subject: string
+): Promise<Lesson[]> => {
   try {
     const lessonsData = await getAllLessonBySubjectData(subject);
 
@@ -60,34 +77,39 @@ export const getLessonBySlugAction = async (slug: string) => {
   if (!user || !user.id) return { error: "Action non autoriser !" };
   let authorId = user.id;
 
-  
   try {
     // Si l'utilisateur connecté n'est pas un admin
     if (user.role !== "ADMIN") {
       // Récupérer l'authorId du groupe de l'utilisateur connecté
       const existingAuthor = await getAuthorIdOfGroupByUserId(user.id);
       if (!existingAuthor) return { error: "Action non autoriser !" };
-      
+
       authorId = existingAuthor.author.id;
     }
-    
+
     // Récupération de la leçon
     const lesson = await getLessonBySlugData(slug, authorId);
-    if (!lesson) return { error: "La leçon n'existe pas !" };
+    if (!lesson) return { error: "Cette leçon n'existe pas !" };
 
     // Sérialiser le contenu
     const contentSerialized = JSON.stringify(lesson.content);
     const lessonSerialized = {
       ...lesson,
-      content: contentSerialized
+      content: contentSerialized,
     };
-    
-    return { success: "La leçon a été trouvée avec succès.", lesson: lessonSerialized };
+
+    return {
+      success: "La leçon a été trouvée avec succès.",
+      lesson: lessonSerialized,
+    };
   } catch (error) {
     console.error(error);
-    return { error: "Une erreur est survenue lors de la récupération des données. Veuillez réessayer." };
+    return {
+      error:
+        "Une erreur est survenue lors de la récupération des données. Veuillez réessayer.",
+    };
   }
-}
+};
 
 /**
  * Crée une nouvelle leçon
@@ -99,25 +121,35 @@ export const getLessonBySlugAction = async (slug: string) => {
  */
 export const createLessonAction = async (data: CreateLessonInput) => {
   const user = await currentUser();
-  if (!user || !user.id || user.role !== "ADMIN") return { error: "Action non autoriser !" };
+  if (!user || !user.id || user.role !== "ADMIN")
+    return { error: "Action non autoriser !" };
 
   const isDataValide = createLessonSchema.safeParse(data);
   if (!isDataValide.success) return { error: "Données non valide !" };
 
-    // Désérialiser le contenu de la leçon et cré le slug
-    const parsedData = {...serializeLessonContent(data), slug: stringToSlug(data.title)};
+  // Désérialiser le contenu de la leçon et cré le slug
+  const parsedData = {
+    ...serializeLessonContent(data),
+    slug: stringToSlug(data.title),
+  };
 
   try {
-    const lesson = await createLessonData({...parsedData, authorId: user.id});
+    const lesson = await createLessonData({ ...parsedData, authorId: user.id });
     return { success: "La leçon a été créée avec succès.", data: lesson };
   } catch (err) {
     console.error(err);
-    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") {
+    if (
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      err.code === "P2002"
+    ) {
       return { error: "Une leçon avec ce titre existe deja !" };
     }
-    return { error: "Une erreur est survenue lors de la création de la leçon. Veuillez réessayer." };
+    return {
+      error:
+        "Une erreur est survenue lors de la création de la leçon. Veuillez réessayer.",
+    };
   }
-}
+};
 
 /**
  * Met à jour une leçon existante
@@ -128,9 +160,13 @@ export const createLessonAction = async (data: CreateLessonInput) => {
  * - error: Message d'erreur si la mise à jour échoue
  * @throws {Prisma.PrismaClientKnownRequestError} Si une leçon avec le même titre existe déjà
  */
-export const updateLessonAction = async (LessonId: string, data: CreateLessonInput) => {
+export const updateLessonAction = async (
+  LessonId: string,
+  data: CreateLessonInput
+) => {
   const user = await currentUser();
-  if (!user || !user.id || user.role !== "ADMIN") return { error: "Action non autoriser !" };
+  if (!user || !user.id || user.role !== "ADMIN")
+    return { error: "Action non autoriser !" };
 
   const isDataValide = createLessonSchema.safeParse(data);
   if (!isDataValide.success) return { error: "Données non valide !" };
@@ -138,18 +174,80 @@ export const updateLessonAction = async (LessonId: string, data: CreateLessonInp
   try {
     const existingLesson = await getLessonByIdData(LessonId);
     if (!existingLesson) return { error: "Cette leçon n'existe pas !" };
-    if (existingLesson && existingLesson.authorId !== user.id) return { error: "Action non autoriser !" };
+    if (existingLesson && existingLesson.authorId !== user.id)
+      return { error: "Action non autoriser !" };
 
     // Désérialiser le contenu de la leçon et cré le slug
-    const parsedData = {...serializeLessonContent(data), slug: stringToSlug(data.title)};
+    const parsedData = {
+      ...serializeLessonContent(data),
+      slug: stringToSlug(data.title),
+    };
 
-    const lesson = await updateLessonData(LessonId, {...parsedData, authorId: user.id});
+    const lesson = await updateLessonData(LessonId, {
+      ...parsedData,
+      authorId: user.id,
+    });
     return { success: "La leçon a bien été mise à jour.", data: lesson };
   } catch (err) {
     console.error(err);
-    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") {
-      return { error: "Une leçon avec ce titre existe deja !" };
+    if (
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      err.code === "P2002"
+    ) {
+      return { error: "Une leçon existe déjà avec ce titre !" };
     }
-    return { error: "Une erreur est survenue lors de la mise à jour de la leçon. Veuillez réessayer." };
+    return {
+      error:
+        "Une erreur est survenue lors de la mise à jour de la leçon. Veuillez réessayer.",
+    };
+  }
+};
+
+// Suppression de la leçon
+export async function deleteLessonsAction(lessonIds: string[]) {
+  try {
+    // Vérification de l'utilisateur
+    const user = await currentUser();
+    if (!user || !user.id || user.role !== "ADMIN") {
+      return { error: "Action non autorisée !" };
+    }
+
+    // Vérification que les leçons existent et appartiennent à l'utilisateur
+    const lessons = await getLessonsWithAuthor(lessonIds);
+
+    // Vérifier si toutes les leçons ont été trouvées
+    if (lessons.length !== lessonIds.length) {
+      return { error: "Certaines leçons n'existent pas !" };
+    }
+
+    // Vérifier si l'utilisateur est l'auteur de toutes les leçons
+    const unauthorizedLessons = lessons.filter(
+      (lesson) => lesson.authorId !== user.id
+    );
+    if (unauthorizedLessons.length > 0) {
+      return {
+        error: "Vous n'avez pas les droits necessaires pour cette action !",
+      };
+    }
+
+    // Get lesson info before deletion for cache invalidation
+    const lessonsInfo = await getLessonsInfoBeforeDelete(lessonIds);
+
+    // Delete the lessons
+    await deleteLessonsData(lessonIds);
+
+    return {
+      success:
+        lessonIds.length > 1
+          ? `${lessonIds.length} leçons ont été supprimées avec succès`
+          : "La leçon a été supprimée avec succès",
+      data: lessonsInfo,
+    };
+  } catch (error) {
+    console.error("Erreur lors de la suppression des leçons:", error);
+    return {
+      error:
+        "Une erreur est survenue lors de la suppression, Veuillez réessayer.",
+    };
   }
 }

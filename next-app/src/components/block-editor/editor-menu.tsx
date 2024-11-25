@@ -9,7 +9,11 @@ interface EditorMenuProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export default function EditorMenu({ children, open, onOpenChange }: EditorMenuProps) {
+export default function EditorMenu({
+  children,
+  open,
+  onOpenChange,
+}: EditorMenuProps) {
   const { editor } = useEditor();
 
   useEffect(() => {

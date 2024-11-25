@@ -1,4 +1,19 @@
-import { CheckSquare, Code, Heading1, Heading2, Heading3, ImageIcon, List, ListOrdered, Minus, Table, Text, TextQuote, Twitter, Youtube } from "lucide-react";
+import {
+  CheckSquare,
+  Code,
+  Heading1,
+  Heading2,
+  Heading3,
+  ImageIcon,
+  List,
+  ListOrdered,
+  Minus,
+  Table,
+  Text,
+  TextQuote,
+  Twitter,
+  Youtube,
+} from "lucide-react";
 import { Command, createSuggestionItems, renderItems } from "novel/extensions";
 import { uploadFn } from "./image-upload";
 
@@ -9,7 +24,12 @@ export const suggestionItems = createSuggestionItems([
     searchTerms: ["p", "paragraph"],
     icon: <Text size={18} />,
     command: ({ editor, range }) => {
-      editor.chain().focus().deleteRange(range).toggleNode("paragraph", "paragraph").run();
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .toggleNode("paragraph", "paragraph")
+        .run();
     },
   },
   {
@@ -18,7 +38,12 @@ export const suggestionItems = createSuggestionItems([
     searchTerms: ["title", "big", "large"],
     icon: <Heading1 size={18} />,
     command: ({ editor, range }) => {
-      editor.chain().focus().deleteRange(range).setNode("heading", { level: 1 }).run();
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .setNode("heading", { level: 1 })
+        .run();
     },
   },
   {
@@ -27,7 +52,12 @@ export const suggestionItems = createSuggestionItems([
     searchTerms: ["subtitle", "medium"],
     icon: <Heading2 size={18} />,
     command: ({ editor, range }) => {
-      editor.chain().focus().deleteRange(range).setNode("heading", { level: 2 }).run();
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .setNode("heading", { level: 2 })
+        .run();
     },
   },
   {
@@ -36,7 +66,12 @@ export const suggestionItems = createSuggestionItems([
     searchTerms: ["subtitle", "small"],
     icon: <Heading3 size={18} />,
     command: ({ editor, range }) => {
-      editor.chain().focus().deleteRange(range).setNode("heading", { level: 3 }).run();
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .setNode("heading", { level: 3 })
+        .run();
     },
   },
   {
@@ -71,14 +106,22 @@ export const suggestionItems = createSuggestionItems([
     description: "Insérez une citation.",
     searchTerms: ["blockquote"],
     icon: <TextQuote size={18} />,
-    command: ({ editor, range }) => editor.chain().focus().deleteRange(range).toggleNode("paragraph", "paragraph").toggleBlockquote().run(),
+    command: ({ editor, range }) =>
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .toggleNode("paragraph", "paragraph")
+        .toggleBlockquote()
+        .run(),
   },
   {
     title: "Règle horizontale",
     description: "Insérez une règle horizontale.",
     searchTerms: ["horizontal", "rule"],
     icon: <Minus size={18} />,
-    command: ({ editor, range }) => editor.chain().focus().deleteRange(range).setHorizontalRule().run(),
+    command: ({ editor, range }) =>
+      editor.chain().focus().deleteRange(range).setHorizontalRule().run(),
   },
   {
     title: "Tableau",
@@ -86,7 +129,12 @@ export const suggestionItems = createSuggestionItems([
     searchTerms: ["table"],
     icon: <Table size={18} />,
     command: ({ editor, range }) => {
-      editor.chain().focus().deleteRange(range).insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+        .run();
     },
   },
   {
@@ -94,7 +142,8 @@ export const suggestionItems = createSuggestionItems([
     description: "Affichez un extrait de code.",
     searchTerms: ["codeblock"],
     icon: <Code size={18} />,
-    command: ({ editor, range }) => editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
+    command: ({ editor, range }) =>
+      editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
   },
   {
     title: "Image",
@@ -125,7 +174,9 @@ export const suggestionItems = createSuggestionItems([
     command: ({ editor, range }) => {
       const videoLink = prompt("Please enter Youtube Video Link");
       //From https://regexr.com/3dj5t
-      const ytregex = new RegExp(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/);
+      const ytregex = new RegExp(
+        /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/
+      );
 
       if (ytregex.test(videoLink as string)) {
         editor
@@ -150,7 +201,9 @@ export const suggestionItems = createSuggestionItems([
     icon: <Twitter size={18} />,
     command: ({ editor, range }) => {
       const tweetLink = prompt("Please enter Twitter Link");
-      const tweetRegex = new RegExp(/^https?:\/\/(www\.)?x\.com\/([a-zA-Z0-9_]{1,15})(\/status\/(\d+))?(\/\S*)?$/);
+      const tweetRegex = new RegExp(
+        /^https?:\/\/(www\.)?x\.com\/([a-zA-Z0-9_]{1,15})(\/status\/(\d+))?(\/\S*)?$/
+      );
 
       if (tweetRegex.test(tweetLink as string)) {
         editor

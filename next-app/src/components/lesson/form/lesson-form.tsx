@@ -4,13 +4,23 @@ import NovelEditor from "@/components/block-editor/novel-editor";
 import CustomInput from "@/components/form/custom-input";
 import CustomSelect from "@/components/form/custom-select";
 import SubmitButton from "@/components/form/submit-button";
-import { Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import LessonFormSkeleton from "@/components/skeleton/lesson-form-skeleton";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useCreateLesson } from "@/hooks/mutations/lesson/use-create-lesson";
 import { useUpdateLesson } from "@/hooks/mutations/lesson/use-update-lesson";
 import useGetAllGradeLevels from "@/hooks/queries/use-get-all-grade-levels";
 import useGetAllLessonsSubject from "@/hooks/queries/use-get-all-lesson-subjects";
 import { stringToSlug } from "@/lib/utils";
-import { CreateLessonFormInput, createLessonFormSchema } from "@/shema-zod/lesson.shema";
+import {
+  CreateLessonFormInput,
+  createLessonFormSchema,
+} from "@/shema-zod/lesson.shema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { JSONContent } from "novel";
@@ -27,16 +37,28 @@ interface EditLessonProps {
   GradeLevelsID?: string;
 }
 
-export default function LessonForm({id, title, content, LessonSubjectID, GradeLevelsID}: EditLessonProps) {
+export default function LessonForm({
+  id,
+  title,
+  content,
+  LessonSubjectID,
+  GradeLevelsID,
+}: EditLessonProps) {
   //queries
-  const { data: allLessonsSubject, isLoading: isLoadingLessonsSubject } = useGetAllLessonsSubject();
-  const { data: allGradeLevels, isLoading: isLoadingGradeLevels } = useGetAllGradeLevels();
-  
-  // mutations
-  const { isPending: isPendingCreate, mutateAsync: mutateAsyncCreate } = useCreateLesson();
-  const { isPending: isPendingUpdate, mutateAsync: mutateAsyncUpdate } = useUpdateLesson();
+  const { data: allLessonsSubject, isLoading: isLoadingLessonsSubject } =
+    useGetAllLessonsSubject();
+  const { data: allGradeLevels, isLoading: isLoadingGradeLevels } =
+    useGetAllGradeLevels();
 
-  const [previewContent, setPreviewContent] = useState<JSONContent | undefined>(content);
+  // mutations
+  const { isPending: isPendingCreate, mutateAsync: mutateAsyncCreate } =
+    useCreateLesson();
+  const { isPending: isPendingUpdate, mutateAsync: mutateAsyncUpdate } =
+    useUpdateLesson();
+
+  const [previewContent, setPreviewContent] = useState<JSONContent | undefined>(
+    content
+  );
 
   const router = useRouter();
 
@@ -49,19 +71,19 @@ export default function LessonForm({id, title, content, LessonSubjectID, GradeLe
       GradeLevelsID: GradeLevelsID ?? "",
     },
   });
-  
+
   const onSubmit = async () => {
     try {
       const values = form.getValues();
       // Sérialiser le contenu avant l'envoi
       const serializedData = {
         ...values,
-        content: JSON.stringify(values.content)
+        content: JSON.stringify(values.content),
       };
 
       let data;
       if (id) {
-        data = await mutateAsyncUpdate({lessonId: id, data: serializedData});
+        data = await mutateAsyncUpdate({ lessonId: id, data: serializedData });
       } else {
         data = await mutateAsyncCreate(serializedData);
       }
@@ -69,7 +91,7 @@ export default function LessonForm({id, title, content, LessonSubjectID, GradeLe
       if (data?.error) toast.error(data.error);
       if (data?.success) {
         const subject = stringToSlug(data.data.LessonSubject.label);
-        
+
         toast.success(data.success);
         form.reset();
         router.push(`/admin/lecons/${subject}`);
@@ -78,45 +100,47 @@ export default function LessonForm({id, title, content, LessonSubjectID, GradeLe
       console.error(error);
       toast.error("Une erreur c'est produite !");
     }
-  }
+  };
 
   if (isLoadingLessonsSubject || isLoadingGradeLevels) {
-    return <div>Loading...</div>;
+    return <LessonFormSkeleton />;
   }
 
   return (
-    <div className="w-full flex flex-col gap-4">
-      <div className="w-full max-w-screen-xl mx-auto">
+    <div className="w-full max-w-screen-xl mx-auto">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <div className="w-full flex justify-between items-center">
-
+          <div className="w-full flex flex-col lg:flex-row  items-center gap-8 lg:gap-16">
             {/* Input pour le titre */}
             <CustomInput
               control={form.control}
               name="title"
               label="Titre"
               placeholder="Entrez le nom de la leçon"
+              description="Le titre de la leçon"
+              className="w-full lg:w-fit"
             />
 
             {/* Select pour le sujet */}
-            <CustomSelect 
+            <CustomSelect
               control={form.control}
               name="LessonSubjectID"
               label="Sujet"
               placeholder="Selectionnez le sujet de la leçon"
               description="Le sujet dont la leçon a trait"
               options={allLessonsSubject}
+              className="w-full lg:w-fit"
             />
 
             {/* Select pour le niveau de la leçon */}
-            <CustomSelect 
+            <CustomSelect
               control={form.control}
               name="GradeLevelsID"
               label="Niveau"
               placeholder="Séléctionnez le niveau de la leçon"
               description="Le niveau de la leçon"
               options={allGradeLevels}
+              className="w-full lg:w-fit"
             />
           </div>
 
@@ -136,7 +160,7 @@ export default function LessonForm({id, title, content, LessonSubjectID, GradeLe
                       onChange={(newContent) => {
                         field.onChange(newContent); // Synchronise avec react-hook-form
                         setPreviewContent(newContent); // Met à jour le contenu de la preview
-                      }} 
+                      }}
                     />
                   )}
                 />
@@ -155,13 +179,10 @@ export default function LessonForm({id, title, content, LessonSubjectID, GradeLe
             />
 
             {/* Preview de la leçon */}
-            {previewContent && 
-              <LessonContent content={previewContent}/>
-            }
+            {previewContent && <LessonContent content={previewContent} />}
           </div>
         </form>
       </Form>
-      </div>
     </div>
   );
 }

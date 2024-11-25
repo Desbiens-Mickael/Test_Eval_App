@@ -1,4 +1,4 @@
-import { ResetEmail } from "@/actions/reset-email";
+import { ResetEmailAction } from "@/actions/reset-email.action";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -8,7 +8,7 @@ import { toast } from "sonner";
  */
 const useResetEmail = () => {
   return useMutation({
-    mutationFn: ResetEmail,
+    mutationFn: ResetEmailAction,
     onSuccess: (data) => {
       if (data?.error) toast.error(data.error);
       if (data?.success) toast.success(data.success);

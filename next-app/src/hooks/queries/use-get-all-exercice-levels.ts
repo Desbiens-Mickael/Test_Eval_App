@@ -1,4 +1,4 @@
-import getExerciceLevels from "@/actions/exercice/get-exercice-levels";
+import { getExerciceLevelsAction } from "@/actions/exercice-levels.action";
 import { Level } from "@/type/level";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
@@ -9,7 +9,7 @@ import { useQuery, UseQueryResult } from "@tanstack/react-query";
 const useGetAllExerciceLevels = (): UseQueryResult<Level[], Error> => {
   return useQuery({
     queryKey: ["allExerciceLevels"],
-    queryFn: async () => getExerciceLevels(),
+    queryFn: async () => getExerciceLevelsAction(),
   });
 };
 

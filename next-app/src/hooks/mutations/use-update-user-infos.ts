@@ -1,4 +1,4 @@
-import updateUserInfos from "@/actions/uptdate-user-infos";
+import { updateUserInfosAction } from "@/actions/user-info.action";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
@@ -11,7 +11,7 @@ export const useUpdateUserInfos = () => {
   const { update } = useSession();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: updateUserInfos,
+    mutationFn: updateUserInfosAction,
     onSuccess: (data) => {
       if (data.success) {
         toast.success(data.success);

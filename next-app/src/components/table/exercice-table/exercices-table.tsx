@@ -6,17 +6,26 @@ import SubjectLayout from "@/components/subject-layout";
 import { DataTableColumnHeader } from "@/components/table/data-table-column-header";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import useGetAllExercicesByType from "@/hooks/queries/use-get-all-exercices-by-type";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import useGetAllExercicesByType from "@/hooks/queries/exercice/use-get-all-exercices-by-type";
 import { Exercice } from "@/type/exercice";
 import { ExerciceType } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
+import { DataTable } from "../data-table";
+import FilterBUttonLessonSubject from "../filter-button/filter-button-lesson-subject";
+import FilterBUttonLevel from "../filter-button/filter-button-level";
 import TableSkeleton from "../table-skeleton";
-import { ExerciceTableTemplate } from "./exercice-table-template";
 
 export default function ExercicesTable({ exerciceType }: { exerciceType: ExerciceType }) {
   const { data: exerciceData, isLoading, isError, error } = useGetAllExercicesByType(exerciceType);
+
+  const hanldeDelete = (id: string) => {
+    const res = confirm("Voulez-vous supprimer cet exercice ? " + id);
+    if (res) {
+      console.log("Suppression de l'exercice " + id);
+    }
+  };
 
   const columns: ColumnDef<Exercice>[] = [
     {
@@ -81,7 +90,6 @@ export default function ExercicesTable({ exerciceType }: { exerciceType: Exercic
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
               {/* TODO: ajouter le bouton de modification d'exercice */}
               <DropdownMenuItem
                 onClick={() => {
@@ -92,7 +100,7 @@ export default function ExercicesTable({ exerciceType }: { exerciceType: Exercic
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               {/* TODO: ajouter le bouton de suppression d'exercice */}
-              <DropdownMenuItem className="text-red-500 focus:text-red-500 focus:bg-red-100" onClick={() => console.log("Suppression de l'exercice " + exercice.id)}>
+              <DropdownMenuItem className="text-red-500 focus:text-red-500 focus:bg-red-100" onClick={() => hanldeDelete(exercice.id)}>
                 Supprimer
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -104,5 +112,9 @@ export default function ExercicesTable({ exerciceType }: { exerciceType: Exercic
 
   if (isLoading) return <TableSkeleton />;
 
-  return <ExerciceTableTemplate columns={columns} data={exerciceData ?? []} viewOptionsButton />;
+  return (
+    <DataTable columns={columns} data={exerciceData ?? []} viewOptionsButton inputSearchColumnId="Titre">
+      {(table) => [<FilterBUttonLevel table={table} />, <FilterBUttonLessonSubject table={table} />]}
+    </DataTable>
+  );
 }

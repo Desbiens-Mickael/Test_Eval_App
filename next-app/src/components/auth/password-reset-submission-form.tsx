@@ -2,11 +2,11 @@
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { resetPasswordSendFormSchema } from "@/type/shema-zod";
+import { resetPasswordSendFormSchema } from "@/shema-zod/auth.shema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { resetPassword } from "@/actions/reset-password";
+import { resetPasswordAction } from "@/actions/reset-password.action";
 import SubmitButton from "@/components/form/submit-button";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -14,7 +14,7 @@ import { z } from "zod";
 
 export default function PasswordResetSubmissionForm({}) {
   const { mutate, isPending } = useMutation({
-    mutationFn: resetPassword,
+    mutationFn: resetPasswordAction,
     onSuccess: (data) => {
       if (data.error) toast.error(data.error);
       if (data.success) toast.error(data.success);

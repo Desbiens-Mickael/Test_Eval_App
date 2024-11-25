@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/db";
 import { hashPassword } from "@/lib/hash-password";
 
-export const createUser = async (email: string, plainPassword: string, fullName: string) => {
+export const createUserData = async (email: string, plainPassword: string, fullName: string) => {
   try {
     const hashedPassword = await hashPassword(plainPassword);
 
@@ -13,7 +13,7 @@ export const createUser = async (email: string, plainPassword: string, fullName:
   }
 };
 
-export const getUserById = async (id: string) => {
+export const getUserByIdData = async (id: string) => {
   try {
     return await prisma.user.findUnique({ where: { id } });
   } catch (error) {
@@ -21,7 +21,7 @@ export const getUserById = async (id: string) => {
   }
 };
 
-export const getUserByEmail = async (email: string) => {
+export const getUserByEmailData = async (email: string) => {
   try {
     return await prisma.user.findUnique({ where: { email } });
   } catch (error) {
@@ -29,7 +29,7 @@ export const getUserByEmail = async (email: string) => {
   }
 };
 
-export const UpdateUser = async (id: string, data: object) => {
+export const UpdateUserData = async (id: string, data: object) => {
   try {
     return await prisma.user.update({ where: { id: id }, data: { ...data } });
   } catch (error) {

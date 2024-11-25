@@ -5,7 +5,7 @@ import SubmitButton from "@/components/form/submit-button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
 import { useUpdateUserSecurity } from "@/hooks/mutations/use-update-user-security";
-import { userSecurityFormSchema } from "@/type/shema-zod";
+import { userSecurityFormSchema } from "@/shema-zod/auth.shema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";

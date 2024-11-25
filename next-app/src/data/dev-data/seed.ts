@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { hashPassword } from "@/lib/hash-password";
+import { stringToSlug } from "@/lib/utils";
 
 const seed = async () => {
   // Creating admin and user users
@@ -46,36 +47,165 @@ const seed = async () => {
 
   const subjects = await prisma.lessonSubject.findMany();
 
-  // create Lesson
-  await prisma.lesson.createMany({
+  // create GradeLevels for user
+  await prisma.gradeLevels.createMany({
     data: [
       {
-        name: "Le theorème de pythagore",
-        LessonSubjectID: subjects[0].id,
-        authorId: userAdmin.id,
-        content: "Le theoreme de pythagore est un theoreme de geometrie.",
+        label: "CP",
+        color: "bg-red-500",
       },
       {
-        name: "Les verbes irreguliers",
-        LessonSubjectID: subjects[1].id,
-        authorId: userAdmin.id,
-        content: "Les verbes irreguliers sont des verbes qui ne sont pas uniques",
+        label: "CE1",
+        color: "bg-orange-500",
       },
       {
-        name: "L'histoire de la troisième guerre mondiale",
-        LessonSubjectID: subjects[2].id,
-        authorId: userAdmin.id,
-        content: "La troisième guerre mondiale est une guerre mondiale de 1939 à 1945.",
+        label: "CE2",
+        color: "bg-green-500",
       },
       {
-        name: "La phusion nucleaire",
-        LessonSubjectID: subjects[3].id,
-        authorId: userAdmin.id,
-        content: "La phusion nucleaire est un processus de fusion nucleaire qui consiste en la fusion des atomes.",
+        label: "CM1",
+        color: "bg-blue-500",
+      },
+      {
+        label: "CM2",
+        color: "bg-purple-500",
+      },
+      {
+        label: "6e",
+        color: "bg-pink-500",
+      },
+      {
+        label: "5e",
+        color: "bg-indigo-500",
+      },
+      {
+        label: "4e",
+        color: "bg-yellow-500",
+      },
+      {
+        label: "3e",
+        color: "bg-amber-500",
       },
     ],
   });
 
+  const gradeLevels = await prisma.gradeLevels.findMany();
+
+  // create Lesson
+  await prisma.lesson.createMany({
+    data: [
+      {
+        title: "Le theorème de pythagore",
+        LessonSubjectID: subjects[0].id,
+        GradeLevelsID: gradeLevels[0].id,
+        authorId: userAdmin.id,
+        content: {
+          type: "doc",
+          content: [
+            {
+              type: "heading",
+              attrs: { level: 1 },
+              content: [{ type: "text", text: "Le théorème de Pythagore" }],
+            },
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  text: "Le théorème de Pythagore est un théorème de géométrie.",
+                },
+              ],
+            },
+          ],
+        },
+        slug: stringToSlug("Le theorème de pythagore"),
+      },
+      {
+        title: "Les verbes irréguliers",
+        LessonSubjectID: subjects[1].id,
+        GradeLevelsID: gradeLevels[2].id,
+        authorId: userAdmin.id,
+        content: {
+          type: "doc",
+          content: [
+            {
+              type: "heading",
+              attrs: { level: 1 },
+              content: [{ type: "text", text: "Les verbes irréguliers" }],
+            },
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  text: "Les verbes irréguliers sont des verbes qui ne suivent pas une règle unique.",
+                },
+              ],
+            },
+          ],
+        },
+        slug: stringToSlug("Les verbes irréguliers"),
+      },
+      {
+        title: "L'histoire de la troisième guerre mondiale",
+        LessonSubjectID: subjects[2].id,
+        GradeLevelsID: gradeLevels[3].id,
+        authorId: userAdmin.id,
+        content: {
+          type: "doc",
+          content: [
+            {
+              type: "heading",
+              attrs: { level: 1 },
+              content: [
+                {
+                  type: "text",
+                  text: "L'histoire de la troisième guerre mondiale",
+                },
+              ],
+            },
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  text: "La troisième guerre mondiale est une guerre mondiale de 1939 à 1945.",
+                },
+              ],
+            },
+          ],
+        },
+        slug: stringToSlug("L'histoire de la troisième guerre mondiale"),
+      },
+      {
+        title: "La fusion nucléaire",
+        LessonSubjectID: subjects[3].id,
+        GradeLevelsID: gradeLevels[6].id,
+        authorId: userAdmin.id,
+        content: {
+          type: "doc",
+          content: [
+            {
+              type: "heading",
+              attrs: { level: 1 },
+              content: [{ type: "text", text: "La fusion nucléaire" }],
+            },
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  text: "La fusion nucléaire est un processus dans lequel deux atomes fusionnent.",
+                },
+              ],
+            },
+          ],
+        },
+        slug: stringToSlug("La fusion nucléaire"),
+      },
+    ],
+  });
+  
   const lessons = await prisma.lesson.findMany();
 
   // create Level

@@ -7,6 +7,7 @@ import type { Metadata, Viewport } from "next";
 import { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import "./globals.css";
+import "./prosemirror.css";
 
 export const metadata: Metadata = {
   title: {
@@ -33,8 +34,8 @@ export default async function RootLayout({
 
   return (
     <SessionProvider session={session}>
-      <html lang="fr" className="min-h-screen">
-        <body className={cn(inter.className, "flex flex-col h-full text-secondary")}>
+      <html lang="fr" className="">
+        <body className={cn(inter.className, "flex flex-col min-h-screen text-secondary")}>
           <Providers>
             {children}
             <Toaster position="top-right" />

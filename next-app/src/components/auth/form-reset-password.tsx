@@ -1,11 +1,11 @@
 "use client";
 
 import { Form } from "@/components/ui/form";
-import { resetPasswordFormSchema } from "@/type/shema-zod";
+import { resetPasswordFormSchema } from "@/shema-zod/auth.shema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { newResetPassword } from "@/actions/reset-password";
+import { newResetPasswordAction } from "@/actions/reset-password.action";
 import SubmitButton from "@/components/form/submit-button";
 import { useMutation } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
@@ -18,7 +18,7 @@ export default function FormResetPassword({}) {
   const token = searchParams.get("token");
 
   const { mutate, isPending } = useMutation({
-    mutationFn: newResetPassword,
+    mutationFn: newResetPasswordAction,
     onSuccess: (data) => {
       if (data?.error) toast.error(data.error);
       if (data?.success) toast.error(data.success);

@@ -1,14 +1,14 @@
 import { prisma } from "@/lib/db";
-import { verificationTokenShema } from "@/type/shema-zod";
+import { verificationTokenShema } from "@/shema-zod/auth.shema";
 import { z } from "zod";
 
 const TYPE = "ResetPassword";
 
-export const createResetPasswordToken = async (resetPasswordToken: z.infer<typeof verificationTokenShema>) => {
+export const createResetPasswordTokenData = async (resetPasswordToken: z.infer<typeof verificationTokenShema>) => {
   return await prisma.verificationToken.create({ data: { type: TYPE, ...resetPasswordToken } });
 };
 
-export const getResetPasswordTokenByIdentifier = async (email: string) => {
+export const getResetPasswordTokenByIdentifierData = async (email: string) => {
   try {
     return prisma.verificationToken.findFirst({ where: { identifier: email, type: TYPE } });
   } catch (err) {
@@ -16,7 +16,7 @@ export const getResetPasswordTokenByIdentifier = async (email: string) => {
   }
 };
 
-export const getResetPasswordTokenByToken = async (token: string) => {
+export const getResetPasswordTokenByTokenData = async (token: string) => {
   try {
     return await prisma.verificationToken.findUnique({ where: { token: token, type: TYPE } });
   } catch (err) {
@@ -24,6 +24,6 @@ export const getResetPasswordTokenByToken = async (token: string) => {
   }
 };
 
-export const deleteResetPasswordTokenById = async (id: string) => {
+export const deleteResetPasswordTokenByIdData = async (id: string) => {
   await prisma.verificationToken.delete({ where: { id } });
 };

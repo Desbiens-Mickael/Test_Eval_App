@@ -4,15 +4,16 @@ import LevelLayout from "../../level-layout";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import useGetAllExerciceLevels from "@/hooks/queries/use-get-all-exercice-levels";
-import { Column } from "@tanstack/react-table";
+import { Table } from "@tanstack/react-table";
 import DataTAbleBUttonFilter from "./data-table-button-filter";
 
-interface FilterBUttonLevelProps<TData, TValue> {
-  column: Column<TData, TValue> | undefined;
+interface FilterBUttonLevelProps<TData> {
+  table: Table<TData>;
 }
 
-export default function FilterBUttonLevel<TData, TValue>({ column }: FilterBUttonLevelProps<TData, TValue>) {
+export default function FilterBUttonLevel<TData>({ table }: FilterBUttonLevelProps<TData>) {
   const { isLoading, isError, data, error } = useGetAllExerciceLevels();
+  const column = table.getColumn("Niveau");
 
   if (isLoading) {
     return <Skeleton className="w-[80px] h-[32px]" />;

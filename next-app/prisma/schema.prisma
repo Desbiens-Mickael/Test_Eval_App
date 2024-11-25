@@ -121,10 +121,23 @@ model LessonSubject {
   @@unique([label, color])
 }
 
+model GradeLevels  {
+  id                      String @id @default(cuid())
+  label                   String @unique
+  color                   String
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  lessons                 Lesson[]
+
+  @@unique([label, color])
+}
+
 model Lesson {
   id                      String @id @default(cuid())
-  name                    String 
-  content                 String
+  title                   String 
+  content                 Json
+  slug                    String
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
   
@@ -134,9 +147,13 @@ model Lesson {
   LessonSubjectID         String
   LessonSubject           LessonSubject @relation(fields: [LessonSubjectID], references: [id], onDelete: Cascade)
 
+  GradeLevelsID           String
+  GradeLevels             GradeLevels @relation(fields: [GradeLevelsID], references: [id], onDelete: Cascade)
+
   exercices               Exercice[]
   
-  @@unique([name, authorId])
+  @@unique([title, authorId])
+  @@unique([slug, authorId])
 }
 
 model ExerciceLevel {

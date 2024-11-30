@@ -9,11 +9,11 @@ import { Lesson } from "@/type/lesson";
 import { ColumnDef } from "@tanstack/react-table";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
-import { DataTable } from "../data-table";
-import FilterGRadeLevel from "../filter-button/filter-grade-level";
-import TableSkeleton from "../table-skeleton";
+import { DataTable } from "../../../../../../components/table/data-table";
+import FilterGRadeLevel from "../../../../../../components/table/filter-button/filter-grade-level";
+import TableSkeleton from "../../../../../../components/table/table-skeleton";
 
-import { DataTableRowActions } from "../data-table-row-action";
+import { DataTableRowActions } from "../../../../../../components/table/data-table-row-action";
 
 export default function LessonTable({ subject }: { subject: string }) {
   const { data: exerciceData, isLoading } = useGetAllLessonsBySubject(subject);

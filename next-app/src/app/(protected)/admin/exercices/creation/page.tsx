@@ -2,13 +2,13 @@ import PageTitle from "@/components/page-title";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Mes Abonnés",
+  title: "Création d'un exercice",
 };
 
-export default function RegisteredPage() {
+export default function ExerciceCreate() {
   return (
     <>
-      <PageTitle title="Mes Abonnés" />
+      <PageTitle title="Création d'un exercice" />
     </>
   );
 }

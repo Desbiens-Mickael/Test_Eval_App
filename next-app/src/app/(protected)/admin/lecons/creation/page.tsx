@@ -1,4 +1,4 @@
-import LessonForm from "@/components/lesson/form/lesson-form";
+import LessonForm from "@/app/(protected)/admin/lecons/(components)/form/lesson-form";
 import PageTitle from "@/components/page-title";
 import { Metadata } from "next";
 

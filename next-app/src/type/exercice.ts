@@ -7,3 +7,10 @@ export type Exercice = {
   levelColor: string;
   subjectColor: string;
 };
+
+export enum ExerciceType {
+  Card = "Card",
+  True_or_False = "True_or_False",
+  List = "List",
+  Fill_blank = "Fill_blank",
+}

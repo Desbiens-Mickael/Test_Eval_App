@@ -1,6 +1,7 @@
 import PageTitle from "@/components/page-title";
-import ExercicesTable from "@/components/table/exercice-table/exercices-table";
+import { ExerciceType } from "@/type/exercice";
 import { Metadata } from "next";
+import ExercicesTable from "../(components)/exercices-table";
 
 export const metadata: Metadata = {
   title: "Exercices à liste",
@@ -8,9 +9,9 @@ export const metadata: Metadata = {
 
 export default function ListGamePage() {
   return (
-    <div className="w-full h-full flex flex-col items-center max-w-[1200px]">
+    <>
       <PageTitle title="Exercices à liste" />
-      <ExercicesTable exerciceType="List" />
-    </div>
+      <ExercicesTable exerciceType={ExerciceType.List} />
+    </>
   );
 }

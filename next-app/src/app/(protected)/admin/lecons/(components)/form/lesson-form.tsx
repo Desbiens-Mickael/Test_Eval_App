@@ -4,7 +4,6 @@ import NovelEditor from "@/components/block-editor/novel-editor";
 import CustomInput from "@/components/form/custom-input";
 import CustomSelect from "@/components/form/custom-select";
 import SubmitButton from "@/components/form/submit-button";
-import LessonFormSkeleton from "@/components/skeleton/lesson-form-skeleton";
 import {
   Form,
   FormField,
@@ -28,6 +27,7 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import LessonContent from "../lesson-content";
+import LessonFormSkeleton from "../lesson-form-skeleton";
 
 interface EditLessonProps {
   id?: string;

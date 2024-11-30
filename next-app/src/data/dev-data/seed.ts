@@ -205,7 +205,7 @@ const seed = async () => {
       },
     ],
   });
-  
+
   const lessons = await prisma.lesson.findMany();
 
   // create Level
@@ -228,6 +228,25 @@ const seed = async () => {
 
   const levels = await prisma.exerciceLevel.findMany();
 
+  await prisma.exerciceType.createMany({
+    data: [
+      {
+        name: "Card",
+      },
+      {
+        name: "True_or_False",
+      },
+      {
+        name: "Fill_blank",
+      },
+      {
+        name: "List",
+      },
+    ],
+  });
+
+  const types = await prisma.exerciceType.findMany();
+
   // create Exercice
   await prisma.exercice.createMany({
     data: [
@@ -236,92 +255,80 @@ const seed = async () => {
         levelID: levels[0].id,
         authorId: userAdmin.id,
         lessonID: lessons[0].id,
-        type: "Card",
+        typeID: types[0].id,
         description: "Trouve la bonne reponse pour le theoreme de pythagore",
+        content: {},
+        answer: {},
       },
       {
         title: "Trouve les bonnes reponses",
         levelID: levels[1].id,
         authorId: userAdmin.id,
         lessonID: lessons[3].id,
-        type: "Card",
+        typeID: types[0].id,
         description: "Trouve la bonne reponse pour la phusion nucleaire",
+        content: {},
+        answer: {},
       },
       {
         title: "Trouve les bonnes reponses",
         levelID: levels[2].id,
         authorId: userAdmin.id,
         lessonID: lessons[1].id,
-        type: "Card",
+        typeID: types[3].id,
         description: "Trouve la bonne reponse pour les verbes irreguliers",
+        content: {},
+        answer: {},
       },
       {
         title: "Trouve les bonnes reponses",
         levelID: levels[2].id,
         authorId: userAdmin.id,
         lessonID: lessons[2].id,
-        type: "Card",
+        typeID: types[1].id,
         description: "Trouve la bonne reponse pour le theoreme de pythagore",
+        content: {},
+        answer: {},
       },
       {
         title: "Trouve les bonnes reponses",
         levelID: levels[2].id,
         authorId: userAdmin.id,
         lessonID: lessons[3].id,
-        type: "Fill_blank",
+        typeID: types[1].id,
         description: "Trouve la bonne reponse pour le theoreme de pythagore",
+        content: {},
+        answer: {},
       },
       {
         title: "Trouve les bonnes reponses",
         levelID: levels[1].id,
         authorId: userAdmin.id,
         lessonID: lessons[3].id,
-        type: "Fill_blank",
+        typeID: types[2].id,
         description: "Trouve la bonne reponse pour le theoreme de pythagore",
+        content: {},
+        answer: {},
       },
       {
         title: "Trouve les bonnes reponses",
         levelID: levels[0].id,
         authorId: userAdmin.id,
         lessonID: lessons[3].id,
-        type: "True_or_False",
+        typeID: types[3].id,
         description: "Trouve la bonne reponse pour le theoreme de pythagore",
+        content: {},
+        answer: {},
       },
       {
         title: "Trouve les bonnes reponses",
         levelID: levels[2].id,
         authorId: userAdmin.id,
         lessonID: lessons[3].id,
-        type: "List",
+        typeID: types[3].id,
         description: "Trouve la bonne reponse pour le theoreme de pythagore",
-      },
-    ],
-  });
-
-  const exercices = await prisma.exercice.findMany();
-
-  // create Card Exercice
-  await prisma.contentExerciceCard.createMany({
-    data: [
-      {
-        exerciceID: exercices[0].id,
-        content: { "colonne-1": ["reponse 1", "reponse 2", "reponse 3"], "colonne-2": ["reponse 4", "reponse 5", "reponse 6"] },
-        correctAnswer: { "colonne-1": ["reponse 1", "reponse 2", "reponse 3"], "colonne-2": ["reponse 4", "reponse 5", "reponse 6"] },
-      },
-      {
-        exerciceID: exercices[1].id,
-        content: { "colonne-1": ["reponse 1", "reponse 2", "reponse 3"], "colonne-2": ["reponse 4", "reponse 5", "reponse 6"] },
-        correctAnswer: { "colonne-1": ["reponse 1", "reponse 2", "reponse 3"], "colonne-2": ["reponse 4", "reponse 5", "reponse 6"] },
-      },
-      {
-        exerciceID: exercices[2].id,
-        content: { "colonne-1": ["reponse 1", "reponse 2", "reponse 3"], "colonne-2": ["reponse 4", "reponse 5", "reponse 6"] },
-        correctAnswer: { "colonne-1": ["reponse 1", "reponse 2", "reponse 3"], "colonne-2": ["reponse 4", "reponse 5", "reponse 6"] },
-      },
-      {
-        exerciceID: exercices[3].id,
-        content: { "colonne-1": ["reponse 1", "reponse 2", "reponse 3"], "colonne-2": ["reponse 4", "reponse 5", "reponse 6"] },
-        correctAnswer: { "colonne-1": ["reponse 1", "reponse 2", "reponse 3"], "colonne-2": ["reponse 4", "reponse 5", "reponse 6"] },
+        content: {},
+        answer: {},
       },
     ],
   });

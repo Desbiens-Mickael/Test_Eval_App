@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { ReactNode } from "react";
 
 interface DialogState {
   openId: string | null; // ID de l’élément ouvert
@@ -29,6 +30,7 @@ interface DataTableRowActionsProps extends DialogState {
   elementId: string;
   editPath: string;
   handleDelete: (id: string) => Promise<void>;
+  children?: ReactNode;
 }
 
 export function DataTableRowActions({
@@ -37,6 +39,7 @@ export function DataTableRowActions({
   handleDelete,
   openId,
   setOpenId,
+  children,
 }: DataTableRowActionsProps) {
   const router = useRouter();
 
@@ -46,7 +49,11 @@ export function DataTableRowActions({
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0" aria-label="Options menu">
+          <Button
+            variant="ghost"
+            className="h-8 w-8 p-0"
+            aria-label="Options menu"
+          >
             <MoreHorizontal className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
@@ -61,6 +68,8 @@ export function DataTableRowActions({
             Modifier
           </DropdownMenuItem>
           <DropdownMenuSeparator />
+          {children}
+          {children && <DropdownMenuSeparator />}
           <DropdownMenuItem
             className="text-red-500 focus:text-red-500 focus:bg-red-100 hover:bg-red-100 cursor-pointer w-full"
             onSelect={() => setOpenId(elementId)} // Ouvre uniquement pour cet élément
@@ -71,12 +80,16 @@ export function DataTableRowActions({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <AlertDialog open={isOpen} onOpenChange={(open) => !open && setOpenId(null)}>
+      <AlertDialog
+        open={isOpen}
+        onOpenChange={(open) => !open && setOpenId(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Suppression de la ligne ?</AlertDialogTitle>
             <AlertDialogDescription>
-              Voulez-vous vraiment supprimer cette ligne ? Cette action est irréversible.
+              Voulez-vous vraiment supprimer cette ligne ? Cette action est
+              irréversible.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

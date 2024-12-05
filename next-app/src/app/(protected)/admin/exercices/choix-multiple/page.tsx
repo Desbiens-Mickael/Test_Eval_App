@@ -4,14 +4,14 @@ import { Metadata } from "next";
 import ExercicesTable from "../(components)/exercices-table";
 
 export const metadata: Metadata = {
-  title: "Exercices à liste",
+  title: "Exercices à choix multiple",
 };
 
-export default function ListGamePage() {
+export default function MultipleChoiceGamePage() {
   return (
     <>
-      <PageTitle title="Exercices à liste" />
-      <ExercicesTable exerciceType={ExerciceType.List} />
+      <PageTitle title="Exercices à choix multiple" />
+      <ExercicesTable exerciceType={ExerciceType.MultipleChoice} />
     </>
   );
 }

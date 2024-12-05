@@ -1,8 +1,21 @@
 "use client";
 
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@/components/ui/input-otp";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 import { loginFormSchema } from "@/shema-zod/auth.shema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "framer-motion";
@@ -20,7 +33,10 @@ import { z } from "zod";
 
 export default function FormLogin() {
   const [showTwoFactor, setShowTwoFactor] = useState(false);
-  const urlError = useSearchParams().get("error") === "OAuthAccountNotLinked" ? "Action impossible avec cet email." : "";
+  const urlError =
+    useSearchParams().get("error") === "OAuthAccountNotLinked"
+      ? "Action impossible avec cet email."
+      : "";
 
   const { isPending, mutateAsync } = useLogin();
 
@@ -52,18 +68,34 @@ export default function FormLogin() {
 
   return (
     <Form {...form}>
-      <form data-testid="form-login" onSubmit={form.handleSubmit(onSubmit)} className="w-full xl:w-[80%] lg:h-1/2 space-y-8">
+      <form
+        data-testid="form-login"
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="w-full xl:w-[80%] lg:h-1/2 space-y-8"
+      >
         <AnimatePresence>
           {showTwoFactor && (
-            <motion.div data-testid="two-factor-section" initial={{ x: 100, opacity: 1 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 100, opacity: 0 }} transition={{ type: "spring" }}>
+            <motion.div
+              data-testid="two-factor-section"
+              initial={{ x: 100, opacity: 1 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: 100, opacity: 0 }}
+              transition={{ type: "spring" }}
+            >
               <FormField
                 control={form.control}
                 name="code"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="inline-flex w-full justify-center mb-3">Code de confirmation</FormLabel>
+                    <FormLabel className="inline-flex w-full justify-center mb-3">
+                      Code de confirmation
+                    </FormLabel>
                     <FormControl className="flex justify-center items-center">
-                      <InputOTP containerClassName="justify-center" maxLength={6} {...field}>
+                      <InputOTP
+                        containerClassName="justify-center"
+                        maxLength={6}
+                        {...field}
+                      >
                         <InputOTPGroup>
                           <InputOTPSlot index={0} />
                           <InputOTPSlot index={1} />
@@ -77,7 +109,10 @@ export default function FormLogin() {
                         </InputOTPGroup>
                       </InputOTP>
                     </FormControl>
-                    <FormDescription className="text-center pt-1 text-xs">Veuillez saisir le code à usage unique qui vous a été envoyé par mail.</FormDescription>
+                    <FormDescription className="text-center pt-1 text-xs">
+                      Veuillez saisir le code à usage unique qui vous a été
+                      envoyé par mail.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -87,7 +122,10 @@ export default function FormLogin() {
         </AnimatePresence>
         {!showTwoFactor && (
           <>
-            <p className="text-sm text-center">Entrez votre email et votre mot de passe ci-dessous pour vous connecter</p>
+            <p className="text-sm text-center">
+              Entrez votre email et votre mot de passe ci-dessous pour vous
+              connecter
+            </p>
             <FormField
               control={form.control}
               name="email"
@@ -103,7 +141,12 @@ export default function FormLogin() {
             />
 
             <div>
-              <PasswordInput control={form.control} name="password" label="Password" placeholder="******" />
+              <PasswordInput
+                control={form.control}
+                name="password"
+                label="Password"
+                placeholder="******"
+              />
               <Button variant={"link"} asChild className="pl-0 mt-1">
                 <Link href={"/auth/reset-password"}>Mot de passe oublié ?</Link>
               </Button>
@@ -111,7 +154,11 @@ export default function FormLogin() {
           </>
         )}
 
-        <SubmitButton texte={showTwoFactor ? "Confirmer" : "Connexion"} isLoading={isPending} loadindText="Vérification en cour" />
+        <SubmitButton
+          texte={showTwoFactor ? "Confirmer" : "Connexion"}
+          isLoading={isPending}
+          loadindText="Vérification en cour"
+        />
       </form>
     </Form>
   );

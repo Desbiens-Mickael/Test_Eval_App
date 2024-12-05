@@ -9,8 +9,8 @@ export type Exercice = {
 };
 
 export enum ExerciceType {
-  Card = "Card",
-  True_or_False = "True_or_False",
-  List = "List",
-  Fill_blank = "Fill_blank",
+  Card = "Carte",
+  True_or_False = "Vrai ou Faux",
+  MultipleChoice = "Choix multiple",
+  Fill_blank = "Texte à trou",
 }

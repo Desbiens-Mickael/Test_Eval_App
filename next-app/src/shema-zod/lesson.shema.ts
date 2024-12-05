@@ -2,23 +2,27 @@ import { JSONContent } from "novel";
 import { z } from "zod";
 
 // Schéma de base pour la création des leçons
-const createLessonBaseSchema =  z.object({
-    title: z.string().min(1, "Le titre est requis"),
-    LessonSubjectID: z.string().min(1, "Le sujet est requis"),
-    GradeLevelsID: z.string().min(1, "Le niveau est requis"),
+const createLessonBaseSchema = z.object({
+  title: z.string().min(1, "Le titre est requis"),
+  LessonSubjectID: z.string().min(1, "Le sujet est requis"),
+  GradeLevelsID: z.string().min(1, "Le niveau est requis"),
 });
 
 // Schéma pour la validation du formulaire côté client
-export const createLessonFormSchema = createLessonBaseSchema.extend({
+export const createLessonFormSchema = createLessonBaseSchema
+  .extend({
     content: z.custom<JSONContent>().refine((content) => {
-        return content && Object.keys(content).length > 0;
+      return content && Object.keys(content).length > 0;
     }, "Le contenu de la leçon est requis"),
-}).required();
+  })
+  .required();
 
 // Schéma pour la validation de l'action serveur
-export const createLessonSchema = createLessonBaseSchema.extend({
+export const createLessonSchema = createLessonBaseSchema
+  .extend({
     content: z.string(),
-}).required();
+  })
+  .required();
 
 // Types dérivés des schémas
 export type CreateLessonFormInput = z.infer<typeof createLessonFormSchema>;

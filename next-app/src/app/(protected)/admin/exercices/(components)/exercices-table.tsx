@@ -110,6 +110,7 @@ export default function ExercicesTable({
     },
     {
       id: "actions",
+      header: "Actions",
       cell: ({ row }) => {
         const exercice = row.original;
 
@@ -168,7 +169,7 @@ export default function ExercicesTable({
       data={exerciceData ?? []}
       viewOptionsButton
       inputSearchColumnId="Titre"
-      createLink="/admin/exercices/creation"
+      // createLink="/admin/exercices/creation"
       handleDelete={async () => {
         console.log("Suppression de l'exercice");
       }}

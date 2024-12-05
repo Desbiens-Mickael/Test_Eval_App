@@ -23,8 +23,11 @@ interface CustomSelectProps<T extends FieldValues> {
   label: string;
   placeholder?: string;
   description?: string;
-  options: Array<{ id: string; label: string; [key: string]: any }> | undefined;
+  options:
+    | Array<{ id: string; label?: string; name?: string; [key: string]: any }>
+    | undefined;
   className?: string;
+  onChange?: (value: string) => void;
 }
 
 export default function CustomSelect<T extends FieldValues>({
@@ -35,6 +38,7 @@ export default function CustomSelect<T extends FieldValues>({
   description,
   options,
   className,
+  onChange,
 }: CustomSelectProps<T>) {
   return (
     <FormField
@@ -43,7 +47,15 @@ export default function CustomSelect<T extends FieldValues>({
       render={({ field }) => (
         <FormItem className={className}>
           <FormLabel>{label}</FormLabel>
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
+          <Select
+            onValueChange={(value) => {
+              field.onChange(value);
+              if (onChange) {
+                onChange(value);
+              }
+            }}
+            defaultValue={field.value}
+          >
             <FormControl>
               <SelectTrigger>
                 <SelectValue placeholder={placeholder} />
@@ -52,7 +64,7 @@ export default function CustomSelect<T extends FieldValues>({
             <SelectContent>
               {options?.map((subject) => (
                 <SelectItem key={subject.id} value={subject.id}>
-                  {subject.label}
+                  {subject.label || subject.name}
                 </SelectItem>
               ))}
             </SelectContent>

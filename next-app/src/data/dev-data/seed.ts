@@ -231,16 +231,16 @@ const seed = async () => {
   await prisma.exerciceType.createMany({
     data: [
       {
-        name: "Card",
+        name: "Carte",
       },
       {
-        name: "True_or_False",
+        name: "Vrai ou Faux",
       },
       {
-        name: "Fill_blank",
+        name: "Texte à trou",
       },
       {
-        name: "List",
+        name: "Choix multiple",
       },
     ],
   });

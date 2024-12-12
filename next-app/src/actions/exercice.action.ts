@@ -1,7 +1,13 @@
 "use server";
 
-import { getAllExercicesByTypeData } from "@/data/exercice/exercice-data";
+import {
+  createExerciceData,
+  getAllExercicesByTypeData,
+} from "@/data/exercice/exercice-data";
 import { getExerciceTypeByNameData } from "@/data/exercice/exercice-type.data";
+import { getLessonBySlugData } from "@/data/lesson/lesson-data";
+import { currentUser } from "@/lib/auth";
+import { createExerciceFormInput } from "@/shema-zod/exercice.shema";
 import { Exercice, ExerciceType } from "@/type/exercice";
 
 export const getAllExercicesByTypeAction = async (
@@ -30,5 +36,41 @@ export const getAllExercicesByTypeAction = async (
   } catch (error) {
     console.error("Error fetching exercises:", error);
     throw Error("Échec de la récupération des exercices");
+  }
+};
+
+export const createExerciceAction = async (
+  data: createExerciceFormInput,
+  lessonSlug: string
+) => {
+  try {
+    // Vérifier que l'utilisateur est connecté
+    const user = await currentUser();
+    if (!user || !user?.id || user.role !== "ADMIN") {
+      return {
+        error: "Action non autoriser !",
+      };
+    }
+
+    // Vérifier que la leçon existe
+    const lesson = await getLessonBySlugData(lessonSlug, user.id);
+    if (!lesson) {
+      return {
+        error: "La leçon n'existe pas !",
+      };
+    }
+
+    // Créer l'exercice avec l'ID de l'auteur et l'ID de la leçon
+    const newExercice = await createExerciceData(data, user.id, lesson.id);
+
+    return {
+      success: "Exercice crée avec successe",
+      data: newExercice,
+    };
+  } catch (error) {
+    console.error("Error creating exercise:", error);
+    return {
+      error: "Une erreur est survenue lors de la création de l'exercice",
+    };
   }
 };

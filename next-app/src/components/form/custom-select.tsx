@@ -26,6 +26,7 @@ interface CustomSelectProps<T extends FieldValues> {
   options:
     | Array<{ id: string; label?: string; name?: string; [key: string]: any }>
     | undefined;
+  isRequired?: boolean;
   className?: string;
   onChange?: (value: string) => void;
 }
@@ -37,6 +38,7 @@ export default function CustomSelect<T extends FieldValues>({
   placeholder,
   description,
   options,
+  isRequired,
   className,
   onChange,
 }: CustomSelectProps<T>) {
@@ -46,7 +48,9 @@ export default function CustomSelect<T extends FieldValues>({
       name={name}
       render={({ field }) => (
         <FormItem className={className}>
-          <FormLabel>{label}</FormLabel>
+          <FormLabel>
+            {label} {isRequired && <span className="text-red-500">*</span>}
+          </FormLabel>
           <Select
             onValueChange={(value) => {
               field.onChange(value);

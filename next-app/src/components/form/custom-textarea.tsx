@@ -6,10 +6,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Control, FieldValues, Path } from "react-hook-form";
+import { Textarea } from "../ui/textarea";
 
-export interface CustomInputProps<T extends FieldValues> {
+interface CustomTextareaProps<T extends FieldValues> {
   control: Control<T>;
   name: Path<T>;
   label: string;
@@ -19,7 +19,7 @@ export interface CustomInputProps<T extends FieldValues> {
   isRequired?: boolean;
 }
 
-const CustomInput = <T extends FieldValues>({
+export default function CustomTextarea<T extends FieldValues>({
   control,
   name,
   label,
@@ -27,27 +27,27 @@ const CustomInput = <T extends FieldValues>({
   description,
   className,
   isRequired,
-}: CustomInputProps<T>) => {
+}: CustomTextareaProps<T>) {
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className={className}>
+        <FormItem>
           <FormLabel>
             {label} {isRequired && <span className="text-red-500">*</span>}
           </FormLabel>
           <FormControl>
-            <Input placeholder={placeholder} {...field} />
+            <Textarea
+              placeholder={placeholder}
+              className={className}
+              {...field}
+            />
           </FormControl>
-          {description && (
-            <FormDescription className="text-xs">{description}</FormDescription>
-          )}
+          <FormDescription className="text-xs">{description}</FormDescription>
           <FormMessage />
         </FormItem>
       )}
     />
   );
-};
-
-export default CustomInput;
+}

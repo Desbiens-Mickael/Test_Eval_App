@@ -183,7 +183,6 @@ model Exercice {
   title                   String
   description             String
   content                 Json
-  answer                  Json
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
 

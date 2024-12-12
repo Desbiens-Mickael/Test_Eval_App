@@ -3,7 +3,6 @@
 
   - You are about to drop the column `type` on the `Exercice` table. All the data in the column will be lost.
   - You are about to drop the `ContentExerciceCard` table. If the table is not empty, all the data it contains will be lost.
-  - Added the required column `answer` to the `Exercice` table without a default value. This is not possible if the table is not empty.
   - Added the required column `content` to the `Exercice` table without a default value. This is not possible if the table is not empty.
   - Added the required column `typeID` to the `Exercice` table without a default value. This is not possible if the table is not empty.
 
@@ -13,7 +12,6 @@ ALTER TABLE "ContentExerciceCard" DROP CONSTRAINT "ContentExerciceCard_exerciceI
 
 -- AlterTable
 ALTER TABLE "Exercice" DROP COLUMN "type",
-ADD COLUMN     "answer" JSONB NOT NULL,
 ADD COLUMN     "content" JSONB NOT NULL,
 ADD COLUMN     "typeID" TEXT NOT NULL;
 

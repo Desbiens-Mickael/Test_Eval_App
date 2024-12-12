@@ -1,8 +1,10 @@
 "use client";
 
+import Stepper from "@/components/form/stepper";
 import SubmitButton from "@/components/form/submit-button";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { useCreateExercice } from "@/hooks/mutations/exercice/use-create-exercice";
 import {
   createExerciceFormInput,
   createExerciceStep1Schema,
@@ -12,8 +14,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import CreateExerciceStep1 from "./createExerciceStep1";
-import CreateExerciceStep2 from "./createExerciceStep2";
+import { toast } from "sonner";
+import CreateExerciceStep1 from "./create-exercice-step-1";
+import CreateExerciceStep2 from "./create-exercice-step-2";
+import CreateEXerciceSTep3 from "./create-exercice-step-3";
 
 interface ExerciceFormProps {
   lessonSlug?: string;
@@ -22,11 +26,15 @@ interface ExerciceFormProps {
 export default function ExerciceForm({ lessonSlug }: ExerciceFormProps) {
   const [step, setStep] = useState<number>(1);
   const [type, setType] = useState<string>("");
+  const [level, setLevel] = useState<string>("");
+
+  const { mutateAsync, isPending } = useCreateExercice();
 
   const form = useForm<createExerciceFormInput>({
     resolver: zodResolver(createExerciceStep1Schema.merge(getStep2Shema(type))),
     defaultValues: {
       title: "",
+      description: "",
       exerciceTypeId: "",
       exerciceLevelId: "",
       content: [],
@@ -40,19 +48,41 @@ export default function ExerciceForm({ lessonSlug }: ExerciceFormProps) {
     });
   }, [type]);
 
-  const onSubmit = (data: createExerciceFormInput) => {
-    const result = { ...data, lessonSlug };
-    console.log("Formulaire soumis :", result);
+  const onSubmit = async (data: createExerciceFormInput) => {
+    try {
+      const res = await mutateAsync({
+        data,
+        lessonSlug: lessonSlug!,
+      });
+      if (res.error) toast.error(res.error);
+      if (res.success) toast.success(res.success);
+    } catch (error) {
+      console.error(error);
+      toast.error("Une erreur est survenue");
+    }
   };
 
   const handleNextStep = async () => {
-    const isValid = await form.trigger([
-      "exerciceLevelId",
-      "exerciceTypeId",
-      "title",
-    ]); // Valide les champs de l'étape actuelle
-    if (isValid) {
-      setStep((prevStep) => prevStep + 1);
+    switch (step) {
+      case 1:
+        const isValid = await form.trigger([
+          "exerciceLevelId",
+          "exerciceTypeId",
+          "title",
+          "description",
+        ]);
+        if (isValid) {
+          setStep((prevStep) => prevStep + 1);
+        }
+        break;
+      case 2:
+        const isValid2 = await form.trigger(["content"]);
+        if (isValid2) {
+          setStep((prevStep) => prevStep + 1);
+        }
+        break;
+      default:
+        break;
     }
   };
 
@@ -61,11 +91,12 @@ export default function ExerciceForm({ lessonSlug }: ExerciceFormProps) {
   };
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full min-h-[600px]">
       <Form {...form}>
+        <Stepper steps={["1", "2", "3"]} currentStep={step} />
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="min-h-[400px] flex flex-col justify-between"
+          className=" w-full flex flex-col justify-between space-y-8"
         >
           <AnimatePresence mode="wait">
             {step === 1 && (
@@ -73,12 +104,24 @@ export default function ExerciceForm({ lessonSlug }: ExerciceFormProps) {
                 key={"step1"}
                 form={form}
                 setType={setType}
+                setLevel={setLevel}
               />
             )}
 
-            {step === 2 && <CreateExerciceStep2 key={"step2"} form={form} />}
+            {step === 2 && (
+              <CreateExerciceStep2 key={"step2"} form={form} type={type} />
+            )}
+
+            {step === 3 && (
+              <CreateEXerciceSTep3
+                key={"step3"}
+                form={form}
+                type={type}
+                level={level}
+              />
+            )}
           </AnimatePresence>
-          <div className="w-full flex mt-4">
+          <div className="w-full flex mt-auto">
             {step > 1 && (
               <div className="size-min me-auto">
                 <Button
@@ -90,10 +133,10 @@ export default function ExerciceForm({ lessonSlug }: ExerciceFormProps) {
                 </Button>
               </div>
             )}
-            {step < 2 ? (
+            {step < 3 ? (
               <div className="size-min ms-auto">
                 <Button
-                  type={step === 1 ? "button" : "submit"}
+                  type={step < 3 ? "button" : "submit"}
                   variant="secondary"
                   onClick={() => handleNextStep()}
                 >
@@ -104,7 +147,7 @@ export default function ExerciceForm({ lessonSlug }: ExerciceFormProps) {
               <div className="size-min ms-auto">
                 <SubmitButton
                   texte="Créer l'exercice"
-                  isLoading={false}
+                  isLoading={isPending}
                   loadindText="Création en cours..."
                 />
               </div>

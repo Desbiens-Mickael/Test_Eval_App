@@ -1,6 +1,6 @@
-FROM node:20-alpine
+FROM node:20-alpine3.17
 
-RUN apk --no-cache add curl make g++ python3 git
+RUN apk --no-cache add curl make g++ python3 git openssl1.1-compat
 RUN npm i -g node-pre-gyp
 
 # Create app directory

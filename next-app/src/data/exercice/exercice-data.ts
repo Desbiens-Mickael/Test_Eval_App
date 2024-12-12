@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { createExerciceFormInput } from "@/shema-zod/exercice.shema";
 import { Exercice, ExerciceType } from "@prisma/client";
 
 export type ExerciceOutput = {
@@ -67,7 +68,9 @@ export const getAllExercicesData = async (): Promise<ExerciceOutput[]> => {
  * - `lesson.LessonSubject.label`: Le sujet de la leçon
  * - `level.label`: Le niveau de difficulté de l'exercice
  */
-export const getAllExercicesByTypeData = async (type: ExerciceType): Promise<ExerciceOutput[]> => {
+export const getAllExercicesByTypeData = async (
+  type: ExerciceType
+): Promise<ExerciceOutput[]> => {
   return prisma.exercice.findMany({
     where: {
       type: type,
@@ -94,12 +97,36 @@ export const getAllExercicesByTypeData = async (type: ExerciceType): Promise<Exe
 };
 
 // get exercice by id
-export const getExerciceByIdData = async (id: string): Promise<Exercice | null> => {
+export const getExerciceByIdData = async (
+  id: string
+): Promise<Exercice | null> => {
   return await prisma.exercice.findUnique({ where: { id } });
 };
 
+// create exercice
+export const createExerciceData = async (
+  data: createExerciceFormInput,
+  authorId: string,
+  lessonID: string
+): Promise<Exercice> => {
+  return await prisma.exercice.create({
+    data: {
+      title: data.title,
+      description: data.description,
+      content: data.content,
+      authorId: authorId,
+      levelID: data.exerciceLevelId,
+      typeID: data.exerciceTypeId,
+      lessonID: lessonID,
+    },
+  });
+};
+
 // update exercice
-export const updateExerciceData = async (id: string, data: object): Promise<Exercice> => {
+export const updateExerciceData = async (
+  id: string,
+  data: object
+): Promise<Exercice> => {
   return await prisma.exercice.update({ where: { id: id }, data: { ...data } });
 };
 

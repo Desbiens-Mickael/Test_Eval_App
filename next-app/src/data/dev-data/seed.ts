@@ -258,7 +258,6 @@ const seed = async () => {
         typeID: types[0].id,
         description: "Trouve la bonne reponse pour le theoreme de pythagore",
         content: {},
-        answer: {},
       },
       {
         title: "Trouve les bonnes reponses",
@@ -268,7 +267,6 @@ const seed = async () => {
         typeID: types[0].id,
         description: "Trouve la bonne reponse pour la phusion nucleaire",
         content: {},
-        answer: {},
       },
       {
         title: "Trouve les bonnes reponses",
@@ -278,7 +276,6 @@ const seed = async () => {
         typeID: types[3].id,
         description: "Trouve la bonne reponse pour les verbes irreguliers",
         content: {},
-        answer: {},
       },
       {
         title: "Trouve les bonnes reponses",
@@ -288,7 +285,6 @@ const seed = async () => {
         typeID: types[1].id,
         description: "Trouve la bonne reponse pour le theoreme de pythagore",
         content: {},
-        answer: {},
       },
       {
         title: "Trouve les bonnes reponses",
@@ -298,7 +294,6 @@ const seed = async () => {
         typeID: types[1].id,
         description: "Trouve la bonne reponse pour le theoreme de pythagore",
         content: {},
-        answer: {},
       },
       {
         title: "Trouve les bonnes reponses",
@@ -308,7 +303,6 @@ const seed = async () => {
         typeID: types[2].id,
         description: "Trouve la bonne reponse pour le theoreme de pythagore",
         content: {},
-        answer: {},
       },
       {
         title: "Trouve les bonnes reponses",
@@ -318,7 +312,6 @@ const seed = async () => {
         typeID: types[3].id,
         description: "Trouve la bonne reponse pour le theoreme de pythagore",
         content: {},
-        answer: {},
       },
       {
         title: "Trouve les bonnes reponses",
@@ -328,7 +321,6 @@ const seed = async () => {
         typeID: types[3].id,
         description: "Trouve la bonne reponse pour le theoreme de pythagore",
         content: {},
-        answer: {},
       },
     ],
   });

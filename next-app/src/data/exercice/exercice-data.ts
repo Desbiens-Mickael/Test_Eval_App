@@ -43,6 +43,9 @@ export const getAllExercicesData = async (): Promise<ExerciceOutput[]> => {
           },
         },
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
   } catch (error) {
     console.error("Error fetching exercises:", error);
@@ -69,11 +72,13 @@ export const getAllExercicesData = async (): Promise<ExerciceOutput[]> => {
  * - `level.label`: Le niveau de difficulté de l'exercice
  */
 export const getAllExercicesByTypeData = async (
-  type: ExerciceType
+  type: ExerciceType,
+  authorId: string
 ): Promise<ExerciceOutput[]> => {
   return prisma.exercice.findMany({
     where: {
       type: type,
+      authorId: authorId,
     },
     select: {
       id: true,
@@ -92,6 +97,9 @@ export const getAllExercicesByTypeData = async (
           color: true,
         },
       },
+    },
+    orderBy: {
+      createdAt: "desc",
     },
   });
 };

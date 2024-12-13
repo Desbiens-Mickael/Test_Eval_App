@@ -7,11 +7,11 @@ import { Form } from "@/components/ui/form";
 import { useCreateExercice } from "@/hooks/mutations/exercice/use-create-exercice";
 import {
   createExerciceFormInput,
-  createExerciceStep1Schema,
-  getStep2Shema,
+  globalExerciceSchema,
 } from "@/shema-zod/exercice.shema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -28,10 +28,12 @@ export default function ExerciceForm({ lessonSlug }: ExerciceFormProps) {
   const [type, setType] = useState<string>("");
   const [level, setLevel] = useState<string>("");
 
-  const { mutateAsync, isPending } = useCreateExercice();
+  const router = useRouter();
+
+  const { mutateAsync, isPending } = useCreateExercice(type);
 
   const form = useForm<createExerciceFormInput>({
-    resolver: zodResolver(createExerciceStep1Schema.merge(getStep2Shema(type))),
+    resolver: zodResolver(globalExerciceSchema),
     defaultValues: {
       title: "",
       description: "",
@@ -55,7 +57,11 @@ export default function ExerciceForm({ lessonSlug }: ExerciceFormProps) {
         lessonSlug: lessonSlug!,
       });
       if (res.error) toast.error(res.error);
-      if (res.success) toast.success(res.success);
+      if (res.success) {
+        toast.success(res.success);
+        form.reset();
+        router.push(`/admin/exercices/${type.toLowerCase()}`);
+      }
     } catch (error) {
       console.error(error);
       toast.error("Une erreur est survenue");

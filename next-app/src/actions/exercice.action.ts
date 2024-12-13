@@ -7,13 +7,22 @@ import {
 import { getExerciceTypeByNameData } from "@/data/exercice/exercice-type.data";
 import { getLessonBySlugData } from "@/data/lesson/lesson-data";
 import { currentUser } from "@/lib/auth";
-import { createExerciceFormInput } from "@/shema-zod/exercice.shema";
+import {
+  createExerciceFormInput,
+  globalExerciceSchema,
+} from "@/shema-zod/exercice.shema";
 import { Exercice, ExerciceType } from "@/type/exercice";
 
 export const getAllExercicesByTypeAction = async (
   type: ExerciceType
 ): Promise<Exercice[]> => {
   try {
+    // Vérifier que l'utilisateur est connecté
+    const user = await currentUser();
+    if (!user || !user?.id || user.role !== "ADMIN") {
+      throw new Error("Action non autoriser !");
+    }
+
     // Recherche du type d'exercice par son nom
     const exerciceType = await getExerciceTypeByNameData(type);
     if (!exerciceType) {
@@ -21,7 +30,10 @@ export const getAllExercicesByTypeAction = async (
     }
 
     // Récupération des exercices selon leur type
-    const exercicesData = await getAllExercicesByTypeData(exerciceType);
+    const exercicesData = await getAllExercicesByTypeData(
+      exerciceType,
+      user.id
+    );
 
     // Formatage des exercices
     return exercicesData.map((exercice) => ({
@@ -43,6 +55,13 @@ export const createExerciceAction = async (
   data: createExerciceFormInput,
   lessonSlug: string
 ) => {
+  const validatedData = globalExerciceSchema.safeParse(data);
+  if (!validatedData.success) {
+    return {
+      error: "Données non valide !",
+    };
+  }
+
   try {
     // Vérifier que l'utilisateur est connecté
     const user = await currentUser();
@@ -61,7 +80,11 @@ export const createExerciceAction = async (
     }
 
     // Créer l'exercice avec l'ID de l'auteur et l'ID de la leçon
-    const newExercice = await createExerciceData(data, user.id, lesson.id);
+    const newExercice = await createExerciceData(
+      validatedData.data,
+      user.id,
+      lesson.id
+    );
 
     return {
       success: "Exercice crée avec successe",

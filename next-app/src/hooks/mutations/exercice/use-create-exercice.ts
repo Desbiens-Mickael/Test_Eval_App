@@ -2,7 +2,7 @@ import { createExerciceAction } from "@/actions/exercice.action";
 import { createExerciceFormInput } from "@/shema-zod/exercice.shema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export const useCreateExercice = () => {
+export const useCreateExercice = (type: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
@@ -16,9 +16,9 @@ export const useCreateExercice = () => {
       if (data?.error) return data.error;
       if (data?.success) {
         // const subject = data.data.LessonSubject.label;
-        // queryClient.invalidateQueries({
-        //   queryKey: ["allLessonsBySubject", subject],
-        // });
+        queryClient.invalidateQueries({
+          queryKey: ["allExercicesByType", type],
+        });
         return data.success;
       }
     },

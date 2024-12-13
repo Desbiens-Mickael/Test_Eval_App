@@ -6,7 +6,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { createExerciceFormInput } from "@/shema-zod/exercice.shema";
+import {
+  columnInput,
+  createExerciceFormInput,
+} from "@/shema-zod/exercice.shema";
 import { motion } from "framer-motion";
 import { Controller, UseFormReturn } from "react-hook-form";
 import ContentCardForm from "./exerciceType/content-card/content-card-form";
@@ -44,7 +47,7 @@ export default function CreateExerciceStep2({
               name="content"
               render={({ field }) => (
                 <ContentCardForm
-                  initialValue={field.value}
+                  initialValue={field.value as columnInput[]}
                   onChange={(newContent) => {
                     field.onChange(newContent); // Synchronise avec react-hook-form
                   }}

@@ -8,7 +8,6 @@ export function useDebouncedCallback<T extends (...args: any[]) => void>(
 ) {
   // Garder une référence au timer
   const timerRef = useRef<Timer>();
-
   // Garder une référence stable à la callback
   const callbackRef = useRef(callback);
 
@@ -26,7 +25,8 @@ export function useDebouncedCallback<T extends (...args: any[]) => void>(
     };
   }, []);
 
-  return useCallback(
+  // Fonction principale debounced
+  const debouncedCallback = useCallback(
     (...args: Parameters<T>) => {
       // Annuler le timer précédent
       if (timerRef.current) {
@@ -40,4 +40,15 @@ export function useDebouncedCallback<T extends (...args: any[]) => void>(
     },
     [delay]
   );
+
+  // Fonction pour annuler explicitement le debounce
+  const cancel = useCallback(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = undefined;
+    }
+  }, []);
+
+  // Retourner la fonction debounce et la méthode cancel
+  return { debouncedCallback, cancel };
 }

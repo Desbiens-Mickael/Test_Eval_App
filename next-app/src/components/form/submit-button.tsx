@@ -9,9 +9,21 @@ interface submitButtonProps {
   className?: string;
 }
 
-export default function SubmitButton({ texte, className, loadindText = "En cour...", isLoading = false }: submitButtonProps) {
+export default function SubmitButton({
+  texte,
+  className,
+  loadindText = "En cour...",
+  isLoading = false,
+}: submitButtonProps) {
   return (
-    <Button disabled={isLoading} type="submit" className={cn("flex w-full text-lg font-semibold px-5", className)}>
+    <Button
+      disabled={isLoading}
+      type="submit"
+      className={cn(
+        "flex w-full text-lg font-semibold px-5 cursor-pointer",
+        className
+      )}
+    >
       {isLoading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
       <span>{isLoading ? loadindText : texte}</span>
     </Button>

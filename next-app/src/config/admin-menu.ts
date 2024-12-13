@@ -1,5 +1,19 @@
 import { MenuSideBar } from "@/type/sidebar";
-import { Atom, BookOpenText, Calculator, CaseUpper, Hourglass, LayoutDashboard, ListCollapse, ListTodo, NotebookPen, Trello, User, Users, WholeWord } from "lucide-react";
+import {
+  Atom,
+  BookOpenText,
+  Calculator,
+  CaseUpper,
+  Hourglass,
+  LayoutDashboard,
+  ListCollapse,
+  ListTodo,
+  NotebookPen,
+  Trello,
+  User,
+  Users,
+  WholeWord,
+} from "lucide-react";
 
 const adminMenus: MenuSideBar = [
   {
@@ -47,7 +61,7 @@ const adminMenus: MenuSideBar = [
           },
           {
             icon: WholeWord,
-            title: "A trou",
+            title: "Texte à trou",
             href: "/admin/exercices/a-trous",
           },
           {
@@ -57,8 +71,8 @@ const adminMenus: MenuSideBar = [
           },
           {
             icon: ListCollapse,
-            title: "Liste",
-            href: "/admin/exercices/liste",
+            title: "Choix multiple",
+            href: "/admin/exercices/choix-multiple",
           },
         ],
       },

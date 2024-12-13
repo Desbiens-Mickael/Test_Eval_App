@@ -2,8 +2,8 @@
 
 import useGetLessonBySlug from "@/hooks/queries/lesson/use-get-lesson-by-slug";
 import { notFound } from "next/navigation";
-import LessonFormSkeleton from "../skeleton/lesson-form-skeleton";
 import LessonForm from "./form/lesson-form";
+import LessonFormSkeleton from "./lesson-form-skeleton";
 
 interface EditLessonProps {
   slug: string;

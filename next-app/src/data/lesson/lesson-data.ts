@@ -29,7 +29,8 @@ export const getAllLessonData = async (): Promise<LessonOutput[]> => {
         GradeLevels: {
           select: { label: true, color: true },
         },
-      }, orderBy: { createdAt: "desc" },
+      },
+      orderBy: { createdAt: "desc" },
     });
   } catch (error) {
     console.error("Error fetching lessons:", error);
@@ -37,11 +38,14 @@ export const getAllLessonData = async (): Promise<LessonOutput[]> => {
   }
 };
 
-
- // Récupèration de toutes les leçons selon leur sujet
-export const getAllLessonBySubjectData = async (subject: string): Promise<LessonOutput[]> => {
+// Récupèration de toutes les leçons selon leur sujet
+export const getAllLessonBySubjectData = async (
+  subject: string,
+  authorId: string
+): Promise<LessonOutput[]> => {
   return prisma.lesson.findMany({
     where: {
+      authorId: authorId,
       LessonSubject: {
         label: subject,
       },
@@ -56,31 +60,34 @@ export const getAllLessonBySubjectData = async (subject: string): Promise<Lesson
       GradeLevels: {
         select: { label: true, color: true },
       },
-    }, orderBy: { createdAt: "desc" },
+    },
+    orderBy: { createdAt: "desc" },
   });
 };
 
 // Récupération de la leçon par son ID
-export const getLessonByIdData = async (id: string) => {
-  return await prisma.lesson.findUnique({ where: { id } });
+export const getLessonByIdData = async (id: string, authorId: string) => {
+  return await prisma.lesson.findUnique({ where: { id, authorId } });
 };
 
 // Récupération de la leçon par son slug
 export const getLessonBySlugData = async (slug: string, authorId: string) => {
-  return await prisma.lesson.findUnique({ where: { slug_authorId: { slug, authorId } } });
+  return await prisma.lesson.findUnique({
+    where: { slug_authorId: { slug, authorId } },
+  });
 };
 
 export const getLessonsWithAuthor = async (lessonIds: string[]) => {
   return await prisma.lesson.findMany({
     where: {
       id: {
-        in: lessonIds
-      }
+        in: lessonIds,
+      },
     },
     select: {
       id: true,
-      authorId: true
-    }
+      authorId: true,
+    },
   });
 };
 
@@ -94,7 +101,8 @@ export const createLessonData = async (data: CreateLessonType) => {
       authorId: data.authorId,
       LessonSubjectID: data.LessonSubjectID,
       GradeLevelsID: data.GradeLevelsID,
-    },select: {
+    },
+    select: {
       LessonSubject: {
         select: { label: true },
       },
@@ -103,26 +111,34 @@ export const createLessonData = async (data: CreateLessonType) => {
 };
 
 // Mise à jour de la leçon
-export const updateLessonData = async (LessonId: string, data: CreateLessonType) => {
-  return await prisma.lesson.update({ 
-    where: { id: LessonId },
-    data: { ...data }, 
+export const updateLessonData = async (
+  authorId: string,
+  LessonId: string,
+  data: CreateLessonType
+) => {
+  return await prisma.lesson.update({
+    where: { id: LessonId, authorId },
+    data: { ...data },
     select: {
       slug: true,
       LessonSubject: {
         select: { label: true },
       },
-    } 
+    },
   });
 };
 
 // Suppression de la leçon
-export const deleteLessonsData = async (lessonIds: string[]) => {
+export const deleteLessonsData = async (
+  lessonIds: string[],
+  authorId: string
+) => {
   return await prisma.lesson.deleteMany({
     where: {
+      authorId,
       id: {
-        in: lessonIds
-      }
+        in: lessonIds,
+      },
     },
   });
 };
@@ -131,14 +147,14 @@ export const getLessonsInfoBeforeDelete = async (lessonIds: string[]) => {
   return await prisma.lesson.findMany({
     where: {
       id: {
-        in: lessonIds
-      }
+        in: lessonIds,
+      },
     },
     select: {
       slug: true,
       LessonSubject: {
-        select: { label: true }
-      }
-    }
+        select: { label: true },
+      },
+    },
   });
 };

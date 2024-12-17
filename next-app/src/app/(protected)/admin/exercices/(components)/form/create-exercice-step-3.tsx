@@ -2,12 +2,13 @@
 
 import { createExerciceFormInput } from "@/shema-zod/exercice.shema";
 import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
 import { UseFormReturn } from "react-hook-form";
-import ContentCardForm from "./exerciceType/content-card/content-card-form";
+import { ComponentType, DynamicComponent } from "./dynamic-content-components";
 
 interface CreateEXerciceSTep3Props {
   form: UseFormReturn<createExerciceFormInput, any, undefined>;
-  type: string;
+  type: ComponentType;
   level: string;
 }
 
@@ -16,6 +17,19 @@ export default function CreateEXerciceSTep3({
   type,
   level,
 }: CreateEXerciceSTep3Props) {
+  const content = form.getValues("content");
+
+  const ContentCardForm = dynamic(
+    () => import("./exerciceType/content-card/content-card-form"),
+    { ssr: false }
+  );
+
+  const TrueFalseForm = dynamic(
+    () => import("./exerciceType/true-or-false/content-true-or-false-form"),
+    { ssr: false }
+  );
+
+  // Vérification et assertion du type de contenu
   return (
     <motion.div
       initial={{ x: 20, opacity: 0, scale: 0.95 }}
@@ -56,8 +70,9 @@ export default function CreateEXerciceSTep3({
             Contenu:
           </span>
           <div className="w-full mx-auto bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700">
-            <ContentCardForm
-              initialValue={form.getValues("content")}
+            <DynamicComponent
+              initialValue={content}
+              type={type}
               isEditing={false}
             />
           </div>

@@ -6,23 +6,31 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  columnInput,
-  createExerciceFormInput,
-} from "@/shema-zod/exercice.shema";
+import { createExerciceFormInput } from "@/shema-zod/exercice.shema";
 import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
 import { Controller, UseFormReturn } from "react-hook-form";
-import ContentCardForm from "./exerciceType/content-card/content-card-form";
+import { ComponentType, DynamicComponent } from "./dynamic-content-components";
 
 interface CreateExerciceStep2Props {
   form: UseFormReturn<createExerciceFormInput, any, undefined>;
-  type: string;
+  type: ComponentType;
 }
 
 export default function CreateExerciceStep2({
   form,
   type,
 }: CreateExerciceStep2Props) {
+  const ContentCardForm = dynamic(
+    () => import("./exerciceType/content-card/content-card-form"),
+    { ssr: false }
+  );
+
+  const TrueFalseForm = dynamic(
+    () => import("./exerciceType/true-or-false/content-true-or-false-form"),
+    { ssr: false }
+  );
+
   return (
     <motion.div
       initial={{ x: 20, opacity: 0, scale: 0.95 }}
@@ -46,8 +54,9 @@ export default function CreateExerciceStep2({
               control={form.control}
               name="content"
               render={({ field }) => (
-                <ContentCardForm
-                  initialValue={field.value as columnInput[]}
+                <DynamicComponent
+                  type={type}
+                  initialValue={field.value}
                   onChange={(newContent) => {
                     field.onChange(newContent); // Synchronise avec react-hook-form
                   }}

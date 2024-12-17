@@ -10,7 +10,7 @@ import useContentCardStore, {
   Column as ColumnType,
 } from "./store/store-content-card";
 
-interface ContentCardProps {
+export interface ContentCardProps {
   onChange?: (newContent: ColumnType[]) => void;
   initialValue?: columnInput[];
   isEditing?: boolean;

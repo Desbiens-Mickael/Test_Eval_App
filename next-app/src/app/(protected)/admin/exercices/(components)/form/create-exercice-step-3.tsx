@@ -25,7 +25,8 @@ export default function CreateEXerciceSTep3({
   );
 
   const TrueFalseForm = dynamic(
-    () => import("./exerciceType/true-or-false/content-true-or-false-form"),
+    () =>
+      import("./exerciceType/content-true-or-false/content-true-or-false-form"),
     { ssr: false }
   );
 

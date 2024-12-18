@@ -49,6 +49,7 @@ export default function ExerciceForm({ lessonSlug }: ExerciceFormProps) {
   useEffect(() => {
     form.reset({
       ...form.getValues(),
+      content: [],
     });
   }, [type]);
 

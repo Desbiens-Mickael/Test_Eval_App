@@ -42,7 +42,7 @@ export default function CreateEXerciceSTep3({
         Étape 3: Récapitulatif et création de l'exercice
       </h2>
 
-      <div className="w-fit mx-auto bg-gray-50 dark:bg-gray-900 rounded-lg p-6 border border-gray-200 dark:border-gray-700 space-y-4">
+      <div className="min-w-[50%] w-fit mx-auto bg-gray-50 dark:bg-gray-900 rounded-lg p-6 border border-gray-200 dark:border-gray-700 space-y-4">
         <div className="flex flex-col gap-2">
           <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
             {form.getValues("title")}
@@ -69,7 +69,7 @@ export default function CreateEXerciceSTep3({
           <span className="font-semibold text-gray-700 dark:text-gray-300 block">
             Contenu:
           </span>
-          <div className="w-full mx-auto bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700">
+          <div className="w-full mx-auto p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700">
             <DynamicComponent
               initialValue={content}
               type={type}

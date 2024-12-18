@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/form";
 import { createExerciceFormInput } from "@/shema-zod/exercice.shema";
 import { motion } from "framer-motion";
-import dynamic from "next/dynamic";
 import { Controller, UseFormReturn } from "react-hook-form";
 import { ComponentType, DynamicComponent } from "./dynamic-content-components";
 
@@ -21,16 +20,6 @@ export default function CreateExerciceStep2({
   form,
   type,
 }: CreateExerciceStep2Props) {
-  const ContentCardForm = dynamic(
-    () => import("./exerciceType/content-card/content-card-form"),
-    { ssr: false }
-  );
-
-  const TrueFalseForm = dynamic(
-    () => import("./exerciceType/true-or-false/content-true-or-false-form"),
-    { ssr: false }
-  );
-
   return (
     <motion.div
       initial={{ x: 20, opacity: 0, scale: 0.95 }}

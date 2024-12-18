@@ -45,7 +45,12 @@ export const getAllLessonsBySubjectAction = async (
   subject: string
 ): Promise<Lesson[]> => {
   try {
-    const lessonsData = await getAllLessonBySubjectData(subject);
+    // Vérifier que l'utilisateur est connecté
+    const user = await currentUser();
+    if (!user || !user?.id || user.role !== "ADMIN") {
+      throw new Error("Action non autoriser !");
+    }
+    const lessonsData = await getAllLessonBySubjectData(subject, user.id);
 
     return lessonsData.map((lesson) => {
       return {
@@ -172,7 +177,7 @@ export const updateLessonAction = async (
   if (!isDataValide.success) return { error: "Données non valide !" };
 
   try {
-    const existingLesson = await getLessonByIdData(LessonId);
+    const existingLesson = await getLessonByIdData(LessonId, user.id);
     if (!existingLesson) return { error: "Cette leçon n'existe pas !" };
     if (existingLesson && existingLesson.authorId !== user.id)
       return { error: "Action non autoriser !" };
@@ -183,10 +188,11 @@ export const updateLessonAction = async (
       slug: stringToSlug(data.title),
     };
 
-    const lesson = await updateLessonData(LessonId, {
+    const lesson = await updateLessonData(user.id, LessonId, {
       ...parsedData,
       authorId: user.id,
     });
+    if (!lesson) return { error: "Cette leçon n'existe pas !" };
     return { success: "La leçon a bien été mise à jour.", data: lesson };
   } catch (err) {
     console.error(err);
@@ -234,7 +240,7 @@ export async function deleteLessonsAction(lessonIds: string[]) {
     const lessonsInfo = await getLessonsInfoBeforeDelete(lessonIds);
 
     // Delete the lessons
-    await deleteLessonsData(lessonIds);
+    await deleteLessonsData(lessonIds, user.id);
 
     return {
       success:

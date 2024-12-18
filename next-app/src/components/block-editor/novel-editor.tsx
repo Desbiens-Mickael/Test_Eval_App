@@ -74,7 +74,7 @@ export default function Editor({
   };
 
   // Permet une mise à jour plus efficace du contenu de l'éditeur
-  const debouncedUpdates = useDebouncedCallback(
+  const { debouncedCallback } = useDebouncedCallback(
     async (editor: EditorInstance) => {
       const json = editor.getJSON();
       onChange(json);
@@ -105,7 +105,7 @@ export default function Editor({
             },
           }}
           onUpdate={({ editor }) => {
-            debouncedUpdates(editor);
+            debouncedCallback(editor);
           }}
           slotAfter={<ImageResizer />}
         >

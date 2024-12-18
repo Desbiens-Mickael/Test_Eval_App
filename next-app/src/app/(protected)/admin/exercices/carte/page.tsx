@@ -1,6 +1,7 @@
 import PageTitle from "@/components/page-title";
-import ExercicesTable from "@/components/table/exercice-table/exercices-table";
+import { ExerciceType } from "@/type/exercice";
 import { Metadata } from "next";
+import ExercicesTable from "../(components)/exercices-table";
 
 export const metadata: Metadata = {
   title: "Exercices de cartes",
@@ -8,9 +9,9 @@ export const metadata: Metadata = {
 
 export default function CardGamePage() {
   return (
-    <div className="w-full h-full flex flex-col items-center max-w-[1200px]">
+    <>
       <PageTitle title="Exercices de cartes" />
-      <ExercicesTable exerciceType="Card" />
-    </div>
+      <ExercicesTable exerciceType={ExerciceType.Card} />
+    </>
   );
 }

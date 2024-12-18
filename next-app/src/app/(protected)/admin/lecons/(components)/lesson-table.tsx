@@ -1,7 +1,10 @@
 "use client";
 
 import SubjectLayout from "@/components/subject-layout";
+import { DataTable } from "@/components/table/data-table";
 import { DataTableColumnHeader } from "@/components/table/data-table-column-header";
+import FilterGRadeLevel from "@/components/table/filter-button/filter-grade-level";
+import TableSkeleton from "@/components/table/table-skeleton";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useDeleteLessons } from "@/hooks/mutations/lesson/use-delete-lesson";
 import useGetAllLessonsBySubject from "@/hooks/queries/lesson/use-get-all-lessons-by-subject";
@@ -9,16 +12,17 @@ import { Lesson } from "@/type/lesson";
 import { ColumnDef } from "@tanstack/react-table";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
-import { DataTable } from "../data-table";
-import FilterGRadeLevel from "../filter-button/filter-grade-level";
-import TableSkeleton from "../table-skeleton";
 
-import { DataTableRowActions } from "../data-table-row-action";
+import { DataTableRowActions } from "@/components/table/data-table-row-action";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { useRouter } from "next/navigation";
 
 export default function LessonTable({ subject }: { subject: string }) {
   const { data: exerciceData, isLoading } = useGetAllLessonsBySubject(subject);
   const { mutateAsync: mutateAsyncDelete, isPending } = useDeleteLessons();
   const [openId, setOpenId] = useState<string | null>(null);
+
+  const router = useRouter();
 
   const handleDelete = useCallback(
     async (lessonIds: string | string[]) => {
@@ -97,15 +101,28 @@ export default function LessonTable({ subject }: { subject: string }) {
     },
     {
       id: "actions",
+      header: "Actions",
       cell: ({ row }) => {
         return (
           <DataTableRowActions
             elementId={row.original.id}
             handleDelete={handleDelete}
-            editPath={`/admin/lecons/edition/${row.original.slug}`}
+            editPath={`/admin/lecons/${row.original.slug}/edition`}
             openId={openId}
             setOpenId={setOpenId}
-          />
+          >
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onSelect={() => {
+                router.push(
+                  `/admin/lecons/${row.original.slug}/exercices/ajout`
+                );
+              }}
+              aria-label="Ajouter un exercice"
+            >
+              Ajouter un exercice
+            </DropdownMenuItem>
+          </DataTableRowActions>
         );
       },
     },

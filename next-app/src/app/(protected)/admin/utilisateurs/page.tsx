@@ -1,3 +1,4 @@
+import PageTitle from "@/components/page-title";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -5,5 +6,9 @@ export const metadata: Metadata = {
 };
 
 export default function RegisteredPage() {
-  return <h1>Mes Abonnés</h1>;
+  return (
+    <>
+      <PageTitle title="Mes Abonnés" />
+    </>
+  );
 }

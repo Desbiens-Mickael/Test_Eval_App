@@ -1,4 +1,5 @@
-import EditLesson from "@/components/lesson/edit-lesson";
+import EditLesson from "@/app/(protected)/admin/lecons/(components)/edit-lesson";
+import PageTitle from "@/components/page-title";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -13,11 +14,9 @@ export default async function EditLeconPage({
   const slug = (await params).slug;
 
   return (
-    <div className="w-full h-full">
-      <h1 className="text-4xl font-semibold mb-8 text-center">
-        Edition de la lecon
-      </h1>
+    <>
+      <PageTitle title="Edition de la lecon" />
       <EditLesson slug={slug} />
-    </div>
+    </>
   );
 }

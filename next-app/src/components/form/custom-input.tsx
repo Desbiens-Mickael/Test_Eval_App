@@ -16,6 +16,7 @@ export interface CustomInputProps<T extends FieldValues> {
   placeholder?: string;
   description?: string;
   className?: string;
+  isRequired?: boolean;
 }
 
 const CustomInput = <T extends FieldValues>({
@@ -25,6 +26,7 @@ const CustomInput = <T extends FieldValues>({
   placeholder,
   description,
   className,
+  isRequired,
 }: CustomInputProps<T>) => {
   return (
     <FormField
@@ -32,7 +34,9 @@ const CustomInput = <T extends FieldValues>({
       name={name}
       render={({ field }) => (
         <FormItem className={className}>
-          <FormLabel>{label}</FormLabel>
+          <FormLabel>
+            {label} {isRequired && <span className="text-red-500">*</span>}
+          </FormLabel>
           <FormControl>
             <Input placeholder={placeholder} {...field} />
           </FormControl>

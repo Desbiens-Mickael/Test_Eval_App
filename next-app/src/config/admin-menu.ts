@@ -62,12 +62,12 @@ const adminMenus: MenuSideBar = [
           {
             icon: WholeWord,
             title: "Texte à trou",
-            href: "/admin/exercices/a-trous",
+            href: "/admin/exercices/texte-a-trous",
           },
           {
             icon: ListTodo,
             title: "Vrai / faux",
-            href: "/admin/exercices/vrai-faux",
+            href: "/admin/exercices/vrai-ou-faux",
           },
           {
             icon: ListCollapse,

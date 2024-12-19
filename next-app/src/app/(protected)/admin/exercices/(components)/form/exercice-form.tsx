@@ -5,6 +5,7 @@ import SubmitButton from "@/components/form/submit-button";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useCreateExercice } from "@/hooks/mutations/exercice/use-create-exercice";
+import { stringToSlug } from "@/lib/utils";
 import {
   createExerciceFormInput,
   globalExerciceSchema,
@@ -18,6 +19,7 @@ import { toast } from "sonner";
 import CreateExerciceStep1 from "./create-exercice-step-1";
 import CreateExerciceStep2 from "./create-exercice-step-2";
 import CreateEXerciceSTep3 from "./create-exercice-step-3";
+import { ComponentType } from "./dynamic-content-components";
 
 interface ExerciceFormProps {
   lessonSlug?: string;
@@ -25,7 +27,7 @@ interface ExerciceFormProps {
 
 export default function ExerciceForm({ lessonSlug }: ExerciceFormProps) {
   const [step, setStep] = useState<number>(1);
-  const [type, setType] = useState<string>("");
+  const [type, setType] = useState<ComponentType>("Carte");
   const [level, setLevel] = useState<string>("");
 
   const router = useRouter();
@@ -47,6 +49,7 @@ export default function ExerciceForm({ lessonSlug }: ExerciceFormProps) {
   useEffect(() => {
     form.reset({
       ...form.getValues(),
+      content: [],
     });
   }, [type]);
 
@@ -60,7 +63,8 @@ export default function ExerciceForm({ lessonSlug }: ExerciceFormProps) {
       if (res.success) {
         toast.success(res.success);
         form.reset();
-        router.push(`/admin/exercices/${type.toLowerCase()}`);
+        const url = stringToSlug(type);
+        router.push(`/admin/exercices/${url}`);
       }
     } catch (error) {
       console.error(error);

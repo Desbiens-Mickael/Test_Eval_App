@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+// Schéma des differents types de base pour la création des leçons
 const columnSchema = z.object({
   column: z.string().min(1, "La colonne ne peut pas etre vide"),
   cards: z
@@ -7,6 +8,24 @@ const columnSchema = z.object({
     .nonempty("Chaque colonne doit avoir au moins une carte"),
 });
 
+export const trueOrFalseShema = z.object({
+  question: z.string().min(1, "La question ne peut pas etre vide"),
+  answer: z.boolean(),
+});
+
+export const multipleChoiceShema = z.object({
+  question: z.string().min(1, "La question ne peut pas etre vide"),
+  answers: z
+    .array(
+      z.object({
+        answer: z.string().min(1, "La réponse ne peut pas etre vide"),
+        isCorrect: z.boolean(),
+      })
+    )
+    .nonempty("Chaque réponse doit avoir une valeur"),
+});
+
+// Schéma des differents types pour la création des leçons
 export const contentCardSchema = z
   .object({
     content: z
@@ -33,11 +52,27 @@ export const contentCardSchema = z
   })
   .required();
 
-export const contentListSchema = z
+export const contentMultipleChoiceShema = z
   .object({
     content: z
-      .array(z.string().min(1, "Le contenu de l'exercice est requis"))
-      .nonempty("Le contenu de l'exercice est requis"),
+      .array(multipleChoiceShema)
+      .nonempty("Le contenu de l'exercice est requis")
+      .superRefine((content, ctx) => {
+        const hasInvalidColumnOrCards = content.some(
+          (item) =>
+            item.question.trim() === "" ||
+            item.answers.length === 0 ||
+            item.answers.some((answer) => answer.answer.trim() === "")
+        );
+        if (hasInvalidColumnOrCards) {
+          // Ajoute un message d'erreur personnalisé si une colonne ou une carte est invalide
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message:
+              "Le contenu de l'exercice est invalide. Veuillez corriger les questions ou les réponses.",
+          });
+        }
+      }),
   })
   .required();
 
@@ -52,8 +87,22 @@ export const contentFillBlankSchema = z
 export const contentTrueOrFalseSchema = z
   .object({
     content: z
-      .array(z.string().min(1, "Le contenu de l'exercice est requis"))
-      .nonempty("Le contenu de l'exercice est requis"),
+      .array(trueOrFalseShema)
+      .nonempty("Le contenu de l'exercice est requis")
+      .superRefine((content, ctx) => {
+        // Vérifie si une colonne ou une carte est invalide
+        const hasInvalidColumnOrCards = content.some(
+          (item) => item.question.trim() === ""
+        );
+        if (hasInvalidColumnOrCards) {
+          // Ajoute un message d'erreur personnalisé si une colonne ou une carte est invalide
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message:
+              "Le contenu de l'exercice est invalide. Veuillez corriger les questions ou les réesponses.",
+          });
+        }
+      }),
   })
   .required();
 
@@ -66,16 +115,20 @@ export const createExerciceBaseSchema = z
   })
   .required();
 
+const contentSchema = z.union([
+  contentCardSchema.shape.content,
+  contentMultipleChoiceShema.shape.content,
+  contentFillBlankSchema.shape.content,
+  contentTrueOrFalseSchema.shape.content,
+]);
+
 export const globalExerciceSchema = createExerciceBaseSchema.extend({
-  content: z.union([
-    contentCardSchema.shape.content,
-    contentListSchema.shape.content,
-    contentFillBlankSchema.shape.content,
-    contentTrueOrFalseSchema.shape.content,
-  ]),
+  content: contentSchema,
 });
 
 // Définition des types d'entrée
 export type columnInput = z.infer<typeof columnSchema>;
-
+export type trueOrFalseInput = z.infer<typeof trueOrFalseShema>;
+export type multipleChoiceInput = z.infer<typeof multipleChoiceShema>;
+export type contentInput = z.infer<typeof contentSchema>;
 export type createExerciceFormInput = z.infer<typeof globalExerciceSchema>;

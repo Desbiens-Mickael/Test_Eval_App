@@ -10,10 +10,11 @@ import { motion } from "framer-motion";
 import { Dispatch } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
+import { ComponentType } from "./dynamic-content-components";
 
 interface createExerciceStep1Props {
   form: UseFormReturn<createExerciceFormInput, any, undefined>;
-  setType: Dispatch<React.SetStateAction<string>>;
+  setType: Dispatch<React.SetStateAction<ComponentType>>;
   setLevel: Dispatch<React.SetStateAction<string>>;
 }
 
@@ -39,7 +40,7 @@ export default function CreateExerciceStep1({
   const handleSelectType = (value: string) => {
     if (exerciceTypeData?.data) {
       const type = exerciceTypeData?.data.find((item) => item.id === value);
-      setType(type?.name!);
+      setType(type?.name as ComponentType);
     }
   };
 

@@ -1,18 +1,26 @@
 import {
   columnInput,
+  contentGapFillInput,
   contentInput,
+  multipleChoiceInput,
   trueOrFalseInput,
 } from "@/shema-zod/exercice.shema";
 import dynamic from "next/dynamic";
 import React, { Suspense } from "react";
 
 // Types des composants disponibles
-export type ComponentType = "Carte" | "Vrai ou Faux";
+export type ComponentType =
+  | "Carte"
+  | "Vrai ou Faux"
+  | "Choix multiple"
+  | "Texte à trou";
 
 // Typage spécifique pour chaque type de composant
 type ComponentProps = {
   Carte: columnInput[];
   "Vrai ou Faux": trueOrFalseInput[];
+  "Choix multiple": multipleChoiceInput[];
+  "Texte à trou": contentGapFillInput;
 };
 
 // Chargement dynamique des composants
@@ -22,7 +30,22 @@ const ContentCardForm = dynamic(
 );
 
 const TrueFalseForm = dynamic(
-  () => import("./exerciceType/true-or-false/content-true-or-false-form"),
+  () =>
+    import("./exerciceType/content-true-or-false/content-true-or-false-form"),
+  { ssr: false }
+);
+
+const MultipleChoiceForm = dynamic(
+  () =>
+    import(
+      "./exerciceType/content-multiple-choice/content-multiple-choice-form"
+    ),
+  { ssr: false }
+);
+
+const GapFillTextForm = dynamic(
+  () =>
+    import("./exerciceType/content-gap-fill-text/content-gap-fill-text-form"),
   { ssr: false }
 );
 
@@ -30,6 +53,8 @@ const TrueFalseForm = dynamic(
 const componentMap = {
   Carte: ContentCardForm,
   "Vrai ou Faux": TrueFalseForm,
+  "Choix multiple": MultipleChoiceForm,
+  "Texte à trou": GapFillTextForm,
 };
 
 // Définition des props pour le composant dynamique

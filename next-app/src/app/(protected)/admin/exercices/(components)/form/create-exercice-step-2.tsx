@@ -29,7 +29,7 @@ export default function CreateExerciceStep2({
       className="h-full flex flex-col space-y-8 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md"
     >
       <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 border-b pb-3 border-gray-200 dark:border-gray-700">
-        {`Étape 2: Contenu de l'exercice de type : [${type}]`}
+        {`Étape 2: Contenu de l'exercice de type : ${type}`}
       </h2>
       <FormField
         control={form.control}

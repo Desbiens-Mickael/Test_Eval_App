@@ -1,5 +1,6 @@
 import {
   columnInput,
+  contentGapFillInput,
   contentInput,
   multipleChoiceInput,
   trueOrFalseInput,
@@ -19,7 +20,7 @@ type ComponentProps = {
   Carte: columnInput[];
   "Vrai ou Faux": trueOrFalseInput[];
   "Choix multiple": multipleChoiceInput[];
-  "Texte à trou": string[]; // TODO: Ajouter le type approprié
+  "Texte à trou": contentGapFillInput;
 };
 
 // Chargement dynamique des composants

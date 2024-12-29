@@ -34,7 +34,7 @@ export const contentGapFillSchema = z
       .array(
         z.object({
           answer: z.string().min(1, "La réponse ne peut pas etre vide"),
-          Placeholder: z.string().min(1, "Le contenu de l'exercice est requis"),
+          placeholder: z.string().min(1, "Le contenu de l'exercice est requis"),
           position: z.number().min(0, "La position doit être positive"),
         })
       )

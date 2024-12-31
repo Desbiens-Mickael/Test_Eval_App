@@ -1,10 +1,13 @@
 import { prisma } from "@/lib/db";
 import { createExerciceFormInput } from "@/shema-zod/exercice.shema";
 import { Exercice, ExerciceType } from "@prisma/client";
+import { JsonValue } from "@prisma/client/runtime/library";
 
 export type ExerciceOutput = {
   id: string;
   title: string;
+  description: string;
+  content: JsonValue;
   lesson: {
     title: string;
     LessonSubject: {
@@ -13,8 +16,13 @@ export type ExerciceOutput = {
     };
   };
   level: {
+    id: string;
     label: string;
     color: string;
+  };
+  type: {
+    id: string;
+    name: string;
   };
 };
 
@@ -28,6 +36,8 @@ export const getAllExercicesData = async (): Promise<ExerciceOutput[]> => {
       select: {
         id: true,
         title: true,
+        description: true,
+        content: true,
         lesson: {
           select: {
             title: true,
@@ -38,8 +48,15 @@ export const getAllExercicesData = async (): Promise<ExerciceOutput[]> => {
         },
         level: {
           select: {
+            id: true,
             label: true,
             color: true,
+          },
+        },
+        type: {
+          select: {
+            id: true,
+            name: true,
           },
         },
       },
@@ -83,6 +100,8 @@ export const getAllExercicesByTypeData = async (
     select: {
       id: true,
       title: true,
+      description: true,
+      content: true,
       lesson: {
         select: {
           title: true,
@@ -93,8 +112,15 @@ export const getAllExercicesByTypeData = async (
       },
       level: {
         select: {
+          id: true,
           label: true,
           color: true,
+        },
+      },
+      type: {
+        select: {
+          id: true,
+          name: true,
         },
       },
     },
@@ -107,8 +133,51 @@ export const getAllExercicesByTypeData = async (
 // get exercice by id
 export const getExerciceByIdData = async (
   id: string
-): Promise<Exercice | null> => {
-  return await prisma.exercice.findUnique({ where: { id } });
+): Promise<ExerciceOutput | null> => {
+  return await prisma.exercice.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      content: true,
+      lesson: {
+        select: {
+          title: true,
+          LessonSubject: {
+            select: { label: true, color: true },
+          },
+        },
+      },
+      level: {
+        select: {
+          id: true,
+          label: true,
+          color: true,
+        },
+      },
+      type: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
+};
+
+export const getExercicesWithAuthor = async (exerciceIds: string[]) => {
+  return await prisma.exercice.findMany({
+    where: {
+      id: {
+        in: exerciceIds,
+      },
+    },
+    select: {
+      id: true,
+      authorId: true,
+    },
+  });
 };
 
 // create exercice
@@ -133,12 +202,49 @@ export const createExerciceData = async (
 // update exercice
 export const updateExerciceData = async (
   id: string,
-  data: object
+  authorId: string,
+  data: createExerciceFormInput
 ): Promise<Exercice> => {
-  return await prisma.exercice.update({ where: { id: id }, data: { ...data } });
+  return await prisma.exercice.update({
+    where: { id: id, authorId: authorId },
+    data: {
+      title: data.title,
+      description: data.description,
+      content: data.content,
+      authorId: authorId,
+      levelID: data.exerciceLevelId,
+      typeID: data.exerciceTypeId,
+    },
+  });
 };
 
 // delete exercice
-export const deleteExerciceByIdData = async (id: string): Promise<Exercice> => {
-  return await prisma.exercice.delete({ where: { id } });
+export const deleteExercicesData = async (
+  exerciceIds: string[],
+  authorId: string
+) => {
+  return await prisma.exercice.deleteMany({
+    where: {
+      authorId,
+      id: {
+        in: exerciceIds,
+      },
+    },
+  });
+};
+
+export const getExercicesInfoBeforeDelete = async (exerciceIds: string[]) => {
+  return await prisma.exercice.findMany({
+    where: {
+      id: {
+        in: exerciceIds,
+      },
+    },
+    select: {
+      id: true,
+      type: {
+        select: { name: true },
+      },
+    },
+  });
 };

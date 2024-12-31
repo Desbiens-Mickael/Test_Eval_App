@@ -16,12 +16,14 @@ interface createExerciceStep1Props {
   form: UseFormReturn<createExerciceFormInput, any, undefined>;
   setType: Dispatch<React.SetStateAction<ComponentType>>;
   setLevel: Dispatch<React.SetStateAction<string>>;
+  isEditing: boolean;
 }
 
 export default function CreateExerciceStep1({
   form,
   setType,
   setLevel,
+  isEditing,
 }: createExerciceStep1Props) {
   const {
     data: exerciceTypeData,
@@ -89,6 +91,7 @@ export default function CreateExerciceStep1({
           onChange={handleSelectLevel}
         />
         <CustomSelect
+          desabled={isEditing}
           isRequired={true}
           label="Type d'exercice"
           options={exerciceTypeData?.data}

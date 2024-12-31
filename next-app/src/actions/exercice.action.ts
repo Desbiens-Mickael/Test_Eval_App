@@ -3,6 +3,8 @@
 import {
   createExerciceData,
   getAllExercicesByTypeData,
+  getExerciceByIdData,
+  updateExerciceData,
 } from "@/data/exercice/exercice-data";
 import { getExerciceTypeByNameData } from "@/data/exercice/exercice-type.data";
 import { getLessonBySlugData } from "@/data/lesson/lesson-data";
@@ -39,11 +41,16 @@ export const getAllExercicesByTypeAction = async (
     return exercicesData.map((exercice) => ({
       id: exercice.id,
       title: exercice.title,
+      description: exercice.description,
+      content: exercice.content,
       lesson: exercice.lesson.title,
+      levelId: exercice.level.id,
       level: exercice.level.label,
       levelColor: exercice.level.color,
       subject: exercice.lesson.LessonSubject.label,
       subjectColor: exercice.lesson.LessonSubject.color,
+      typeId: exercice.type.id,
+      type: exercice.type.name,
     }));
   } catch (error) {
     console.error("Error fetching exercises:", error);
@@ -94,6 +101,82 @@ export const createExerciceAction = async (
     console.error("Error creating exercise:", error);
     return {
       error: "Une erreur est survenue lors de la création de l'exercice",
+    };
+  }
+};
+
+export const getExerciceByIdAction = async (id: string) => {
+  const user = await currentUser();
+  if (!user || !user?.id) {
+    return {
+      error: "Action non autoriser !",
+    };
+  }
+
+  try {
+    const exercice = await getExerciceByIdData(id);
+
+    if (!exercice) {
+      return {
+        error: "Exercice non trouvé",
+      };
+    }
+
+    const exerciceModified = {
+      id: exercice.id,
+      title: exercice.title,
+      description: exercice.description,
+      content: exercice.content,
+      lesson: exercice.lesson.title,
+      levelId: exercice.level.id,
+      level: exercice.level.label,
+      levelColor: exercice.level.color,
+      subject: exercice.lesson.LessonSubject.label,
+      subjectColor: exercice.lesson.LessonSubject.color,
+      typeId: exercice.type.id,
+      type: exercice.type.name,
+    };
+
+    return {
+      success: "Exercice trouvé",
+      data: exerciceModified,
+    };
+  } catch (error) {
+    console.error("Error fetching exercise by ID:", error);
+    return {
+      error: "Une erreur est survenue lors de la recherche de l'exercice",
+    };
+  }
+};
+
+export const updateExerciceAction = async (
+  id: string,
+  data: createExerciceFormInput
+) => {
+  const validatedData = globalExerciceSchema.safeParse(data);
+  if (!validatedData.success) {
+    return {
+      error: "Données non valide !",
+    };
+  }
+
+  try {
+    const user = await currentUser();
+    if (!user || !user?.id || user.role !== "ADMIN") {
+      return {
+        error: "Action non autoriser !",
+      };
+    }
+
+    const exercice = await updateExerciceData(id, user.id, data);
+    return {
+      success: "Exercice mis à jour avec successe",
+      data: exercice,
+    };
+  } catch (error) {
+    console.error("Error updating exercise:", error);
+    return {
+      error: "Une erreur est survenue lors de la mise à jour de l'exercice",
     };
   }
 };

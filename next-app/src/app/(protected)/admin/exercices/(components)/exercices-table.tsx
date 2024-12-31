@@ -17,6 +17,7 @@ import useGetAllExercicesByType from "@/hooks/queries/exercice/use-get-all-exerc
 import { Exercice, ExerciceType } from "@/type/exercice";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { DataTable } from "../../../../../components/table/data-table";
 import FilterBUttonLessonSubject from "../../../../../components/table/filter-button/filter-button-lesson-subject";
@@ -34,6 +35,8 @@ export default function ExercicesTable({
     isError,
     error,
   } = useGetAllExercicesByType(exerciceType);
+
+  const router = useRouter();
 
   const hanldeDelete = (id: string) => {
     const res = confirm("Voulez-vous supprimer cet exercice ? " + id);
@@ -126,7 +129,7 @@ export default function ExercicesTable({
               {/* TODO: ajouter le bouton de modification d'exercice */}
               <DropdownMenuItem
                 onClick={() => {
-                  console.log("Mise à jour de l'exercice " + exercice.id);
+                  router.push(`/admin/exercices/${exercice.id}/edition`);
                 }}
               >
                 Modifier

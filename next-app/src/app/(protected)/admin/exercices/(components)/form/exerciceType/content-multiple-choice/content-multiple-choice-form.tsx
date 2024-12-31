@@ -24,7 +24,7 @@ interface ContentMUltipleCHoiceFormProps {
 }
 
 export default function ContentMUltipleCHoiceForm({
-  initialValue,
+  initialValue = defaultValue,
   onChange,
   isEditing = true,
 }: ContentMUltipleCHoiceFormProps) {
@@ -32,8 +32,7 @@ export default function ContentMUltipleCHoiceForm({
     useContentMultipleChoiceStore();
 
   useEffect(() => {
-    if (!initialValue?.length) {
-      initialValue = defaultValue;
+    if (initialValue?.length) {
       setInitialValues(initialValue!, onChange);
     }
   }, [initialValue]);

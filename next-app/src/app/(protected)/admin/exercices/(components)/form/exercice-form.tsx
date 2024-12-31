@@ -5,14 +5,17 @@ import SubmitButton from "@/components/form/submit-button";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useCreateExercice } from "@/hooks/mutations/exercice/use-create-exercice";
+import { useUpdateExercice } from "@/hooks/mutations/exercice/use-update-exercice";
 import { stringToSlug } from "@/lib/utils";
 import {
+  contentInput,
   createExerciceFormInput,
   globalExerciceSchema,
 } from "@/shema-zod/exercice.shema";
+import { Exercice } from "@/type/exercice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -23,42 +26,66 @@ import { ComponentType } from "./dynamic-content-components";
 
 interface ExerciceFormProps {
   lessonSlug?: string;
+  exerciceData?: Exercice;
 }
 
-export default function ExerciceForm({ lessonSlug }: ExerciceFormProps) {
+export default function ExerciceForm({
+  lessonSlug,
+  exerciceData,
+}: ExerciceFormProps) {
   const [step, setStep] = useState<number>(1);
-  const [type, setType] = useState<ComponentType>("Carte");
-  const [level, setLevel] = useState<string>("");
+  const [type, setType] = useState<ComponentType>(
+    (exerciceData?.type as ComponentType) || "Carte"
+  );
+  const [level, setLevel] = useState<string>(exerciceData?.level || "");
 
   const router = useRouter();
 
-  const { mutateAsync, isPending } = useCreateExercice(type);
+  const { mutateAsync: createMutation, isPending: isPendingCreate } =
+    useCreateExercice(type);
+  const { mutateAsync: updateMutation, isPending: isPendingUpdate } =
+    useUpdateExercice(type);
 
   const form = useForm<createExerciceFormInput>({
     resolver: zodResolver(globalExerciceSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      exerciceTypeId: "",
-      exerciceLevelId: "",
-      content: [],
+      title: exerciceData?.title || "",
+      description: exerciceData?.description || "",
+      exerciceTypeId: exerciceData?.typeId || "",
+      exerciceLevelId: exerciceData?.levelId || "",
+      content: (exerciceData?.content as contentInput) || [],
     },
   });
 
   // Reset du formulaire si le type change
   useEffect(() => {
+    if (exerciceData) return;
     form.reset({
       ...form.getValues(),
       content: [],
     });
   }, [type]);
 
+  if (!exerciceData && !lessonSlug) return notFound();
+
   const onSubmit = async (data: createExerciceFormInput) => {
     try {
-      const res = await mutateAsync({
-        data,
-        lessonSlug: lessonSlug!,
-      });
+      let res;
+      if (exerciceData) {
+        res = await updateMutation({
+          exerciceId: exerciceData.id,
+          data,
+        });
+      } else {
+        if (!lessonSlug || typeof lessonSlug !== "string") {
+          toast.error("Le slug de la leçon est requis pour créer un exercice.");
+          return;
+        }
+        res = await createMutation({
+          data,
+          lessonSlug,
+        });
+      }
       if (res.error) toast.error(res.error);
       if (res.success) {
         toast.success(res.success);
@@ -111,6 +138,7 @@ export default function ExerciceForm({ lessonSlug }: ExerciceFormProps) {
           <AnimatePresence mode="wait">
             {step === 1 && (
               <CreateExerciceStep1
+                isEditing={!!exerciceData}
                 key={"step1"}
                 form={form}
                 setType={setType}
@@ -156,9 +184,13 @@ export default function ExerciceForm({ lessonSlug }: ExerciceFormProps) {
             ) : (
               <div className="size-min ms-auto">
                 <SubmitButton
-                  texte="Créer l'exercice"
-                  isLoading={isPending}
-                  loadindText="Création en cours..."
+                  texte={exerciceData ? "Mettre à jour" : "Créer"}
+                  isLoading={isPendingCreate || isPendingUpdate}
+                  loadindText={
+                    exerciceData
+                      ? "Mise à jour en cours..."
+                      : "Création en cours..."
+                  }
                 />
               </div>
             )}

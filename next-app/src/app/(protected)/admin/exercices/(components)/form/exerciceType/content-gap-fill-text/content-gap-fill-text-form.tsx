@@ -26,7 +26,7 @@ interface ContentFillGapTextFormProps {
 }
 
 export default function ContentFillGapTextForm({
-  initialValue,
+  initialValue = { text: [], answers: [] },
   onChange,
   isEditing = true,
 }: ContentFillGapTextFormProps) {
@@ -34,8 +34,8 @@ export default function ContentFillGapTextForm({
   const [toggleMode, setToggleMode] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!initialValue?.text?.length && !initialValue?.answers?.length) {
-      setInitialValues({ text: [], answers: [] }, onChange);
+    if (initialValue?.text?.length && initialValue?.answers?.length) {
+      setInitialValues(initialValue, onChange);
     }
   }, [initialValue]);
 

@@ -2,8 +2,11 @@
 
 import {
   createExerciceData,
+  deleteExercicesData,
   getAllExercicesByTypeData,
   getExerciceByIdData,
+  getExercicesInfoBeforeDelete,
+  getExercicesWithAuthor,
   updateExerciceData,
 } from "@/data/exercice/exercice-data";
 import { getExerciceTypeByNameData } from "@/data/exercice/exercice-type.data";
@@ -180,3 +183,51 @@ export const updateExerciceAction = async (
     };
   }
 };
+
+export async function deleteExercicesAction(exerciceIds: string[]) {
+  try {
+    // Vérification de l'utilisateur
+    const user = await currentUser();
+    if (!user || !user.id || user.role !== "ADMIN") {
+      return { error: "Action non autorisée !" };
+    }
+
+    // Vérification que les leçons existent et appartiennent à l'utilisateur
+    const lessons = await getExercicesWithAuthor(exerciceIds);
+
+    // Vérifier si toutes les leçons ont été trouvées
+    if (lessons.length !== exerciceIds.length) {
+      return { error: "Certains exercices n'existent pas !" };
+    }
+
+    // Vérifier si l'utilisateur est l'auteur de toutes les leçons
+    const unauthorizedLessons = lessons.filter(
+      (lesson) => lesson.authorId !== user.id
+    );
+    if (unauthorizedLessons.length > 0) {
+      return {
+        error: "Vous n'avez pas les droits necessaires pour cette action !",
+      };
+    }
+
+    // Get lesson info before deletion for cache invalidation
+    const lessonsInfo = await getExercicesInfoBeforeDelete(exerciceIds);
+
+    // Delete the lessons
+    await deleteExercicesData(exerciceIds, user.id);
+
+    return {
+      success:
+        exerciceIds.length > 1
+          ? `${exerciceIds.length} exercices ont été supprimées avec succès`
+          : "L'exercice a été supprimée avec succès",
+      data: lessonsInfo,
+    };
+  } catch (error) {
+    console.error("Erreur lors de la suppression des exercices:", error);
+    return {
+      error:
+        "Une erreur est survenue lors de la suppression, Veuillez réessayer.",
+    };
+  }
+}

@@ -14,7 +14,8 @@ export const metadata: Metadata = {
     template: "%s | EduCraft",
     default: "EduCraft",
   },
-  description: "EduCraft est un service de création d'exercices pour l'apprentissage",
+  description:
+    "EduCraft est un service de création d'exercices pour l'apprentissage",
 };
 
 export const viewport: Viewport = {
@@ -35,10 +36,20 @@ export default async function RootLayout({
   return (
     <SessionProvider session={session}>
       <html lang="fr" className="">
-        <body className={cn(inter.className, "flex flex-col min-h-screen text-secondary")}>
+        <body
+          className={cn(
+            inter.className,
+            "flex flex-col min-h-screen text-secondary"
+          )}
+        >
           <Providers>
             {children}
-            <Toaster position="top-right" />
+            <Toaster
+              position="top-right"
+              richColors={true}
+              duration={5000}
+              theme="light"
+            />
           </Providers>
         </body>
       </html>

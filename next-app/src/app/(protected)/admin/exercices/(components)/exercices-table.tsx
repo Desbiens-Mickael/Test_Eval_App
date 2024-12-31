@@ -4,20 +4,14 @@
 import LevelLayout from "@/components/level-layout";
 import SubjectLayout from "@/components/subject-layout";
 import { DataTableColumnHeader } from "@/components/table/data-table-column-header";
-import { Button } from "@/components/ui/button";
+import { DataTableRowActions } from "@/components/table/data-table-row-action";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { useDeleteExercices } from "@/hooks/mutations/exercice/use-delete-exercice";
 import useGetAllExercicesByType from "@/hooks/queries/exercice/use-get-all-exercices-by-type";
 import { Exercice, ExerciceType } from "@/type/exercice";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { DataTable } from "../../../../../components/table/data-table";
 import FilterBUttonLessonSubject from "../../../../../components/table/filter-button/filter-button-lesson-subject";
@@ -36,14 +30,25 @@ export default function ExercicesTable({
     error,
   } = useGetAllExercicesByType(exerciceType);
 
+  const { mutateAsync: mutateAsyncDelete, isPending } = useDeleteExercices();
+  const [openId, setOpenId] = useState<string | null>(null);
+
   const router = useRouter();
 
-  const hanldeDelete = (id: string) => {
-    const res = confirm("Voulez-vous supprimer cet exercice ? " + id);
-    if (res) {
-      console.log("Suppression de l'exercice " + id);
-    }
-  };
+  const handleDelete = useCallback(
+    async (lessonIds: string | string[]) => {
+      if (!Array.isArray(lessonIds)) lessonIds = [lessonIds];
+
+      toast.promise(mutateAsyncDelete(lessonIds), {
+        loading: "Suppression en cours...",
+        success: (data) => data.success,
+        error: (data) =>
+          data.error ||
+          "Une erreur c'est produite pendant la suppression ! Veuillez réessayer.",
+      });
+    },
+    [mutateAsyncDelete]
+  );
 
   const columns: ColumnDef<Exercice>[] = [
     {
@@ -118,32 +123,13 @@ export default function ExercicesTable({
         const exercice = row.original;
 
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {/* TODO: ajouter le bouton de modification d'exercice */}
-              <DropdownMenuItem
-                onClick={() => {
-                  router.push(`/admin/exercices/${exercice.id}/edition`);
-                }}
-              >
-                Modifier
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              {/* TODO: ajouter le bouton de suppression d'exercice */}
-              <DropdownMenuItem
-                className="text-red-500 focus:text-red-500 focus:bg-red-100"
-                onClick={() => hanldeDelete(exercice.id)}
-              >
-                Supprimer
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <DataTableRowActions
+            elementId={row.original.id}
+            handleDelete={handleDelete}
+            editPath={`/admin/exercices/${row.original.id}/edition`}
+            openId={openId}
+            setOpenId={setOpenId}
+          ></DataTableRowActions>
         );
       },
     },
@@ -173,9 +159,7 @@ export default function ExercicesTable({
       viewOptionsButton
       inputSearchColumnId="Titre"
       // createLink="/admin/exercices/creation"
-      handleDelete={async () => {
-        console.log("Suppression de l'exercice");
-      }}
+      handleDelete={handleDelete}
     >
       {(table) => [
         <FilterBUttonLevel table={table} />,

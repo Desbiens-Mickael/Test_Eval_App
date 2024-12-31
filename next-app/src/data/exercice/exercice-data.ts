@@ -166,6 +166,20 @@ export const getExerciceByIdData = async (
   });
 };
 
+export const getExercicesWithAuthor = async (exerciceIds: string[]) => {
+  return await prisma.exercice.findMany({
+    where: {
+      id: {
+        in: exerciceIds,
+      },
+    },
+    select: {
+      id: true,
+      authorId: true,
+    },
+  });
+};
+
 // create exercice
 export const createExerciceData = async (
   data: createExerciceFormInput,
@@ -205,6 +219,32 @@ export const updateExerciceData = async (
 };
 
 // delete exercice
-export const deleteExerciceByIdData = async (id: string): Promise<Exercice> => {
-  return await prisma.exercice.delete({ where: { id } });
+export const deleteExercicesData = async (
+  exerciceIds: string[],
+  authorId: string
+) => {
+  return await prisma.exercice.deleteMany({
+    where: {
+      authorId,
+      id: {
+        in: exerciceIds,
+      },
+    },
+  });
+};
+
+export const getExercicesInfoBeforeDelete = async (exerciceIds: string[]) => {
+  return await prisma.exercice.findMany({
+    where: {
+      id: {
+        in: exerciceIds,
+      },
+    },
+    select: {
+      id: true,
+      type: {
+        select: { name: true },
+      },
+    },
+  });
 };

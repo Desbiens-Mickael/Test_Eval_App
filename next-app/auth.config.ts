@@ -1,9 +1,19 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 
-import { deleteTwoFactorComfirmationByIdData, getTwoFactorComfirmationByUserIdData } from "@/data/two-factor-comfirmation.data";
-import { UpdateUserData, getUserByEmailData, getUserByIdData } from "@/data/user-data";
-import { deleteVerificationTokenByIdData, getVerificationTokenByIdentifierData } from "@/data/verification-token-data";
+import {
+  deleteTwoFactorComfirmationByIdData,
+  getTwoFactorComfirmationByUserIdData,
+} from "@/data/two-factor-comfirmation.data";
+import {
+  UpdateUserData,
+  getUserByEmailData,
+  getUserByIdData,
+} from "@/data/user-data";
+import {
+  deleteVerificationTokenByIdData,
+  getVerificationTokenByIdentifierData,
+} from "@/data/verification-token-data";
 import { verifyPassword } from "@/lib/hash-password";
 import { loginFormSchema } from "@/shema-zod/auth.shema";
 import { UserRole } from "@prisma/client";
@@ -58,7 +68,15 @@ export default {
   callbacks: {
     async signIn({ user, account }) {
       // Allow OAuth without email verification
-      if (account?.provider !== "credentials") return true;
+      if (account?.provider !== "credentials") {
+        // TODO: Vérifier si il y'a un token d'ajout à un groupe
+        // if (account?.provider === "google") {
+        //   const googleUser = await getUserByEmailData(user?.email as string);
+        //   if (googleUser) return true;
+        // }
+
+        return true;
+      }
 
       if (!user) return false;
 
@@ -67,13 +85,17 @@ export default {
       // Prevent sign in without email verification
       if (!existingUser?.email || !existingUser?.emailVerified) return false;
 
-      const existingVerification = await getVerificationTokenByIdentifierData(existingUser.email);
+      const existingVerification = await getVerificationTokenByIdentifierData(
+        existingUser.email
+      );
 
       // Deletion of the token if the email has been verified
-      if (existingVerification) await deleteVerificationTokenByIdData(existingVerification.id);
+      if (existingVerification)
+        await deleteVerificationTokenByIdData(existingVerification.id);
 
       if (existingUser.isTwoFactorEnabled) {
-        const twoFactorComfirmation = await getTwoFactorComfirmationByUserIdData(existingUser.id);
+        const twoFactorComfirmation =
+          await getTwoFactorComfirmationByUserIdData(existingUser.id);
 
         if (!twoFactorComfirmation) return false;
 

@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Edition de la lecon",
+  title: "Edition de la leçon",
 };
 
 export default async function EditLeconPage({
@@ -20,7 +20,7 @@ export default async function EditLeconPage({
 
   return (
     <>
-      <PageTitle title="Edition de la lecon" />
+      <PageTitle title="Edition de la leçon" />
       <EditLesson slug={slug} />
     </>
   );

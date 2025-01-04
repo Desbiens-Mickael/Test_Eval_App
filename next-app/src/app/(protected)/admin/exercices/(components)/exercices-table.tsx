@@ -126,7 +126,7 @@ export default function ExercicesTable({
           <DataTableRowActions
             elementId={row.original.id}
             handleDelete={handleDelete}
-            editPath={`/admin/exercices/${row.original.id}/edition`}
+            editPath={`/admin/exercices/${exercice.id}/edition`}
             openId={openId}
             setOpenId={setOpenId}
           ></DataTableRowActions>

@@ -85,7 +85,7 @@ model User {
   accounts                Account[]
   sessions                Session[]
   twoFactorComfirmation   TwoFactorComfirmation?
-  ownedGroup              Group? 
+  ownedGroup              Group[] 
   ownedLessons            Lesson[]
   ownedExercice           Exercice[]
   createdAt               DateTime  @default(now())
@@ -98,12 +98,12 @@ model User {
 
 model Group {
   id                      String @id @default(cuid())
-  name                    String
+  name                    String @db.VarChar(20)
   users                   User[] @relation(name: "users")
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
 
-  authorId                String @unique
+  authorId                String
   author                  User @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@unique([name, authorId])

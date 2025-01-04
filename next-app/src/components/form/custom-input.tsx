@@ -17,6 +17,7 @@ export interface CustomInputProps<T extends FieldValues> {
   description?: string;
   className?: string;
   isRequired?: boolean;
+  autoFocus?: boolean;
 }
 
 const CustomInput = <T extends FieldValues>({

@@ -18,7 +18,7 @@ export interface ContentCardProps {
 
 export default function ContentCardForm({
   onChange,
-  initialValue = [],
+  initialValue,
   isEditing = true,
 }: ContentCardProps) {
   const { columns, setInitialValues, addColumn } = useContentCardStore();
@@ -26,8 +26,13 @@ export default function ContentCardForm({
 
   // Initialiser Zustand avec `initialValue` et `onChange`
   useEffect(() => {
-    setInitialValues(initialValue, onChange);
-  }, [initialValue, onChange, setInitialValues]);
+    const defaultValue = initialValue || [];
+    setInitialValues(defaultValue, onChange);
+
+    return () => {
+      setInitialValues([]);
+    };
+  }, [initialValue, onChange]);
 
   const handleAddColumn = () => {
     if (inputColumn === "") return;

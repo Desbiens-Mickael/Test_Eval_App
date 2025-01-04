@@ -8,7 +8,13 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <AuthenticationWrapper title="Connexion" imagePath="/assets/images/login.webp" backButtonHref="/auth/inscription" backButtonText="Pas encore de compte ? CRÉER UN COMPTE" sociale>
+    <AuthenticationWrapper
+      title="Connexion"
+      imagePath="/assets/images/login.webp"
+      backButtonHref="/auth/inscription"
+      backButtonText="Pas encore de compte ? CRÉER UN COMPTE"
+      sociale
+    >
       <FormLogin />
     </AuthenticationWrapper>
   );

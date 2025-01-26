@@ -12,6 +12,7 @@ import { Control, FieldValues, Path } from "react-hook-form";
 export interface CustomInputProps<T extends FieldValues> {
   control: Control<T>;
   name: Path<T>;
+  type?: "email" | "text" | "number";
   label: string;
   placeholder?: string;
   description?: string;
@@ -28,6 +29,7 @@ const CustomInput = <T extends FieldValues>({
   description,
   className,
   isRequired,
+  type = "text",
 }: CustomInputProps<T>) => {
   return (
     <FormField
@@ -39,7 +41,7 @@ const CustomInput = <T extends FieldValues>({
             {label} {isRequired && <span className="text-red-500">*</span>}
           </FormLabel>
           <FormControl>
-            <Input placeholder={placeholder} {...field} />
+            <Input type={type} placeholder={placeholder} {...field} />
           </FormControl>
           {description && (
             <FormDescription className="text-xs">{description}</FormDescription>

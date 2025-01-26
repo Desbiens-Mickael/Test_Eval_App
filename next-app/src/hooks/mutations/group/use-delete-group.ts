@@ -1,12 +1,11 @@
-import { createGroupAction } from "@/actions/group.action";
-import { CreateGroupInput } from "@/shema-zod/group.shema";
+import { deleteGroupAction } from "@/actions/group.action";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export const useCreateGroup = () => {
+export const useDeleteGroup = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (name: CreateGroupInput) => {
-      const response = await createGroupAction(name);
+    mutationFn: async (id: string) => {
+      const response = await deleteGroupAction(id);
       // Si la réponse contient une erreur, on la rejette
       if (response.error) {
         throw response;
@@ -16,8 +15,8 @@ export const useCreateGroup = () => {
     onSuccess: (data) => {
       if (data?.success) {
         queryClient.invalidateQueries({ queryKey: ["allGroups"] });
+        return data;
       }
-      return data;
     },
   });
 };

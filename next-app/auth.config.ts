@@ -15,7 +15,7 @@ import {
   getVerificationTokenByIdentifierData,
 } from "@/data/verification-token-data";
 import { verifyPassword } from "@/lib/hash-password";
-import { loginFormSchema } from "@/shema-zod/auth.shema";
+import { loginUserFormSchema } from "@/shema-zod/auth.shema";
 import { UserRole } from "@prisma/client";
 import type { NextAuthConfig } from "next-auth";
 import "next-auth/jwt";
@@ -47,7 +47,7 @@ export default {
   providers: [
     CredentialsProvider({
       async authorize(credentials) {
-        const isCredentialsValide = loginFormSchema.safeParse(credentials);
+        const isCredentialsValide = loginUserFormSchema.safeParse(credentials);
         if (isCredentialsValide.success) {
           const { email, password } = isCredentialsValide.data;
 

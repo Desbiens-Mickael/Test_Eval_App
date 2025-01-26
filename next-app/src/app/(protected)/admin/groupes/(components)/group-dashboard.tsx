@@ -31,7 +31,7 @@ export default function GroupDashboard() {
                 key={group.id}
                 id={group.id}
                 name={group.name}
-                users={group.users}
+                students={group.students}
               />
             ))}
           </div>

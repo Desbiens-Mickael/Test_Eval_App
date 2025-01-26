@@ -1,6 +1,6 @@
 "use server";
 
-import { getAuthorIdOfGroupByUserId } from "@/data/group.data";
+import { getAuthorIdOfGroupByUserIdData } from "@/data/group.data";
 import {
   createLessonData,
   deleteLessonsData,
@@ -86,7 +86,7 @@ export const getLessonBySlugAction = async (slug: string) => {
     // Si l'utilisateur connecté n'est pas un admin
     if (user.role !== "ADMIN") {
       // Récupérer l'authorId du groupe de l'utilisateur connecté
-      const existingAuthor = await getAuthorIdOfGroupByUserId(user.id);
+      const existingAuthor = await getAuthorIdOfGroupByUserIdData(user.id);
       if (!existingAuthor) return { error: "Action non autoriser !" };
 
       authorId = existingAuthor.author.id;

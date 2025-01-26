@@ -1,4 +1,6 @@
+import PageTitle from "@/components/page-title";
 import { Metadata } from "next";
+import EditGroupForm from "../(components)/edit-group-form";
 
 export const metadata: Metadata = {
   title: "Details du groupe",
@@ -23,5 +25,10 @@ export default async function GroupDetailsPage({
 }) {
   const groupId = (await params).groupId;
 
-  return <div>Groupe: {groupId}</div>;
+  return (
+    <div>
+      <PageTitle title="Details du groupe" />
+      <EditGroupForm id={groupId} />
+    </div>
+  );
 }

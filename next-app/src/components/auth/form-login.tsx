@@ -16,7 +16,7 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { loginFormSchema } from "@/shema-zod/auth.shema";
+import { loginUserFormSchema } from "@/shema-zod/auth.shema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -46,8 +46,8 @@ export default function FormLogin() {
     }
   }, [urlError]);
 
-  const form = useForm<z.infer<typeof loginFormSchema>>({
-    resolver: zodResolver(loginFormSchema),
+  const form = useForm<z.infer<typeof loginUserFormSchema>>({
+    resolver: zodResolver(loginUserFormSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -55,7 +55,7 @@ export default function FormLogin() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof loginFormSchema>) {
+  async function onSubmit(values: z.infer<typeof loginUserFormSchema>) {
     try {
       const result = await mutateAsync(values);
       if (result?.twoFactor) {

@@ -1,7 +1,7 @@
 import { UserRole } from "@prisma/client";
 import { z } from "zod";
 
-export const registerFormSchema = z
+export const registerUserFormSchema = z
   .object({
     firstname: z.string(),
     lastname: z.string(),
@@ -10,13 +10,31 @@ export const registerFormSchema = z
   })
   .required();
 
-export const loginFormSchema = registerFormSchema.omit({ firstname: true, lastname: true }).extend({ code: z.optional(z.string()) });
+export const registerStudentFormSchema = registerUserFormSchema.omit({
+  email: true,
+  password: true,
+});
 
-export const resetPasswordSendFormSchema = registerFormSchema.pick({ email: true });
+export const loginUserFormSchema = registerUserFormSchema
+  .omit({ firstname: true, lastname: true })
+  .extend({ code: z.optional(z.string()) });
 
-export const resetPasswordFormSchema = registerFormSchema.pick({ password: true });
+export const loginStudentFormSchema = z.object({
+  identifier: z.string({ required_error: "Identifiant requis" }),
+  password: z.string().min(6, { message: "minimum 6 caractère" }),
+});
 
-export const resetEmailFormSchema = registerFormSchema.pick({ email: true });
+export const resetPasswordSendFormSchema = registerUserFormSchema.pick({
+  email: true,
+});
+
+export const resetPasswordFormSchema = registerUserFormSchema.pick({
+  password: true,
+});
+
+export const resetEmailFormSchema = registerUserFormSchema.pick({
+  email: true,
+});
 
 export const verificationTokenShema = z
   .object({
@@ -79,3 +97,8 @@ export const userSecurityFormSchema = z
     },
     { message: "Mot de passe requis!", path: ["password"] }
   );
+
+export type registerUserFormType = z.infer<typeof registerUserFormSchema>;
+export type registerStudentFormType = z.infer<typeof registerStudentFormSchema>;
+export type loginUserFormType = z.infer<typeof loginUserFormSchema>;
+export type loginStudentFormType = z.infer<typeof loginStudentFormSchema>;

@@ -35,13 +35,13 @@ export default function CreateGroupButton() {
 
   const onSubmit = async (values: CreateGroupInput) => {
     try {
-      const res = await mutateAsync(values);
-      if (res.error) toast.error(res.error);
-      if (res.success) {
-        toast.success(res.success);
-        setOpen(false);
-        form.reset();
-      }
+      toast.promise(mutateAsync(values), {
+        loading: "Suppression en cours...",
+        success: (data) => data.success,
+        error: (data) => data.error || "Une erreur c'est produite !",
+      });
+      setOpen(false);
+      form.reset();
     } catch (error) {
       console.error(error);
       toast.error("Une erreur c'est produite !");
@@ -62,8 +62,10 @@ export default function CreateGroupButton() {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Entrez le nom du groupe</AlertDialogTitle>
-          <AlertDialogDescription></AlertDialogDescription>
+          <AlertDialogTitle>Création d'un groupe</AlertDialogTitle>
+          <AlertDialogDescription>
+            Entrer le nom du groupe et cliquer sur confirmer
+          </AlertDialogDescription>
         </AlertDialogHeader>
         <Form {...form}>
           <form

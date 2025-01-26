@@ -1,6 +1,16 @@
 import nodemailer from "nodemailer";
+import { capitalize } from "./utils";
 
-const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, MAILER_FROM_ADDRESS, MAILER_TO_ADDRESS, NODE_ENV, NEXT_BASE_URL } = process.env;
+const {
+  SMTP_HOST,
+  SMTP_PORT,
+  SMTP_USER,
+  SMTP_PASS,
+  MAILER_FROM_ADDRESS,
+  MAILER_TO_ADDRESS,
+  NODE_ENV,
+  NEXT_BASE_URL,
+} = process.env;
 
 let transporter: nodemailer.Transporter;
 
@@ -75,6 +85,27 @@ export async function sendTwoFactorCodeEmail(email: string, code: string) {
       to: email, // Le destinataire
       subject: "Double authentification",
       html: `<p>Votre code pour la double authentification: ${code}<p>`,
+    });
+  } catch (error) {
+    throw new Error("Echec lors de l'envoi de l'email.");
+  }
+}
+
+export async function sendCredentialStudentEmail(
+  destinationEmail: string,
+  firstname: string,
+  lastname: string,
+  identifier: string,
+  password: string
+) {
+  try {
+    await transporter.sendMail({
+      from: MAILER_FROM_ADDRESS, // L'adresse d'envoi
+      to: destinationEmail, // Le destinataire
+      subject: `Identifiant et mot de passe pour l'élève : ${capitalize(
+        firstname
+      )} ${capitalize(lastname)}`,
+      html: `<p>Identifiant: ${identifier}<br>Mot de passe: ${password}</p>`,
     });
   } catch (error) {
     throw new Error("Echec lors de l'envoi de l'email.");

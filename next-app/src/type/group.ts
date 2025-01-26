@@ -1,10 +1,20 @@
+export type Student = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  identifier: string;
+  isActive: boolean;
+};
+
 export type Group = {
   id: string;
   name: string;
   authorId: string;
   createdAt: Date;
-  users: {
-    id: string;
-    name: string;
-  }[];
+  students: Student[];
+};
+
+export type searchUserFromGroup = {
+  id: string;
+  identifier?: string;
 };

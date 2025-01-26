@@ -1,17 +1,26 @@
 "use server";
 
-import { createTwoFactorComfirmationByUserIdData, deleteTwoFactorComfirmationByIdData, getTwoFactorComfirmationByUserIdData } from "@/data/two-factor-comfirmation.data";
-import { deleteTwoFactorTokenByIdData, getTwoFactorTokenByIdentifierData } from "@/data/two-factor-token.data";
+import {
+  createTwoFactorComfirmationByUserIdData,
+  deleteTwoFactorComfirmationByIdData,
+  getTwoFactorComfirmationByUserIdData,
+} from "@/data/two-factor-comfirmation.data";
+import {
+  deleteTwoFactorTokenByIdData,
+  getTwoFactorTokenByIdentifierData,
+} from "@/data/two-factor-token.data";
 import { getUserByEmailData } from "@/data/user-data";
 import { sendTwoFactorCodeEmail, sendVerificationEmail } from "@/lib/mail";
-import { generateTwoFactorToken, generateVerificationToken } from "@/lib/tokens";
-import { loginFormSchema } from "@/shema-zod/auth.shema";
+import {
+  generateTwoFactorToken,
+  generateVerificationToken,
+} from "@/lib/tokens";
+import { loginUserFormSchema, loginUserFormType } from "@/shema-zod/auth.shema";
 import { signIn } from "auth";
 import { AuthError } from "next-auth";
-import { z } from "zod";
 
-const loginAction = async (credentials: z.infer<typeof loginFormSchema>) => {
-  const isCredentialsValide = loginFormSchema.safeParse(credentials);
+const loginAction = async (credentials: loginUserFormType) => {
+  const isCredentialsValide = loginUserFormSchema.safeParse(credentials);
 
   if (!isCredentialsValide.success) return { error: "Données non valide!" };
 
@@ -24,35 +33,52 @@ const loginAction = async (credentials: z.infer<typeof loginFormSchema>) => {
   }
 
   if (!existingUser.emailVerified) {
-    const verificationToken = await generateVerificationToken(existingUser.email);
-    await sendVerificationEmail(verificationToken.identifier, verificationToken.token);
-    return { success: "Un email de comfirmation viens d'être envoyé à cette adresse." };
+    const verificationToken = await generateVerificationToken(
+      existingUser.email
+    );
+    await sendVerificationEmail(
+      verificationToken.identifier,
+      verificationToken.token
+    );
+    return {
+      success: "Un email de comfirmation viens d'être envoyé à cette adresse.",
+    };
   }
 
   if (existingUser.isTwoFactorEnabled && existingUser.email) {
     if (code) {
-      const twoFactorToken = await getTwoFactorTokenByIdentifierData(existingUser.email);
-      if (!twoFactorToken || twoFactorToken.token !== code) return { error: "Code non valide!" };
+      const twoFactorToken = await getTwoFactorTokenByIdentifierData(
+        existingUser.email
+      );
+      if (!twoFactorToken || twoFactorToken.token !== code)
+        return { error: "Code non valide!" };
 
       const hasExpired = new Date(twoFactorToken.expires) < new Date();
       if (hasExpired) return { error: "Code expirer!" };
 
       await deleteTwoFactorTokenByIdData(twoFactorToken.id);
 
-      const existingTwoFactorComfirmation = await getTwoFactorComfirmationByUserIdData(existingUser.id);
+      const existingTwoFactorComfirmation =
+        await getTwoFactorComfirmationByUserIdData(existingUser.id);
       if (existingTwoFactorComfirmation) {
-        await deleteTwoFactorComfirmationByIdData(existingTwoFactorComfirmation.id);
+        await deleteTwoFactorComfirmationByIdData(
+          existingTwoFactorComfirmation.id
+        );
       }
 
       await createTwoFactorComfirmationByUserIdData(existingUser.id);
     } else {
       const twoFactorToken = await generateTwoFactorToken(existingUser.email);
-      await sendTwoFactorCodeEmail(twoFactorToken.identifier, twoFactorToken.token);
+      await sendTwoFactorCodeEmail(
+        twoFactorToken.identifier,
+        twoFactorToken.token
+      );
       return { twoFactor: true };
     }
   }
 
-  const urlRedirect = existingUser.role === "ADMIN" ? "/admin/dashboard" : "/user/dashboard";
+  const urlRedirect =
+    existingUser.role === "ADMIN" ? "/admin/dashboard" : "/user/dashboard";
 
   try {
     await signIn("credentials", {

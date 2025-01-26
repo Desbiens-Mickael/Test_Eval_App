@@ -1,13 +1,13 @@
 import { prisma } from "@/lib/db";
 
-export const getAuthorIdOfGroupByUserId = async (userId: string) => {
+export const getAuthorIdOfGroupByUserIdData = async (userId: string) => {
   return await prisma.group.findFirst({
-    where: { users: { some: { id: userId } } },
+    where: { students: { some: { id: userId } } },
     select: { author: { select: { id: true } } },
   });
 };
 
-export const getGroupsByAuthorId = async (authorId: string) => {
+export const getGroupsByAuthorIdData = async (authorId: string) => {
   return await prisma.group.findMany({
     where: { authorId },
     select: {
@@ -15,15 +15,15 @@ export const getGroupsByAuthorId = async (authorId: string) => {
       name: true,
       createdAt: true,
       authorId: true,
-      users: {
-        select: { id: true, name: true },
+      students: {
+        select: { id: true, identifier: true },
       },
     },
     orderBy: { createdAt: "desc" },
   });
 };
 
-export const getGroupById = async (id: string, authorId: string) => {
+export const getGroupByIdData = async (id: string, authorId: string) => {
   return await prisma.group.findUnique({
     where: { id, authorId },
     select: {
@@ -31,8 +31,14 @@ export const getGroupById = async (id: string, authorId: string) => {
       name: true,
       createdAt: true,
       authorId: true,
-      users: {
-        select: { id: true, name: true },
+      students: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          identifier: true,
+          isActive: true,
+        },
       },
     },
   });
@@ -40,4 +46,18 @@ export const getGroupById = async (id: string, authorId: string) => {
 
 export const createGroupData = async (name: string, authorId: string) => {
   return await prisma.group.create({ data: { name, authorId } });
+};
+
+export const addStudentToGroupData = async (
+  groupId: string,
+  studentId: string
+) => {
+  return await prisma.group.update({
+    where: { id: groupId },
+    data: { students: { connect: { id: studentId } } },
+  });
+};
+
+export const deleteGroupData = async (id: string, authorId: string) => {
+  return await prisma.group.delete({ where: { id, authorId } });
 };

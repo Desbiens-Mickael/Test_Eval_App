@@ -16,8 +16,7 @@ const seed = async () => {
 
   const student = await prisma.student.create({
     data: {
-      firstName: "Thibault",
-      lastName: "Desbiens",
+      name: "Thibault Desbiens",
       professorId: userAdmin.id,
       identifier: "t.desbiens",
       password: await hashPassword("azerty"),

@@ -1,10 +1,4 @@
-export type Student = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  identifier: string;
-  isActive: boolean;
-};
+import { Student } from "./student";
 
 export type Group = {
   id: string;

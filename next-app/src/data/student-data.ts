@@ -7,8 +7,7 @@ export const createStudentData = async (
   professorId: string,
   identifier: string,
   plainPassword: string,
-  firstName: string,
-  lastName: string
+  name: string
 ) => {
   try {
     const hashedPassword = await hashPassword(plainPassword);
@@ -18,8 +17,7 @@ export const createStudentData = async (
         professorId,
         identifier,
         password: hashedPassword,
-        firstName,
-        lastName,
+        name,
       },
     });
   } catch (error) {
@@ -53,8 +51,28 @@ export const getCountAllStudentsByIdentifierData = async (
   }
 };
 
-// Récupérer les élèves de l'utilisateur connecté
-export const getAllStudentsByAuthorIdData = async (
+// Récupérer tout les élèves de l'utilisateur connecté
+export const getAllStudentsByAuthorIdData = async (authorId: string) => {
+  return await prisma.student.findMany({
+    where: { professorId: authorId },
+    select: {
+      id: true,
+      identifier: true,
+      name: true,
+      isActive: true,
+      createdAt: true,
+      groupStudent: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
+};
+
+// Récupérer tout les élèves de l'utilisateur connecté qui se trouvent dans le groupe demandé
+export const getAllStudentsByAuthorIdwhoDontBelongToTheGroupIdData = async (
   authorId: string,
   groupId: string
 ) => {
@@ -66,8 +84,7 @@ export const getAllStudentsByAuthorIdData = async (
     select: {
       id: true,
       identifier: true,
-      firstName: true,
-      lastName: true,
+      name: true,
       isActive: true,
     },
   });

@@ -63,12 +63,12 @@ export const createNewStudentAction = async (
 
   try {
     const password = generateTemporaryPassword();
+    const name = `${capitalize(firstname)} ${capitalize(lastname)}`;
     const student = await createStudentData(
       user.id,
       identifier,
       password,
-      firstname,
-      lastname
+      name
     );
 
     if (!student) return { error: "Une erreur c'est produite !" };
@@ -84,6 +84,12 @@ export const createNewStudentAction = async (
 
     return {
       success: `Un email contenant les informations de connexion pour ${firstname} ${lastname} viens de vous etre envoyé !`,
+      data: {
+        authorId: user.id,
+        identifier,
+        password,
+        name,
+      },
     };
   } catch (error) {
     throw error;

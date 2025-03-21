@@ -21,7 +21,7 @@ export const loginUserFormSchema = registerUserFormSchema
 
 export const loginStudentFormSchema = z.object({
   identifier: z.string({ required_error: "Identifiant requis" }),
-  password: z.string().min(6, { message: "minimum 6 caractère" }),
+  password: z.string().min(8, { message: "minimum 8 caractère" }),
 });
 
 export const resetPasswordSendFormSchema = registerUserFormSchema.pick({
@@ -60,7 +60,7 @@ export const userInfosFormSchema = z.object({
       message: "Adresse email non valide!",
     })
   ),
-  role: z.enum([UserRole.ADMIN, UserRole.USER]),
+  role: z.enum([UserRole.ADMIN, UserRole.USER, UserRole.STUDENT]),
 });
 
 export const userPreferencesFormSchema = z.object({

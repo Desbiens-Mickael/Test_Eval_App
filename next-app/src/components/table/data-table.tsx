@@ -15,7 +15,14 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { TableBody, TableCell, TableHead, TableHeader, TableRow, Table as TableUI } from "@/components/ui/table";
+import {
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Table as TableUI,
+} from "@/components/ui/table";
 import { ReactElement, useState } from "react";
 import DataTAbleBUttonCreate from "./data-table-button-create";
 import DataTableButtonReset from "./data-table-button-reset";
@@ -34,6 +41,7 @@ interface DataTableProps<TData, TValue> {
   inputSearchColumnId?: string;
   viewOptionsButton?: boolean;
   createLink?: string;
+  createChildren?: React.ReactNode;
   handleDelete: (ids: string[]) => Promise<void>;
   children?: (table: Table<TData>) => ReactElement[];
 }
@@ -49,7 +57,16 @@ interface DataTableProps<TData, TValue> {
  * @param {ReactElement<{ table: Table<TData> }> | ReactElement<{ table: Table<TData> }>[]} [props.children] - The children components to be rendered within the table. If not provided, a default filter button will be rendered.
  * @return {JSX.Element} The rendered DataTable component.
  */
-export function DataTable<TData extends Identifier, TValue>({ columns, data, inputSearchColumnId, viewOptionsButton, createLink, handleDelete, children }: DataTableProps<TData, TValue>) {
+export function DataTable<TData extends Identifier, TValue>({
+  columns,
+  data,
+  inputSearchColumnId,
+  viewOptionsButton,
+  createLink,
+  handleDelete,
+  children,
+  createChildren,
+}: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -84,16 +101,25 @@ export function DataTable<TData extends Identifier, TValue>({ columns, data, inp
     <div className="w-full space-y-4">
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          {inputSearchColumnId && <DataTAbleInputFilter key={"Titre"} table={table} columnId={inputSearchColumnId} />}
-          {children && children(table).map((child, index) => <div key={index}>{child}</div>)}
-        </div>
-        <div className="flex items-center space-x-2">
-          <DataTableDeleteSelectionButton handleDelete={handleDelete} table={table} />
-          {createLink && (
-            <DataTAbleBUttonCreate
-              createLink={createLink}
+          {inputSearchColumnId && (
+            <DataTAbleInputFilter
+              key={"Titre"}
+              table={table}
+              columnId={inputSearchColumnId}
             />
           )}
+          {children &&
+            children(table).map((child, index) => (
+              <div key={index}>{child}</div>
+            ))}
+        </div>
+        <div className="flex items-center space-x-2">
+          <DataTableDeleteSelectionButton
+            handleDelete={handleDelete}
+            table={table}
+          />
+          {createLink && <DataTAbleBUttonCreate createLink={createLink} />}
+          {createChildren && <>{createChildren}</>}
           {viewOptionsButton && <DataTableViewOptions table={table} />}
           <DataTableButtonReset table={table} />
         </div>
@@ -104,7 +130,16 @@ export function DataTable<TData extends Identifier, TValue>({ columns, data, inp
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
-                  return <TableHead key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>;
+                  return (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  );
                 })}
               </TableRow>
             ))}
@@ -112,15 +147,26 @@ export function DataTable<TData extends Identifier, TValue>({ columns, data, inp
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center text-2xl font-bold">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center text-2xl font-bold"
+                >
                   Aucun résultat trouvé.
                 </TableCell>
               </TableRow>

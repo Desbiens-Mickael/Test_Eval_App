@@ -34,8 +34,7 @@ export const getGroupByIdData = async (id: string, authorId: string) => {
       students: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
+          name: true,
           identifier: true,
           isActive: true,
         },

@@ -2,20 +2,20 @@
 
 import CustomSelect from "@/components/form/custom-select";
 import SubmitButton from "@/components/form/submit-button";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
 import { useAddStudentToGroup } from "@/hooks/mutations/group/use-add-student-to-group";
-import { useGetAllStudentsByProfessorId } from "@/hooks/queries/student/use-get-all-students-by-professorId";
+import { useGetAllStudentsByAuthorIdwhoDontBelongToTheGroupId } from "@/hooks/queries/student/use-get-all-students-by-professorId-who-dont-belong-to-the-groupId";
 import {
   AddUserToGroupInput,
   addUserToGroupSchema,
@@ -44,13 +44,9 @@ export default function AddStudentToGroupForm({
     },
   });
 
-  const { data } = useGetAllStudentsByProfessorId(authorId, groupId);
+  const { data } =
+    useGetAllStudentsByAuthorIdwhoDontBelongToTheGroupId(groupId);
   const { mutateAsync, isPending } = useAddStudentToGroup();
-
-  const handleClose = () => {
-    setOpen(false);
-    form.reset();
-  };
 
   const onSubmit = async (values: AddUserToGroupInput) => {
     try {
@@ -74,19 +70,19 @@ export default function AddStudentToGroupForm({
   };
 
   return (
-    <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
         <Button size={"icon"} className="self-end">
           <Plus />
         </Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Ajouter un élève au groupe</AlertDialogTitle>
-          <AlertDialogDescription>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Ajouter un élève au groupe</DialogTitle>
+          <DialogDescription>
             Séléctionner l'élève à ajouter dans la dans la liste ci-dessous.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
+          </DialogDescription>
+        </DialogHeader>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -98,7 +94,7 @@ export default function AddStudentToGroupForm({
                 control={form.control}
                 options={data?.map((student) => ({
                   id: student.identifier,
-                  label: student.firstName + " " + student.lastName,
+                  label: student.name,
                 }))}
                 name="identifier"
                 label="Nom de l'élève"
@@ -108,10 +104,17 @@ export default function AddStudentToGroupForm({
             </div>
           </form>
         </Form>
-        <AlertDialogFooter>
-          <AlertDialogCancel onClick={() => handleClose()}>
-            Anuller
-          </AlertDialogCancel>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button
+              variant="outline"
+              onClick={() => {
+                form.reset();
+              }}
+            >
+              Annuler
+            </Button>
+          </DialogClose>
           <SubmitButton
             form="create-group"
             isLoading={isPending}
@@ -119,8 +122,8 @@ export default function AddStudentToGroupForm({
             loadindText="Ajout en cours..."
             className="w-fit"
           />
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

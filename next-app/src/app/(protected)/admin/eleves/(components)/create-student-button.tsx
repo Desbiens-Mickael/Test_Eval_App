@@ -15,6 +15,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useCreateGroup } from "@/hooks/mutations/group/use-create-group";
+import { useCreateStudent } from "@/hooks/mutations/student/use-create-student";
+import {
+  registerStudentFormSchema,
+  registerStudentFormType,
+} from "@/shema-zod/auth.shema";
 import { CreateGroupInput, createGroupSchema } from "@/shema-zod/group.shema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
@@ -22,18 +27,19 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-export default function CreateGroupButton() {
+export default function CreateStudentButton() {
   const [open, setOpen] = useState(false);
-  const { mutateAsync, isPending } = useCreateGroup();
+  const { mutateAsync, isPending } = useCreateStudent();
 
-  const form = useForm<CreateGroupInput>({
-    resolver: zodResolver(createGroupSchema),
+  const form = useForm<registerStudentFormType>({
+    resolver: zodResolver(registerStudentFormSchema),
     defaultValues: {
-      name: "",
+      firstname: "",
+      lastname: "",
     },
   });
 
-  const onSubmit = async (values: CreateGroupInput) => {
+  const onSubmit = async (values: registerStudentFormType) => {
     try {
       toast.promise(mutateAsync(values), {
         loading: "Création en cours...",
@@ -56,15 +62,15 @@ export default function CreateGroupButton() {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button size={"icon"}>
+        <Button size="sm" className="ml-auto hidden h-8 lg:flex">
           <Plus />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Création d'un groupe</AlertDialogTitle>
+          <AlertDialogTitle>Création d'un compte élève</AlertDialogTitle>
           <AlertDialogDescription>
-            Entrer le nom du groupe et cliquer sur confirmer
+            Entrer le nom et prénom de l'élève et cliquer sur confirmer
           </AlertDialogDescription>
         </AlertDialogHeader>
         <Form {...form}>
@@ -77,10 +83,19 @@ export default function CreateGroupButton() {
               autoFocus
               isRequired
               control={form.control}
-              name="name"
-              label="Nom du groupe"
-              placeholder="Nom du groupe"
-              description="Le nom du groupe doit contenir au maximum de 20 caractères"
+              name="firstname"
+              label="Prénom"
+              placeholder="Prénom"
+              description="Le prénom doit contenir au maximum de 20 caractères"
+            />
+            <CustomInput
+              autoFocus
+              isRequired
+              control={form.control}
+              name="lastname"
+              label="Nom"
+              placeholder="Nom"
+              description="Le nom doit contenir au maximum de 20 caractères"
             />
           </form>
         </Form>

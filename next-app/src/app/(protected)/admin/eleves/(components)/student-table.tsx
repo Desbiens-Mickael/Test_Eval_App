@@ -14,19 +14,20 @@ import { useGetAllStudentsByProfessorId } from "@/hooks/queries/student/use-get-
 import { Student } from "@/type/student";
 import { useRouter } from "next/navigation";
 import CreateStudentButton from "./create-student-button";
+import { useDeleteStudents } from "@/hooks/mutations/student/use-delete-students";
 
 export default function StudentTable({ subject }: { subject: string }) {
   const { data: studentData, isLoading } = useGetAllStudentsByProfessorId();
-  const { mutateAsync: mutateAsyncDelete, isPending } = useDeleteLessons();
+  const { mutateAsync: mutateAsyncDelete, isPending } = useDeleteStudents();
   const [openId, setOpenId] = useState<string | null>(null);
 
   const router = useRouter();
 
   const handleDelete = useCallback(
-    async (lessonIds: string | string[]) => {
-      if (!Array.isArray(lessonIds)) lessonIds = [lessonIds];
+    async (studentIds: string | string[]) => {
+      if (!Array.isArray(studentIds)) studentIds = [studentIds];
 
-      toast.promise(mutateAsyncDelete(lessonIds), {
+      toast.promise(mutateAsyncDelete(studentIds), {
         loading: "Suppression en cours...",
         success: (data) => data.success,
         error: (data) =>
@@ -80,6 +81,9 @@ export default function StudentTable({ subject }: { subject: string }) {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Groupe" />
       ),
+      cell: ({ row }) => {
+        return row.original.groupStudent?.name ?? "Aucun groupe";
+      },
     },
 
     {
@@ -88,6 +92,10 @@ export default function StudentTable({ subject }: { subject: string }) {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Activé" />
       ),
+      cell: ({ row }) => {
+        const isActive = row.original.isActive;
+        return <>{isActive ? "Oui" : "Non"}</>;
+      },
     },
     {
       id: "Date de création",

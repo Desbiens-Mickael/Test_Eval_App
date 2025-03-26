@@ -2,6 +2,7 @@
 
 import CustomSelect from "@/components/form/custom-select";
 import SubmitButton from "@/components/form/submit-button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,7 +22,7 @@ import {
   addUserToGroupSchema,
 } from "@/shema-zod/group.shema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus } from "lucide-react";
+import { MessageSquareWarning, Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -103,6 +104,14 @@ export default function AddStudentToGroupForm({
               />
             </div>
           </form>
+          <Alert variant="warning">
+            <MessageSquareWarning className="h-4 w-4" color="#ffffa1" />
+            <AlertTitle>Attention</AlertTitle>
+            <AlertDescription>
+              Si l'élève est déjà dans un groupe, il sera déplacé dans le
+              nouveau groupe.
+            </AlertDescription>
+          </Alert>
         </Form>
         <DialogFooter>
           <DialogClose asChild>

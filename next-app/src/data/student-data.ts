@@ -90,6 +90,7 @@ export const getAllStudentsByAuthorIdwhoDontBelongToTheGroupIdData = async (
   });
 };
 
+// Mise à jour d'un élève
 export const UpdateStudentData = async (id: string, data: object) => {
   try {
     return await prisma.student.update({
@@ -100,3 +101,15 @@ export const UpdateStudentData = async (id: string, data: object) => {
     throw error;
   }
 };
+
+// Suppression d'un ou plusieurs élèves
+export const deleteStudentsData = async (studentIds: string[]) => {
+  try {
+    return await prisma.student.deleteMany({ where: { id: { in: studentIds } } });
+  } catch (error) {
+    throw error;
+  }
+};
+  
+
+

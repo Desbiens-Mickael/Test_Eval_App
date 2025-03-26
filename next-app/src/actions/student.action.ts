@@ -2,8 +2,10 @@
 
 import { getGroupByIdData } from "@/data/group.data";
 import {
+  deleteStudentsData,
   getAllStudentsByAuthorIdData,
   getAllStudentsByAuthorIdwhoDontBelongToTheGroupIdData,
+  UpdateStudentData,
 } from "@/data/student-data";
 import { currentUser } from "@/lib/auth";
 
@@ -53,6 +55,48 @@ export const getAllStudentsByAuthorIdwhoDontBelongToTheGroupIdAction = async (
     console.error(error);
     return {
       error: "Une erreur est survenue lors de la récupération des groupes.",
+    };
+  }
+};
+
+// Mise à jour d'un élève (uniquement pour l'élève connecté)
+export const updateStudentAction = async (data: object) => {
+  const user = await currentUser();
+  if (!user || !user.id || user.role !== "STUDENT") {
+    return { error: "Action non autoriser !" };
+  }
+
+  try {
+    const updatedStudent = await UpdateStudentData(user.id, data);
+    return { success: "Compte mis à jour avec succès.", data: updatedStudent };
+  } catch (error) {
+    console.error(error);
+    return {
+      error: "Une erreur est survenue lors de la mise à jour du compte.",
+    };
+  }
+};
+
+// Supprimer un ou plusieurs élèves
+export const deleteStudentsAction = async (studentIds: string[]) => {
+  const user = await currentUser();
+  if (!user || !user.id || user.role !== "ADMIN") {
+    return { error: "Action non autoriser !" };
+  }
+
+  try {
+    const deletedStudents = await deleteStudentsData(studentIds);
+    return {
+      success:
+        studentIds.length > 1
+          ? "Les élèves ont bien été supprimés."
+          : "L'élève a bien été supprimé.",
+      data: deletedStudents,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      error: "Une erreur est survenue lors de la suppression des élèves.",
     };
   }
 };

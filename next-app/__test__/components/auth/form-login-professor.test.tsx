@@ -1,4 +1,4 @@
-import FormLogin from "@/components/auth/form-login";
+import FormLoginProfessor from "@/components/auth/form-login-professor";
 import useLogin from "@/hooks/mutations/useLogin";
 import Providers from "@/lib/providers";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
@@ -15,11 +15,15 @@ jest.mock("next/navigation", () => ({
   })),
 }));
 
+jest.mock("@/components/auth/google-signin-button.tsx", () =>
+  jest.fn(() => <button> Google Sign </button>)
+);
+
 describe("FormLogin", () => {
   beforeEach(() => {
     render(
       <Providers>
-        <FormLogin />
+        <FormLoginProfessor />
       </Providers>
     );
   });
@@ -38,15 +42,21 @@ describe("FormLogin", () => {
   };
 
   it("should render FormLogin component correctly", () => {
-    expect(screen.getByTestId("form-login")).toBeInTheDocument();
+    expect(screen.getByTestId("form-login-professor")).toBeInTheDocument();
   });
 
   it("should render FormLogin component with description", () => {
-    expect(screen.getByText(/Entrez votre email et votre mot de passe ci-dessous pour vous connecter/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Entrez votre email et votre mot de passe ci-dessous pour vous connecter/i
+      )
+    ).toBeInTheDocument();
   });
 
   it("should render a input of type email", () => {
-    expect(screen.getByPlaceholderText("exemple@gmail.com")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("exemple@gmail.com")
+    ).toBeInTheDocument();
   });
 
   it("should render a input of type password", () => {
@@ -66,6 +76,12 @@ describe("FormLogin", () => {
     const SubmitButton = screen.getByRole("button", { name: /Connexion/i });
     expect(SubmitButton).toBeInTheDocument();
     expect(SubmitButton).toHaveAttribute("type", "submit");
+  });
+
+  it("renders the social button correctly", () => {
+    expect(
+      screen.getByRole("button", { name: /Google Sign/i })
+    ).toBeInTheDocument();
   });
 
   it("Should not displayed the two-factor code input if twoFactor is false", () => {
@@ -113,7 +129,9 @@ describe("FormLogin", () => {
     const passwordInput = screen.getByPlaceholderText("******");
     const submitButton = screen.getByRole("button", { name: /Connexion/i });
 
-    fireEvent.change(emailInput, { target: { value: "valid-email@gmail.com" } });
+    fireEvent.change(emailInput, {
+      target: { value: "valid-email@gmail.com" },
+    });
     fireEvent.change(passwordInput, { target: { value: "123456" } });
     fireEvent.click(submitButton);
 
@@ -135,14 +153,20 @@ describe("FormLogin", () => {
     const passwordInput = screen.getByPlaceholderText("******");
     const submitButton = screen.getByRole("button", { name: /Connexion/i });
 
-    fireEvent.change(emailInput, { target: { value: "valid-email@gmail.com" } });
+    fireEvent.change(emailInput, {
+      target: { value: "valid-email@gmail.com" },
+    });
     fireEvent.change(passwordInput, { target: { value: "123456" } });
     fireEvent.click(submitButton);
 
     // Attendre que la section du 2FA apparaisse
     await waitFor(() => {
       expect(screen.getByTestId("two-factor-section")).toBeInTheDocument();
-      expect(screen.getByText(/Veuillez saisir le code à usage unique qui vous a été envoyé par mail./i)).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          /Veuillez saisir le code à usage unique qui vous a été envoyé par mail./i
+        )
+      ).toBeInTheDocument();
     });
   });
 
@@ -154,7 +178,9 @@ describe("FormLogin", () => {
     const passwordInput = screen.getByPlaceholderText("******");
     const submitButton = screen.getByRole("button", { name: /Connexion/i });
 
-    fireEvent.change(emailInput, { target: { value: "valid-email@gmail.com" } });
+    fireEvent.change(emailInput, {
+      target: { value: "valid-email@gmail.com" },
+    });
     fireEvent.change(passwordInput, { target: { value: "123456" } });
     fireEvent.click(submitButton);
 
@@ -173,7 +199,9 @@ describe("FormLogin", () => {
     const passwordInput = screen.getByPlaceholderText("******");
     const submitButton = screen.getByRole("button", { name: /Connexion/i });
 
-    fireEvent.change(emailInput, { target: { value: "valid-email@gmail.com" } });
+    fireEvent.change(emailInput, {
+      target: { value: "valid-email@gmail.com" },
+    });
     fireEvent.change(passwordInput, { target: { value: "123456" } });
     fireEvent.click(submitButton);
 

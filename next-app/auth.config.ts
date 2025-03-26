@@ -148,31 +148,25 @@ export default {
       if (trigger === "signIn") token.isOAuth = !!account?.access_token;
 
       if (trigger === "signIn" || trigger === "update") {
-        let existingData: User | Student | null;
-        // Selon le rôle, récupère les données depuis le modèle approprié
-        if (token.role === "STUDENT") {
-          existingData = await getStudentByIdData(token.sub);
-          token.identifier = existingData?.identifier;
-          token.email = "";
-          token.isTwoFactorEnabled = false;
-        } else {
-          existingData = await getUserByIdData(token.sub);
-          token.email = existingData?.email || "";
-          token.isTwoFactorEnabled = existingData?.isTwoFactorEnabled || false;
+        // let existingData: User | Student | null;
+        const existingUserData: User | null = await getUserByIdData(token.sub);
+        const existingStudentData: Student | null = await getStudentByIdData(
+          token.sub
+        );
+        // Récupère les données depuis le modèle approprié en fonction du type des données
+        if (existingStudentData) {
+          token.identifier = existingStudentData?.identifier;
+          token.role = existingStudentData.role;
+          token.name = existingStudentData.name;
+          token.picture = existingStudentData.image;
+        } else if (existingUserData) {
+          token.email = existingUserData?.email || "";
+          token.isTwoFactorEnabled =
+            existingUserData?.isTwoFactorEnabled || false;
+          token.role = existingUserData.role;
+          token.name = existingUserData.name;
+          token.picture = existingUserData.image;
         }
-        if (existingData) {
-          token.name = existingData?.name;
-          token.picture = existingData.image;
-          token.role = existingData.role;
-        }
-
-        // const existingUser = await getUserByIdData(token.sub);
-        // if (!existingUser) return token;
-        // token.name = existingUser.name;
-        // token.email = existingUser.email;
-        // token.picture = existingUser.image;
-        // token.role = existingUser.role;
-        // token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
       }
 
       return token;
@@ -182,6 +176,7 @@ export default {
         ...session,
         user: {
           ...session.user,
+          identifier: token.identifier,
           role: token.role,
           isTwoFactorEnabled: token.isTwoFactorEnabled,
           isOAuth: token.isOAuth,

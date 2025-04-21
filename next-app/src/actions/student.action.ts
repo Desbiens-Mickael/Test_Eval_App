@@ -5,6 +5,7 @@ import {
   deleteStudentsData,
   getAllStudentsByAuthorIdData,
   getAllStudentsByAuthorIdwhoDontBelongToTheGroupIdData,
+  getStudentByIdentifierlData,
   UpdateStudentData,
 } from "@/data/student-data";
 import { currentUser } from "@/lib/auth";
@@ -55,6 +56,25 @@ export const getAllStudentsByAuthorIdwhoDontBelongToTheGroupIdAction = async (
     console.error(error);
     return {
       error: "Une erreur est survenue lors de la récupération des groupes.",
+    };
+  }
+};
+
+// Récupérer un élève par son identifiant
+export const getStudentByIdentifierAction = async (identifier: string) => {
+  const user = await currentUser();
+  if (!user || !user.id || user.role !== "STUDENT") {
+    return { error: "Action non autoriser !" };
+  }
+
+  try {
+    const student = await getStudentByIdentifierlData(identifier);
+    return { success: "", data: student };
+  } catch (error) {
+    console.error(error);
+    return {
+      error:
+        "Une erreur est survenue lors de la récupération des informations du compte.",
     };
   }
 };

@@ -8,7 +8,7 @@ const userMenus: MenuSideBar = [
       {
         icon: LayoutDashboard,
         title: "Tableau de bord",
-        href: "/user/dashboard",
+        href: "/eleve/dashboard",
       },
     ],
   },
@@ -18,7 +18,7 @@ const userMenus: MenuSideBar = [
       {
         icon: User,
         title: "Mon profil",
-        href: "/profil",
+        href: "/eleve/profil",
       },
     ],
   },

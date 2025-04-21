@@ -39,7 +39,7 @@ const loginStudentAction = async (credentials: loginStudentFormType) => {
     await UpdateStudentData(existingStudent.id, { isActive: true });
   }
 
-  const urlRedirect = "/user/dashboard";
+  const urlRedirect = "/eleve/dashboard";
 
   try {
     await signIn("credentials", {

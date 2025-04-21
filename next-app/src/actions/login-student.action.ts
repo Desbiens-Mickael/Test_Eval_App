@@ -26,14 +26,14 @@ const loginStudentAction = async (credentials: loginStudentFormType) => {
     !existingStudent.identifier ||
     !existingStudent.password
   ) {
-    return { error: "identifiant invalide!" };
+    return { error: "identifiant ou mot de passe invalide !" };
   }
 
   const veriedPassword = await verifyPassword(
     existingStudent.password,
     password
   );
-  if (!veriedPassword) return { error: "Données non valide!" };
+  if (!veriedPassword) return { error: "Données non valide !" };
 
   if (existingStudent.isActive === false) {
     await UpdateStudentData(existingStudent.id, { isActive: true });
@@ -51,7 +51,7 @@ const loginStudentAction = async (credentials: loginStudentFormType) => {
     if (err instanceof AuthError) {
       switch (err.type) {
         case "CredentialsSignin":
-          return { error: "Identifiants non valide!" };
+          return { error: "Identifiants ou mot de passe non valide!" };
         default:
           return { error: "Une erreur c'est produite !!" };
       }

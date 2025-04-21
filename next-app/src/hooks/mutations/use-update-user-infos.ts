@@ -16,9 +16,9 @@ export const useUpdateUserInfos = () => {
       if (data.success) {
         toast.success(data.success);
         update({});
+        queryClient.invalidateQueries({ queryKey: ["userByEmail"] });
       }
       if (data.error) toast.error(data.error);
-      queryClient.invalidateQueries({ queryKey: ["userByEmail"] });
     },
   });
 };

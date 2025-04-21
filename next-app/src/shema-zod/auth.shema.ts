@@ -63,6 +63,11 @@ export const userInfosFormSchema = z.object({
   role: z.enum([UserRole.ADMIN, UserRole.USER, UserRole.STUDENT]),
 });
 
+export const studentInfosFormSchema = z.object({
+  firstname: z.string().min(2, "Le prénom doit contenir au moins 2 caractères"),
+  lastname: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
+});
+
 export const userPreferencesFormSchema = z.object({
   imgPath: z.optional(z.string()),
 });
@@ -98,7 +103,42 @@ export const userSecurityFormSchema = z
     { message: "Mot de passe requis!", path: ["password"] }
   );
 
+export const studentSecurityFormSchema = z
+  .object({
+    password: z.optional(
+      z.string().min(6, {
+        message: "Minimum 6 caractère!",
+      })
+    ),
+    newPassword: z.optional(
+      z.string().min(6, {
+        message: "Minimum 6 caractère!",
+      })
+    ),
+  })
+  .refine(
+    (data) => {
+      if (data.password && !data.newPassword) return false;
+
+      return true;
+    },
+    { message: "Nouveau mot de passe requis!", path: ["newPassword"] }
+  )
+  .refine(
+    (data) => {
+      if (!data.password && data.newPassword) return false;
+
+      return true;
+    },
+    { message: "Mot de passe requis!", path: ["password"] }
+  );
+
+// user
 export type registerUserFormType = z.infer<typeof registerUserFormSchema>;
 export type registerStudentFormType = z.infer<typeof registerStudentFormSchema>;
 export type loginUserFormType = z.infer<typeof loginUserFormSchema>;
+
+// student
 export type loginStudentFormType = z.infer<typeof loginStudentFormSchema>;
+export type studentInfosFormType = z.infer<typeof studentInfosFormSchema>;
+export type studentSecurityFormType = z.infer<typeof studentSecurityFormSchema>;

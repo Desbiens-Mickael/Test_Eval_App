@@ -18,7 +18,6 @@ import StudentSecurityForm from "./student-security-form";
 
 export default function StudentProfileManager() {
   const student = useCurrentUser();
-  console.log(student);
   const { data, isLoading, error } = useGetStudentByIdentifier(
     student?.identifier || ""
   );
@@ -59,7 +58,7 @@ export default function StudentProfileManager() {
                 <CardDescription>Modifier vos préférences.</CardDescription>
               </CardHeader>
               <CardContent>
-                <StudentPreferencesForm />
+                <StudentPreferencesForm imgPath={data?.data?.image ?? null} />
               </CardContent>
               <CardFooter></CardFooter>
             </Card>

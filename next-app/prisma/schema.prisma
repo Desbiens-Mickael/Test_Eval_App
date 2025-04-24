@@ -98,8 +98,7 @@ model User {
 
 model Student {
   id                      String @id @default(cuid())
-  lastName                String
-  firstName               String
+  name                    String
   identifier              String @unique
   password                String
   image                   String?
@@ -117,32 +116,15 @@ model Group {
   id                      String @id @default(cuid())
   name                    String @db.VarChar(20)
   students                Student[] @relation(name: "students")
+  lessons                 Lesson[]
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
-
-  // invitations             Invitation[]
 
   authorId                String
   author                  User @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@unique([name, authorId])
 }
-
-// enum InvitationStatus {
-//   PENDING
-//   EXPIRED
-//   ACCEPTED
-// }
-
-// model Invitation {
-//   id              String            @id @default(cuid())
-//   email           String            @unique // email user invité
-//   status          InvitationStatus  @default(PENDING)
-//   groupId         String
-//   group           Group             @relation(fields: [groupId], references: [id], onDelete: Cascade)
-//   createdAt       DateTime          @default(now())
-//   updatedAt       DateTime          @updatedAt
-// }
 
 model LessonSubject {
   id                      String @id @default(cuid())
@@ -186,6 +168,7 @@ model Lesson {
   GradeLevels             GradeLevels @relation(fields: [GradeLevelsID], references: [id], onDelete: Cascade)
 
   exercices               Exercice[]
+  groups                  Group[]
   
   @@unique([title, authorId])
   @@unique([slug, authorId])

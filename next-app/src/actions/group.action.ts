@@ -1,12 +1,14 @@
 "use server";
 
 import {
+  addLessonsToGroupData,
   addStudentToGroupData,
   createGroupData,
   deleteGroupData,
   getGroupByIdData,
   getGroupsByAuthorIdData,
 } from "@/data/group.data";
+import { getLessonsByIdsData } from "@/data/lesson/lesson-data";
 import { getStudentByIdentifierlData } from "@/data/student-data";
 import { currentUser } from "@/lib/auth";
 import { CreateGroupInput, createGroupSchema } from "@/shema-zod/group.shema";
@@ -41,7 +43,26 @@ export const getGroupByIdAction = async (groupId: string) => {
       return { error: "Ce groupe n'existe pas !" };
     }
 
-    return { success: "Groupe trouvé.", data: group };
+    const formattedGroup = {
+      ...group,
+      students: group.students.map((student) => ({
+        id: student.id,
+        name: student.name,
+        identifier: student.identifier,
+        isActive: student.isActive,
+      })),
+      lessons: group.lessons.map((lesson) => ({
+        id: lesson.id,
+        title: lesson.title,
+        slug: lesson.slug,
+        subject: lesson.LessonSubject.label,
+        subjectColor: lesson.LessonSubject.color,
+        gradeLevel: lesson.GradeLevels.label,
+        gradeLevelColor: lesson.GradeLevels.color,
+      })),
+    };
+
+    return { success: "Groupe trouvé.", data: formattedGroup };
   } catch (error) {
     console.error(error);
     return {
@@ -151,6 +172,47 @@ export const deleteGroupAction = async (groupId: string) => {
     console.error(error);
     return {
       error: "Une erreur est survenue lors de la suppression du groupe.",
+    };
+  }
+};
+
+export const addLessonsToGroupAction = async (
+  groupId: string,
+  lessonIds: string[]
+) => {
+  const user = await currentUser();
+  if (!user || !user.id || user.role !== "ADMIN") {
+    return { error: "Action non autoriser !" };
+  }
+
+  try {
+    // Vérifier si le groupe existe
+    const group = await getGroupByIdData(groupId, user.id);
+    if (!group) {
+      return { error: "Ce groupe n'existe pas !" };
+    }
+
+    // Vérifier si l'utilisateur est l'auteur du groupe
+    if (group.authorId !== user.id) {
+      return { error: "Action non autoriser !" };
+    }
+
+    // Vérifier si les leçons existent
+    const lessons = await getLessonsByIdsData(lessonIds);
+    if (!lessons || lessons.length !== lessonIds.length) {
+      return { error: "Certaines leçons n'existent pas !" };
+    }
+
+    // Ajouter les leçons au groupe
+    const response = await addLessonsToGroupData(groupId, lessonIds);
+    return {
+      success: "Leçons ajoutées au groupe avec succès.",
+      data: response,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      error: "Une erreur est survenue lors de l'ajout des leçons au groupe.",
     };
   }
 };

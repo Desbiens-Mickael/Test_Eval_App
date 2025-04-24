@@ -1,21 +1,20 @@
-"use client"
+"use client";
 
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 
-interface DataTAbleBUttonCreateProps{
+interface DataTAbleBUttonCreateProps {
   createLink: string;
 }
 
-export default function DataTAbleBUttonCreate({createLink}: DataTAbleBUttonCreateProps)  {
+export default function DataTAbleBUttonCreate({
+  createLink,
+}: DataTAbleBUttonCreateProps) {
   return (
-    <Button
-    size="sm"
-    asChild className="ml-auto hidden h-8 lg:flex"
-    >
+    <Button size="sm" asChild className="ml-auto hidden h-8 lg:flex">
       <Link href={createLink}>
-        <Plus/>
+        <Plus />
       </Link>
     </Button>
   );

@@ -18,7 +18,7 @@ import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
 
 export default function LessonTable({ subject }: { subject: string }) {
-  const { data: exerciceData, isLoading } = useGetAllLessonsBySubject(subject);
+  const { data, isLoading } = useGetAllLessonsBySubject(subject);
   const { mutateAsync: mutateAsyncDelete, isPending } = useDeleteLessons();
   const [openId, setOpenId] = useState<string | null>(null);
 
@@ -133,7 +133,7 @@ export default function LessonTable({ subject }: { subject: string }) {
   return (
     <DataTable
       columns={columns}
-      data={exerciceData ?? []}
+      data={data ?? []}
       viewOptionsButton
       inputSearchColumnId="Titre"
       createLink="/admin/lecons/creation"

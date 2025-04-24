@@ -24,7 +24,7 @@ export const useAddStudentToGroup = () => {
         const authorId = data.data.authorId;
         queryClient.invalidateQueries({ queryKey: ["group", groupId] });
         queryClient.invalidateQueries({
-          queryKey: ["TeacherStudentsByGroup", authorId, groupId],
+          queryKey: ["TeacherStudentsByGroup", groupId],
         });
       }
       return data;

@@ -1,10 +1,5 @@
-export type Student = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  identifier: string;
-  isActive: boolean;
-};
+import { Lesson } from "./lesson";
+import { Student } from "./student";
 
 export type Group = {
   id: string;
@@ -12,6 +7,7 @@ export type Group = {
   authorId: string;
   createdAt: Date;
   students: Student[];
+  lessons: Lesson[];
 };
 
 export type searchUserFromGroup = {

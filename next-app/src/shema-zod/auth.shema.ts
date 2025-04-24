@@ -21,7 +21,7 @@ export const loginUserFormSchema = registerUserFormSchema
 
 export const loginStudentFormSchema = z.object({
   identifier: z.string({ required_error: "Identifiant requis" }),
-  password: z.string().min(6, { message: "minimum 6 caractère" }),
+  password: z.string().min(8, { message: "minimum 8 caractère" }),
 });
 
 export const resetPasswordSendFormSchema = registerUserFormSchema.pick({
@@ -60,7 +60,12 @@ export const userInfosFormSchema = z.object({
       message: "Adresse email non valide!",
     })
   ),
-  role: z.enum([UserRole.ADMIN, UserRole.USER]),
+  role: z.enum([UserRole.ADMIN, UserRole.USER, UserRole.STUDENT]),
+});
+
+export const studentInfosFormSchema = z.object({
+  firstname: z.string().min(2, "Le prénom doit contenir au moins 2 caractères"),
+  lastname: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
 });
 
 export const userPreferencesFormSchema = z.object({
@@ -98,7 +103,42 @@ export const userSecurityFormSchema = z
     { message: "Mot de passe requis!", path: ["password"] }
   );
 
+export const studentSecurityFormSchema = z
+  .object({
+    password: z.optional(
+      z.string().min(6, {
+        message: "Minimum 6 caractère!",
+      })
+    ),
+    newPassword: z.optional(
+      z.string().min(6, {
+        message: "Minimum 6 caractère!",
+      })
+    ),
+  })
+  .refine(
+    (data) => {
+      if (data.password && !data.newPassword) return false;
+
+      return true;
+    },
+    { message: "Nouveau mot de passe requis!", path: ["newPassword"] }
+  )
+  .refine(
+    (data) => {
+      if (!data.password && data.newPassword) return false;
+
+      return true;
+    },
+    { message: "Mot de passe requis!", path: ["password"] }
+  );
+
+// user
 export type registerUserFormType = z.infer<typeof registerUserFormSchema>;
 export type registerStudentFormType = z.infer<typeof registerStudentFormSchema>;
 export type loginUserFormType = z.infer<typeof loginUserFormSchema>;
+
+// student
 export type loginStudentFormType = z.infer<typeof loginStudentFormSchema>;
+export type studentInfosFormType = z.infer<typeof studentInfosFormSchema>;
+export type studentSecurityFormType = z.infer<typeof studentSecurityFormSchema>;

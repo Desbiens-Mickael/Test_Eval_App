@@ -2,8 +2,10 @@
 
 import { useGetGroupById } from "@/hooks/queries/group/use-get-group-by-id";
 import { toast } from "sonner";
+import AddLessonToGroup from "./add-lesson-to-group-form";
 import AddStudentToGroupForm from "./add-student-to-group-form";
 import DeleteGroupButton from "./delete-group-button";
+import LessonListe from "./lesson-liste";
 import ListeMembers from "./liste-members";
 
 interface EditGroupFormProps {
@@ -40,8 +42,15 @@ export default function EditGroupForm({ id }: EditGroupFormProps) {
           <h3 className="text-lg font-bold absolute top-[-15px] bg-white">
             Gestion des élèves
           </h3>
-          <AddStudentToGroupForm authorId={data.authorId} groupId={id} />
+          <AddStudentToGroupForm groupId={id} />
           <ListeMembers students={data.students} />
+        </div>
+        <div className="w-full flex flex-col border-2 border-dashed border-gray-300 rounded-lg p-4 relative">
+          <h3 className="text-lg font-bold absolute top-[-15px] bg-white">
+            Gestion des Leçons
+          </h3>
+          <AddLessonToGroup groupId={id} />
+          <LessonListe lessons={data.lessons} />
         </div>
       </div>
     </div>

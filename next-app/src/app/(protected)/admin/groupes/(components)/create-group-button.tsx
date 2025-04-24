@@ -36,7 +36,7 @@ export default function CreateGroupButton() {
   const onSubmit = async (values: CreateGroupInput) => {
     try {
       toast.promise(mutateAsync(values), {
-        loading: "Suppression en cours...",
+        loading: "Création en cours...",
         success: (data) => data.success,
         error: (data) => data.error || "Une erreur c'est produite !",
       });

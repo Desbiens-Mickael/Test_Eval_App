@@ -1,3 +1,4 @@
+import { Lesson } from "./lesson";
 import { Student } from "./student";
 
 export type Group = {
@@ -6,6 +7,7 @@ export type Group = {
   authorId: string;
   createdAt: Date;
   students: Student[];
+  lessons: Lesson[];
 };
 
 export type searchUserFromGroup = {

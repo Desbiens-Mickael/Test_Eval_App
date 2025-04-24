@@ -26,17 +26,26 @@ export const getGroupsByAuthorIdData = async (authorId: string) => {
 export const getGroupByIdData = async (id: string, authorId: string) => {
   return await prisma.group.findUnique({
     where: { id, authorId },
-    select: {
-      id: true,
-      name: true,
-      createdAt: true,
-      authorId: true,
+    include: {
       students: {
         select: {
           id: true,
           name: true,
           identifier: true,
           isActive: true,
+        },
+      },
+      lessons: {
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          LessonSubject: {
+            select: { label: true, color: true },
+          },
+          GradeLevels: {
+            select: { label: true, color: true },
+          },
         },
       },
     },
@@ -59,4 +68,15 @@ export const addStudentToGroupData = async (
 
 export const deleteGroupData = async (id: string, authorId: string) => {
   return await prisma.group.delete({ where: { id, authorId } });
+};
+
+// Ajouter un tableau de leçons au groupe
+export const addLessonsToGroupData = async (
+  groupId: string,
+  lessonIds: string[]
+) => {
+  return await prisma.group.update({
+    where: { id: groupId },
+    data: { lessons: { connect: lessonIds.map((id) => ({ id })) } },
+  });
 };

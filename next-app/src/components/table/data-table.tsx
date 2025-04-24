@@ -29,6 +29,7 @@ import DataTableButtonReset from "./data-table-button-reset";
 import DataTableDeleteSelectionButton from "./data-table-delete-selection-button";
 import DataTAbleInputFilter from "./data-table-input-filter";
 import { DataTablePagination } from "./data-table-pagination";
+import DataTableValidateSelectionButton from "./data-table-validate-selection-button";
 import { DataTableViewOptions } from "./data-table-view-options";
 
 export interface Identifier {
@@ -42,7 +43,8 @@ interface DataTableProps<TData, TValue> {
   viewOptionsButton?: boolean;
   createLink?: string;
   createChildren?: React.ReactNode;
-  handleDelete: (ids: string[]) => Promise<void>;
+  handleDelete?: (ids: string[]) => Promise<void>;
+  handleValidate?: (ids: string[]) => Promise<void>;
   children?: (table: Table<TData>) => ReactElement[];
 }
 
@@ -64,6 +66,7 @@ export function DataTable<TData extends Identifier, TValue>({
   viewOptionsButton,
   createLink,
   handleDelete,
+  handleValidate,
   children,
   createChildren,
 }: DataTableProps<TData, TValue>) {
@@ -114,10 +117,12 @@ export function DataTable<TData extends Identifier, TValue>({
             ))}
         </div>
         <div className="flex items-center space-x-2">
-          <DataTableDeleteSelectionButton
-            handleDelete={handleDelete}
-            table={table}
-          />
+          {handleDelete && (
+            <DataTableDeleteSelectionButton
+              handleDelete={handleDelete}
+              table={table}
+            />
+          )}
           {createLink && <DataTAbleBUttonCreate createLink={createLink} />}
           {createChildren && <>{createChildren}</>}
           {viewOptionsButton && <DataTableViewOptions table={table} />}
@@ -174,7 +179,15 @@ export function DataTable<TData extends Identifier, TValue>({
           </TableBody>
         </TableUI>
       </div>
-      <DataTablePagination table={table} />
+      <div className="flex flex-col space-y-2">
+        <DataTablePagination table={table} />
+        {handleValidate && (
+          <DataTableValidateSelectionButton
+            table={table}
+            handleValidate={handleValidate}
+          />
+        )}
+      </div>
     </div>
   );
 }

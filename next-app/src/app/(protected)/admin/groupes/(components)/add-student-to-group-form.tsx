@@ -26,14 +26,13 @@ import { MessageSquareWarning, Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import AddToGroupSkeleton from "./add-to-group-skeleton";
 
 interface AddUserToGroupFormProps {
-  authorId: string;
   groupId: string;
 }
 
 export default function AddStudentToGroupForm({
-  authorId,
   groupId,
 }: AddUserToGroupFormProps) {
   const [open, setOpen] = useState(false);
@@ -45,7 +44,7 @@ export default function AddStudentToGroupForm({
     },
   });
 
-  const { data } =
+  const { data, isLoading: isLoadingStudents } =
     useGetAllStudentsByAuthorIdwhoDontBelongToTheGroupId(groupId);
   const { mutateAsync, isPending } = useAddStudentToGroup();
 
@@ -70,11 +69,19 @@ export default function AddStudentToGroupForm({
     }
   };
 
+  if (isLoadingStudents) {
+    return <AddToGroupSkeleton className="self-center" />;
+  }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size={"icon"} className="self-end">
-          <Plus />
+        <Button
+          variant="outline"
+          className="flex items-center gap-2 self-center"
+        >
+          <Plus className="h-4 w-4" />
+          Ajouter un élève
         </Button>
       </DialogTrigger>
       <DialogContent>

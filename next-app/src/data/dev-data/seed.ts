@@ -19,7 +19,7 @@ const seed = async () => {
       name: "Thibault Desbiens",
       professorId: userAdmin.id,
       identifier: "t.desbiens",
-      password: await hashPassword("azerty"),
+      password: await hashPassword("azerty22"),
     },
   });
 

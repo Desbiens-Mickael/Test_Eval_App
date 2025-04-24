@@ -4,7 +4,10 @@ import { getAuthorIdOfGroupByUserIdData } from "@/data/group.data";
 import {
   createLessonData,
   deleteLessonsData,
+  getAllLessonByAuthorIdData,
   getAllLessonBySubjectData,
+  getAllLessonsByGroupIdData,
+  getAllLessonsNotInGroupData,
   getLessonByIdData,
   getLessonBySlugData,
   getLessonsInfoBeforeDelete,
@@ -33,6 +36,39 @@ const serializeLessonContent = (data: CreateLessonInput) => {
         ? JSON.parse(data.content)
         : data.content,
   };
+};
+
+/**
+ * Récupère toutes les leçons de l'auteur connecté
+ * @returns {Promise<Lesson[]>} Un tableau des leçons formatées
+ * @throws {Error} Si la récupération échoue
+ */
+export const getAllLessonsByAuthorIdAction = async () => {
+  try {
+    const user = await currentUser();
+    if (!user || !user?.id || user.role !== "ADMIN") {
+      return { error: "Action non autoriser !" };
+    }
+    const lessonsData = await getAllLessonByAuthorIdData(user.id);
+    const lessons = lessonsData.map((lesson) => {
+      return {
+        id: lesson.id,
+        title: lesson.title,
+        slug: lesson.slug,
+        subject: lesson.LessonSubject.label,
+        subjectColor: lesson.LessonSubject.color,
+        gradeLevel: lesson.GradeLevels.label,
+        gradeLevelColor: lesson.GradeLevels.color,
+      };
+    });
+    return {
+      success: "Les leçons ont été récupérées avec succès.",
+      data: lessons,
+    };
+  } catch (error) {
+    console.error("Error fetching lessons:", error);
+    return { error: "Échec de la récupération des leçons" };
+  }
 };
 
 /**
@@ -257,3 +293,43 @@ export async function deleteLessonsAction(lessonIds: string[]) {
     };
   }
 }
+
+// Récupération des leçons non contenu dans le groupe donné
+export const getAllLessonsNotInGroupAction = async (groupId: string) => {
+  try {
+    const lessonsData = await getAllLessonsNotInGroupData(groupId);
+
+    const lessons = lessonsData.map((lesson) => {
+      return {
+        id: lesson.id,
+        title: lesson.title,
+        slug: lesson.slug,
+        subject: lesson.LessonSubject.label,
+        subjectColor: lesson.LessonSubject.color,
+        gradeLevel: lesson.GradeLevels.label,
+        gradeLevelColor: lesson.GradeLevels.color,
+      };
+    });
+    return {
+      success: "Les leçons ont été récupérées avec succès.",
+      data: lessons,
+    };
+  } catch (error) {
+    console.error("Error fetching lessons:", error);
+    return { error: "Échec de la récupération des leçons" };
+  }
+};
+
+// Récupération des leçons par leur groupe
+export const getAllLessonsByGroupIdAction = async (groupId: string) => {
+  try {
+    const lessons = await getAllLessonsByGroupIdData(groupId);
+    return {
+      success: "Les leçons ont été récupérées avec succès.",
+      data: lessons,
+    };
+  } catch (error) {
+    console.error("Error fetching lessons:", error);
+    return { error: "Échec de la récupération des leçons" };
+  }
+};

@@ -8,8 +8,13 @@ export const createGroupSchema = z.object({
 });
 
 export const addUserToGroupSchema = z.object({
-  identifier: z.string().min(1, "Identifiant requis"),
+  identifier: z.string().min(1, "Veuillez sélectionner un élève"),
+});
+
+export const addLessonToGroupSchema = z.object({
+  lessonId: z.string().min(1, "Veuillez sélectionner une leçon"),
 });
 
 export type CreateGroupInput = z.infer<typeof createGroupSchema>;
 export type AddUserToGroupInput = z.infer<typeof addUserToGroupSchema>;
+export type AddLessonToGroupInput = z.infer<typeof addLessonToGroupSchema>;

@@ -28,16 +28,10 @@ export default function StudentProfileManager() {
         <Loader />
       ) : (
         <Tabs defaultValue="infos" className="w-full lg:w-[800px] mx-auto">
-          <TabsList className="w-full">
-            <TabsTrigger value="infos" className="w-1/3">
-              Infos
-            </TabsTrigger>
-            <TabsTrigger value="preferences" className="w-1/3">
-              Préférences
-            </TabsTrigger>
-            <TabsTrigger value="security" className="w-1/3">
-              Sécurité
-            </TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 bg-foreground text-background">
+            <TabsTrigger value="infos">Infos</TabsTrigger>
+            <TabsTrigger value="preferences">Préférences</TabsTrigger>
+            <TabsTrigger value="security">Sécurité</TabsTrigger>
           </TabsList>
           <TabsContent value="infos">
             <Card>

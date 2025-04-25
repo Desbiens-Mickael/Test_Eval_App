@@ -22,10 +22,6 @@ interface AddLessonToGroupProps {
 export default function AddLessonToGroup({ groupId }: AddLessonToGroupProps) {
   const [open, setOpen] = useState(false);
 
-  // if (isLoadingAllLessons) {
-  //   return <AddToGroupSkeleton className="self-center" />;
-  // }
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -42,7 +38,7 @@ export default function AddLessonToGroup({ groupId }: AddLessonToGroupProps) {
           <DialogTitle>Ajouter une leçon</DialogTitle>
           <DialogDescription>Ajoutez une leçon au groupe</DialogDescription>
         </DialogHeader>
-        <GroupLessonManagementTable groupId={groupId} />
+        <GroupLessonManagementTable groupId={groupId} setOpen={setOpen} />
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="outline" onClick={() => {}}>

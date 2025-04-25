@@ -15,15 +15,15 @@ export default function ListeMembers({ students }: ListeMembersProps) {
         students.map((user) => (
           <div
             key={user.id}
-            className="flex justify-between items-center bg-gray-600 rounded-md p-2"
+            className="flex justify-between items-center shadow-lg rounded-md p-2"
           >
-            <h3 className="text-md font-bold text-background">{user.name}</h3>
+            <h3 className="text-lg font-bold text-foreground">{user.name}</h3>
             {user.isActive ? (
-              <div className="text-sm text-green-100 bg-green-500 rounded-xl py-[0.5px] px-2">
-                Active
+              <div className="text-sm font-bold text-green-500 border border-green-500 rounded-xl py-[0.5px] px-2">
+                Activé
               </div>
             ) : (
-              <div className="text-sm text-red-100 bg-primary rounded-xl py-[0.5px] px-2">
+              <div className="text-sm font-bold text-red-500 border border-red-500 rounded-xl py-[0.5px] px-2">
                 En attente
               </div>
             )}

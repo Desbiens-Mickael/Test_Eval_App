@@ -115,8 +115,8 @@ export default function AddStudentToGroupForm({
             <MessageSquareWarning className="h-4 w-4" color="#ffffa1" />
             <AlertTitle>Attention</AlertTitle>
             <AlertDescription>
-              Si l'élève est déjà dans un groupe, il sera déplacé dans le
-              nouveau groupe.
+              Si l'élève est déjà dans un groupe, il sera déplacé dans ce
+              groupe-ci.
             </AlertDescription>
           </Alert>
         </Form>

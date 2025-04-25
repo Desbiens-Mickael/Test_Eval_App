@@ -17,13 +17,13 @@ import useGetAllLessonsNotInGroup from "@/hooks/queries/lesson/use-get-all-lesso
 
 export default function GroupLessonManagementTable({
   groupId,
+  setOpen,
 }: {
   groupId: string;
+  setOpen: (open: boolean) => void;
 }) {
   const { data, isLoading } = useGetAllLessonsNotInGroup(groupId);
-  const { mutateAsync: mutateAsyncAdd, isPending } = useAddLessonsToGroup();
-  // const [openId, setOpenId] = useState<string | null>(null);
-  // const router = useRouter();
+  const { mutateAsync: mutateAsyncAdd } = useAddLessonsToGroup();
 
   const handleValidate = useCallback(
     async (lessonIds: string | string[]) => {
@@ -36,6 +36,10 @@ export default function GroupLessonManagementTable({
           data.error ||
           "Une erreur c'est produite pendant l'ajout ! Veuillez réessayer.",
       });
+      // Retarde la fermeture du modal de 1 seconde
+      setTimeout(() => {
+        setOpen(false);
+      }, 1000);
     },
     [mutateAsyncAdd]
   );
@@ -100,33 +104,6 @@ export default function GroupLessonManagementTable({
         return <SubjectLayout label={gradeLevel} color={color} />;
       },
     },
-    // {
-    //   id: "actions",
-    //   header: "Actions",
-    //   cell: ({ row }) => {
-    //     return (
-    //       <DataTableRowActions
-    //         elementId={row.original.id}
-    //         handleDelete={handleDelete}
-    //         editPath={`/admin/lecons/${row.original.slug}/edition`}
-    //         openId={openId}
-    //         setOpenId={setOpenId}
-    //       >
-    //         <DropdownMenuItem
-    //           className="cursor-pointer"
-    //           onSelect={() => {
-    //             router.push(
-    //               `/admin/lecons/${row.original.slug}/exercices/ajout`
-    //             );
-    //           }}
-    //           aria-label="Ajouter un exercice"
-    //         >
-    //           Ajouter un exercice
-    //         </DropdownMenuItem>
-    //       </DataTableRowActions>
-    //     );
-    //   },
-    // },
   ];
 
   if (isLoading) return <TableSkeleton />;
@@ -137,7 +114,6 @@ export default function GroupLessonManagementTable({
       data={data ?? []}
       viewOptionsButton
       inputSearchColumnId="Titre"
-      createLink="/admin/lecons/creation"
       handleValidate={handleValidate}
     >
       {(table) => [

@@ -80,3 +80,14 @@ export const addLessonsToGroupData = async (
     data: { lessons: { connect: lessonIds.map((id) => ({ id })) } },
   });
 };
+
+// Supprimer une leçon du groupe
+export const removeLessonFromGroupData = async (
+  groupId: string,
+  lessonId: string
+) => {
+  return await prisma.group.update({
+    where: { id: groupId },
+    data: { lessons: { disconnect: { id: lessonId } } },
+  });
+};

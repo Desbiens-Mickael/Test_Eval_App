@@ -50,7 +50,7 @@ export default function EditGroupForm({ id }: EditGroupFormProps) {
             Gestion des Leçons
           </h3>
           <AddLessonToGroup groupId={id} />
-          <LessonListe lessons={data.lessons} />
+          <LessonListe lessons={data.lessons} groupId={id} />
         </div>
       </div>
     </div>

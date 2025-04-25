@@ -7,6 +7,7 @@ import {
   deleteGroupData,
   getGroupByIdData,
   getGroupsByAuthorIdData,
+  removeLessonFromGroupData,
 } from "@/data/group.data";
 import { getLessonsByIdsData } from "@/data/lesson/lesson-data";
 import { getStudentByIdentifierlData } from "@/data/student-data";
@@ -213,6 +214,41 @@ export const addLessonsToGroupAction = async (
     console.error(error);
     return {
       error: "Une erreur est survenue lors de l'ajout des leçons au groupe.",
+    };
+  }
+};
+
+export const removeLessonFromGroupAction = async (
+  groupId: string,
+  lessonId: string
+) => {
+  const user = await currentUser();
+  if (!user || !user.id || user.role !== "ADMIN") {
+    return { error: "Action non autoriser !" };
+  }
+
+  try {
+    // Vérifier si le groupe existe
+    const group = await getGroupByIdData(groupId, user.id);
+    if (!group) {
+      return { error: "Ce groupe n'existe pas !" };
+    }
+
+    // Vérifier si l'utilisateur est l'auteur du groupe
+    if (group.authorId !== user.id) {
+      return { error: "Action non autoriser !" };
+    }
+
+    // Supprimer la leçon du groupe
+    const response = await removeLessonFromGroupData(groupId, lessonId);
+    return {
+      success: "Leçon retirée du groupe avec succès.",
+      data: response,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      error: "Une erreur est survenue lors du retrait de la leçon.",
     };
   }
 };

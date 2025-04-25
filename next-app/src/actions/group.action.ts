@@ -10,7 +10,14 @@ import {
   removeLessonFromGroupData,
 } from "@/data/group.data";
 import { getLessonsByIdsData } from "@/data/lesson/lesson-data";
-import { getStudentByIdentifierlData } from "@/data/student-data";
+import {
+  createNotificationLessonData,
+  createStudentNotificationData,
+} from "@/data/notification/notification.data";
+import {
+  getAllStudentsByAuthorIdwhoBelongToTheGroupIdIdsData,
+  getStudentByIdentifierlData,
+} from "@/data/student-data";
 import { currentUser } from "@/lib/auth";
 import { CreateGroupInput, createGroupSchema } from "@/shema-zod/group.shema";
 
@@ -75,7 +82,6 @@ export const getGroupByIdAction = async (groupId: string) => {
 // Création d'un groupe
 export const createGroupAction = async (data: CreateGroupInput) => {
   const isDataValide = createGroupSchema.safeParse(data);
-  console.log(data);
   if (!isDataValide.success) return { error: "Données non valide !" };
 
   const user = await currentUser();
@@ -206,6 +212,24 @@ export const addLessonsToGroupAction = async (
 
     // Ajouter les leçons au groupe
     const response = await addLessonsToGroupData(groupId, lessonIds);
+
+    // Récupérer tout les ids des élèves du groupe
+    const studentIds =
+      await getAllStudentsByAuthorIdwhoBelongToTheGroupIdIdsData(
+        user.id,
+        groupId
+      );
+
+    // Créer des notifications pour chaque leçon ajoutée
+    for (const lesson of lessons) {
+      const notification = await createNotificationLessonData({
+        lessonId: lesson.id,
+        createdByTeacherId: user.id,
+      });
+      // Créer des notifications pour chaque élève
+      await createStudentNotificationData(notification.id, studentIds);
+    }
+
     return {
       success: "Leçons ajoutées au groupe avec succès.",
       data: response,

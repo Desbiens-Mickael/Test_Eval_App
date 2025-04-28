@@ -15,6 +15,7 @@ import {
   getLessonsWithAuthor,
   updateLessonData,
 } from "@/data/lesson/lesson-data";
+import { getStudentByIdData } from "@/data/student-data";
 import { currentUser } from "@/lib/auth";
 import { stringToSlug } from "@/lib/utils";
 import {
@@ -335,6 +336,44 @@ export const getAllLessonsByGroupIdAction = async (groupId: string) => {
   }
 };
 
+// Récupération de toutes les leçons d'un élève
+export const getAllLessonsForStudentAction = async () => {
+  const user = await currentUser();
+  if (!user || !user.id) return { error: "Action non autoriser !" };
+
+  try {
+    // Récupération de l'élève en BDD
+    const student = await getStudentByIdData(user.id);
+
+    if (!student) return { error: "L'élève n'existe pas !" };
+    if (!student.groupId) return { error: "L'élève n'a pas de groupe !" };
+
+    // Récupération des leçons du groupe auquel l'élève appartient
+    const lessonsData = await getAllLessonsByGroupIdData(student.groupId);
+
+    const lessons = lessonsData.map((lesson) => {
+      return {
+        id: lesson.id,
+        title: lesson.title,
+        slug: lesson.slug,
+        subject: lesson.LessonSubject.label,
+        subjectColor: lesson.LessonSubject.color,
+        gradeLevel: lesson.GradeLevels.label,
+        gradeLevelColor: lesson.GradeLevels.color,
+      };
+    });
+
+    return {
+      success: "Les leçons ont été récupérées avec succès.",
+      data: lessons,
+    };
+  } catch (error) {
+    console.error("Error fetching lessons:", error);
+    return { error: "Échec de la récupération des leçons" };
+  }
+};
+
+// Récupération d'une leçon par son ID
 export const getLessonByIdForStudentAction = async (id: string) => {
   try {
     const lesson = await getLessonByIdForStudentData(id);

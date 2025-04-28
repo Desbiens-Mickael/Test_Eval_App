@@ -1,5 +1,5 @@
 import { MenuSideBar } from "@/type/sidebar";
-import { LayoutDashboard, User } from "lucide-react";
+import { Book, LayoutDashboard, User } from "lucide-react";
 
 const userMenus: MenuSideBar = [
   {
@@ -9,6 +9,11 @@ const userMenus: MenuSideBar = [
         icon: LayoutDashboard,
         title: "Tableau de bord",
         href: "/eleve/dashboard",
+      },
+      {
+        icon: Book,
+        title: "Mes leçons",
+        href: "/eleve/lecons",
       },
     ],
   },

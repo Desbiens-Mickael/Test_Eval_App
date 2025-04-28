@@ -225,6 +225,7 @@ export const addLessonsToGroupAction = async (
       const notification = await createNotificationLessonData({
         lessonId: lesson.id,
         createdByTeacherId: user.id,
+        message: lesson.title,
       });
       // Créer des notifications pour chaque élève
       await createStudentNotificationData(notification.id, studentIds);

@@ -9,14 +9,27 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useReadNotification } from "@/hooks/mutations/notification/use-read-notification";
 import useGetNotification from "@/hooks/queries/notification/use-get-notification";
-import { Bell } from "lucide-react";
+import { Bell, CheckCheck } from "lucide-react";
+import { useState } from "react";
 import NotificationItem from "./notification-item";
 
 export default function Notification() {
+  const [open, setOpen] = useState(false);
   const { data } = useGetNotification();
+  const { mutate } = useReadNotification();
+
+  const handleOpen = () => {
+    setOpen(!open);
+  };
+
+  const handleReadAll = () => {
+    const notificationIds = data?.map((notification) => notification.id) || [];
+    mutate(notificationIds);
+  };
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={handleOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="rounded-full p-2">
           <div className="relative">
@@ -33,24 +46,37 @@ export default function Notification() {
         <DropdownMenuLabel>Notifications</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {data && data.length > 0 ? (
-          data.map((notification) => {
-            if (!notification.isRead) {
-              return (
-                <NotificationItem
-                  key={notification.id}
-                  notification={{
-                    id: notification.id,
-                    message: notification.notification.message,
-                    type: notification.notification.type,
-                    itemId:
+          <div>
+            {data.map((notification) => {
+              if (!notification.isRead) {
+                return (
+                  <NotificationItem
+                    key={notification.id}
+                    id={notification.id}
+                    message={notification.notification.message}
+                    type={notification.notification.type}
+                    itemId={
                       notification.notification.lessonId ||
                       notification.notification.exerciseId ||
-                      "",
-                  }}
-                />
-              );
-            }
-          })
+                      ""
+                    }
+                    handleOpen={handleOpen}
+                  />
+                );
+              }
+            })}
+            <Button
+              variant={"outline"}
+              className="w-full flex items-center gap-2"
+              onClick={() => {
+                handleReadAll();
+                handleOpen();
+              }}
+            >
+              <CheckCheck size={18} className="text-primary" />
+              Marquer comme lues
+            </Button>
+          </div>
         ) : (
           <DropdownMenuItem>Aucune notification</DropdownMenuItem>
         )}

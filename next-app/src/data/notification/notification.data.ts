@@ -4,6 +4,7 @@ import { NotificationType } from "@prisma/client";
 interface CreateNotificationInput {
   lessonId: string;
   createdByTeacherId: string;
+  message: string;
 }
 
 // Création d'une notification pour une leçon
@@ -13,7 +14,7 @@ export const createNotificationLessonData = async (
   return await prisma.notification.create({
     data: {
       type: NotificationType.LESSON,
-      message: "Une nouvelle leçon a été ajoutée",
+      message: data.message,
       lessonId: data.lessonId,
       createdByTeacherId: data.createdByTeacherId,
     },

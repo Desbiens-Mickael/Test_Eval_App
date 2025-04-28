@@ -75,6 +75,12 @@ export const getLessonByIdData = async (id: string, authorId: string) => {
   return await prisma.lesson.findUnique({ where: { id, authorId } });
 };
 
+// Récupération d'une leçon par son ID pour un élève
+export const getLessonByIdForStudentData = async (id: string) => {
+  return await prisma.lesson.findUnique({ where: { id } });
+};
+
+// Récupération des leçons par leurs ID
 export const getLessonsByIdsData = async (lessonIds: string[]) => {
   return await prisma.lesson.findMany({
     where: {

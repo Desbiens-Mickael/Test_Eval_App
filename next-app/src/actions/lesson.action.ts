@@ -9,6 +9,7 @@ import {
   getAllLessonsByGroupIdData,
   getAllLessonsNotInGroupData,
   getLessonByIdData,
+  getLessonByIdForStudentData,
   getLessonBySlugData,
   getLessonsInfoBeforeDelete,
   getLessonsWithAuthor,
@@ -331,5 +332,27 @@ export const getAllLessonsByGroupIdAction = async (groupId: string) => {
   } catch (error) {
     console.error("Error fetching lessons:", error);
     return { error: "Échec de la récupération des leçons" };
+  }
+};
+
+export const getLessonByIdForStudentAction = async (id: string) => {
+  try {
+    const lesson = await getLessonByIdForStudentData(id);
+    if (!lesson) return { error: "Cette leçon n'existe pas !" };
+
+    // Sérialiser le contenu
+    const contentSerialized = JSON.stringify(lesson.content);
+    const lessonSerialized = {
+      ...lesson,
+      content: contentSerialized,
+    };
+
+    return {
+      success: "La leçon a été récupérée avec succès.",
+      lesson: lessonSerialized,
+    };
+  } catch (error) {
+    console.error("Error fetching lesson:", error);
+    return { error: "Échec de la récupération de la leçon" };
   }
 };

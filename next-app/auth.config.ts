@@ -23,7 +23,7 @@ import {
   loginStudentFormSchema,
   loginUserFormSchema,
 } from "@/shema-zod/auth.shema";
-import { Student, User, UserRole } from "@prisma/client";
+import { UserRole } from "@prisma/client";
 import type { NextAuthConfig } from "next-auth";
 import "next-auth/jwt";
 
@@ -145,27 +145,34 @@ export default {
     async jwt({ token, account, trigger }) {
       if (!token.sub) return token;
 
-      if (trigger === "signIn") token.isOAuth = !!account?.access_token;
+      // Gérer l'OAuth
+      if (trigger === "signIn") {
+        token.isOAuth = !!account?.access_token;
+      }
 
-      if (trigger === "signIn" || trigger === "update") {
-        // let existingData: User | Student | null;
-        const existingUserData: User | null = await getUserByIdData(token.sub);
-        const existingStudentData: Student | null = await getStudentByIdData(
-          token.sub
-        );
-        // Récupère les données depuis le modèle approprié en fonction du type des données
-        if (existingStudentData) {
-          token.identifier = existingStudentData?.identifier;
-          token.role = existingStudentData.role;
-          token.name = existingStudentData.name;
-          token.picture = existingStudentData.image;
-        } else if (existingUserData) {
-          token.email = existingUserData?.email || "";
-          token.isTwoFactorEnabled =
-            existingUserData?.isTwoFactorEnabled || false;
-          token.role = existingUserData.role;
-          token.name = existingUserData.name;
-          token.picture = existingUserData.image;
+      // Récupérer les données utilisateur/student
+      if (["signIn", "signUp", "update"].includes(trigger!)) {
+        const [user, student] = await Promise.all([
+          getUserByIdData(token.sub),
+          getStudentByIdData(token.sub),
+        ]);
+
+        if (student) {
+          token.identifier = student.identifier;
+          token.role = student.role;
+          token.name = student.name;
+          token.picture = student.image;
+        } else if (user) {
+          token.email = user.email ?? "";
+          token.isTwoFactorEnabled = user.isTwoFactorEnabled ?? false;
+          token.role = user.role;
+          token.name = user.name;
+          token.picture = user.image;
+        } else {
+          console.warn(
+            "Aucun user ni student trouvé pour le token.sub :",
+            token.sub
+          );
         }
       }
 

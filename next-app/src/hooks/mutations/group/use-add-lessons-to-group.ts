@@ -27,6 +27,9 @@ export const useAddLessonsToGroup = () => {
         queryClient.invalidateQueries({
           queryKey: ["allLessonsNotInGroup", groupId],
         });
+        queryClient.invalidateQueries({
+          queryKey: ["notifications"],
+        });
       }
       return data;
     },

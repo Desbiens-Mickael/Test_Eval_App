@@ -1,6 +1,9 @@
 -- CreateEnum
 CREATE TYPE "NotificationType" AS ENUM ('LESSON', 'EXERCISE', 'COMPLETION');
 
+-- AlterTable
+ALTER TABLE "User" ALTER COLUMN "role" SET DEFAULT 'ADMIN';
+
 -- CreateTable
 CREATE TABLE "Notification" (
     "id" TEXT NOT NULL,

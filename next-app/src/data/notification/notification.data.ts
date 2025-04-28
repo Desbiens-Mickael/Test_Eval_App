@@ -33,3 +33,35 @@ export const createStudentNotificationData = async (
     skipDuplicates: true, // pour éviter les doublons si tu rejoues le script
   });
 };
+
+// Récupération de toutes les notifications d'un élève
+export const getStudentNotificationsData = async (studentId: string) => {
+  return await prisma.studentNotification.findMany({
+    where: {
+      studentId,
+    },
+    select: {
+      id: true,
+      isRead: true,
+      notification: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};
+
+// Récupération de toutes les notifications d'un professeur
+export const getTeacherNotificationsData = async (teacherId: string) => {
+  return await prisma.teacherNotification.findMany({
+    where: {
+      teacherId,
+    },
+    include: {
+      notification: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};

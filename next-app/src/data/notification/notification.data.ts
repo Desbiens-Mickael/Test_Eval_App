@@ -40,6 +40,7 @@ export const getStudentNotificationsData = async (studentId: string) => {
   return await prisma.studentNotification.findMany({
     where: {
       studentId,
+      isRead: false,
     },
     select: {
       id: true,
@@ -57,6 +58,7 @@ export const getTeacherNotificationsData = async (teacherId: string) => {
   return await prisma.teacherNotification.findMany({
     where: {
       teacherId,
+      isRead: false,
     },
     include: {
       notification: true,
@@ -64,5 +66,45 @@ export const getTeacherNotificationsData = async (teacherId: string) => {
     orderBy: {
       createdAt: "desc",
     },
+  });
+};
+
+// Met à jour la notification d'un élève comme étant lu
+export const updateStudentNotificationData = async (
+  studentNotificationId: string
+) => {
+  return await prisma.studentNotification.update({
+    where: { id: studentNotificationId },
+    data: { isRead: true },
+  });
+};
+
+// Met à jour toutes les notifications données d'un élève comme étant lu
+export const updateAllStudentNotificationData = async (
+  studentNotificationIds: string[]
+) => {
+  return await prisma.studentNotification.updateMany({
+    where: { id: { in: studentNotificationIds } },
+    data: { isRead: true },
+  });
+};
+
+// Met à jour la notification d'un professeur comme étant lu
+export const updateTeacherNotificationData = async (
+  teacherNotificationId: string
+) => {
+  return await prisma.teacherNotification.update({
+    where: { id: teacherNotificationId },
+    data: { isRead: true },
+  });
+};
+
+// Met à jour toutes les notifications données d'un professeur comme étant lu
+export const updateAllTeacherNotificationData = async (
+  teacherNotificationIds: string[]
+) => {
+  return await prisma.teacherNotification.updateMany({
+    where: { id: { in: teacherNotificationIds } },
+    data: { isRead: true },
   });
 };

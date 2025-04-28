@@ -26,8 +26,8 @@ import { JSONContent } from "novel";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import LessonContent from "../lesson-content";
 import LessonFormSkeleton from "../lesson-form-skeleton";
+import LessonPreview from "../lesson-preview";
 
 interface EditLessonProps {
   id?: string;
@@ -179,7 +179,7 @@ export default function LessonForm({
             />
 
             {/* Preview de la leçon */}
-            {previewContent && <LessonContent content={previewContent} />}
+            {previewContent && <LessonPreview content={previewContent} />}
           </div>
         </form>
       </Form>

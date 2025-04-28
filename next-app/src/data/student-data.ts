@@ -71,7 +71,7 @@ export const getAllStudentsByAuthorIdData = async (authorId: string) => {
   });
 };
 
-// Récupérer tout les élèves de l'utilisateur connecté qui se trouvent dans le groupe demandé
+// Récupérer tout les élèves de l'utilisateur connecté qui ne se trouvent dans le groupe demandé
 export const getAllStudentsByAuthorIdwhoDontBelongToTheGroupIdData = async (
   authorId: string,
   groupId: string
@@ -86,6 +86,22 @@ export const getAllStudentsByAuthorIdwhoDontBelongToTheGroupIdData = async (
       identifier: true,
       name: true,
       isActive: true,
+    },
+  });
+};
+
+// Récupère tout les ids des élèves de l'utilisateur connecté qui se trouvent dans le groupe demandé
+export const getAllStudentsByAuthorIdwhoBelongToTheGroupIdIdsData = async (
+  authorId: string,
+  groupId: string
+) => {
+  return await prisma.student.findMany({
+    where: {
+      professorId: authorId,
+      groupId: groupId,
+    },
+    select: {
+      id: true,
     },
   });
 };
@@ -105,11 +121,10 @@ export const UpdateStudentData = async (id: string, data: object) => {
 // Suppression d'un ou plusieurs élèves
 export const deleteStudentsData = async (studentIds: string[]) => {
   try {
-    return await prisma.student.deleteMany({ where: { id: { in: studentIds } } });
+    return await prisma.student.deleteMany({
+      where: { id: { in: studentIds } },
+    });
   } catch (error) {
     throw error;
   }
 };
-  
-
-

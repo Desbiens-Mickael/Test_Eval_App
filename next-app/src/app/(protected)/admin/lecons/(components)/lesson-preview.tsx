@@ -1,6 +1,6 @@
 "use client";
 
-import { JSONContentToHTML } from "@/components/block-editor/extentions/extentions";
+import LessonContent from "@/components/lesson/lesson-content";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,7 +9,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import parse from "html-react-parser";
 import { JSONContent } from "novel";
 
 interface LessonContentProps {
@@ -17,11 +16,10 @@ interface LessonContentProps {
   className?: string;
 }
 
-export default function LessonContent({
+export default function LessonPreview({
   content,
   className,
 }: LessonContentProps) {
-  const contentHTML = JSONContentToHTML(content);
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -35,9 +33,7 @@ export default function LessonContent({
             Visuel de votre leçon qui sera affiché aux apprenants.
           </DialogTitle>
         </DialogHeader>
-        <article className="tiptap prose lg:prose-lg max-w-full rounded-xl border p-4">
-          {parse(`${contentHTML}`)}
-        </article>
+        <LessonContent content={content} />
       </DialogContent>
     </Dialog>
   );

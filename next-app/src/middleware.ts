@@ -20,14 +20,14 @@ export default auth((req) => {
 
   const isHomeRoutes = !!req.nextUrl.pathname.match("^/$");
   const isAdminRoutes = !!req.nextUrl.pathname.match("^/admin");
-  const isUserRoutes = !!req.nextUrl.pathname.match("^/user");
+  const isStudentRoutes = !!req.nextUrl.pathname.match("^/eleve");
   const isAuthRoutes = !!authRoutes.includes(req.nextUrl.pathname); //!!req.nextUrl.pathname.match("^/auth");
   const isAcountRoute = !!req.nextUrl.pathname.match("^/profil");
 
   const fixUrl = ["/api/auth/auth/connexion", "/api/auth/auth/error"];
 
   // Utilisateur non connecter
-  if ((isAdminRoutes || isUserRoutes || isAcountRoute) && !isLoggedIn)
+  if ((isAdminRoutes || isStudentRoutes || isAcountRoute) && !isLoggedIn)
     return NextResponse.redirect(new URL("/auth/connexion", nextUrl));
 
   if (fixUrl.includes(req.nextUrl.pathname)) {
@@ -40,11 +40,11 @@ export default auth((req) => {
 
   // Rôle User
   if (
-    (isHomeRoutes && userRole === "USER") ||
+    (isHomeRoutes && userRole === "STUDENT") ||
     (isAdminRoutes && userRole !== "ADMIN") ||
-    (isAuthRoutes && userRole === "USER")
+    (isAuthRoutes && userRole === "STUDENT")
   )
-    return NextResponse.redirect(new URL("/user/dashboard", nextUrl));
+    return NextResponse.redirect(new URL("/eleve/dashboard", nextUrl));
 
   // Rôle Admin
   if (

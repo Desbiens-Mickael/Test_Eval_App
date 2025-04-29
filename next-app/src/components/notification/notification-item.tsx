@@ -13,10 +13,19 @@ interface Notification {
   handleOpen: () => void;
 }
 
-const image = {
-  LESSON: "/assets/images/new-lesson.png",
-  EXERCISE: "/assets/images/new-exercise.png",
-  COMPLETION: "/assets/images/new-completion.png",
+const InfosNotification = {
+  LESSON: {
+    image: "/assets/images/new-lesson.png",
+    title: "Nouvelle leçon ajoutée",
+  },
+  EXERCISE: {
+    image: "/assets/images/new-exercise.png",
+    title: "Nouvel exercice ajouté",
+  },
+  COMPLETION: {
+    image: "/assets/images/new-completion.png",
+    title: "Exercice terminé",
+  },
 };
 
 export default function NotificationItem({
@@ -27,6 +36,7 @@ export default function NotificationItem({
   handleOpen,
 }: Notification) {
   const { mutate } = useReadNotification();
+
   const handleRead = (notificationId: string) => {
     mutate([notificationId]);
   };
@@ -45,8 +55,14 @@ export default function NotificationItem({
           <div className="flex items-center gap-2">
             <div>
               <Image
-                src={image[type as keyof typeof image]}
-                alt={type}
+                src={
+                  InfosNotification[type as keyof typeof InfosNotification]
+                    .image
+                }
+                alt={
+                  InfosNotification[type as keyof typeof InfosNotification]
+                    .title
+                }
                 width={50}
                 height={50}
                 className="h-full w-auto object-cover"
@@ -54,7 +70,10 @@ export default function NotificationItem({
             </div>
             <div className="w-full flex flex-col">
               <span className="font-semibold text-accent-foreground">
-                Nouvelle leçon ajoutée
+                {
+                  InfosNotification[type as keyof typeof InfosNotification]
+                    .title
+                }
               </span>
               <p> {message}</p>
             </div>

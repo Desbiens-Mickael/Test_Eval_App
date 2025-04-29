@@ -2,7 +2,8 @@ import { prisma } from "@/lib/db";
 import { NotificationType } from "@prisma/client";
 
 interface CreateNotificationInput {
-  lessonId: string;
+  lessonId?: string;
+  exerciseId?: string;
   createdByTeacherId: string;
   message: string;
 }
@@ -16,6 +17,20 @@ export const createNotificationLessonData = async (
       type: NotificationType.LESSON,
       message: data.message,
       lessonId: data.lessonId,
+      createdByTeacherId: data.createdByTeacherId,
+    },
+  });
+};
+
+// Création d'une notification pour un exercice
+export const createNotificationExerciseData = async (
+  data: CreateNotificationInput
+) => {
+  return await prisma.notification.create({
+    data: {
+      type: NotificationType.EXERCISE,
+      message: data.message,
+      exerciseId: data.exerciseId,
       createdByTeacherId: data.createdByTeacherId,
     },
   });

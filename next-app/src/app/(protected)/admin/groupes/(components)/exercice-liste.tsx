@@ -1,5 +1,6 @@
 "use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import useGetAllExercicesByLessonId from "@/hooks/queries/exercice/use-get-all-lessons-by-lessonId";
 import ExerciceListeItem from "./exercice-liste-item";
 
@@ -15,7 +16,7 @@ export default function ExerciceListe({
   const { data, isLoading, error } = useGetAllExercicesByLessonId(lessonId);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Skeleton className="h-5" />;
   }
 
   if (error) {

@@ -18,6 +18,11 @@ import {
   getLessonByIdData,
   getLessonBySlugData,
 } from "@/data/lesson/lesson-data";
+import {
+  createNotificationExerciseData,
+  createStudentNotificationData,
+} from "@/data/notification/notification.data";
+import { getAllStudentsByAuthorIdwhoBelongToTheGroupIdIdsData } from "@/data/student-data";
 import { currentUser } from "@/lib/auth";
 import {
   createExerciceFormInput,
@@ -197,6 +202,22 @@ export const toggleExerciceGroupAction = async (
     } else {
       await addExerciceToGroupData(exerciceId, groupId);
       message = "Exercice ajouté au groupe avec succes";
+
+      // Récupérer tout les ids des élèves du groupe
+      const studentIds =
+        await getAllStudentsByAuthorIdwhoBelongToTheGroupIdIdsData(
+          user.id,
+          groupId
+        );
+
+      // Créer une notification pour l'exercice
+      const notification = await createNotificationExerciseData({
+        exerciseId: exercice.id,
+        createdByTeacherId: user.id,
+        message: exercice.title,
+      });
+      // Créer des notifications pour chaque élève
+      await createStudentNotificationData(notification.id, studentIds);
     }
 
     return {

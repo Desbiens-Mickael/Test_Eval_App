@@ -27,6 +27,130 @@ export type ExerciceOutput = {
 };
 
 /**
+ * Création d'un exercice
+ *
+ * @param {createExerciceFormInput} data - Les données de l'exercice à créer.
+ * @param {string} authorId - L'identifiant de l'auteur de l'exercice.
+ * @param {string} lessonID - L'identifiant de la leçon associée à l'exercice.
+ * @returns {Promise<Exercice>} - Une promesse qui résout à l'exercice créé.
+ *
+ * @example
+ * // Créer un exercice
+ * const newExercise = await createExercice({ title: "New title" }, "1", "1");
+ *
+ * @description
+ * La fonction crée un nouvel exercice avec les données données. Les champs retournés pour l'exercice sont :
+ * - `id`: L'identifiant unique de l'exercice
+ * - `title`: Le titre de l'exercice
+ * - `description`: La description de l'exercice
+ * - `content`: Le contenu de l'exercice
+ * - `lesson.title`: Le nom de la leçon associée à l'exercice
+ * - `lesson.LessonSubject.label`: Le sujet de la leçon
+ * - `level.label`: Le niveau de difficulté de l'exercice
+ */
+export const createExerciceData = async (
+  data: createExerciceFormInput,
+  authorId: string,
+  lessonID: string
+): Promise<Exercice> => {
+  return await prisma.exercice.create({
+    data: {
+      title: data.title,
+      description: data.description,
+      content: data.content,
+      authorId: authorId,
+      levelID: data.exerciceLevelId,
+      typeID: data.exerciceTypeId,
+      lessonID: lessonID,
+    },
+  });
+};
+
+/**
+ * Mise à jour d'un exercice
+ *
+ * @param {string} id - L'identifiant de l'exercice à mettre à jour.
+ * @param {string} authorId - L'identifiant de l'auteur de l'exercice.
+ * @param {createExerciceFormInput} data - Les données de l'exercice à mettre à jour.
+ * @returns {Promise<Exercice>} - Une promesse qui résout à l'exercice mis à jour.
+ *
+ * @example
+ * // Mettre à jour l'exercice avec l'identifiant "1"
+ * const updatedExercise = await updateExercice("1", "1", { title: "New title" });
+ *
+ * @description
+ * La fonction met à jour l'exercice correspondant à l'identifiant donné. Les champs retournés pour l'exercice sont :
+ * - `id`: L'identifiant unique de l'exercice
+ * - `title`: Le titre de l'exercice
+ * - `description`: La description de l'exercice
+ * - `content`: Le contenu de l'exercice
+ * - `lesson.title`: Le nom de la leçon associée à l'exercice
+ * - `lesson.LessonSubject.label`: Le sujet de la leçon
+ * - `level.label`: Le niveau de difficulté de l'exercice
+ */
+export const updateExerciceData = async (
+  id: string,
+  authorId: string,
+  data: createExerciceFormInput
+): Promise<Exercice> => {
+  return await prisma.exercice.update({
+    where: { id: id, authorId: authorId },
+    data: {
+      title: data.title,
+      description: data.description,
+      content: data.content,
+      authorId: authorId,
+      levelID: data.exerciceLevelId,
+      typeID: data.exerciceTypeId,
+    },
+  });
+};
+
+/**
+ * Delete multiple exercices
+ *
+ * @param {string[]} exerciceIds - Les identifiants des exercices à supprimer.
+ * @param {string} authorId - L'identifiant de l'auteur de l'exercice.
+ * @returns {Promise<{ count: number }>} - Une promesse qui résout à l'objet contenant le nombre de lignes supprimées.
+ *
+ * @example
+ * // Supprimer les exercices avec les identifiants "1", "2" et "3"
+ * const result = await deleteExercices(["1", "2", "3"]);
+ *
+ * @description
+ * La fonction supprime les exercices correspondant aux identifiants donnés. La fonction retourne l'objet contenant le nombre de lignes supprimées.
+ */
+export const deleteExercicesData = async (
+  exerciceIds: string[],
+  authorId: string
+) => {
+  return await prisma.exercice.deleteMany({
+    where: {
+      authorId,
+      id: {
+        in: exerciceIds,
+      },
+    },
+  });
+};
+
+export const getExercicesInfoBeforeDelete = async (exerciceIds: string[]) => {
+  return await prisma.exercice.findMany({
+    where: {
+      id: {
+        in: exerciceIds,
+      },
+    },
+    select: {
+      id: true,
+      type: {
+        select: { name: true },
+      },
+    },
+  });
+};
+
+/**
  * Get all exercice
  * @returns exercice list
  */
@@ -130,7 +254,26 @@ export const getAllExercicesByTypeData = async (
   });
 };
 
-// get exercice by id
+/**
+ * Récupère un exercice par son identifiant
+ *
+ * @param {string} id - L'identifiant de l'exercice à récupérer.
+ * @returns {Promise<ExerciceOutput | null>} - Une promesse qui résout à l'exercice correspondant à l'identifiant donné, ou null si l'exercice n'existe pas.
+ *
+ * @example
+ * // Récupérer l'exercice avec l'identifiant "1"
+ * const exercise = await getExerciceById("1");
+ *
+ * @description
+ * La fonction récupère l'exercice correspondant à l'identifiant donné. Les champs retournés pour l'exercice sont :
+ * - `id`: L'identifiant unique de l'exercice
+ * - `title`: Le titre de l'exercice
+ * - `description`: La description de l'exercice
+ * - `content`: Le contenu de l'exercice
+ * - `lesson.title`: Le nom de la leçon associée à l'exercice
+ * - `lesson.LessonSubject.label`: Le sujet de la leçon
+ * - `level.label`: Le niveau de difficulté de l'exercice
+ */
 export const getExerciceByIdData = async (
   id: string
 ): Promise<ExerciceOutput | null> => {
@@ -166,6 +309,21 @@ export const getExerciceByIdData = async (
   });
 };
 
+/**
+ * Récupère les auteurs des exercices
+ *
+ * @param {string[]} exerciceIds - Les identifiants des exercices à récupérer.
+ * @returns {Promise<{ id: string; authorId: string }[]>} - Une promesse qui résout à une liste d'objets contenant l'ID de l'exercice et l'ID de l'auteur.
+ *
+ * @example
+ * // Récupérer les auteurs des exercices avec les identifiants "1", "2" et "3"
+ * const authors = await getExercicesWithAuthor(["1", "2", "3"]);
+ *
+ * @description
+ * La fonction récupère une liste d'objets contenant l'ID de l'exercice et l'ID de l'auteur. Les champs retournés pour chaque exercice sont :
+ * - `id`: L'identifiant unique de l'exercice
+ * - `authorId`: L'identifiant unique de l'auteur de l'exercice
+ */
 export const getExercicesWithAuthor = async (exerciceIds: string[]) => {
   return await prisma.exercice.findMany({
     where: {
@@ -180,71 +338,49 @@ export const getExercicesWithAuthor = async (exerciceIds: string[]) => {
   });
 };
 
-// create exercice
-export const createExerciceData = async (
-  data: createExerciceFormInput,
-  authorId: string,
-  lessonID: string
-): Promise<Exercice> => {
-  return await prisma.exercice.create({
-    data: {
-      title: data.title,
-      description: data.description,
-      content: data.content,
-      authorId: authorId,
-      levelID: data.exerciceLevelId,
-      typeID: data.exerciceTypeId,
-      lessonID: lessonID,
-    },
-  });
-};
-
-// update exercice
-export const updateExerciceData = async (
-  id: string,
-  authorId: string,
-  data: createExerciceFormInput
-): Promise<Exercice> => {
-  return await prisma.exercice.update({
-    where: { id: id, authorId: authorId },
-    data: {
-      title: data.title,
-      description: data.description,
-      content: data.content,
-      authorId: authorId,
-      levelID: data.exerciceLevelId,
-      typeID: data.exerciceTypeId,
-    },
-  });
-};
-
-// delete exercice
-export const deleteExercicesData = async (
-  exerciceIds: string[],
-  authorId: string
-) => {
-  return await prisma.exercice.deleteMany({
-    where: {
-      authorId,
-      id: {
-        in: exerciceIds,
-      },
-    },
-  });
-};
-
-export const getExercicesInfoBeforeDelete = async (exerciceIds: string[]) => {
+/**
+ * Récupère tous les exercices d'une leçon
+ *
+ * @param {string} lessonId - L'identifiant de la leçon.
+ * @returns {Promise<ExerciceOutput[]>} - Une promesse qui résout à une liste d'exercices.
+ *
+ * @example
+ * // Récupérer tous les exercices d'une leçon avec l'identifiant "1"
+ * const exercises = await getAllExercicesByLessonId("1");
+ *
+ * @description
+ * La fonction récupère une liste d'exercices filtrée par la leçon donnée. Les champs retournés pour chaque exercice sont :
+ * - `id`: L'identifiant unique de l'exercice
+ * - `title`: Le titre de l'exercice
+ * - `description`: La description de l'exercice
+ * - `level.label`: Le niveau de difficulté de l'exercice
+ * - `type.name`: Le type de l'exercice
+ */
+export const getAllExercicesByLessonIdData = async (lessonId: string) => {
   return await prisma.exercice.findMany({
     where: {
-      id: {
-        in: exerciceIds,
-      },
+      lessonID: lessonId,
     },
     select: {
       id: true,
-      type: {
-        select: { name: true },
+      title: true,
+      description: true,
+      level: {
+        select: {
+          id: true,
+          label: true,
+          color: true,
+        },
       },
+      type: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+    orderBy: {
+      title: "asc",
     },
   });
 };

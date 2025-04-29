@@ -3,6 +3,7 @@
 import {
   createExerciceData,
   deleteExercicesData,
+  getAllExercicesByLessonIdData,
   getAllExercicesByTypeData,
   getExerciceByIdData,
   getExercicesInfoBeforeDelete,
@@ -10,7 +11,10 @@ import {
   updateExerciceData,
 } from "@/data/exercice/exercice-data";
 import { getExerciceTypeByNameData } from "@/data/exercice/exercice-type.data";
-import { getLessonBySlugData } from "@/data/lesson/lesson-data";
+import {
+  getLessonByIdData,
+  getLessonBySlugData,
+} from "@/data/lesson/lesson-data";
 import { currentUser } from "@/lib/auth";
 import {
   createExerciceFormInput,
@@ -18,49 +22,7 @@ import {
 } from "@/shema-zod/exercice.shema";
 import { Exercice, ExerciceType } from "@/type/exercice";
 
-export const getAllExercicesByTypeAction = async (
-  type: ExerciceType
-): Promise<Exercice[]> => {
-  try {
-    // Vérifier que l'utilisateur est connecté
-    const user = await currentUser();
-    if (!user || !user?.id || user.role !== "ADMIN") {
-      throw new Error("Action non autoriser !");
-    }
-
-    // Recherche du type d'exercice par son nom
-    const exerciceType = await getExerciceTypeByNameData(type);
-    if (!exerciceType) {
-      throw new Error(`Type d'exercice ${type} non trouvé`);
-    }
-
-    // Récupération des exercices selon leur type
-    const exercicesData = await getAllExercicesByTypeData(
-      exerciceType,
-      user.id
-    );
-
-    // Formatage des exercices
-    return exercicesData.map((exercice) => ({
-      id: exercice.id,
-      title: exercice.title,
-      description: exercice.description,
-      content: exercice.content,
-      lesson: exercice.lesson.title,
-      levelId: exercice.level.id,
-      level: exercice.level.label,
-      levelColor: exercice.level.color,
-      subject: exercice.lesson.LessonSubject.label,
-      subjectColor: exercice.lesson.LessonSubject.color,
-      typeId: exercice.type.id,
-      type: exercice.type.name,
-    }));
-  } catch (error) {
-    console.error("Error fetching exercises:", error);
-    throw Error("Échec de la récupération des exercices");
-  }
-};
-
+// Création d'un exercice
 export const createExerciceAction = async (
   data: createExerciceFormInput,
   lessonSlug: string
@@ -108,50 +70,7 @@ export const createExerciceAction = async (
   }
 };
 
-export const getExerciceByIdAction = async (id: string) => {
-  const user = await currentUser();
-  if (!user || !user?.id) {
-    return {
-      error: "Action non autoriser !",
-    };
-  }
-
-  try {
-    const exercice = await getExerciceByIdData(id);
-
-    if (!exercice) {
-      return {
-        error: "Exercice non trouvé",
-      };
-    }
-
-    const exerciceModified = {
-      id: exercice.id,
-      title: exercice.title,
-      description: exercice.description,
-      content: exercice.content,
-      lesson: exercice.lesson.title,
-      levelId: exercice.level.id,
-      level: exercice.level.label,
-      levelColor: exercice.level.color,
-      subject: exercice.lesson.LessonSubject.label,
-      subjectColor: exercice.lesson.LessonSubject.color,
-      typeId: exercice.type.id,
-      type: exercice.type.name,
-    };
-
-    return {
-      success: "Exercice trouvé",
-      data: exerciceModified,
-    };
-  } catch (error) {
-    console.error("Error fetching exercise by ID:", error);
-    return {
-      error: "Une erreur est survenue lors de la recherche de l'exercice",
-    };
-  }
-};
-
+// Mise à jour d'un exercice
 export const updateExerciceAction = async (
   id: string,
   data: createExerciceFormInput
@@ -184,6 +103,7 @@ export const updateExerciceAction = async (
   }
 };
 
+// Suppression d'un ou plusieurs exercices
 export async function deleteExercicesAction(exerciceIds: string[]) {
   try {
     // Vérification de l'utilisateur
@@ -231,3 +151,146 @@ export async function deleteExercicesAction(exerciceIds: string[]) {
     };
   }
 }
+
+// Récupération de tous les exercices d'un type donné
+export const getAllExercicesByTypeAction = async (
+  type: ExerciceType
+): Promise<Exercice[]> => {
+  try {
+    // Vérifier que l'utilisateur est connecté
+    const user = await currentUser();
+    if (!user || !user?.id || user.role !== "ADMIN") {
+      throw new Error("Action non autoriser !");
+    }
+
+    // Recherche du type d'exercice par son nom
+    const exerciceType = await getExerciceTypeByNameData(type);
+    if (!exerciceType) {
+      throw new Error(`Type d'exercice ${type} non trouvé`);
+    }
+
+    // Récupération des exercices selon leur type
+    const exercicesData = await getAllExercicesByTypeData(
+      exerciceType,
+      user.id
+    );
+
+    // Formatage des exercices
+    return exercicesData.map((exercice) => ({
+      id: exercice.id,
+      title: exercice.title,
+      description: exercice.description,
+      content: exercice.content,
+      lesson: exercice.lesson.title,
+      levelId: exercice.level.id,
+      level: exercice.level.label,
+      levelColor: exercice.level.color,
+      subject: exercice.lesson.LessonSubject.label,
+      subjectColor: exercice.lesson.LessonSubject.color,
+      typeId: exercice.type.id,
+      type: exercice.type.name,
+    }));
+  } catch (error) {
+    console.error("Error fetching exercises:", error);
+    throw Error("Échec de la récupération des exercices");
+  }
+};
+
+// Récupération d'un exercice par son ID
+export const getExerciceByIdAction = async (id: string) => {
+  const user = await currentUser();
+  if (!user || !user?.id) {
+    return {
+      error: "Action non autoriser !",
+    };
+  }
+
+  try {
+    const exercice = await getExerciceByIdData(id);
+
+    if (!exercice) {
+      return {
+        error: "Exercice non trouvé",
+      };
+    }
+
+    const exerciceModified = {
+      id: exercice.id,
+      title: exercice.title,
+      description: exercice.description,
+      content: exercice.content,
+      lesson: exercice.lesson.title,
+      levelId: exercice.level.id,
+      level: exercice.level.label,
+      levelColor: exercice.level.color,
+      subject: exercice.lesson.LessonSubject.label,
+      subjectColor: exercice.lesson.LessonSubject.color,
+      typeId: exercice.type.id,
+      type: exercice.type.name,
+    };
+
+    return {
+      success: "Exercice trouvé",
+      data: exerciceModified,
+    };
+  } catch (error) {
+    console.error("Error fetching exercise by ID:", error);
+    return {
+      error: "Une erreur est survenue lors de la recherche de l'exercice",
+    };
+  }
+};
+
+// Récupération de tout les exercices d'une leçon
+export const getExercicesByLessonIdAction = async (lessonId: string) => {
+  const user = await currentUser();
+  if (!user || !user?.id) {
+    return {
+      error: "Action non autoriser !",
+    };
+  }
+
+  // Vérification que la leçon existe
+  const lesson = await getLessonByIdData(lessonId, user.id);
+  if (!lesson) {
+    return {
+      error: "La leçon n'existe pas !",
+    };
+  }
+
+  // Vérification que l'utilisateur est bien l'auteur de la leçon
+  if (lesson.authorId !== user.id) {
+    return {
+      error: "Action non autorisée !",
+    };
+  }
+
+  try {
+    const exercices = await getAllExercicesByLessonIdData(lessonId);
+
+    if (!exercices) {
+      return {
+        error: "Aucun exercice trouvé",
+      };
+    }
+
+    const exercicesModified = exercices.map((exercice) => ({
+      id: exercice.id,
+      title: exercice.title,
+      description: exercice.description,
+      level: exercice.level.label,
+      levelColor: exercice.level.color,
+      type: exercice.type.name,
+    }));
+
+    return {
+      success: "Exercices trouvés",
+      data: exercicesModified,
+    };
+  } catch (error) {
+    console.error("Error fetching exercises by lesson ID:", error);
+    return {
+      error: "Une erreur est survenue lors de la recherche des exercices",
+    };
+  }
+};

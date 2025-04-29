@@ -47,6 +47,7 @@ export const getGroupByIdData = async (id: string, authorId: string) => {
             select: { label: true, color: true },
           },
         },
+        orderBy: { title: "asc" },
       },
     },
   });

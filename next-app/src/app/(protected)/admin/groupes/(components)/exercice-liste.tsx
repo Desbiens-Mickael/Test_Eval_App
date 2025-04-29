@@ -25,18 +25,24 @@ export default function ExerciceListe({
   return (
     <>
       {data && data.length > 0 ? (
-        data.map((exercice) => (
-          <ExerciceListeItem
-            key={exercice.id}
-            id={exercice.id}
-            title={exercice.title}
-            description={exercice.description}
-            level={exercice.level}
-            levelColor={exercice.levelColor}
-            type={exercice.type}
-            isActive={true}
-          />
-        ))
+        data.map((exercice) => {
+          const isActive = !!exercice.groups?.some(
+            (group) => group.id === groupId
+          );
+          return (
+            <ExerciceListeItem
+              key={exercice.id}
+              exerciceId={exercice.id}
+              groupId={groupId}
+              title={exercice.title}
+              description={exercice.description}
+              level={exercice.level}
+              levelColor={exercice.levelColor}
+              type={exercice.type}
+              isActive={isActive}
+            />
+          );
+        })
       ) : (
         <div>Aucun exercice trouvé</div>
       )}

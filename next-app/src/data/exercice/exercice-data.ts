@@ -5,10 +5,12 @@ import { JsonValue } from "@prisma/client/runtime/library";
 
 export type ExerciceOutput = {
   id: string;
+  authorId?: string;
   title: string;
   description: string;
   content: JsonValue;
   lesson: {
+    id: string;
     title: string;
     LessonSubject: {
       label: string;
@@ -24,6 +26,9 @@ export type ExerciceOutput = {
     id: string;
     name: string;
   };
+  groups?: {
+    id: string;
+  }[];
 };
 
 /**
@@ -134,6 +139,83 @@ export const deleteExercicesData = async (
   });
 };
 
+/**
+ * Ajoute un exercice à un groupe
+ *
+ * @param {string} exerciceId - L'identifiant de l'exercice à ajouter.
+ * @param {string} groupId - L'identifiant du groupe à ajouter.
+ * @returns {Promise<Exercice>} - Une promesse qui résout à l'exercice ajouté.
+ *
+ * @example
+ * // Ajouter l'exercice avec l'identifiant "1" au groupe avec l'identifiant "2"
+ * const addedExercise = await addExerciceToGroup("1", "2");
+ *
+ * @description
+ * La fonction ajoute l'exercice correspondant à l'identifiant donné au groupe correspondant à l'identifiant donné. Les champs retournés pour l'exercice sont :
+ * - `id`: L'identifiant unique de l'exercice
+ * - `title`: Le titre de l'exercice
+ * - `description`: La description de l'exercice
+ * - `content`: Le contenu de l'exercice
+ * - `lesson.title`: Le nom de la leçon associée à l'exercice
+ * - `lesson.LessonSubject.label`: Le sujet de la leçon
+ * - `level.label`: Le niveau de difficulté de l'exercice
+ */
+export const addExerciceToGroupData = async (
+  exerciceId: string,
+  groupId: string
+) => {
+  return await prisma.exercice.update({
+    where: { id: exerciceId },
+    data: { groups: { connect: { id: groupId } } },
+  });
+};
+
+/**
+ * Supprime un exercice d'un groupe
+ *
+ * @param {string} exerciceId - L'identifiant de l'exercice à supprimer.
+ * @param {string} groupId - L'identifiant du groupe à supprimer.
+ * @returns {Promise<Exercice>} - Une promesse qui résout à l'exercice supprimé.
+ *
+ * @example
+ * // Supprimer l'exercice avec l'identifiant "1" du groupe avec l'identifiant "2"
+ * const removedExercise = await removeExerciceFromGroup("1", "2");
+ *
+ * @description
+ * La fonction supprime l'exercice correspondant à l'identifiant donné du groupe correspondant à l'identifiant donné. Les champs retournés pour l'exercice sont :
+ * - `id`: L'identifiant unique de l'exercice
+ * - `title`: Le titre de l'exercice
+ * - `description`: La description de l'exercice
+ * - `content`: Le contenu de l'exercice
+ * - `lesson.title`: Le nom de la leçon associée à l'exercice
+ * - `lesson.LessonSubject.label`: Le sujet de la leçon
+ * - `level.label`: Le niveau de difficulté de l'exercice
+ */
+export const removeExerciceFromGroupData = async (
+  exerciceId: string,
+  groupId: string
+) => {
+  return await prisma.exercice.update({
+    where: { id: exerciceId },
+    data: { groups: { disconnect: { id: groupId } } },
+  });
+};
+
+/**
+ * Get exercices info before delete
+ *
+ * @param {string[]} exerciceIds - Les identifiants des exercices à supprimer.
+ * @returns {Promise<ExerciceOutput[]>} - Une promesse qui résout à une liste d'exercices.
+ *
+ * @example
+ * // Récupérer les exercices avec les identifiants "1", "2" et "3"
+ * const exercises = await getExercicesInfoBeforeDelete(["1", "2", "3"]);
+ *
+ * @description
+ * La fonction récupère une liste d'exercices filtrée par les identifiants donnés. Les champs retournés pour chaque exercice sont :
+ * - `id`: L'identifiant unique de l'exercice
+ * - `type.name`: Le type de l'exercice
+ */
 export const getExercicesInfoBeforeDelete = async (exerciceIds: string[]) => {
   return await prisma.exercice.findMany({
     where: {
@@ -164,6 +246,7 @@ export const getAllExercicesData = async (): Promise<ExerciceOutput[]> => {
         content: true,
         lesson: {
           select: {
+            id: true,
             title: true,
             LessonSubject: {
               select: { label: true, color: true },
@@ -228,6 +311,7 @@ export const getAllExercicesByTypeData = async (
       content: true,
       lesson: {
         select: {
+          id: true,
           title: true,
           LessonSubject: {
             select: { label: true, color: true },
@@ -284,8 +368,10 @@ export const getExerciceByIdData = async (
       title: true,
       description: true,
       content: true,
+      authorId: true,
       lesson: {
         select: {
+          id: true,
           title: true,
           LessonSubject: {
             select: { label: true, color: true },
@@ -303,6 +389,11 @@ export const getExerciceByIdData = async (
         select: {
           id: true,
           name: true,
+        },
+      },
+      groups: {
+        select: {
+          id: true,
         },
       },
     },
@@ -376,6 +467,11 @@ export const getAllExercicesByLessonIdData = async (lessonId: string) => {
         select: {
           id: true,
           name: true,
+        },
+      },
+      groups: {
+        select: {
+          id: true,
         },
       },
     },

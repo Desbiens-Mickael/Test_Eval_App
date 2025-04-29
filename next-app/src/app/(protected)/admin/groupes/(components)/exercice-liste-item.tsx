@@ -2,19 +2,22 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { useToggleExerciceGroup } from "@/hooks/mutations/exercice/use-toggle-exercice-group";
 
 interface ExerciceListeItemProps {
-  id: string;
+  exerciceId: string;
+  groupId: string;
   title: string;
   description: string;
   level: string;
   levelColor: string;
   type: string;
-  isActive: boolean;
+  isActive: boolean | undefined;
 }
 
 export default function ExerciceListeItem({
-  id,
+  exerciceId,
+  groupId,
   title,
   description,
   level,
@@ -22,8 +25,13 @@ export default function ExerciceListeItem({
   type,
   isActive,
 }: ExerciceListeItemProps) {
+  const { mutate } = useToggleExerciceGroup();
+
   const handleToggle = () => {
-    console.log("Toggle", id);
+    mutate({
+      exerciceId: exerciceId,
+      groupId: groupId,
+    });
   };
 
   return (
@@ -40,7 +48,7 @@ export default function ExerciceListeItem({
             {level}
           </Badge>
           <div className="w-fit flex items-center ms-auto">
-            <Switch checked={isActive} onCheckedChange={handleToggle} />
+            <Switch checked={isActive} onCheckedChange={() => handleToggle()} />
           </div>
         </div>
         <p>{description}</p>

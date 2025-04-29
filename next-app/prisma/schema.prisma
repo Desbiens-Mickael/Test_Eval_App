@@ -120,6 +120,7 @@ model Group {
   name                    String @db.VarChar(20)
   students                Student[] @relation(name: "students")
   lessons                 Lesson[]
+  exercices               Exercice[]
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
 
@@ -219,6 +220,8 @@ model Exercice {
 
   lessonID                String
   lesson                  Lesson   @relation(fields: [lessonID], references: [id], onDelete: Cascade)
+
+  groups                  Group[]
 }
 
 model Notification {

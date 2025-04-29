@@ -1,6 +1,7 @@
 "use server";
 
 import {
+  addExerciceToGroupData,
   createExerciceData,
   deleteExercicesData,
   getAllExercicesByLessonIdData,
@@ -8,9 +9,11 @@ import {
   getExerciceByIdData,
   getExercicesInfoBeforeDelete,
   getExercicesWithAuthor,
+  removeExerciceFromGroupData,
   updateExerciceData,
 } from "@/data/exercice/exercice-data";
 import { getExerciceTypeByNameData } from "@/data/exercice/exercice-type.data";
+import { getGroupByIdData } from "@/data/group.data";
 import {
   getLessonByIdData,
   getLessonBySlugData,
@@ -152,6 +155,66 @@ export async function deleteExercicesAction(exerciceIds: string[]) {
   }
 }
 
+// Ajoute ou retire un exercice d'un groupe
+export const toggleExerciceGroupAction = async (
+  exerciceId: string,
+  groupId: string
+) => {
+  try {
+    // Vérification de l'utilisateur
+    const user = await currentUser();
+    if (!user || !user.id || user.role !== "ADMIN") {
+      return { error: "Action non autorisée !" };
+    }
+
+    // Vérification que le groupe existe et appartient à l'utilisateur
+    const group = await getGroupByIdData(groupId, user.id);
+    if (!group) {
+      return { error: "Groupe non trouvé !" };
+    }
+    if (group.authorId !== user.id) {
+      return {
+        error: "Action non autorisée !",
+      };
+    }
+
+    // Vérification que l'exercice existe et appartient à l'utilisateur
+    const exercice = await getExerciceByIdData(exerciceId);
+    if (!exercice) {
+      return { error: "Exercice non trouvé !" };
+    }
+    if (exercice.authorId !== user.id) {
+      return {
+        error: "Action non autorisée !",
+      };
+    }
+
+    let message: string;
+    // Ajoute ou retire l'exercice du groupe
+    if (exercice?.groups?.some((group) => group.id === groupId)) {
+      await removeExerciceFromGroupData(exerciceId, groupId);
+      message = "Exercice retiré du groupe avec succes";
+    } else {
+      await addExerciceToGroupData(exerciceId, groupId);
+      message = "Exercice ajouté au groupe avec succes";
+    }
+
+    return {
+      success: message,
+      data: exercice,
+    };
+  } catch (error) {
+    console.error(
+      "Erreur lors de la mise à jour de l'exercice au groupe:",
+      error
+    );
+    return {
+      error:
+        "Une erreur est survenue lors de la mise à jour de l'exercice au groupe",
+    };
+  }
+};
+
 // Récupération de tous les exercices d'un type donné
 export const getAllExercicesByTypeAction = async (
   type: ExerciceType
@@ -281,6 +344,7 @@ export const getExercicesByLessonIdAction = async (lessonId: string) => {
       level: exercice.level.label,
       levelColor: exercice.level.color,
       type: exercice.type.name,
+      groups: exercice.groups,
     }));
 
     return {

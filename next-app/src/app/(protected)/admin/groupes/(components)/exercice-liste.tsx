@@ -1,7 +1,7 @@
 "use client";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import useGetAllExercicesByLessonId from "@/hooks/queries/exercice/use-get-all-lessons-by-lessonId";
+import useGetAllExercicesByLessonId from "@/hooks/queries/exercice/use-get-all-exercises-by-lessonId";
 import ExerciceListeItem from "./exercice-liste-item";
 
 interface ExerciceListeProps {

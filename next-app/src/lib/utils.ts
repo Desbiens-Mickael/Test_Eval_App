@@ -31,6 +31,7 @@ export const stringToSlug = (str: string) => {
     .trim(); // Supprime les tirets en début/fin
 };
 
+// genere un mot de passe temporaire
 export const generateTemporaryPassword = (length = 8) => {
   const charset =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*!";
@@ -40,4 +41,14 @@ export const generateTemporaryPassword = (length = 8) => {
     password += charset[randomIndex];
   }
   return password;
+};
+
+// melange un array de manière aleatoire
+export const shuffleArray = <T>(array: T[]): T[] => {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
 };

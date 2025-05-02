@@ -17,14 +17,17 @@ const InfosNotification = {
   LESSON: {
     image: "/assets/images/new-lesson.png",
     title: "Nouvelle leçon ajoutée",
+    href: "/eleve/lecons",
   },
   EXERCISE: {
     image: "/assets/images/new-exercise.png",
     title: "Nouvel exercice ajouté",
+    href: "/eleve/exercices",
   },
   COMPLETION: {
     image: "/assets/images/new-completion.png",
     title: "Exercice terminé",
+    href: "/eleve/progression",
   },
 };
 
@@ -45,7 +48,9 @@ export default function NotificationItem({
     <>
       <DropdownMenuItem key={id}>
         <Link
-          href={`/eleve/lecons/${itemId}`}
+          href={`${
+            InfosNotification[type as keyof typeof InfosNotification].href
+          }/${itemId}`}
           className="w-full p-2 rounded-md bg-background hover:bg-accent transition-colors"
           onClick={() => {
             handleRead(id);

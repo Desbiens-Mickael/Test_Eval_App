@@ -1,6 +1,12 @@
 "use client";
 
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
   AlertDialog,
   AlertDialogCancel,
   AlertDialogContent,
@@ -10,11 +16,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useRemoveLessonFromGroup } from "@/hooks/mutations/group/use-remove-lesson-from-group";
 import { Lesson } from "@/type/lesson";
 import { X } from "lucide-react";
 import { toast } from "sonner";
+import ExerciceListe from "./exercice-liste";
 
 interface LessonListeProps {
   lessons: Lesson[];
@@ -47,25 +55,34 @@ export default function LessonListe({ lessons, groupId }: LessonListeProps) {
       ) : (
         lessons.map((lesson) => (
           <div className="w-full flex gap-4" key={lesson.id}>
-            <div className="flex-1 flex justify-between items-center shadow-lg rounded-md p-2">
-              <h3 className="text-lg font-bold text-foreground">
-                {lesson.title}
-              </h3>
-              <div className="flex gap-2">
-                <span
-                  className={`text-md font-bold text-background rounded-md py-[0.5px] px-2 ${lesson.subjectColor}`}
-                >
-                  {lesson.subject}
-                </span>
-                <span
-                  className={`text-md font-bold text-background rounded-md py-[0.5px] px-2 ${lesson.gradeLevelColor}`}
-                >
-                  {lesson.gradeLevel}
-                </span>
-              </div>
-            </div>
+            <Accordion type="single" collapsible className="flex-1">
+              <AccordionItem value="item-1">
+                <AccordionTrigger className="hover:no-underline hover:shadow-xl">
+                  <div className="flex-1 flex items-center gap-2 rounded-md p-2">
+                    <h3 className="text-lg font-bold text-foreground">
+                      {lesson.title}
+                    </h3>
+                    <div className="flex gap-2">
+                      <Badge
+                        className={`${lesson.subjectColor} text-background hover:${lesson.subjectColor}`}
+                      >
+                        {lesson.subject}
+                      </Badge>
+                      <Badge
+                        className={`${lesson.gradeLevelColor} text-background hover:${lesson.gradeLevelColor}`}
+                      >
+                        {lesson.gradeLevel}
+                      </Badge>
+                    </div>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="flex flex-col gap-4">
+                  <ExerciceListe groupId={groupId} lessonId={lesson.id} />
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
             <AlertDialog>
-              <AlertDialogTrigger asChild>
+              <AlertDialogTrigger asChild className="mt-4">
                 <Button variant="destructiveInverted" size="icon">
                   <X size={25} />
                 </Button>
@@ -82,7 +99,6 @@ export default function LessonListe({ lessons, groupId }: LessonListeProps) {
                 <AlertDialogFooter>
                   <AlertDialogCancel>Annuller</AlertDialogCancel>
                   <Button
-                    type="button"
                     variant="destructive"
                     className="w-fit"
                     onClick={() => {

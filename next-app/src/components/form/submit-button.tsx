@@ -8,6 +8,7 @@ interface submitButtonProps {
   loadindText?: string;
   className?: string;
   form?: string;
+  onClick?: () => void;
 }
 
 export default function SubmitButton({
@@ -16,10 +17,12 @@ export default function SubmitButton({
   loadindText = "En cour...",
   isLoading = false,
   form,
+  onClick,
 }: submitButtonProps) {
   return (
     <Button
       form={form}
+      onClick={onClick}
       disabled={isLoading}
       type="submit"
       className={cn(

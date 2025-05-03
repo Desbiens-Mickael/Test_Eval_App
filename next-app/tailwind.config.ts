@@ -2,7 +2,12 @@ import type { Config } from "tailwindcss";
 
 const config = {
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: [
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   prefix: "",
   theme: {
     container: {
@@ -18,18 +23,18 @@ const config = {
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: {
+          "200": "hsl(var(--background-200))",
+          "300": "hsl(var(--background-300))",
           DEFAULT: "hsl(var(--background))",
-          200: "hsl(var(--background-200))",
-          300: "hsl(var(--background-300))",
         },
         foreground: {
           DEFAULT: "hsl(var(--foreground))",
           light: "hsl(var(--foreground-light))",
         },
         primary: {
+          "200": "hsl(var(--primary-200))",
+          "300": "hsl(var(--primary-300))",
           DEFAULT: "hsl(var(--primary))",
-          200: "hsl(var(--primary-200))",
-          300: "hsl(var(--primary-300))",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
@@ -58,7 +63,8 @@ const config = {
         },
       },
       backgroundImage: {
-        "primary-gradient": "linear-gradient(to right, hsl(var(--primary)), hsl(var(--primary-200)), hsl(var(--primary-300)))",
+        "primary-gradient":
+          "linear-gradient(to right, hsl(var(--primary)), hsl(var(--primary-200)), hsl(var(--primary-300)))",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -67,22 +73,34 @@ const config = {
       },
       keyframes: {
         "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
+          from: {
+            height: "0",
+          },
+          to: {
+            height: "var(--radix-accordion-content-height)",
+          },
         },
         "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
+          from: {
+            height: "var(--radix-accordion-content-height)",
+          },
+          to: {
+            height: "0",
+          },
         },
         "caret-blink": {
-          "0%,70%,100%": { opacity: "1" },
-          "20%,50%": { opacity: "0" },
+          "0%,70%,100%": {
+            opacity: "1",
+          },
+          "20%,50%": {
+            opacity: "0",
+          },
         },
       },
       animation: {
+        "caret-blink": "caret-blink 1.25s ease-out infinite",
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "caret-blink": "caret-blink 1.25s ease-out infinite",
       },
     },
   },

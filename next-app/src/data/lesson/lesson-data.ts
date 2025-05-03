@@ -131,6 +131,7 @@ export const getAllLessonsByGroupIdData = async (groupId: string) => {
         select: { label: true, color: true },
       },
     },
+    orderBy: { title: "asc" },
   });
 };
 

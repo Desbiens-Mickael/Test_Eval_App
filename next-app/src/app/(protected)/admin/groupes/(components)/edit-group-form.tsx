@@ -1,5 +1,6 @@
 "use client";
 
+import Loader from "@/components/loader";
 import { useGetGroupById } from "@/hooks/queries/group/use-get-group-by-id";
 import { toast } from "sonner";
 import AddLessonToGroup from "./add-lesson-to-group-form";
@@ -17,7 +18,7 @@ export default function EditGroupForm({ id }: EditGroupFormProps) {
 
   if (isLoading || !data) {
     // TODO: Ajouter le skeleton du formulaire
-    return <h1>Loading...</h1>;
+    return <Loader />;
   }
 
   if (isError) {

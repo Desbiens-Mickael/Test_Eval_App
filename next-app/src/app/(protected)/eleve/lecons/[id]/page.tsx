@@ -1,4 +1,4 @@
-import ShowLesson from "@/app/(protected)/eleve/lecons/components/show-lesson";
+import ShowLesson from "@/app/(protected)/eleve/lecons/(components)/show-lesson";
 import PageTitle from "@/components/page-title";
 import { Metadata } from "next";
 

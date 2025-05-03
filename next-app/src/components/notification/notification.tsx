@@ -58,6 +58,7 @@ export default function Notification() {
                     itemId={
                       notification.notification.lessonId ||
                       notification.notification.exerciseId ||
+                      notification.notification.completionId ||
                       ""
                     }
                     handleOpen={handleOpen}

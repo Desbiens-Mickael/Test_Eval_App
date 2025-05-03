@@ -27,7 +27,7 @@ const InfosNotification = {
   COMPLETION: {
     image: "/assets/images/new-completion.png",
     title: "Exercice terminé",
-    href: "/eleve/progression",
+    href: "/correction/progression",
   },
 };
 

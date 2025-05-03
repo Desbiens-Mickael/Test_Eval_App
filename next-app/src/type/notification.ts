@@ -10,6 +10,7 @@ export type Notification = {
     createdAt: Date;
     lessonId: string | null;
     exerciseId: string | null;
+    completionId: string | null;
     createdByTeacherId: string | null;
     createdByStudentId: string | null;
   };

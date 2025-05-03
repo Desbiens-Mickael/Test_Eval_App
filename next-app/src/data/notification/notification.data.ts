@@ -4,7 +4,9 @@ import { NotificationType } from "@prisma/client";
 interface CreateNotificationInput {
   lessonId?: string;
   exerciseId?: string;
-  createdByTeacherId: string;
+  completionId?: string;
+  createdByTeacherId?: string;
+  createdByStudentId?: string;
   message: string;
 }
 
@@ -36,6 +38,20 @@ export const createNotificationExerciseData = async (
   });
 };
 
+// Création d'une notification pour une completion
+export const createNotificationCompletionData = async (
+  data: CreateNotificationInput
+) => {
+  return await prisma.notification.create({
+    data: {
+      type: NotificationType.COMPLETION,
+      message: data.message,
+      completionId: data.completionId,
+      createdByStudentId: data.createdByStudentId,
+    },
+  });
+};
+
 // Création des StudentNotification
 export const createStudentNotificationData = async (
   notificationId: string,
@@ -47,6 +63,19 @@ export const createStudentNotificationData = async (
       notificationId,
     })),
     skipDuplicates: true, // pour éviter les doublons si tu rejoues le script
+  });
+};
+
+// Création des TeacherNotification
+export const createTeacherNotificationData = async (
+  notificationId: string,
+  teacherId: string
+) => {
+  await prisma.teacherNotification.create({
+    data: {
+      teacherId,
+      notificationId,
+    },
   });
 };
 

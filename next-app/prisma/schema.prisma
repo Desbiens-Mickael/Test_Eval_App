@@ -113,6 +113,7 @@ model Student {
   groupStudent            Group?   @relation(name: "students", fields: [groupId], references: [id], onDelete: SetNull)
   notifications           StudentNotification[]
   createdNotifications    Notification[] @relation("StudentNotifications")
+  studentExercices        StudentExercice[]
 }
 
 model Group {
@@ -222,6 +223,8 @@ model Exercice {
   lesson                  Lesson   @relation(fields: [lessonID], references: [id], onDelete: Cascade)
 
   groups                  Group[]
+
+  studentExercices        StudentExercice[]
 }
 
 model Notification {
@@ -231,6 +234,7 @@ model Notification {
   createdAt           DateTime @default(now())
   lessonId            String?
   exerciseId          String?
+  completionId        String?
   createdByTeacherId  String? 
   createdByStudentId  String?
   createdByTeacher    User? @relation("TeacherNotifications", fields: [createdByTeacherId], references: [id])
@@ -267,4 +271,20 @@ enum NotificationType {
   LESSON
   EXERCISE
   COMPLETION
+}
+
+model StudentExercice {
+  id                      String @id @default(cuid())
+  student                 Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId               String
+  exercice                Exercice @relation(fields: [exerciceId], references: [id], onDelete: Cascade)
+  exerciceId              String
+  subject                 String
+  response                Json
+  note                    Float
+  coeficient              Int
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  @@unique([studentId, exerciceId])
 }

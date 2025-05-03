@@ -1,6 +1,7 @@
 "use server";
 
 import {
+  addExerciceResultData,
   addExerciceToGroupData,
   createExerciceData,
   deleteExercicesData,
@@ -9,21 +10,28 @@ import {
   getExerciceByIdData,
   getExercicesInfoBeforeDelete,
   getExercicesWithAuthor,
+  getStudentExerciceByStudentIdData,
   removeExerciceFromGroupData,
   updateExerciceData,
 } from "@/data/exercice/exercice-data";
 import { getExerciceTypeByNameData } from "@/data/exercice/exercice-type.data";
-import { getGroupByIdData } from "@/data/group.data";
+import { getGroupByIdData, getGroupByStudentIdData } from "@/data/group.data";
 import {
   getLessonByIdData,
   getLessonBySlugData,
 } from "@/data/lesson/lesson-data";
 import {
+  createNotificationCompletionData,
   createNotificationExerciseData,
   createStudentNotificationData,
+  createTeacherNotificationData,
 } from "@/data/notification/notification.data";
 import { getAllStudentsByAuthorIdwhoBelongToTheGroupIdIdsData } from "@/data/student-data";
 import { currentUser } from "@/lib/auth";
+import {
+  globalExerciceCorectionShema,
+  globalExerciceCorectionType,
+} from "@/shema-zod/exercice-corection.shema";
 import {
   createExerciceFormInput,
   globalExerciceSchema,
@@ -232,6 +240,110 @@ export const toggleExerciceGroupAction = async (
     return {
       error:
         "Une erreur est survenue lors de la mise à jour de l'exercice au groupe",
+    };
+  }
+};
+
+// Ajout d'un résultat d'exercice pour un élève
+export const addExerciceResultAction = async (
+  data: globalExerciceCorectionType
+) => {
+  // Validation des données avec Zod
+  const validatedData = globalExerciceCorectionShema.safeParse(data);
+  if (!validatedData.success) {
+    return {
+      error: "Données non valide !",
+    };
+  }
+
+  try {
+    // Vérifier que l'utilisateur est connecté
+    const student = await currentUser();
+    if (!student || !student?.id || student.role !== "STUDENT") {
+      return {
+        error: "Action non autorisée !",
+      };
+    }
+
+    // Vérifier que l'exercice existe et qu'il est bien dans le groupe de l'élève
+    const exercice = await getExerciceByIdData(validatedData.data.exerciceId);
+    if (!exercice) {
+      return {
+        error: "Exercice non trouvé !",
+      };
+    }
+
+    // Récupération du groupe de l'élève
+    const group = await getGroupByStudentIdData(student.id);
+    if (!group) {
+      return {
+        error: "Action non autorisée !",
+      };
+    }
+
+    // Vérifier que l'exercice appartient au groupe de l'élève
+    if (!exercice.groups?.some((group) => group.id === group.id)) {
+      return {
+        error: "Action non autorisée !",
+      };
+    }
+
+    // Récupérer tout les réponses de l'élève
+    const studentExercice = await getStudentExerciceByStudentIdData(student.id);
+
+    // Vérifier que l'exercice n'a pas déjà été corrigé
+    if (
+      studentExercice.some(
+        (e) => e.exerciceId === validatedData.data.exerciceId
+      )
+    ) {
+      return {
+        error: "Vous avez déjà réalisé cet exercice !",
+      };
+    }
+
+    // Récupérer le sujet de la leçon associée à l'exercice
+    const subject = exercice.lesson.LessonSubject.label;
+
+    // Ajouter le résultat de l'exercice
+    const createdExerciceResult = await addExerciceResultData(
+      student.id,
+      subject,
+      validatedData.data
+    );
+
+    if (!createdExerciceResult) {
+      return {
+        error:
+          "Une erreur est survenue lors de l'ajout du résultat de l'exercice",
+      };
+    }
+
+    // Ajouter une notification pour le professeur
+    const notification = await createNotificationCompletionData({
+      completionId: createdExerciceResult.id,
+      createdByStudentId: student.id,
+      message: `${student.name} a réalisé l'exercice ${exercice.title}`,
+    });
+
+    if (!notification) {
+      return {
+        error: "Une erreur est survenue lors de la création de la notification",
+      };
+    }
+
+    // Créer des notifications pour chaque professeur
+    await createTeacherNotificationData(notification.id, group.authorId);
+
+    return {
+      success: "Votre réponse a bien été enregistrée",
+      data: createdExerciceResult,
+    };
+  } catch (error) {
+    console.error("Error adding exercise result:", error);
+    return {
+      error:
+        "Une erreur est survenue lors de l'ajout du résultat de l'exercice",
     };
   }
 };

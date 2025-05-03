@@ -1,32 +1,39 @@
 "use client";
 
-import Loader from "@/components/loader";
+import SubmitButton from "@/components/form/submit-button";
 import { Button } from "@/components/ui/button";
-import { shuffleArray } from "@/lib/utils";
+import { useAddExerciceResponse } from "@/hooks/mutations/exercice/use-add-exercice-response";
+import { calculateNote, shuffleArray } from "@/lib/utils";
+import { gapFillTextResponseType } from "@/shema-zod/exercice-corection.shema";
 import { contentGapFillInput } from "@/shema-zod/exercice.shema";
 import { RefreshCcw } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
+import { toast } from "sonner";
 import { isInputPosition } from "../../../(lib)/utils";
 import { ExerciseResultText } from "./exercise-result-text";
 
 interface ExerciseGapFillTextProps {
+  exerciceId: string;
   content: contentGapFillInput;
   level: string;
 }
 
 export default function ExerciseGapFillText({
+  exerciceId,
   content,
   level,
 }: ExerciseGapFillTextProps) {
-  const [inputs, setInputs] = useState<{ [key: number]: string }>({});
-  const [loading, setLoading] = useState(false);
+  const [inputs, setInputs] = useState<gapFillTextResponseType>({});
   const [isValidated, setIsValidated] = useState(false);
   const [note, setNote] = useState<{ note: number; coeficient: number }>({
     note: 0,
     coeficient: 0,
   });
 
-  const handleChange = useCallback(
+  const { mutateAsync: addExerciceResponse, isPending } =
+    useAddExerciceResponse();
+
+  const handleInputChange = useCallback(
     (pos: number, value: string) => {
       setInputs((prev) => ({ ...prev, [pos]: value.trim() }));
     },
@@ -37,124 +44,95 @@ export default function ExerciseGapFillText({
     return shuffleArray(content.answers).map((a) => a.answer);
   }, [content.answers, shuffleArray]);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setInputs({});
     setIsValidated(false);
-  };
+  }, [setInputs]);
 
-  const calculateNote = (
-    level: string,
-    maxCorrectAnswers: number,
-    correctAnswers: number
-  ) => {
-    let coeficient: number;
-    switch (level) {
-      case "Facile":
-        coeficient = 5;
-        break;
-      case "Difficile":
-        coeficient = 10;
-        break;
-      case "Très difficile":
-        coeficient = 20;
-        break;
-      default:
-        coeficient = 5; // Coeficient par defaut
-    }
-    const result = ((correctAnswers / maxCorrectAnswers) * coeficient).toFixed(
-      2
-    );
-    return { note: Number(result), coeficient: coeficient };
-  };
-
-  // Valide l'exercice
-  const handleCheck = () => {
-    setLoading(true);
+  const handleSubmit = useCallback(async () => {
     try {
-      setIsValidated(true);
       const maxCorrectAnswers = content.answers.length;
       const correctAnswers = content.answers.filter(
         (a) => a.answer === inputs[a.position]
       ).length;
-      console.log("maxCorrectAnswers", maxCorrectAnswers);
-      console.log("correctAnswers", correctAnswers);
-      console.log("level", level);
-      const note = calculateNote(level, maxCorrectAnswers, correctAnswers);
-      console.log("note", note.note);
-      console.log("coeficient", note.coeficient);
+      const note: { note: number; coeficient: number } = calculateNote(
+        level,
+        maxCorrectAnswers,
+        correctAnswers
+      );
       setNote(note);
+      const result = await addExerciceResponse({
+        exerciceId,
+        note: note.note,
+        coeficient: note.coeficient,
+        response: inputs,
+      });
+      if (result.success) {
+        setIsValidated(true);
+      }
     } catch (error) {
+      toast.error(
+        "Une erreur est survenue lors de la validation de l'exercice"
+      );
       console.error("Error checking answers:", error);
-    } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 2000);
     }
-  };
+  }, [addExerciceResponse, exerciceId, inputs, level, setNote]);
 
   return (
     <div className="relative flex flex-col gap-10">
-      {loading ? (
-        <Loader />
-      ) : (
+      {level !== "Très difficile" && (
+        <div className="text-sm text-muted-foreground">
+          {shuffledAnswers.join(" | ")}
+        </div>
+      )}
+      {!isValidated ? (
         <>
-          {level !== "Très difficile" && (
-            <div className="text-sm text-muted-foreground">
-              {shuffledAnswers.join(" | ")}
-            </div>
-          )}
-          {!isValidated ? (
-            <>
-              <div className="flex gap-[0.15rem] flex-wrap ">
-                {content.text.map((word, index) => {
-                  if (isInputPosition(index, content.answers)) {
-                    const width = content.answers.find(
-                      (a) => a.position === index
-                    )?.answer.length;
-                    return (
-                      <input
-                        key={index}
-                        type="text"
-                        value={inputs[index] || ""}
-                        onChange={(e) => handleChange(index, e.target.value)}
-                        style={{ width: `${(width || 2) + 1}ch` }}
-                        className="border-b border-b-foreground px-1 text-foreground font-semibold"
-                      />
-                    );
-                  } else {
-                    return <span key={index}>{word}</span>;
-                  }
-                })}
-              </div>
-              <div className="flex justify-between items-center">
-                <Button
-                  onClick={handleCheck}
-                  className="w-fit"
-                  disabled={loading}
-                >
-                  Soumettre
-                </Button>
-                <Button
-                  title="Reinitialiser"
-                  size="icon"
-                  onClick={handleReset}
-                  className="bg-background text-primary hover:bg-primary hover:text-background"
-                  disabled={loading}
-                >
-                  <RefreshCcw className="h-6 w-6" />
-                </Button>
-              </div>
-            </>
-          ) : (
-            <ExerciseResultText
-              originalText={content.text}
-              response={inputs}
-              answers={content.answers}
-              note={note.note}
-              coeficient={note.coeficient}
+          <div className="flex gap-[0.15rem] flex-wrap ">
+            {content.text.map((word, index) => {
+              if (isInputPosition(index, content.answers)) {
+                const width = content.answers.find((a) => a.position === index)
+                  ?.answer.length;
+                return (
+                  <input
+                    key={index}
+                    type="text"
+                    value={inputs[index] || ""}
+                    onChange={(e) => handleInputChange(index, e.target.value)}
+                    style={{ width: `${(width || 2) + 1}ch` }}
+                    className="border-b border-b-foreground px-1 text-foreground font-semibold"
+                  />
+                );
+              } else {
+                return <span key={index}>{word}</span>;
+              }
+            })}
+          </div>
+          <div className="flex justify-between items-center">
+            <SubmitButton
+              onClick={handleSubmit}
+              className="w-fit"
+              texte="Soumettre"
+              isLoading={isPending}
             />
-          )}
+            <Button
+              title="Reinitialiser"
+              size="icon"
+              onClick={handleReset}
+              className="bg-background text-primary hover:bg-primary hover:text-background"
+              disabled={isPending}
+            >
+              <RefreshCcw className="h-6 w-6" />
+            </Button>
+          </div>
         </>
+      ) : (
+        <ExerciseResultText
+          originalText={content.text}
+          response={inputs}
+          answers={content.answers}
+          note={note.note}
+          coeficient={note.coeficient}
+        />
       )}
     </div>
   );

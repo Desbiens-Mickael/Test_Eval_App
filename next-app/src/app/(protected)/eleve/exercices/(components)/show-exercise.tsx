@@ -39,6 +39,7 @@ export default function ShowExercise({ exerciceId }: ShowExerciseProps) {
       {data?.type === "Vrai ou Faux" && <div>Vrai ou Faux</div>}
       {data?.type === "Texte à trou" && (
         <ExerciseGapFillText
+          exerciceId={data?.id}
           level={data?.level}
           content={data?.content as contentGapFillInput}
         />

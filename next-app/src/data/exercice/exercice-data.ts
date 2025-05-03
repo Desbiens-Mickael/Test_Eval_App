@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { globalExerciceCorectionType } from "@/shema-zod/exercice-corection.shema";
 import { createExerciceFormInput } from "@/shema-zod/exercice.shema";
 import { Exercice, ExerciceType } from "@prisma/client";
 import { JsonValue } from "@prisma/client/runtime/library";
@@ -198,6 +199,48 @@ export const removeExerciceFromGroupData = async (
   return await prisma.exercice.update({
     where: { id: exerciceId },
     data: { groups: { disconnect: { id: groupId } } },
+  });
+};
+
+/**
+ * Ajoute le résultat d'un exercice pour un élève ainsi que sa note
+ *
+ * @param {string} exerciceId - L'identifiant de l'exercice.
+ * @param {string} studentId - L'identifiant de l'élève.
+ * @param {string} subject - Le sujet de l'exercice.
+ * @param {string} response - La réponse de l'élève.
+ * @param {number} note - La note de l'élève.
+ * @param {number} coeficient - Le coeficient de l'exercice.
+ * @returns {Promise<StudentExercice>} - Une promesse qui résout à l'exercice ajouté.
+ *
+ * @example
+ * // Ajouter le résultat de l'exercice avec l'identifiant "1" pour l'élève avec l'identifiant "2"
+ * const addedExerciseResult = await addExerciceResult("1", "2", "Mathématiques", "1", "2", "3", "4");
+ *
+ * @description
+ * La fonction ajoute le résultat de l'exercice correspondant à l'identifiant donné pour l'élève correspondant à l'identifiant donné. Les champs retournés pour l'exercice sont :
+ * - `id`: L'identifiant unique de l'exercice
+ * - `title`: Le titre de l'exercice
+ * - `description`: La description de l'exercice
+ * - `content`: Le contenu de l'exercice
+ * - `lesson.title`: Le nom de la leçon associée à l'exercice
+ * - `lesson.LessonSubject.label`: Le sujet de la leçon
+ * - `level.label`: Le niveau de difficulté de l'exercice
+ */
+export const addExerciceResultData = async (
+  studentId: string,
+  subject: string,
+  data: globalExerciceCorectionType
+) => {
+  return await prisma.studentExercice.create({
+    data: {
+      studentId,
+      exerciceId: data.exerciceId,
+      subject,
+      response: data.response,
+      note: data.note,
+      coeficient: data.coeficient,
+    },
   });
 };
 
@@ -477,6 +520,14 @@ export const getAllExercicesByLessonIdData = async (lessonId: string) => {
     },
     orderBy: {
       title: "asc",
+    },
+  });
+};
+
+export const getStudentExerciceByStudentIdData = async (studentId: string) => {
+  return await prisma.studentExercice.findMany({
+    where: {
+      studentId: studentId,
     },
   });
 };

@@ -23,6 +23,7 @@ export const getGroupsByAuthorIdData = async (authorId: string) => {
   });
 };
 
+// Récupération d'un groupe par son id
 export const getGroupByIdData = async (id: string, authorId: string) => {
   return await prisma.group.findUnique({
     where: { id, authorId },
@@ -50,6 +51,13 @@ export const getGroupByIdData = async (id: string, authorId: string) => {
         orderBy: { title: "asc" },
       },
     },
+  });
+};
+
+// Récupération d'un groupe à partir de l'id de l'élève
+export const getGroupByStudentIdData = async (studentId: string) => {
+  return await prisma.group.findFirst({
+    where: { students: { some: { id: studentId } } },
   });
 };
 

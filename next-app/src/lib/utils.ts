@@ -52,3 +52,27 @@ export const shuffleArray = <T>(array: T[]): T[] => {
   }
   return arr;
 };
+
+// calcule la note d'un exercice
+export const calculateNote = (
+  level: string,
+  maxCorrectAnswers: number,
+  correctAnswers: number
+) => {
+  let coeficient: number;
+  switch (level) {
+    case "Facile":
+      coeficient = 5;
+      break;
+    case "Difficile":
+      coeficient = 10;
+      break;
+    case "Très difficile":
+      coeficient = 20;
+      break;
+    default:
+      coeficient = 5; // Coeficient par defaut
+  }
+  const result = ((correctAnswers / maxCorrectAnswers) * coeficient).toFixed(2);
+  return { note: Number(result), coeficient: coeficient };
+};

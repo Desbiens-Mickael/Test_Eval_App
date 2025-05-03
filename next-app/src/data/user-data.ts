@@ -3,11 +3,17 @@
 import { prisma } from "@/lib/db";
 import { hashPassword } from "@/lib/hash-password";
 
-export const createUserData = async (email: string, plainPassword: string, fullName: string) => {
+export const createUserData = async (
+  email: string,
+  plainPassword: string,
+  fullName: string
+) => {
   try {
     const hashedPassword = await hashPassword(plainPassword);
 
-    return await prisma.user.create({ data: { email, password: hashedPassword, name: fullName } });
+    return await prisma.user.create({
+      data: { email, password: hashedPassword, name: fullName },
+    });
   } catch (error) {
     throw error;
   }

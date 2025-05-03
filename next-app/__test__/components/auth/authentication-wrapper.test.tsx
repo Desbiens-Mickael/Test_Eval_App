@@ -1,8 +1,6 @@
 import AuthenticationWrapper from "@/components/auth/authentication-wrapper";
 import { render, screen } from "@testing-library/react";
 
-jest.mock("@/components/auth/google-signin-button.tsx", () => jest.fn(() => <button> Google Sign </button>));
-
 describe("AuthenticationWrapper component", () => {
   describe("With sociale is true", () => {
     beforeEach(() => {
@@ -22,7 +20,9 @@ describe("AuthenticationWrapper component", () => {
     });
 
     it("renders the heading correctly", () => {
-      expect(screen.getByRole("heading", { name: /title/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: /title/i })
+      ).toBeInTheDocument();
     });
 
     it("renders the text correctly", () => {
@@ -49,22 +49,25 @@ describe("AuthenticationWrapper component", () => {
     it("renders children correctly", () => {
       expect(screen.getByTestId("children")).toBeInTheDocument();
     });
-
-    it("renders the social button correctly", () => {
-      expect(screen.getByRole("button", { name: /Google Sign/i })).toBeInTheDocument();
-    });
   });
 
   describe("With sociale is false and without compulsory accessories", () => {
     beforeEach(() => {
       render(
-        <AuthenticationWrapper title="title" backButtonText="backButtonText" backButtonHref="/auth/inscription" sociale={false}>
+        <AuthenticationWrapper
+          title="title"
+          backButtonText="backButtonText"
+          backButtonHref="/auth/inscription"
+          sociale={false}
+        >
           <span data-testid="children">Mocked children</span>
         </AuthenticationWrapper>
       );
     });
     it("does not render the social button", () => {
-      expect(screen.queryByRole("button", { name: /Google Sign/i })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: /Google Sign/i })
+      ).not.toBeInTheDocument();
     });
 
     it("does not render the text", () => {

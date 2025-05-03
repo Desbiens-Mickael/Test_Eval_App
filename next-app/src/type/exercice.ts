@@ -13,6 +13,7 @@ export type Exercice = {
   subjectColor: string;
   typeId: string;
   type: string;
+  groups?: { id: string }[];
 };
 
 export enum ExerciceType {

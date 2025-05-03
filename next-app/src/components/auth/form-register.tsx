@@ -1,13 +1,21 @@
 "use client";
 
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { registerFormSchema } from "@/shema-zod/auth.shema";
+import { registerUserFormSchema } from "@/shema-zod/auth.shema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import createNewUserAction from "@/actions/register.action";
+import { createNewUserAction } from "@/actions/register.action";
 import SubmitButton from "@/components/form/submit-button";
 import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
@@ -23,8 +31,8 @@ export default function FormRegister({}) {
     },
   });
 
-  const form = useForm<z.infer<typeof registerFormSchema>>({
-    resolver: zodResolver(registerFormSchema),
+  const form = useForm<z.infer<typeof registerUserFormSchema>>({
+    resolver: zodResolver(registerUserFormSchema),
     defaultValues: {
       firstname: "",
       lastname: "",
@@ -33,7 +41,7 @@ export default function FormRegister({}) {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof registerFormSchema>) {
+  async function onSubmit(values: z.infer<typeof registerUserFormSchema>) {
     try {
       mutate(values);
     } catch (error) {
@@ -43,7 +51,10 @@ export default function FormRegister({}) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full xl:w-[80%] lg:h-1/2 space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="w-full xl:w-[80%] lg:h-1/2 space-y-8"
+      >
         <div className="w-full flex flex-col gap-8 md:flex-row">
           <FormField
             control={form.control}
@@ -54,7 +65,9 @@ export default function FormRegister({}) {
                 <FormControl>
                   <Input placeholder="John" {...field} />
                 </FormControl>
-                <FormDescription className="text-xs">Entrez votre prénom</FormDescription>
+                <FormDescription className="text-xs">
+                  Entrez votre prénom
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -68,7 +81,9 @@ export default function FormRegister({}) {
                 <FormControl>
                   <Input placeholder="exemple@gmail.com" {...field} />
                 </FormControl>
-                <FormDescription className="text-xs">Entrez votre nom</FormDescription>
+                <FormDescription className="text-xs">
+                  Entrez votre nom
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -83,14 +98,26 @@ export default function FormRegister({}) {
               <FormControl>
                 <Input placeholder="exemple@gmail.com" {...field} />
               </FormControl>
-              <FormDescription className="text-xs">Entrez une adresse e-mail valide</FormDescription>
+              <FormDescription className="text-xs">
+                Entrez une adresse e-mail valide
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <PasswordInput control={form.control} name="password" label="Mot de passe" placeholder="******" description="Min 6 caractères" />
-        <SubmitButton texte="Créer mon compte" isLoading={isPending} loadindText="Création en cour" />
+        <PasswordInput
+          control={form.control}
+          name="password"
+          label="Mot de passe"
+          placeholder="******"
+          description="Min 6 caractères"
+        />
+        <SubmitButton
+          texte="Créer mon compte"
+          isLoading={isPending}
+          loadindText="Création en cour"
+        />
       </form>
     </Form>
   );

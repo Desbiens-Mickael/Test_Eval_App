@@ -40,7 +40,7 @@ export default function CreateEXerciceSTep3({
       className="h-full flex flex-col space-y-8 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md"
     >
       <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 border-b pb-3 border-gray-200 dark:border-gray-700">
-        Étape 3: Récapitulatif et création de l'exercice
+        Étape 3: Récapitulatif
       </h2>
 
       <div className="min-w-[50%] w-fit mx-auto bg-gray-50 dark:bg-gray-900 rounded-lg p-6 border border-gray-200 dark:border-gray-700 space-y-4">

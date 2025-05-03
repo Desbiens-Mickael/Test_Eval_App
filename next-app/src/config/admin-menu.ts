@@ -79,12 +79,17 @@ const adminMenus: MenuSideBar = [
     ],
   },
   {
-    group: "Utilisateurs",
+    group: "Groupe",
     menus: [
       {
         icon: Users,
-        title: "Inscrits",
-        href: "/admin/utilisateurs",
+        title: "Mes groupes",
+        href: "/admin/groupes",
+      },
+      {
+        icon: Users,
+        title: "Mes élèves",
+        href: "/admin/eleves",
       },
     ],
   },

@@ -112,6 +112,7 @@ export const createExerciceBaseSchema = z
   })
   .required();
 
+// Union des différents types de contenu pour pouvoir les utiliser dans le schéma global
 const contentSchema = z.union([
   contentCardSchema,
   contentMultipleChoiceShema,

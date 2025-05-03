@@ -10,7 +10,6 @@ import { useDeleteExercices } from "@/hooks/mutations/exercice/use-delete-exerci
 import useGetAllExercicesByType from "@/hooks/queries/exercice/use-get-all-exercices-by-type";
 import { Exercice, ExerciceType } from "@/type/exercice";
 import { ColumnDef } from "@tanstack/react-table";
-import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { DataTable } from "../../../../../components/table/data-table";
@@ -30,10 +29,8 @@ export default function ExercicesTable({
     error,
   } = useGetAllExercicesByType(exerciceType);
 
-  const { mutateAsync: mutateAsyncDelete, isPending } = useDeleteExercices();
+  const { mutateAsync: mutateAsyncDelete } = useDeleteExercices();
   const [openId, setOpenId] = useState<string | null>(null);
-
-  const router = useRouter();
 
   const handleDelete = useCallback(
     async (lessonIds: string | string[]) => {
@@ -126,7 +123,7 @@ export default function ExercicesTable({
           <DataTableRowActions
             elementId={row.original.id}
             handleDelete={handleDelete}
-            editPath={`/admin/exercices/${row.original.id}/edition`}
+            editPath={`/admin/exercices/${exercice.id}/edition`}
             openId={openId}
             setOpenId={setOpenId}
           ></DataTableRowActions>

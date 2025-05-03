@@ -14,37 +14,38 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import Link from "next/link";
 import LinkCta from "./link-cta";
 import Logo from "./logo";
+import Notification from "./notification/notification";
 
 export default function Header() {
   const user = useCurrentUser();
 
   return (
-    <header className="sticky top-0 left-0 z-40 flex justify-between items-center gap-2 w-full h-16 shadow-md backdrop-blur py-4 px-6">
-      <div className=" w-[150px]">
-        <Link href={"/"} className="flex gap-2 items-center">
-          <Logo
-            width={200}
-            height={100}
-            type="horizontal"
-            className="md:ms-8"
-          />
-        </Link>
-      </div>
+    <header className="sticky top-0 left-0 z-40 flex justify-end items-center gap-2 w-full h-16 shadow-md backdrop-blur py-4 px-6">
       {!user ? (
-        <div className="hidden md:flex gap-3 md:me-8">
-          <LinkCta
-            href={"/auth/inscription"}
-            text={"Inscription"}
-            LinkType="outline"
-          />
-          <LinkCta href={"/auth/connexion"} text={"Connexion"} />
-        </div>
+        <>
+          <div className="flex justify-start items-center w-full bg-background rounded-md">
+            <Link href={"/"}>
+              <Logo width={100} height={50} type="horizontal" />
+            </Link>
+          </div>
+          <div className="hidden md:flex gap-3 md:me-8">
+            <LinkCta
+              href={"/auth/inscription"}
+              text={"Inscription"}
+              LinkType="outline"
+            />
+            <LinkCta href={"/auth/connexion"} text={"Connexion"} />
+          </div>
+        </>
       ) : (
-        <UserItem
-          fullName={user.name ?? ""}
-          email={user.email ?? ""}
-          avatarUrl={user.image ?? ""}
-        />
+        <>
+          <Notification />
+          <UserItem
+            fullName={user.name ?? ""}
+            email={user.email ?? ""}
+            avatarUrl={user.image ?? ""}
+          />
+        </>
       )}
       <div className="block md:hidden">
         <Sheet>

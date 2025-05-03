@@ -7,15 +7,15 @@ import QuestionComponent from "./question-component";
 import ShowPReviewMUltipleChoice from "./show-preview-multiple-choice";
 import { useContentMultipleChoiceStore } from "./store/store-content-multiple-choice";
 
-const defaultQuestion: multipleChoiceInput = {
-  question: "",
-  answers: [
-    { answer: "", isCorrect: false },
-    { answer: "", isCorrect: false },
-  ],
-};
-
-const defaultValue: multipleChoiceInput[] = [defaultQuestion];
+const defaultValue: multipleChoiceInput[] = [
+  {
+    question: "",
+    answers: [
+      { answer: "", isCorrect: false },
+      { answer: "", isCorrect: false },
+    ],
+  },
+];
 
 interface ContentMUltipleCHoiceFormProps {
   initialValue?: multipleChoiceInput[];
@@ -24,7 +24,7 @@ interface ContentMUltipleCHoiceFormProps {
 }
 
 export default function ContentMUltipleCHoiceForm({
-  initialValue = defaultValue,
+  initialValue,
   onChange,
   isEditing = true,
 }: ContentMUltipleCHoiceFormProps) {
@@ -32,10 +32,14 @@ export default function ContentMUltipleCHoiceForm({
     useContentMultipleChoiceStore();
 
   useEffect(() => {
-    if (initialValue?.length) {
-      setInitialValues(initialValue!, onChange);
-    }
-  }, [initialValue]);
+    const values =
+      initialValue && initialValue.length > 0 ? initialValue : defaultValue;
+    setInitialValues(values, onChange);
+
+    return () => {
+      setInitialValues(defaultValue);
+    };
+  }, [initialValue, onChange]);
 
   return (
     <div className="flex flex-col gap-4">

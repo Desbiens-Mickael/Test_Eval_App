@@ -1,3 +1,4 @@
+import PageTitle from "@/components/page-title";
 import { Metadata } from "next";
 import UserPRofileManager from "./_components/user-profile-manager";
 
@@ -6,5 +7,10 @@ export const metadata: Metadata = {
 };
 
 export default function ProfilePage() {
-  return <UserPRofileManager />;
+  return (
+    <>
+      <PageTitle title="Mon profil" />
+      <UserPRofileManager />
+    </>
+  );
 }

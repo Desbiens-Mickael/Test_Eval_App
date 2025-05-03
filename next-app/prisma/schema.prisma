@@ -46,6 +46,7 @@ enum TokenType {
   ResetPassword
   TwoFactor
   ResetEmail
+  Invitation
 }
 model VerificationToken {
   id                      String    @id @default(cuid())
@@ -71,6 +72,7 @@ model TwoFactorComfirmation {
 enum UserRole {
   ADMIN 
   USER
+  STUDENT
 } 
 
 model User {
@@ -80,30 +82,50 @@ model User {
   password                String?
   emailVerified           DateTime?
   image                   String?
-  role                    UserRole  @default(USER)
+  role                    UserRole  @default(ADMIN)
   isTwoFactorEnabled      Boolean   @default(false)
   accounts                Account[]
   sessions                Session[]
   twoFactorComfirmation   TwoFactorComfirmation?
-  ownedGroup              Group? 
+  ownedGroup              Group[]
+  students                Student[] 
   ownedLessons            Lesson[]
   ownedExercice           Exercice[]
   createdAt               DateTime  @default(now())
   updatedAt               DateTime  @updatedAt
+  notifications           TeacherNotification[]
+  createdNotifications    Notification[] @relation("TeacherNotifications")
+}
 
-  groupId                 String?  @unique
-  groupUser               Group?   @relation(name: "users", fields: [groupId], references: [id], onDelete: SetNull)
-  
+model Student {
+  id                      String @id @default(cuid())
+  name                    String
+  identifier              String @unique
+  password                String
+  image                   String?
+  role                    UserRole @default(STUDENT)
+  isActive                Boolean @default(false)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+  professorId             String
+  professor               User @relation(fields: [professorId], references: [id], onDelete: Cascade)
+  groupId                 String?
+  groupStudent            Group?   @relation(name: "students", fields: [groupId], references: [id], onDelete: SetNull)
+  notifications           StudentNotification[]
+  createdNotifications    Notification[] @relation("StudentNotifications")
+  studentExercices        StudentExercice[]
 }
 
 model Group {
   id                      String @id @default(cuid())
-  name                    String
-  users                   User[] @relation(name: "users")
+  name                    String @db.VarChar(20)
+  students                Student[] @relation(name: "students")
+  lessons                 Lesson[]
+  exercices               Exercice[]
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
 
-  authorId                String @unique
+  authorId                String
   author                  User @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@unique([name, authorId])
@@ -151,6 +173,7 @@ model Lesson {
   GradeLevels             GradeLevels @relation(fields: [GradeLevelsID], references: [id], onDelete: Cascade)
 
   exercices               Exercice[]
+  groups                  Group[]
   
   @@unique([title, authorId])
   @@unique([slug, authorId])
@@ -179,7 +202,7 @@ model ExerciceType {
 
 // Exercice
 model Exercice {
-  id                      String   @id @default(cuid())
+  id                      String @id @default(cuid())
   title                   String
   description             String
   content                 Json
@@ -198,4 +221,70 @@ model Exercice {
 
   lessonID                String
   lesson                  Lesson   @relation(fields: [lessonID], references: [id], onDelete: Cascade)
+
+  groups                  Group[]
+
+  studentExercices        StudentExercice[]
+}
+
+model Notification {
+  id                  String @id @default(cuid())
+  type                NotificationType
+  message             String
+  createdAt           DateTime @default(now())
+  lessonId            String?
+  exerciseId          String?
+  completionId        String?
+  createdByTeacherId  String? 
+  createdByStudentId  String?
+  createdByTeacher    User? @relation("TeacherNotifications", fields: [createdByTeacherId], references: [id])
+  createdByStudent    Student? @relation("StudentNotifications", fields: [createdByStudentId], references: [id])
+  studentRecipients   StudentNotification[]
+  teacherRecipients   TeacherNotification[]
+}
+
+model StudentNotification {
+  id             String       @id @default(cuid())
+  student        Student      @relation(fields: [studentId], references: [id])
+  studentId      String
+  notification   Notification @relation(fields: [notificationId], references: [id])
+  notificationId String
+  isRead         Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+
+  @@unique([studentId, notificationId])
+}
+
+model TeacherNotification {
+  id             String   @id @default(cuid())
+  teacher        User         @relation(fields: [teacherId], references: [id])
+  teacherId      String
+  notification   Notification @relation(fields: [notificationId], references: [id])
+  notificationId String
+  isRead         Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+
+  @@unique([teacherId, notificationId])
+}
+
+enum NotificationType {
+  LESSON
+  EXERCISE
+  COMPLETION
+}
+
+model StudentExercice {
+  id                      String @id @default(cuid())
+  student                 Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId               String
+  exercice                Exercice @relation(fields: [exerciceId], references: [id], onDelete: Cascade)
+  exerciceId              String
+  subject                 String
+  response                Json
+  note                    Float
+  coeficient              Int
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  @@unique([studentId, exerciceId])
 }

@@ -16,9 +16,14 @@ export type LessonOutput = {
 };
 
 // Récupération de toutes les leçons
-export const getAllLessonData = async (): Promise<LessonOutput[]> => {
+export const getAllLessonByAuthorIdData = async (
+  authorId: string
+): Promise<LessonOutput[]> => {
   try {
     return await prisma.lesson.findMany({
+      where: {
+        authorId: authorId,
+      },
       select: {
         id: true,
         title: true,
@@ -30,7 +35,7 @@ export const getAllLessonData = async (): Promise<LessonOutput[]> => {
           select: { label: true, color: true },
         },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { title: "asc" },
     });
   } catch (error) {
     console.error("Error fetching lessons:", error);
@@ -70,6 +75,22 @@ export const getLessonByIdData = async (id: string, authorId: string) => {
   return await prisma.lesson.findUnique({ where: { id, authorId } });
 };
 
+// Récupération d'une leçon par son ID pour un élève
+export const getLessonByIdForStudentData = async (id: string) => {
+  return await prisma.lesson.findUnique({ where: { id } });
+};
+
+// Récupération des leçons par leurs ID
+export const getLessonsByIdsData = async (lessonIds: string[]) => {
+  return await prisma.lesson.findMany({
+    where: {
+      id: {
+        in: lessonIds,
+      },
+    },
+  });
+};
+
 // Récupération de la leçon par son slug
 export const getLessonBySlugData = async (slug: string, authorId: string) => {
   return await prisma.lesson.findUnique({
@@ -77,6 +98,7 @@ export const getLessonBySlugData = async (slug: string, authorId: string) => {
   });
 };
 
+// Récupération des leçons avec l'auteur
 export const getLessonsWithAuthor = async (lessonIds: string[]) => {
   return await prisma.lesson.findMany({
     where: {
@@ -87,6 +109,49 @@ export const getLessonsWithAuthor = async (lessonIds: string[]) => {
     select: {
       id: true,
       authorId: true,
+    },
+  });
+};
+
+// récupération de toutes les leçons d'un groupe
+export const getAllLessonsByGroupIdData = async (groupId: string) => {
+  return await prisma.lesson.findMany({
+    where: {
+      groups: {
+        some: {
+          id: groupId,
+        },
+      },
+    },
+    include: {
+      LessonSubject: {
+        select: { label: true, color: true },
+      },
+      GradeLevels: {
+        select: { label: true, color: true },
+      },
+    },
+    orderBy: { title: "asc" },
+  });
+};
+
+// Récupération de toutes les leçons non contenu dans le groupe donné
+export const getAllLessonsNotInGroupData = async (groupId: string) => {
+  return await prisma.lesson.findMany({
+    where: {
+      groups: {
+        none: {
+          id: groupId,
+        },
+      },
+    },
+    include: {
+      LessonSubject: {
+        select: { label: true, color: true },
+      },
+      GradeLevels: {
+        select: { label: true, color: true },
+      },
     },
   });
 };

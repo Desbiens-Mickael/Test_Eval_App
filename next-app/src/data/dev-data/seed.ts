@@ -14,12 +14,12 @@ const seed = async () => {
     },
   });
 
-  const user = await prisma.user.create({
+  const student = await prisma.student.create({
     data: {
-      name: "Mickaël Desbiens",
-      email: "user@gmail.com",
-      password: await hashPassword("azerty"),
-      emailVerified: new Date(),
+      name: "Thibault Desbiens",
+      professorId: userAdmin.id,
+      identifier: "t.desbiens",
+      password: await hashPassword("azerty22"),
     },
   });
 

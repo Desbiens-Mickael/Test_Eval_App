@@ -62,7 +62,7 @@ export default function CreateGroupButton() {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Création d'un groupe</AlertDialogTitle>
+          <AlertDialogTitle>{"Création d'un groupe"}</AlertDialogTitle>
           <AlertDialogDescription>
             Entrer le nom du groupe et cliquer sur confirmer
           </AlertDialogDescription>

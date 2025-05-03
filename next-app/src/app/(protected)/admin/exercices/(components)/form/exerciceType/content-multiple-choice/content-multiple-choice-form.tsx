@@ -39,7 +39,7 @@ export default function ContentMUltipleCHoiceForm({
     return () => {
       setInitialValues(defaultValue);
     };
-  }, [initialValue, onChange]);
+  }, [initialValue, onChange, setInitialValues]);
 
   return (
     <div className="flex flex-col gap-4">

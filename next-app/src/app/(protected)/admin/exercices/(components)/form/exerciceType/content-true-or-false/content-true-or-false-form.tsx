@@ -29,7 +29,7 @@ export default function ContentTrueFalseForm({
     if (onChange) {
       onChange(content ?? []);
     }
-  }, [content]);
+  }, [content, onChange]);
 
   useEffect(() => {
     if (!initialValue?.length) {

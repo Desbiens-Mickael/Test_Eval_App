@@ -16,10 +16,14 @@ export default function TextEditorWithAlert({
 }: TextEditorWithAlertProps) {
   const { content, updateText } = useContentGapFillTextStore();
 
-  const handleQuestionChange = useCallback((value: string) => {
-    const words = value.match(/[\wÀ-ÿ]+(?:['’-][\wÀ-ÿ]*)?|[.,!?;:]|\s+/g) || [];
-    updateText(words);
-  }, []);
+  const handleQuestionChange = useCallback(
+    (value: string) => {
+      const words =
+        value.match(/[\wÀ-ÿ]+(?:['’-][\wÀ-ÿ]*)?|[.,!?;:]|\s+/g) || [];
+      updateText(words);
+    },
+    [updateText]
+  );
 
   return (
     <div className="flex flex-col gap-4">

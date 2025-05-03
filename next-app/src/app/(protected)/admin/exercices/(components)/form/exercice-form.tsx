@@ -64,7 +64,7 @@ export default function ExerciceForm({
       ...form.getValues(),
       content: [],
     });
-  }, [type]);
+  }, [type, exerciceData, form]);
 
   if (!exerciceData && !lessonSlug) return notFound();
 

@@ -88,7 +88,9 @@ export default function AddStudentToGroupForm({
         <DialogHeader>
           <DialogTitle>Ajouter un élève au groupe</DialogTitle>
           <DialogDescription>
-            Séléctionner l'élève à ajouter dans la dans la liste ci-dessous.
+            {
+              " Séléctionner l'élève à ajouter dans la dans la liste ci-dessous."
+            }
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -115,8 +117,9 @@ export default function AddStudentToGroupForm({
             <MessageSquareWarning className="h-4 w-4" color="#ffffa1" />
             <AlertTitle>Attention</AlertTitle>
             <AlertDescription>
-              Si l'élève est déjà dans un groupe, il sera déplacé dans ce
-              groupe-ci.
+              {
+                "Si l'élève est déjà dans un groupe, il sera déplacé dans ce groupe-ci."
+              }
             </AlertDescription>
           </Alert>
         </Form>

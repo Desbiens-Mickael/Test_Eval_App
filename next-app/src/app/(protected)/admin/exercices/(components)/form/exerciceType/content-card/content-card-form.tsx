@@ -32,7 +32,7 @@ export default function ContentCardForm({
     return () => {
       setInitialValues([]);
     };
-  }, [initialValue, onChange]);
+  }, [initialValue, onChange, setInitialValues]);
 
   const handleAddColumn = () => {
     if (inputColumn === "") return;

@@ -24,19 +24,19 @@ export default auth((req) => {
   const isAuthRoutes = !!authRoutes.includes(req.nextUrl.pathname); //!!req.nextUrl.pathname.match("^/auth");
   const isAcountRoute = !!req.nextUrl.pathname.match("^/profil");
 
-  const fixUrl = ["/api/auth/auth/connexion", "/api/auth/auth/error"];
+  // const fixUrl = ["/api/auth/auth/connexion", "/api/auth/auth/error"];
 
   // Utilisateur non connecter
   if ((isAdminRoutes || isStudentRoutes || isAcountRoute) && !isLoggedIn)
     return NextResponse.redirect(new URL("/auth/connexion", nextUrl));
 
-  if (fixUrl.includes(req.nextUrl.pathname)) {
-    const redirectUrl = `${req.nextUrl.pathname.replace(
-      "/api/auth",
-      ""
-    )}${params}`;
-    return NextResponse.redirect(new URL(redirectUrl, nextUrl));
-  }
+  // if (fixUrl.includes(req.nextUrl.pathname)) {
+  //   const redirectUrl = `${req.nextUrl.pathname.replace(
+  //     "/api/auth",
+  //     ""
+  //   )}${params}`;
+  //   return NextResponse.redirect(new URL(redirectUrl, nextUrl));
+  // }
 
   // Rôle User
   if (

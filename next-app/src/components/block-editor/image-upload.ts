@@ -1,12 +1,12 @@
 import { createImageUpload } from "novel/plugins";
 import { toast } from "sonner";
 
-const NEXT_PUBLIC_UPLOAD_API_URL = process.env.NEXT_PUBLIC_UPLOAD_API_URL;
+const NEXT_PUBLIC_CLIENT_DOMAIN_API = process.env.NEXT_PUBLIC_CLIENT_DOMAIN_API;
 
 const onUpload = (file: File) => {
   const formData = new FormData();
   formData.append("file", file);
-  const promise = fetch(`${NEXT_PUBLIC_UPLOAD_API_URL}/lesson`, {
+  const promise = fetch(`${NEXT_PUBLIC_CLIENT_DOMAIN_API}/lesson`, {
     method: "POST",
     body: formData,
   });
@@ -19,7 +19,7 @@ const onUpload = (file: File) => {
           const { image_path } = (await res.json()) as { image_path: string };
           // preload the image
           const image = new Image();
-          const src = `${NEXT_PUBLIC_UPLOAD_API_URL}/lesson/${image_path}`;
+          const src = `${NEXT_PUBLIC_CLIENT_DOMAIN_API}/lesson/${image_path}`;
           image.src = src;
           image.onload = () => {
             resolve(src);
@@ -28,7 +28,7 @@ const onUpload = (file: File) => {
         } else if (res.status === 401) {
           resolve(file);
           throw new Error(
-            "`NEXT_PUBLIC_UPLOAD_API_URL` environment variable not found, reading image locally instead."
+            `${NEXT_PUBLIC_CLIENT_DOMAIN_API} environment variable not found, reading image locally instead.`
           );
           // Unknown error
         } else {

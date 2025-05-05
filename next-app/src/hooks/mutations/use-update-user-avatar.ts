@@ -10,24 +10,32 @@ import { toast } from "sonner";
  * @return {Promise} a promise resolving to the updated avatar
  */
 export const useUpdateUserAvatar = () => {
+  const NEXT_PUBLIC_CLIENT_DOMAIN_API =
+    process.env.NEXT_PUBLIC_CLIENT_DOMAIN_API;
+  const NEXT_PUBLIC_SERVER_DOMAIN_API =
+    process.env.NEXT_PUBLIC_SERVER_DOMAIN_API;
+
   const { update, data } = useSession();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (formData: FormData) => {
       const img = data?.user?.image?.split("/").pop();
       if (img) {
-        await fetch(`http://localhost:8000/avatar/${img}`, {
+        await fetch(`${NEXT_PUBLIC_CLIENT_DOMAIN_API}/avatar/${img}`, {
           method: "DELETE",
         });
       }
 
-      const res = await fetch(`http://localhost:8000/avatar`, {
+      const res = await fetch(`${NEXT_PUBLIC_CLIENT_DOMAIN_API}/avatar`, {
         method: "POST",
         body: formData,
       });
 
+      // Ici vue que l'on utilise le composant Image de Next.js
+      // on utilise le nom du service docker car le composant Image de Next.js
+      // et executé sur le serveur
       const { image_path } = await res.json();
-      const imgPath = `http://upload-service:8000/avatar/${image_path}`;
+      const imgPath = `${NEXT_PUBLIC_SERVER_DOMAIN_API}/avatar/${image_path}`;
       return updateAvatarAction(imgPath);
     },
     onSuccess: (data) => {

@@ -1,38 +1,19 @@
 /** @type {import('next').NextConfig} */
-// const nextConfig = {
-//   images: {
-//     remotePatterns: [
-//       {
-//         protocol: "http",
-//         hostname: "upload-service",
-//       },
-//       {
-//         protocol: "http",
-//         hostname: "localhost:8000",
-//         // port: "8000",
-//       },
-//       {
-//         protocol: "https",
-//         hostname: "lh3.googleusercontent.com",
-//       },
-//     ],
-//   },
-// };
 
 let nextConfig;
 if (process.env.NODE_ENV !== "production") {
   nextConfig = {
-    // -------- Pour le dev avec Docker ----------
     images: {
       remotePatterns: [
         {
           protocol: "http",
           hostname: "upload-service",
+          port: "8000",
         },
         {
           protocol: "http",
-          hostname: "localhost:8000",
-          // port: "8000",
+          hostname: "localhost",
+          port: "8000",
         },
         {
           protocol: "https",
@@ -40,7 +21,6 @@ if (process.env.NODE_ENV !== "production") {
         },
       ],
     },
-    // -------------------------------------------
   };
 } else {
   nextConfig = {
@@ -48,12 +28,12 @@ if (process.env.NODE_ENV !== "production") {
       remotePatterns: [
         {
           protocol: "http",
-          hostname: "upload-service",
+          hostname: "educraft_upload_service",
+          port: "8000",
         },
         {
-          protocol: "http",
-          hostname: "localhost:8000",
-          // port: "8000",
+          protocol: "https",
+          hostname: "upload.mickaeldesbiens.com",
         },
         {
           protocol: "https",

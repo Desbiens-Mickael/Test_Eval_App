@@ -1,0 +1,74 @@
+version: "3.8"
+services:
+  educraft_db:
+    image: postgres:16-alpine
+    container_name: educraft_db
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      PGUSER: ${DATABASE_USERNAME}
+      PGDATABASE: ${DATABASE_NAME}
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./postgres_data_educraft:/var/lib/postgresql/data
+    networks:
+      - traefik-net
+  educraft_next:
+    image: mickael01/test-eval:latest
+    container_name: educraft_next
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      educraft_db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      NEXT_BASE_URL: ${NEXT_BASE_URL}
+      DATABASE_URL: ${DATABASE_URL}
+      AUTH_TRUST_HOST: ${AUTH_TRUST_HOST}
+      AUTH_SECRET: ${AUTH_SECRET}
+      AUTH_GOOGLE_ID: ${AUTH_GOOGLE_ID}
+      AUTH_GOOGLE_SECRET: ${AUTH_GOOGLE_SECRET}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      MAILER_FROM_ADDRESS: ${MAILER_FROM_ADDRESS}
+      MAILER_TO_ADDRESS: ${MAILER_TO_ADDRESS}
+      UPLOAD_API_URL: ${UPLOAD_API_URL}
+      NEXT_PUBLIC_UPLOAD_API_URL: ${NEXT_PUBLIC_UPLOAD_API_URL}
+    networks:
+      - traefik-net
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.educraft_next.rule=Host(`educraft.mickaeldesbiens.com`)
+      - traefik.http.services.educraft_next.loadbalancer.server.port=3000
+      - traefik.http.routers.educraft_next.entrypoints=websecure
+  educraft_upload_service:
+    image: mickael01/test-eval-upload-service:latest
+    container_name: educraft_upload_service
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      CORS_URL: ${CORS_URL}
+    volumes:
+      - ./upload-images_educraft:/app/uploads/images
+    networks:
+      - traefik-net
+volumes:
+  postgres_data_educraft: null
+networks:
+  traefik-net:
+    external: true

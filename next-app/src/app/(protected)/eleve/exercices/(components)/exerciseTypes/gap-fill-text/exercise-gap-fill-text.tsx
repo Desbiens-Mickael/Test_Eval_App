@@ -42,7 +42,7 @@ export default function ExerciseGapFillText({
 
   const shuffledAnswers = useMemo(() => {
     return shuffleArray(content.answers).map((a) => a.answer);
-  }, [content.answers, shuffleArray]);
+  }, [content.answers]);
 
   const handleReset = useCallback(() => {
     setInputs({});
@@ -76,7 +76,14 @@ export default function ExerciseGapFillText({
       );
       console.error("Error checking answers:", error);
     }
-  }, [addExerciceResponse, exerciceId, inputs, level, setNote]);
+  }, [
+    addExerciceResponse,
+    exerciceId,
+    inputs,
+    level,
+    setNote,
+    content.answers,
+  ]);
 
   return (
     <div className="relative flex flex-col gap-10">

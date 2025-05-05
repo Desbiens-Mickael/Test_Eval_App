@@ -22,7 +22,7 @@ export default function AnswerList() {
 
       removeAnswer(position);
     },
-    [content]
+    [content, removeAnswer]
   );
 
   return (

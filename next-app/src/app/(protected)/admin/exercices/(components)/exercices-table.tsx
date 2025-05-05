@@ -159,8 +159,8 @@ export default function ExercicesTable({
       handleDelete={handleDelete}
     >
       {(table) => [
-        <FilterBUttonLevel table={table} />,
-        <FilterBUttonLessonSubject table={table} />,
+        <FilterBUttonLevel key="filter-level" table={table} />,
+        <FilterBUttonLessonSubject key="filter-lesson" table={table} />,
       ]}
     </DataTable>
   );

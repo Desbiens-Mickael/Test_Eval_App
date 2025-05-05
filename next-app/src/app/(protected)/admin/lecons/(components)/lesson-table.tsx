@@ -139,7 +139,7 @@ export default function LessonTable({ subject }: { subject: string }) {
       createLink="/admin/lecons/creation"
       handleDelete={handleDelete}
     >
-      {(table) => [<FilterGRadeLevel table={table} />]}
+      {(table) => [<FilterGRadeLevel key="filter-grade-level" table={table} />]}
     </DataTable>
   );
 }

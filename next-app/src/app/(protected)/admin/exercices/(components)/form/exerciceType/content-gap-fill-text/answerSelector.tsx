@@ -108,7 +108,7 @@ export default function AnswerSelector({
     // Ajouter la réponse
     addAnswer({ answer: wordToReplace, placeholder, position: foundIndex });
     setInputAnswer("");
-  }, [content, inputAnswer]);
+  }, [content, inputAnswer, generatePlaceholder, addAnswer]);
 
   return (
     <div className="flex flex-col gap-4">

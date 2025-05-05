@@ -43,13 +43,13 @@ export default function ContentFillGapTextForm({
     return () => {
       setInitialValues({ text: [], answers: [] }); // Vide les valeurs
     };
-  }, [initialValue, onChange]);
+  }, [initialValue, onChange, setInitialValues]);
 
   useEffect(() => {
     if (initialValue?.text?.length) {
       setToggleMode(true);
     }
-  }, []);
+  }, [initialValue?.text?.length]);
 
   // Fonction pour générer le placeholder
   const replaceAllTextWithPlaceholder = useCallback(() => {

@@ -67,7 +67,7 @@ export default function CreateExerciceStep1({
       className="h-full flex flex-col space-y-8 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md"
     >
       <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 border-b pb-3 border-gray-200 dark:border-gray-700">
-        Étape 1: Informations globales et type de l'exercice
+        {"Étape 1: Informations globales et type de l'exercice"}
       </h2>
 
       <CustomInput

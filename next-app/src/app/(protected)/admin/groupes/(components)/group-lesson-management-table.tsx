@@ -41,7 +41,7 @@ export default function GroupLessonManagementTable({
         setOpen(false);
       }, 1000);
     },
-    [mutateAsyncAdd]
+    [mutateAsyncAdd, setOpen, groupId]
   );
 
   const columns: ColumnDef<Lesson>[] = [
@@ -117,8 +117,8 @@ export default function GroupLessonManagementTable({
       handleValidate={handleValidate}
     >
       {(table) => [
-        <FilterBUttonLessonSubject table={table} />,
-        <FilterGRadeLevel table={table} />,
+        <FilterBUttonLessonSubject key="filter-lesson" table={table} />,
+        <FilterGRadeLevel key="filter-grade-level" table={table} />,
       ]}
     </DataTable>
   );

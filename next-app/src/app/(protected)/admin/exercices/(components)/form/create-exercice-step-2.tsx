@@ -37,7 +37,7 @@ export default function CreateExerciceStep2({
         render={({ field }) => (
           <FormItem>
             <FormLabel>
-              Contenu de l'exercice <span className="text-red-500">*</span>
+              {"Contenu de l'exercice"} <span className="text-red-500">*</span>
             </FormLabel>
             <Controller
               control={form.control}

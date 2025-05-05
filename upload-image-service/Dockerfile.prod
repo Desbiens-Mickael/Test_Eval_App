@@ -1,0 +1,42 @@
+# Étape 1 : build (compilation des dépendances)
+FROM python:3.10-slim AS builder
+
+WORKDIR /app
+
+# Installer les dépendances système nécessaires (par ex. pillow, psycopg2, etc.)
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    libffi-dev \
+    libjpeg-dev \
+    zlib1g-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+
+# Installer les dépendances dans un dossier séparé
+RUN pip install --user --no-cache-dir -r requirements.txt
+
+# Étape 2 : image finale minimale
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Installer les dépendances système nécessaires au runtime
+RUN apt-get update && apt-get install -y \
+    libpq5 \
+    libffi8 \
+    libjpeg62-turbo \
+    zlib1g \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /root/.local /root/.local
+
+# Assurer que /root/.local/bin est dans le PATH
+ENV PATH=/root/.local/bin:$PATH
+
+COPY . .
+
+EXPOSE 8000
+
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "main:app", "--bind", "0.0.0.0:8000", "--workers", "4"]

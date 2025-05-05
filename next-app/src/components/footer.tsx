@@ -12,8 +12,9 @@ export default function Footer() {
         <div className="flex flex-col justify-center items-center mb-4 md:mb-0">
           <Logo width={120} height={120} type="vertical" className="mb-4" />
           <p className="text-center text-sm">
-            Une plateforme d'apprentissage en ligne pour les étudiants en
-            informatique
+            {
+              "Une plateforme d'apprentissage en ligne pour les étudiants en informatique"
+            }
           </p>
         </div>
 
@@ -45,7 +46,7 @@ export default function Footer() {
               </h2>
               <ul className="w-full flex flex-col items-center text-center gap-1 text-sm">
                 <li>
-                  <Link href="/conditions">Conditions d'utilisation</Link>
+                  <Link href="/conditions">{"Conditions d'utilisation"}</Link>
                 </li>
                 <li>
                   <Link href="/confidentialite">

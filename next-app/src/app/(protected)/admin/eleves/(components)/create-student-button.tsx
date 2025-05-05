@@ -14,13 +14,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { useCreateGroup } from "@/hooks/mutations/group/use-create-group";
 import { useCreateStudent } from "@/hooks/mutations/student/use-create-student";
 import {
   registerStudentFormSchema,
   registerStudentFormType,
 } from "@/shema-zod/auth.shema";
-import { CreateGroupInput, createGroupSchema } from "@/shema-zod/group.shema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
 import { useState } from "react";
@@ -68,9 +66,9 @@ export default function CreateStudentButton() {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Création d'un compte élève</AlertDialogTitle>
+          <AlertDialogTitle>{"Création d'un compte élève"}</AlertDialogTitle>
           <AlertDialogDescription>
-            Entrer le nom et prénom de l'élève et cliquer sur confirmer
+            {"Entrer le nom et prénom de l'élève et cliquer sur confirmer"}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <Form {...form}>

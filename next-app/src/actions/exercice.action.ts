@@ -402,15 +402,38 @@ export const getExerciceByIdAction = async (id: string) => {
   if (!user || !user?.id) {
     return {
       error: "Action non autoriser !",
+      redirect: "/",
+      data: null,
     };
   }
 
   try {
+    if (user.role === "STUDENT") {
+      const studentExercice = await getStudentExerciceByStudentIdData(user.id);
+      if (studentExercice.some((e) => e.exerciceId === id)) {
+        return {
+          error: "Vous avez déjà réalisé cet exercice !",
+          redirect: "/eleve/exercices",
+          data: null,
+        };
+      }
+    }
+
     const exercice = await getExerciceByIdData(id);
 
     if (!exercice) {
+      if (user.role === "STUDENT") {
+        return {
+          error: "Exercice non trouvé",
+          redirect: "/eleve/exercices",
+          data: null,
+        };
+      }
+
       return {
         error: "Exercice non trouvé",
+        redirect: "",
+        data: null,
       };
     }
 
@@ -437,6 +460,7 @@ export const getExerciceByIdAction = async (id: string) => {
     console.error("Error fetching exercise by ID:", error);
     return {
       error: "Une erreur est survenue lors de la recherche de l'exercice",
+      data: null,
     };
   }
 };

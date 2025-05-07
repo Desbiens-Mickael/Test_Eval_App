@@ -2,7 +2,9 @@ import { getExerciceByIdAction } from "@/actions/exercice.action";
 import { Exercice } from "@/type/exercice";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { toast } from "sonner";
-const useGetExerciceById = (id: string): UseQueryResult<Exercice, Error> => {
+const useGetExerciceById = (
+  id: string
+): UseQueryResult<Exercice | null, Error> => {
   return useQuery({
     queryKey: ["exercice", id],
     queryFn: async () => {
@@ -12,6 +14,7 @@ const useGetExerciceById = (id: string): UseQueryResult<Exercice, Error> => {
       }
       return response.data;
     },
+    retry: false,
   });
 };
 

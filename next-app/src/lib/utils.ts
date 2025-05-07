@@ -76,3 +76,12 @@ export const calculateNote = (
   const result = ((correctAnswers / maxCorrectAnswers) * coeficient).toFixed(2);
   return { note: Number(result), coeficient: coeficient };
 };
+
+// formate une date au format français jj/mm/yyyy
+export const formatDate = (date: Date | string): string => {
+  return new Intl.DateTimeFormat("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(new Date(date));
+};

@@ -1,5 +1,6 @@
 "use client";
 
+import SubjectLayout from "@/components/subject-layout";
 import {
   Accordion,
   AccordionContent,
@@ -16,7 +17,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useRemoveLessonFromGroup } from "@/hooks/mutations/group/use-remove-lesson-from-group";
 import { Lesson } from "@/type/lesson";
@@ -63,16 +63,14 @@ export default function LessonListe({ lessons, groupId }: LessonListeProps) {
                       {lesson.title}
                     </h3>
                     <div className="flex gap-2">
-                      <Badge
-                        className={`${lesson.subjectColor} text-background hover:${lesson.subjectColor}`}
-                      >
-                        {lesson.subject}
-                      </Badge>
-                      <Badge
-                        className={`${lesson.gradeLevelColor} text-background hover:${lesson.gradeLevelColor}`}
-                      >
-                        {lesson.gradeLevel}
-                      </Badge>
+                      <SubjectLayout
+                        label={lesson.subject}
+                        color={lesson.subjectColor}
+                      />
+                      <SubjectLayout
+                        label={lesson.gradeLevel}
+                        color={lesson.gradeLevelColor}
+                      />
                     </div>
                   </div>
                 </AccordionTrigger>

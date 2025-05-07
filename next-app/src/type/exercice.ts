@@ -22,3 +22,13 @@ export enum ExerciceType {
   MultipleChoice = "Choix multiple",
   Fill_blank = "Texte à trou",
 }
+
+export type StudentExerciceCard = {
+  exerciceId: string;
+  title: string;
+  lessonSubject: string;
+  lessonSubjectColor: string;
+  studentExerciceId: string;
+  note: number;
+  createdAt: Date;
+};

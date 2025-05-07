@@ -4,7 +4,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
+import { toast } from "sonner";
 import { useContentGapFillTextStore } from "./store/store-content-gap-fill-test";
 
 interface TextEditorWithAlertProps {
@@ -14,15 +15,32 @@ interface TextEditorWithAlertProps {
 export default function TextEditorWithAlert({
   handleToggleMode,
 }: TextEditorWithAlertProps) {
-  const { content, updateText } = useContentGapFillTextStore();
+  const { content, updateContent } = useContentGapFillTextStore();
+  const [inputValue, setInputValue] = useState<string>(
+    content.text ? content.text.join("") : ""
+  );
 
-  const handleQuestionChange = useCallback(
+  const handleValidateTextChange = useCallback(
     (value: string) => {
       const words =
         value.match(/[\wÀ-ÿ]+(?:['’-][\wÀ-ÿ]*)?|[.,!?;:]|\s+/g) || [];
-      updateText(words);
+      // Validation que le texte contient des mots
+      const hasRealWord = words.some(
+        (w) => w.trim().length > 0 && !/^[.,!?;:\s]+$/.test(w)
+      );
+      if (!hasRealWord) {
+        toast.error("Veuillez entrer un texte.");
+        return;
+      }
+      // Filtrer les réponses dont la position existe encore dans le texte
+      const filteredAnswers = (content.answers || []).filter(
+        (answer) => words[answer.position] === answer.answer
+      );
+      // Mettre à jour texte et réponses
+      updateContent(words, filteredAnswers);
+      handleToggleMode();
     },
-    [updateText]
+    [handleToggleMode, updateContent]
   );
 
   return (
@@ -31,8 +49,8 @@ export default function TextEditorWithAlert({
         <Alert variant={"warning"}>
           <AlertTitle>Attention !</AlertTitle>
           <AlertDescription>
-            Modifier le texte réinitialisera définitivement toutes les réponses,
-            y compris celles déjà sauvegardées.
+            Modifier le texte entrainera la suppression de certaines réponses
+            qui auront été soit supprimer ou déplacées.
           </AlertDescription>
         </Alert>
       )}
@@ -43,10 +61,14 @@ export default function TextEditorWithAlert({
         id="baseText"
         className="min-h-[200px] w-full resize-none"
         placeholder="Entrer le contenu de l'exercice..."
-        value={content.text && content.text.join("")}
-        onChange={(e) => handleQuestionChange(e.target.value)}
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
       />
-      <Button type="button" onClick={() => handleToggleMode()}>
+      <Button
+        type="button"
+        className="w-fit"
+        onClick={() => handleValidateTextChange(inputValue)}
+      >
         Valider
       </Button>
     </div>

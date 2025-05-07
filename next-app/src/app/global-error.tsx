@@ -21,20 +21,20 @@ export default function GlobalError({
   return (
     // global-error must include html and body tags
     <html lang="fr">
-      <body className="flex justify-center items-center min-h-screen text-secondary p-4">
-        <Card className="bg-background text-red-600 border-red-600">
+      <body className="flex justify-center items-center min-h-screen bg-background text-primary p-4">
+        <Card className="bg-error text-primary-foreground border-error">
           <CardHeader>
-            <CardTitle>{"Une erreur c'est produite!"}</CardTitle>
+            <CardTitle>{"Oups ! Une erreur est survenue 😵"}</CardTitle>
             <CardDescription>{error.message}</CardDescription>
           </CardHeader>
           <CardContent>
             <p>
-              {"Oops il s'emblerait qu'une erreur non prévue c'est produite!"}
+              {"Essayez de recharger la page ou contactez l'administrateur."}
             </p>
           </CardContent>
           <CardFooter>
             <Button
-              className="text-red-600 border-red-600 hover:bg-red-100 hover:text-red-600"
+              className="text-primary-foreground border-primary-foreground hover:bg-primary-100 hover:text-primary-foreground"
               variant={"outline"}
               onClick={() => reset()}
             >

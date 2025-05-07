@@ -16,7 +16,7 @@ services:
   next:
     build:
       context: ./next-app
-      dockerfile: Dockerfile
+      # dockerfile: Dockerfile
     env_file:
       - ./next-app/.env
     ports:
@@ -41,7 +41,7 @@ services:
   upload-service:
     build:
       context: ./upload-image-service
-      dockerfile: Dockerfile
+      # dockerfile: Dockerfile
     env_file:
       - ./upload-image-service/.env
     ports:

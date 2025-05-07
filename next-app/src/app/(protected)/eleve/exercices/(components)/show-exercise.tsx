@@ -18,7 +18,7 @@ export default function ShowExercise({ exerciceId }: ShowExerciseProps) {
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    throw new Error(error.message);
   }
 
   return (

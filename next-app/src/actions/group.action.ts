@@ -5,7 +5,7 @@ import {
   addStudentToGroupData,
   createGroupData,
   deleteGroupData,
-  getGroupByIdData,
+  getGroupByIdAndAuthorIdData,
   getGroupsByAuthorIdData,
   removeLessonFromGroupData,
 } from "@/data/group.data";
@@ -46,7 +46,7 @@ export const getGroupByIdAction = async (groupId: string) => {
   }
 
   try {
-    const group = await getGroupByIdData(groupId, user.id);
+    const group = await getGroupByIdAndAuthorIdData(groupId, user.id);
     if (!group) {
       return { error: "Ce groupe n'existe pas !" };
     }
@@ -122,7 +122,7 @@ export const addStudentToGroupAction = async (
   }
 
   try {
-    const group = await getGroupByIdData(groupId, user.id);
+    const group = await getGroupByIdAndAuthorIdData(groupId, user.id);
     if (!group) {
       return { error: "Ce groupe n'existe pas !" };
     }
@@ -162,7 +162,7 @@ export const deleteGroupAction = async (groupId: string) => {
 
   try {
     // Vérifier si le groupe existe
-    const group = await getGroupByIdData(groupId, user.id);
+    const group = await getGroupByIdAndAuthorIdData(groupId, user.id);
     if (!group) {
       return { error: "Ce groupe n'existe pas !" };
     }
@@ -194,7 +194,7 @@ export const addLessonsToGroupAction = async (
 
   try {
     // Vérifier si le groupe existe
-    const group = await getGroupByIdData(groupId, user.id);
+    const group = await getGroupByIdAndAuthorIdData(groupId, user.id);
     if (!group) {
       return { error: "Ce groupe n'existe pas !" };
     }
@@ -254,7 +254,7 @@ export const removeLessonFromGroupAction = async (
 
   try {
     // Vérifier si le groupe existe
-    const group = await getGroupByIdData(groupId, user.id);
+    const group = await getGroupByIdAndAuthorIdData(groupId, user.id);
     if (!group) {
       return { error: "Ce groupe n'existe pas !" };
     }

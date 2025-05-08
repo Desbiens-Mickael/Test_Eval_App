@@ -24,11 +24,34 @@ export enum ExerciceType {
 }
 
 export type StudentExerciceCard = {
-  exerciceId: string;
-  title: string;
-  lessonSubject: string;
-  lessonSubjectColor: string;
+  exerciceId?: string;
+  title?: string;
+  lessonSubject?: string;
+  lessonSubjectColor?: string;
   studentExerciceId: string;
   note: number;
   createdAt: Date;
+};
+
+export type StudentExerciceById = {
+  id: string;
+  exerciceId?: string;
+  studentId: string;
+  note: number;
+  createdAt: Date;
+  response: string;
+  coeficient: number;
+  exercice?: {
+    id: string;
+    title: string;
+    description: string;
+    content: JsonValue;
+    type: {
+      name: string;
+    };
+  };
+  student: {
+    id: string;
+    name: string;
+  };
 };

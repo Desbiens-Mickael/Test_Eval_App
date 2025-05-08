@@ -11,6 +11,7 @@ import {
   getExercicesInfoBeforeDelete,
   getExercicesWithAuthor,
   getExercisesByGroupIdAndSubjectData,
+  getStudentExerciceByIdData,
   getStudentExerciceByStudentIdData,
   removeExerciceFromGroupData,
   updateExerciceData,
@@ -591,35 +592,26 @@ export const getExercisesDoneAction = async (subject?: string) => {
       };
     }
 
-    // Récupération des exercices du groupe
-    const groupExercises = await getExercisesByGroupIdAndSubjectData(
-      groupStudent.id,
-      subject
-    );
-
     // Récupération des exercices fait par l'élève
     const studentExercises = await getStudentExerciceByStudentIdData(
       student.id,
       subject
     );
 
-    // Récupération des exercices qui ont été fait par l'élève
-    const exercisesDone = groupExercises
-      .map((exercise) => {
-        const studentExercice = studentExercises.find(
-          (e) => e.exerciceId === exercise.id
-        );
-        if (studentExercice) {
-          return {
-            exerciceId: exercise.id,
-            title: exercise.title,
-            lessonSubject: exercise.lesson.LessonSubject.label,
-            lessonSubjectColor: exercise.lesson.LessonSubject.color,
-            studentExerciceId: studentExercice.id,
-            note: studentExercice.note,
-            createdAt: studentExercice.createdAt,
-          };
-        }
+    // Récupération des exercices qui ont été fait par l'élève ou que l'exerciceId est null
+    const exercisesDone = studentExercises
+      .map((studentExercice) => {
+        return {
+          exerciceId: studentExercice.exerciceId || null,
+          title: studentExercice.exercice?.title || null,
+          lessonSubject:
+            studentExercice.exercice?.lesson.LessonSubject.label || null,
+          lessonSubjectColor:
+            studentExercice.exercice?.lesson.LessonSubject.color || null,
+          studentExerciceId: studentExercice.id,
+          note: studentExercice.note,
+          createdAt: studentExercice.createdAt,
+        };
       })
       .filter((exercise) => exercise !== undefined) as StudentExerciceCard[];
 
@@ -631,6 +623,39 @@ export const getExercisesDoneAction = async (subject?: string) => {
     console.error("Error fetching exercises by group ID:", error);
     return {
       error: "Une erreur est survenue lors de la recherche des exercices",
+    };
+  }
+};
+
+// Récupération d'un studentExercice par son ID
+export const getStudentExerciceByIdAction = async (
+  studentExerciceId: string
+) => {
+  const user = await currentUser();
+  if (!user || !user?.id) {
+    return {
+      error: "Action non autoriser !",
+      data: null,
+    };
+  }
+
+  try {
+    const studentExercice = await getStudentExerciceByIdData(studentExerciceId);
+    if (!studentExercice) {
+      return {
+        error: "Correction non trouvée",
+        data: null,
+      };
+    }
+    return {
+      success: "Correction trouvée",
+      data: studentExercice,
+    };
+  } catch (error) {
+    console.error("Error fetching studentExercice by ID:", error);
+    return {
+      error: "Une erreur est survenue lors de la recherche de la correction",
+      data: null,
     };
   }
 };

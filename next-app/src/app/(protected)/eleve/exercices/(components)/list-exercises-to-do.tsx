@@ -3,6 +3,7 @@
 import ExerciceTypeBadge from "@/app/(protected)/eleve/exercices/(components)/exercice-type-badge";
 import SkeletonExercises from "@/app/(protected)/eleve/exercices/(components)/skeleton-exercises";
 import SubjectLayout from "@/components/subject-layout";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -11,6 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useGetExercisesToDo } from "@/hooks/queries/exercice/use-get-exercises-to-do";
+import Link from "next/link";
 
 interface ListExercisesToDoProps {
   selectedSubject: string | undefined;
@@ -48,23 +50,34 @@ export default function ListExercisesToDo({
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {data?.map((exercice) => (
-            <Card className="max-w-full" key={exercice.id}>
+            <Card className="max-w-full flex flex-col" key={exercice.id}>
               <CardHeader>
-                <CardTitle className="text-center">{exercice.title}</CardTitle>
+                <CardTitle className="text-center text-lg font-semibold">
+                  {exercice.title}
+                </CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm">{exercice.description}</p>
+              <CardContent className="flex-1 flex flex-col justify-center items-center">
+                <p className="text-sm text-gray-700 line-clamp-2">
+                  {exercice.description}
+                </p>
+                <div className="flex items-center  flex-wrap gap-x-4 gap-y-2 mt-2">
+                  <ExerciceTypeBadge type={exercice.type.name} />
+                  <SubjectLayout
+                    label={exercice.lesson.LessonSubject.label}
+                    color={exercice.lesson.LessonSubject.color}
+                  />
+                  <SubjectLayout
+                    label={exercice.level.label}
+                    color={exercice.level.color}
+                  />
+                </div>
               </CardContent>
-              <CardFooter className="flex items-center justify-between flex-wrap gap-y-2">
-                <ExerciceTypeBadge type={exercice.type.name} />
-                <SubjectLayout
-                  label={exercice.level.label}
-                  color={exercice.level.color}
-                />
-                <SubjectLayout
-                  label={exercice.lesson.LessonSubject.label}
-                  color={exercice.lesson.LessonSubject.color}
-                />
+              <CardFooter className="p-2">
+                <Button asChild className="w-full">
+                  <Link href={`/eleve/exercices/${exercice.id}`}>
+                    Faire l'exercice
+                  </Link>
+                </Button>
               </CardFooter>
             </Card>
           ))}

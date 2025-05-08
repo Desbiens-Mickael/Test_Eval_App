@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LessonSubjectChips } from "./LessonSubjectChips";
+import { LessonSubjectChips } from "../../../../../components/lesson/LessonSubjectChips";
 import ListExercisesToDo from "./list-exercises-to-do";
 
 export default function ExerciseDashboard() {

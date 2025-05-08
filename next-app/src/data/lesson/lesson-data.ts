@@ -114,9 +114,15 @@ export const getLessonsWithAuthor = async (lessonIds: string[]) => {
 };
 
 // récupération de toutes les leçons d'un groupe
-export const getAllLessonsByGroupIdData = async (groupId: string) => {
+export const getAllLessonsByGroupIdData = async (
+  groupId: string,
+  subject?: string
+) => {
   return await prisma.lesson.findMany({
     where: {
+      LessonSubject: {
+        label: subject,
+      },
       groups: {
         some: {
           id: groupId,

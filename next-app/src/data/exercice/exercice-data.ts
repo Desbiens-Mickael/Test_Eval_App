@@ -551,6 +551,32 @@ export const getStudentExerciceByStudentIdData = async (
       studentId: studentId,
       subject: subject,
     },
+    include: {
+      exercice: {
+        select: {
+          id: true,
+          title: true,
+          lesson: {
+            select: {
+              LessonSubject: {
+                select: { label: true, color: true },
+              },
+            },
+          },
+          level: {
+            select: {
+              label: true,
+              color: true,
+            },
+          },
+          type: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
   });
 };
 
@@ -604,6 +630,35 @@ export const getExercisesByGroupIdAndSubjectData = async (
     },
     orderBy: {
       createdAt: "desc",
+    },
+  });
+};
+
+export const getStudentExerciceByIdData = async (studentExerciceId: string) => {
+  return await prisma.studentExercice.findUnique({
+    where: {
+      id: studentExerciceId,
+    },
+    include: {
+      exercice: {
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          content: true,
+          type: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+      student: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     },
   });
 };

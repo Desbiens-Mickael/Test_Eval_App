@@ -19,13 +19,16 @@ import Link from "next/link";
 
 interface ListExercisesDoneProps {
   selectedSubject: string | undefined;
+  studentId?: string;
 }
 
 export default function ListExercisesDone({
   selectedSubject,
+  studentId,
 }: ListExercisesDoneProps) {
   const { data, isLoading, error } = useGetExercisesDone({
     subject: selectedSubject,
+    studentId,
   });
 
   if (isLoading) {
@@ -44,6 +47,10 @@ export default function ListExercisesDone({
   if (error) {
     return <div>Erreur: {error.message}</div>;
   }
+
+  const baseUrlShowCorrection = !studentId
+    ? "/eleve/exercices/correction/"
+    : `/admin/eleves/${studentId}/exercices/correction/`;
 
   return (
     <div className="min-h-[300px] flex flex-col gap-4">
@@ -91,7 +98,7 @@ export default function ListExercisesDone({
                 {exercice.exerciceId ? (
                   <Button className="w-full" asChild>
                     <Link
-                      href={`/eleve/exercices/correction/${exercice.studentExerciceId}`}
+                      href={`${baseUrlShowCorrection}${exercice.studentExerciceId}`}
                     >
                       Voir la correction
                     </Link>

@@ -4,7 +4,13 @@ import { useState } from "react";
 import { LessonSubjectChips } from "../../../../../components/lesson/LessonSubjectChips";
 import ListExercisesDone from "./list-exercises-done";
 
-export default function ExerciseDoneDashboard() {
+interface ExerciseDoneDashboardProps {
+  studentId?: string;
+}
+
+export default function ExerciseDoneDashboard({
+  studentId,
+}: ExerciseDoneDashboardProps) {
   const [selectedSubject, setSelectedSubject] = useState<string | undefined>(
     undefined
   );
@@ -16,7 +22,10 @@ export default function ExerciseDoneDashboard() {
         onClick={setSelectedSubject}
       />
 
-      <ListExercisesDone selectedSubject={selectedSubject} />
+      <ListExercisesDone
+        selectedSubject={selectedSubject}
+        studentId={studentId}
+      />
     </div>
   );
 }

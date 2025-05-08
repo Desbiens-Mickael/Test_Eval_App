@@ -31,7 +31,10 @@ import {
   createStudentNotificationData,
   createTeacherNotificationData,
 } from "@/data/notification/notification.data";
-import { getAllStudentsByAuthorIdwhoBelongToTheGroupIdIdsData } from "@/data/student-data";
+import {
+  getAllStudentsByAuthorIdwhoBelongToTheGroupIdIdsData,
+  getStudentByIdData,
+} from "@/data/student-data";
 import { currentUser } from "@/lib/auth";
 import {
   globalExerciceCorectionShema,
@@ -572,20 +575,41 @@ export const getExercisesToDoAction = async (subject?: string) => {
 };
 
 // Récupération de tout les exercices d'un groupe qui ont été fait par l'élève
-export const getExercisesDoneAction = async (subject?: string) => {
+export const getExercisesDoneAction = async (
+  subject?: string,
+  studentId?: string
+) => {
   // Récupération de l'utilisateur connecté en session
-  const student = await currentUser();
-
+  const user = await currentUser();
   // Vérification que l'utilisateur est connecté et qu'il est bien un élève
-  if (!student || !student?.id || student.role !== "STUDENT") {
+  if (
+    !user ||
+    !user?.id ||
+    !(user.role === "STUDENT" || user.role === "ADMIN")
+  ) {
     return {
       error: "Action non autoriser !",
     };
   }
 
+  // Si l'utilisateur est un élève, on utilise son id
+  let studentIdToUse = user.id;
+
+  // Si l'utilisateur est un professeur et qu'il a spécifié un id d'élève
+  if (user.role === "ADMIN" && studentId) {
+    // Vérification que l'élève existe et que l'élève est bien relier au professeur connecté
+    const student = await getStudentByIdData(studentId);
+    if (!student || student.professorId !== user?.id) {
+      return {
+        error: "Action non autoriser !",
+      };
+    }
+    studentIdToUse = student.id;
+  }
+
   try {
     // Récupération du groupe de l'élève
-    const groupStudent = await getGroupByStudentIdData(student.id);
+    const groupStudent = await getGroupByStudentIdData(studentIdToUse);
     if (!groupStudent) {
       return {
         error: "Action non autorisée !",
@@ -594,7 +618,7 @@ export const getExercisesDoneAction = async (subject?: string) => {
 
     // Récupération des exercices fait par l'élève
     const studentExercises = await getStudentExerciceByStudentIdData(
-      student.id,
+      studentIdToUse,
       subject
     );
 

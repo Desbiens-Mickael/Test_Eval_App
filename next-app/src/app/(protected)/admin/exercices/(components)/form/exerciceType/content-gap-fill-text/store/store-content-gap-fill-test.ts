@@ -16,8 +16,9 @@ interface ContentGapFillTextStore {
   updateText: (newValue: string[]) => void;
 
   // CRUD des reponses
-  addAnswer: (answer: AnswerInput) => void;
-  removeAnswer: (position: number) => void;
+  addAnswer: (answer: AnswerInput) => void; // Ajout d'une réponse
+  removeAnswer: (position: number) => void; // Suppression d'une réponse
+  updateContent: (text: string[], answers: AnswerInput[]) => void; // Mise à jour du contenu
 }
 
 export const useContentGapFillTextStore = create<ContentGapFillTextStore>(
@@ -61,6 +62,11 @@ export const useContentGapFillTextStore = create<ContentGapFillTextStore>(
           (answer) => answer.position !== position
         ),
       });
+    },
+    updateContent: (text: string[], answers: AnswerInput[]) => {
+      const { onChange } = get();
+      set({ content: { text, answers } });
+      onChange?.({ text, answers });
     },
   })
 );

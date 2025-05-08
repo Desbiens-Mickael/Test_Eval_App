@@ -1,5 +1,11 @@
 import { prisma } from "@/lib/db";
 
+// Récupération d'un groupe par son id
+export const getGroupByIdData = async (id: string) => {
+  return await prisma.group.findUnique({ where: { id } });
+};
+
+// Récupération de l'authorId d'un groupe par son userId
 export const getAuthorIdOfGroupByUserIdData = async (userId: string) => {
   return await prisma.group.findFirst({
     where: { students: { some: { id: userId } } },
@@ -7,6 +13,7 @@ export const getAuthorIdOfGroupByUserIdData = async (userId: string) => {
   });
 };
 
+// Récupération de tous les groupes d'un auteur
 export const getGroupsByAuthorIdData = async (authorId: string) => {
   return await prisma.group.findMany({
     where: { authorId },
@@ -23,8 +30,11 @@ export const getGroupsByAuthorIdData = async (authorId: string) => {
   });
 };
 
-// Récupération d'un groupe par son id
-export const getGroupByIdData = async (id: string, authorId: string) => {
+// Récupération d'un groupe par son id et son authorId
+export const getGroupByIdAndAuthorIdData = async (
+  id: string,
+  authorId: string
+) => {
   return await prisma.group.findUnique({
     where: { id, authorId },
     include: {

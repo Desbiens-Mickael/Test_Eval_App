@@ -277,8 +277,8 @@ model StudentExercice {
   id                      String @id @default(cuid())
   student                 Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
   studentId               String
-  exercice                Exercice @relation(fields: [exerciceId], references: [id], onDelete: Cascade)
-  exerciceId              String
+  exercice                Exercice? @relation(fields: [exerciceId], references: [id], onDelete: SetNull)
+  exerciceId              String?
   subject                 String
   response                Json
   note                    Float

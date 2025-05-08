@@ -1,6 +1,6 @@
 "use server";
 
-import { getGroupByIdData } from "@/data/group.data";
+import { getGroupByIdAndAuthorIdData } from "@/data/group.data";
 import {
   deleteStudentsData,
   getAllStudentsByAuthorIdData,
@@ -37,7 +37,7 @@ export const getAllStudentsByAuthorIdwhoDontBelongToTheGroupIdAction = async (
     return { error: "Action non autoriser !" };
   }
 
-  const group = await getGroupByIdData(groupId, user.id);
+  const group = await getGroupByIdAndAuthorIdData(groupId, user.id);
   if (!group) {
     return { error: "Ce groupe n'existe pas !" };
   }

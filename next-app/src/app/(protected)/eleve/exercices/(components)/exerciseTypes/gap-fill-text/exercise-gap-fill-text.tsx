@@ -10,7 +10,7 @@ import { RefreshCcw } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { isInputPosition } from "../../../(lib)/utils";
-import { ExerciseResultText } from "./exercise-result-text";
+import { ExerciseResultGapFillText } from "./exercise-result-gap-fill-text";
 
 interface ExerciseGapFillTextProps {
   exerciceId: string;
@@ -133,10 +133,9 @@ export default function ExerciseGapFillText({
           </div>
         </>
       ) : (
-        <ExerciseResultText
-          originalText={content.text}
+        <ExerciseResultGapFillText
+          content={content}
           response={inputs}
-          answers={content.answers}
           note={note.note}
           coeficient={note.coeficient}
         />

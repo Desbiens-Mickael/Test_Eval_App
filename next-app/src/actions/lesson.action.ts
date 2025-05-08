@@ -337,7 +337,7 @@ export const getAllLessonsByGroupIdAction = async (groupId: string) => {
 };
 
 // Récupération de toutes les leçons d'un élève
-export const getAllLessonsForStudentAction = async () => {
+export const getAllLessonsForStudentAction = async (subject?: string) => {
   const user = await currentUser();
   if (!user || !user.id) return { error: "Action non autoriser !" };
 
@@ -349,7 +349,10 @@ export const getAllLessonsForStudentAction = async () => {
     if (!student.groupId) return { error: "L'élève n'a pas de groupe !" };
 
     // Récupération des leçons du groupe auquel l'élève appartient
-    const lessonsData = await getAllLessonsByGroupIdData(student.groupId);
+    const lessonsData = await getAllLessonsByGroupIdData(
+      student.groupId,
+      subject
+    );
 
     const lessons = lessonsData.map((lesson) => {
       return {

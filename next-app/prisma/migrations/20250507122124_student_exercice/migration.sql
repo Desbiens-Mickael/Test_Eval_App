@@ -1,8 +1,11 @@
+-- AlterTable
+ALTER TABLE "Notification" ADD COLUMN     "completionId" TEXT;
+
 -- CreateTable
 CREATE TABLE "StudentExercice" (
     "id" TEXT NOT NULL,
     "studentId" TEXT NOT NULL,
-    "exerciceId" TEXT NOT NULL,
+    "exerciceId" TEXT,
     "subject" TEXT NOT NULL,
     "response" JSONB NOT NULL,
     "note" DOUBLE PRECISION NOT NULL,
@@ -20,4 +23,4 @@ CREATE UNIQUE INDEX "StudentExercice_studentId_exerciceId_key" ON "StudentExerci
 ALTER TABLE "StudentExercice" ADD CONSTRAINT "StudentExercice_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "Student"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "StudentExercice" ADD CONSTRAINT "StudentExercice_exerciceId_fkey" FOREIGN KEY ("exerciceId") REFERENCES "Exercice"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "StudentExercice" ADD CONSTRAINT "StudentExercice_exerciceId_fkey" FOREIGN KEY ("exerciceId") REFERENCES "Exercice"("id") ON DELETE SET NULL ON UPDATE CASCADE;

@@ -1,10 +1,10 @@
 "use client";
 
-import { LessonSubjectChips } from "@/components/lesson/LessonSubjectChips";
 import { useState } from "react";
-import LessonList from "./lesson-list";
+import { LessonSubjectChips } from "../../../../../components/lesson/LessonSubjectChips";
+import ListExercisesToDo from "./list-exercises-to-do";
 
-export default function LessonDashboard() {
+export default function ExerciseDashboard() {
   const [selectedSubject, setSelectedSubject] = useState<string | undefined>(
     undefined
   );
@@ -16,7 +16,7 @@ export default function LessonDashboard() {
         onClick={setSelectedSubject}
       />
 
-      <LessonList selectedSubject={selectedSubject} />
+      <ListExercisesToDo selectedSubject={selectedSubject} />
     </div>
   );
 }

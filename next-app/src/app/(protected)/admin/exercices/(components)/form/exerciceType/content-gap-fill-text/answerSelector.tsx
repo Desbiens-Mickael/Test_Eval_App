@@ -112,6 +112,13 @@ export default function AnswerSelector({
 
   return (
     <div className="flex flex-col gap-4">
+      <Button
+        type="button"
+        className="w-fit ms-auto"
+        onClick={() => handleToggleMode()}
+      >
+        Modifier le texte
+      </Button>
       <div className="flex flex-col justify-between min-h-[200px] w-full p-4 border rounded-md">
         <p onMouseUp={handleSelection} className="whitespace-pre-wrap">
           {modifiedText}
@@ -134,10 +141,6 @@ export default function AnswerSelector({
           </div>
         )}
       </div>
-
-      <Button type="button" onClick={() => handleToggleMode()}>
-        Modifier
-      </Button>
     </div>
   );
 }

@@ -27,11 +27,13 @@ export default function ListExercisesToDo({
   });
 
   if (isLoading) {
-    return <SkeletonExercises />;
+    return <SkeletonExercises count={4} />;
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    throw new Error(
+      "Une erreur est survenue lors de la récupération des exercices"
+    );
   }
 
   return (

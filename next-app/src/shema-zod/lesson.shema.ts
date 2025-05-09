@@ -4,6 +4,7 @@ import { z } from "zod";
 // Schéma de base pour la création des leçons
 const createLessonBaseSchema = z.object({
   title: z.string().min(1, "Le titre est requis"),
+  imageBanner: z.string().optional(),
   LessonSubjectID: z.string().min(1, "Le sujet est requis"),
   GradeLevelsID: z.string().min(1, "Le niveau est requis"),
 });

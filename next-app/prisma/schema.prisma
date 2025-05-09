@@ -158,6 +158,7 @@ model GradeLevels  {
 model Lesson {
   id                      String @id @default(cuid())
   title                   String 
+  imageBanner             String?
   content                 Json
   slug                    String
   createdAt               DateTime @default(now())

@@ -94,6 +94,7 @@ export const getAllLessonsBySubjectAction = async (
       return {
         id: lesson.id,
         title: lesson.title,
+        imageBanner: lesson.imageBanner || "",
         slug: lesson.slug,
         subject: lesson.LessonSubject.label,
         subjectColor: lesson.LessonSubject.color,
@@ -359,6 +360,7 @@ export const getAllLessonsForStudentAction = async (subject?: string) => {
       return {
         id: lesson.id,
         title: lesson.title,
+        imageBanner: lesson.imageBanner,
         slug: lesson.slug,
         subject: lesson.LessonSubject.label,
         subjectColor: lesson.LessonSubject.color,

@@ -12,12 +12,14 @@ import {
 import { JSONContent } from "novel";
 
 interface LessonContentProps {
+  imageBanner?: string;
   content: JSONContent | undefined;
   className?: string;
 }
 
 export default function LessonPreview({
   content,
+  imageBanner,
   className,
 }: LessonContentProps) {
   return (
@@ -30,10 +32,10 @@ export default function LessonPreview({
       >
         <DialogHeader>
           <DialogTitle className="">
-            Visuel de votre leçon qui sera affiché aux apprenants.
+            Visuel de votre leçon qui sera affiché aux élèves.
           </DialogTitle>
         </DialogHeader>
-        <LessonContent content={content} />
+        <LessonContent content={content} imageBanner={imageBanner} />
       </DialogContent>
     </Dialog>
   );

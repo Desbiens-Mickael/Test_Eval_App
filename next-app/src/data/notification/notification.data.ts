@@ -86,9 +86,7 @@ export const getStudentNotificationsData = async (studentId: string) => {
       studentId,
       isRead: false,
     },
-    select: {
-      id: true,
-      isRead: true,
+    include: {
       notification: true,
     },
     orderBy: {

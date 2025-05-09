@@ -346,11 +346,12 @@ export const getAllLessonsForStudentAction = async (subject?: string) => {
     const student = await getStudentByIdData(user.id);
 
     if (!student) return { error: "L'élève n'existe pas !" };
-    if (!student.groupId) return { error: "L'élève n'a pas de groupe !" };
+    if (!student?.groupStudent?.id)
+      return { error: "L'élève n'a pas de groupe !" };
 
     // Récupération des leçons du groupe auquel l'élève appartient
     const lessonsData = await getAllLessonsByGroupIdData(
-      student.groupId,
+      student.groupStudent.id,
       subject
     );
 

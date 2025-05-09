@@ -1,5 +1,6 @@
 "use client";
 
+import { ConstructionPanel } from "@/components/construction-panel";
 import Loader from "@/components/loader";
 import PageTitle from "@/components/page-title";
 import { Badge } from "@/components/ui/badge";
@@ -40,7 +41,10 @@ export default function ShowExercise({ exerciceId }: ShowExerciseProps) {
   return (
     <>
       <PageTitle title={data?.title || "Exercice"} />
-      <div className="flex flex-col gap-2 mb-4">
+      <div
+        className="leading-8 mb-4"
+        style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
+      >
         {data?.description}
 
         <div className="text-sm text-muted-foreground">
@@ -51,8 +55,8 @@ export default function ShowExercise({ exerciceId }: ShowExerciseProps) {
         </div>
       </div>
 
-      {data?.type === "Carte" && <div>Carte</div>}
-      {data?.type === "Vrai ou Faux" && <div>Vrai ou Faux</div>}
+      {data?.type === "Carte" && <ConstructionPanel />}
+      {data?.type === "Vrai ou Faux" && <ConstructionPanel />}
       {data?.type === "Texte à trou" && (
         <ExerciseGapFillText
           exerciceId={data?.id}
@@ -60,7 +64,7 @@ export default function ShowExercise({ exerciceId }: ShowExerciseProps) {
           content={data?.content as contentGapFillInput}
         />
       )}
-      {data?.type === "Choix multiple" && <div>Choix multiple</div>}
+      {data?.type === "Choix multiple" && <ConstructionPanel />}
     </>
   );
 }

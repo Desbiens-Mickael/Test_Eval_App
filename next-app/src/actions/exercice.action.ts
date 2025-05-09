@@ -634,6 +634,7 @@ export const getExercisesDoneAction = async (
             studentExercice.exercice?.lesson.LessonSubject.color || null,
           studentExerciceId: studentExercice.id,
           note: studentExercice.note,
+          coeficient: studentExercice.coeficient,
           createdAt: studentExercice.createdAt,
         };
       })

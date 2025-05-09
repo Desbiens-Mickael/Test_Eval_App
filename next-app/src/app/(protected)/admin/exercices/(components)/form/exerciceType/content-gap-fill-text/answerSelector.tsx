@@ -106,7 +106,8 @@ export default function AnswerSelector({
     const placeholder = generatePlaceholder(wordToReplace, selectedText);
 
     // Ajouter la réponse
-    addAnswer({ answer: wordToReplace, placeholder, position: foundIndex });
+    addAnswer({ answer: selectedText, placeholder, position: foundIndex });
+
     setInputAnswer("");
   }, [content, inputAnswer, generatePlaceholder, addAnswer]);
 

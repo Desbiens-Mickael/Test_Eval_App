@@ -33,6 +33,7 @@ export const getStudentByIdData = async (id: string) => {
       identifier: true,
       name: true,
       image: true,
+      role: true,
       professorId: true,
       isActive: true,
       createdAt: true,

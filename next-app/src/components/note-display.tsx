@@ -1,23 +1,39 @@
 import { cn } from "@/lib/utils";
 import React from "react";
 
-interface NoteDisplayProps {
+interface NoteDisplayProps extends React.HTMLAttributes<HTMLDivElement> {
   note: number;
   coeficient: number;
-  className?: string;
 }
 
 export const NoteDisplay: React.FC<NoteDisplayProps> = ({
+  className,
   note,
   coeficient,
-  className = "",
 }) => {
+  const getNoteColor = () => {
+    const percentage = (note / coeficient) * 100;
+    if (percentage >= 80) return "text-green-600 dark:text-green-400";
+    if (percentage >= 60) return "text-yellow-600 dark:text-yellow-400";
+    if (percentage >= 40) return "text-orange-600 dark:text-orange-400";
+    return "text-red-600 dark:text-red-400";
+  };
+
   return (
-    <span className={cn("text-lg font-bold", className)}>
-      Note:{" "}
-      <span className="text-primary">
-        {note}/{coeficient}
+    <div
+      className={cn(
+        "inline-flex items-center gap-2 px-3 py-1 rounded-full",
+        "bg-gray-100 dark:bg-gray-700",
+        "text-gray-800 dark:text-gray-200",
+        "text-sm font-semibold",
+        className
+      )}
+    >
+      <span>Note</span>
+      <span>
+        <span className={cn("font-bold", getNoteColor())}>{note}</span>/
+        {coeficient}
       </span>
-    </span>
+    </div>
   );
 };

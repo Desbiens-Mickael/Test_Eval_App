@@ -86,7 +86,7 @@ export default function ListExercisesDone({
                 )}
                 <NoteDisplay
                   note={exercice.note}
-                  coeficient={10}
+                  coeficient={exercice.coeficient}
                   className="text-md"
                 />
                 <p className="text-center">

@@ -4,6 +4,7 @@ import { CreateLessonType } from "@/type/lesson";
 export type LessonOutput = {
   id: string;
   title: string;
+  imageBanner: string | null;
   slug: string;
   LessonSubject: {
     label: string;
@@ -27,6 +28,7 @@ export const getAllLessonByAuthorIdData = async (
       select: {
         id: true,
         title: true,
+        imageBanner: true,
         slug: true,
         LessonSubject: {
           select: { label: true, color: true },
@@ -58,6 +60,7 @@ export const getAllLessonBySubjectData = async (
     select: {
       id: true,
       title: true,
+      imageBanner: true,
       slug: true,
       LessonSubject: {
         select: { label: true, color: true },
@@ -109,14 +112,21 @@ export const getLessonsWithAuthor = async (lessonIds: string[]) => {
     select: {
       id: true,
       authorId: true,
+      imageBanner: true,
     },
   });
 };
 
 // récupération de toutes les leçons d'un groupe
-export const getAllLessonsByGroupIdData = async (groupId: string) => {
+export const getAllLessonsByGroupIdData = async (
+  groupId: string,
+  subject?: string
+) => {
   return await prisma.lesson.findMany({
     where: {
+      LessonSubject: {
+        label: subject,
+      },
       groups: {
         some: {
           id: groupId,
@@ -217,6 +227,7 @@ export const getLessonsInfoBeforeDelete = async (lessonIds: string[]) => {
     },
     select: {
       slug: true,
+      imageBanner: true,
       LessonSubject: {
         select: { label: true },
       },

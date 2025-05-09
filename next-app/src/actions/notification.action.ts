@@ -4,6 +4,7 @@ import {
   getStudentNotificationsData,
   getTeacherNotificationsData,
   updateAllStudentNotificationData,
+  updateAllTeacherNotificationData,
 } from "@/data/notification/notification.data";
 import { currentUser } from "@/lib/auth";
 import { Notification } from "@/type/notification";
@@ -47,7 +48,7 @@ export const updateNotifications = async (notificationIds: string[]) => {
     if (user.role === "STUDENT") {
       await updateAllStudentNotificationData(notificationIds);
     } else if (user.role === "ADMIN") {
-      await updateAllStudentNotificationData(notificationIds);
+      await updateAllTeacherNotificationData(notificationIds);
     }
     return { success: "Notifications marquées comme lues." };
   } catch (error) {

@@ -1,13 +1,17 @@
+import { getAllLessonsForStudentAction } from "@/actions/lesson.action";
 import { Lesson } from "@/type/lesson";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { getAllLessonsForStudentAction } from "@/actions/lesson.action";
 
-const useGetAllLessonsForStudent = (): UseQueryResult<Lesson[] | [], Error> => {
+const useGetAllLessonsForStudent = ({
+  subject,
+}: {
+  subject?: string;
+}): UseQueryResult<Lesson[] | [], Error> => {
   return useQuery({
-    queryKey: ["allTheStudentLessons"],
+    queryKey: ["allTheStudentLessons", subject],
     queryFn: async () => {
-      const response = await getAllLessonsForStudentAction();
+      const response = await getAllLessonsForStudentAction(subject);
 
       if (response.error) {
         toast.error(response.error);

@@ -10,12 +10,17 @@ import {
   getExerciceByIdData,
   getExercicesInfoBeforeDelete,
   getExercicesWithAuthor,
+  getExercisesByGroupIdAndSubjectData,
+  getStudentExerciceByIdData,
   getStudentExerciceByStudentIdData,
   removeExerciceFromGroupData,
   updateExerciceData,
 } from "@/data/exercice/exercice-data";
 import { getExerciceTypeByNameData } from "@/data/exercice/exercice-type.data";
-import { getGroupByIdData, getGroupByStudentIdData } from "@/data/group.data";
+import {
+  getGroupByIdAndAuthorIdData,
+  getGroupByStudentIdData,
+} from "@/data/group.data";
 import {
   getLessonByIdData,
   getLessonBySlugData,
@@ -26,7 +31,10 @@ import {
   createStudentNotificationData,
   createTeacherNotificationData,
 } from "@/data/notification/notification.data";
-import { getAllStudentsByAuthorIdwhoBelongToTheGroupIdIdsData } from "@/data/student-data";
+import {
+  getAllStudentsByAuthorIdwhoBelongToTheGroupIdIdsData,
+  getStudentByIdData,
+} from "@/data/student-data";
 import { currentUser } from "@/lib/auth";
 import {
   globalExerciceCorectionShema,
@@ -36,7 +44,7 @@ import {
   createExerciceFormInput,
   globalExerciceSchema,
 } from "@/shema-zod/exercice.shema";
-import { Exercice, ExerciceType } from "@/type/exercice";
+import { Exercice, ExerciceType, StudentExerciceCard } from "@/type/exercice";
 
 // Création d'un exercice
 export const createExerciceAction = async (
@@ -181,7 +189,7 @@ export const toggleExerciceGroupAction = async (
     }
 
     // Vérification que le groupe existe et appartient à l'utilisateur
-    const group = await getGroupByIdData(groupId, user.id);
+    const group = await getGroupByIdAndAuthorIdData(groupId, user.id);
     if (!group) {
       return { error: "Groupe non trouvé !" };
     }
@@ -398,15 +406,38 @@ export const getExerciceByIdAction = async (id: string) => {
   if (!user || !user?.id) {
     return {
       error: "Action non autoriser !",
+      redirect: "/",
+      data: null,
     };
   }
 
   try {
+    if (user.role === "STUDENT") {
+      const studentExercice = await getStudentExerciceByStudentIdData(user.id);
+      if (studentExercice.some((e) => e.exerciceId === id)) {
+        return {
+          error: "Vous avez déjà réalisé cet exercice !",
+          redirect: "/eleve/exercices",
+          data: null,
+        };
+      }
+    }
+
     const exercice = await getExerciceByIdData(id);
 
     if (!exercice) {
+      if (user.role === "STUDENT") {
+        return {
+          error: "Exercice non trouvé",
+          redirect: "/eleve/exercices",
+          data: null,
+        };
+      }
+
       return {
         error: "Exercice non trouvé",
+        redirect: "",
+        data: null,
       };
     }
 
@@ -433,6 +464,7 @@ export const getExerciceByIdAction = async (id: string) => {
     console.error("Error fetching exercise by ID:", error);
     return {
       error: "Une erreur est survenue lors de la recherche de l'exercice",
+      data: null,
     };
   }
 };
@@ -488,6 +520,167 @@ export const getExercicesByLessonIdAction = async (lessonId: string) => {
     console.error("Error fetching exercises by lesson ID:", error);
     return {
       error: "Une erreur est survenue lors de la recherche des exercices",
+    };
+  }
+};
+
+// Récupération de tout les exercices d'un groupe qui n'ont pas encore été fait par l'élève
+export const getExercisesToDoAction = async (subject?: string) => {
+  // Récupération de l'utilisateur connecté en session
+  const student = await currentUser();
+
+  // Vérification que l'utilisateur est connecté et qu'il est bien un élève
+  if (!student || !student?.id || student.role !== "STUDENT") {
+    return {
+      error: "Action non autoriser !",
+    };
+  }
+
+  try {
+    // Récupération du groupe de l'élève
+    const groupStudent = await getGroupByStudentIdData(student.id);
+    if (!groupStudent) {
+      return {
+        error: "Action non autorisée !",
+      };
+    }
+
+    // Récupération des exercices du groupe
+    const groupExercises = await getExercisesByGroupIdAndSubjectData(
+      groupStudent.id,
+      subject
+    );
+
+    // Récupération des exercices fait par l'élève
+    const studentExercises = await getStudentExerciceByStudentIdData(
+      student.id,
+      subject
+    );
+
+    // Récupération des exercices qui n'ont pas été fait par l'élève
+    const exercisesToDo = groupExercises.filter(
+      (exercise) => !studentExercises.some((e) => e.exerciceId === exercise.id)
+    );
+
+    return {
+      success: "Exercices trouvés",
+      data: exercisesToDo,
+    };
+  } catch (error) {
+    console.error("Error fetching exercises by group ID:", error);
+    return {
+      error: "Une erreur est survenue lors de la recherche des exercices",
+    };
+  }
+};
+
+// Récupération de tout les exercices d'un groupe qui ont été fait par l'élève
+export const getExercisesDoneAction = async (
+  subject?: string,
+  studentId?: string
+) => {
+  // Récupération de l'utilisateur connecté en session
+  const user = await currentUser();
+  // Vérification que l'utilisateur est connecté et qu'il est bien un élève
+  if (
+    !user ||
+    !user?.id ||
+    !(user.role === "STUDENT" || user.role === "ADMIN")
+  ) {
+    return {
+      error: "Action non autoriser !",
+    };
+  }
+
+  // Si l'utilisateur est un élève, on utilise son id
+  let studentIdToUse = user.id;
+
+  // Si l'utilisateur est un professeur et qu'il a spécifié un id d'élève
+  if (user.role === "ADMIN" && studentId) {
+    // Vérification que l'élève existe et que l'élève est bien relier au professeur connecté
+    const student = await getStudentByIdData(studentId);
+    if (!student || student.professorId !== user?.id) {
+      return {
+        error: "Action non autoriser !",
+      };
+    }
+    studentIdToUse = student.id;
+  }
+
+  try {
+    // Récupération du groupe de l'élève
+    const groupStudent = await getGroupByStudentIdData(studentIdToUse);
+    if (!groupStudent) {
+      return {
+        error: "Action non autorisée !",
+      };
+    }
+
+    // Récupération des exercices fait par l'élève
+    const studentExercises = await getStudentExerciceByStudentIdData(
+      studentIdToUse,
+      subject
+    );
+
+    // Récupération des exercices qui ont été fait par l'élève ou que l'exerciceId est null
+    const exercisesDone = studentExercises
+      .map((studentExercice) => {
+        return {
+          exerciceId: studentExercice.exerciceId || null,
+          title: studentExercice.exercice?.title || null,
+          lessonSubject:
+            studentExercice.exercice?.lesson.LessonSubject.label || null,
+          lessonSubjectColor:
+            studentExercice.exercice?.lesson.LessonSubject.color || null,
+          studentExerciceId: studentExercice.id,
+          note: studentExercice.note,
+          coeficient: studentExercice.coeficient,
+          createdAt: studentExercice.createdAt,
+        };
+      })
+      .filter((exercise) => exercise !== undefined) as StudentExerciceCard[];
+
+    return {
+      success: "Exercices trouvés",
+      data: exercisesDone,
+    };
+  } catch (error) {
+    console.error("Error fetching exercises by group ID:", error);
+    return {
+      error: "Une erreur est survenue lors de la recherche des exercices",
+    };
+  }
+};
+
+// Récupération d'un studentExercice par son ID
+export const getStudentExerciceByIdAction = async (
+  studentExerciceId: string
+) => {
+  const user = await currentUser();
+  if (!user || !user?.id) {
+    return {
+      error: "Action non autoriser !",
+      data: null,
+    };
+  }
+
+  try {
+    const studentExercice = await getStudentExerciceByIdData(studentExerciceId);
+    if (!studentExercice) {
+      return {
+        error: "Correction non trouvée",
+        data: null,
+      };
+    }
+    return {
+      success: "Correction trouvée",
+      data: studentExercice,
+    };
+  } catch (error) {
+    console.error("Error fetching studentExercice by ID:", error);
+    return {
+      error: "Une erreur est survenue lors de la recherche de la correction",
+      data: null,
     };
   }
 };

@@ -4,19 +4,19 @@ import { DataTable } from "@/components/table/data-table";
 import { DataTableColumnHeader } from "@/components/table/data-table-column-header";
 import TableSkeleton from "@/components/table/table-skeleton";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useDeleteLessons } from "@/hooks/mutations/lesson/use-delete-lesson";
 import { ColumnDef } from "@tanstack/react-table";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
 import { DataTableRowActions } from "@/components/table/data-table-row-action";
+import { useDeleteStudents } from "@/hooks/mutations/student/use-delete-students";
 import { useGetAllStudentsByProfessorId } from "@/hooks/queries/student/use-get-all-students-by-professorId ";
+import { formatDate } from "@/lib/utils";
 import { Student } from "@/type/student";
 import { useRouter } from "next/navigation";
 import CreateStudentButton from "./create-student-button";
-import { useDeleteStudents } from "@/hooks/mutations/student/use-delete-students";
 
-export default function StudentTable({ subject }: { subject: string }) {
+export default function StudentTable() {
   const { data: studentData, isLoading } = useGetAllStudentsByProfessorId();
   const { mutateAsync: mutateAsyncDelete, isPending } = useDeleteStudents();
   const [openId, setOpenId] = useState<string | null>(null);
@@ -104,13 +104,8 @@ export default function StudentTable({ subject }: { subject: string }) {
         <DataTableColumnHeader column={column} title="Date de création" />
       ),
       cell: ({ row }) => {
-        const date = new Date(row.original.createdAt); // Convertir en objet Date
-        return date.toLocaleDateString("fr-FR", {
-          // Formater la date
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        });
+        const date = row.original.createdAt;
+        return formatDate(date);
       },
     },
     {
@@ -121,9 +116,9 @@ export default function StudentTable({ subject }: { subject: string }) {
           <DataTableRowActions
             elementId={row.original.id}
             handleDelete={handleDelete}
-            editPath={`/admin/eleves/${row.original.id}/edition`}
             openId={openId}
             setOpenId={setOpenId}
+            showPath={`/admin/eleves/${row.original.id}`}
           />
         );
       },

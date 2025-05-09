@@ -23,8 +23,6 @@ const seed = async () => {
     ],
   });
 
-  const subjects = await prisma.lessonSubject.findMany();
-
   // create GradeLevels for user
   await prisma.gradeLevels.createMany({
     data: [
@@ -67,8 +65,6 @@ const seed = async () => {
     ],
   });
 
-  const gradeLevels = await prisma.gradeLevels.findMany();
-
   // create Level
   await prisma.exerciceLevel.createMany({
     data: [
@@ -86,8 +82,6 @@ const seed = async () => {
       },
     ],
   });
-
-  const levels = await prisma.exerciceLevel.findMany();
 
   await prisma.exerciceType.createMany({
     data: [

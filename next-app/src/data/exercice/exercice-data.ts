@@ -524,10 +524,141 @@ export const getAllExercicesByLessonIdData = async (lessonId: string) => {
   });
 };
 
-export const getStudentExerciceByStudentIdData = async (studentId: string) => {
+/**
+ * Récupère tous les exercices d'un élève
+ *
+ * @param {string} studentId - L'identifiant de l'élève.
+ * @returns {Promise<StudentExercice[]>} - Une promesse qui résout à une liste d'exercices.
+ *
+ * @example
+ * // Récupérer tous les exercices d'un élève avec l'identifiant "1"
+ * const exercises = await getStudentExerciceByStudentId("1");
+ *
+ * @description
+ * La fonction récupère une liste d'exercices filtrée par l'élève donné. Les champs retournés pour chaque exercice sont :
+ * - `id`: L'identifiant unique de l'exercice
+ * - `title`: Le titre de l'exercice
+ * - `description`: La description de l'exercice
+ * - `level.label`: Le niveau de difficulté de l'exercice
+ * - `type.name`: Le type de l'exercice
+ */
+export const getStudentExerciceByStudentIdData = async (
+  studentId: string,
+  subject?: string
+) => {
   return await prisma.studentExercice.findMany({
     where: {
       studentId: studentId,
+      subject: subject,
+    },
+    include: {
+      exercice: {
+        select: {
+          id: true,
+          title: true,
+          lesson: {
+            select: {
+              LessonSubject: {
+                select: { label: true, color: true },
+              },
+            },
+          },
+          level: {
+            select: {
+              label: true,
+              color: true,
+            },
+          },
+          type: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+};
+
+/**
+ * Récupère tous les exercices d'un groupe en fonction du sujet
+ *
+ * @param {string} groupId - L'identifiant du groupe.
+ * @param {string} subject - Le sujet de l'exercice.
+ *
+ * @example
+ * // Récupérer tous les exercices d'un groupe avec l'identifiant "1"
+ * const exercises = await getExercisesByGroupIdAndSubjectData("1", "Français");
+ *
+ * @description
+ * La fonction récupère une liste d'exercices filtrée par le groupe et le sujet donné. Les champs retournés pour chaque exercice sont :
+ * - `id`: L'identifiant unique de l'exercice
+ * - `title`: Le titre de l'exercice
+ * - `description`: La description de l'exercice
+ * - `level.label`: Le niveau de difficulté de l'exercice
+ * - `type.name`: Le type de l'exercice
+ */
+export const getExercisesByGroupIdAndSubjectData = async (
+  groupId: string,
+  subject?: string
+) => {
+  return await prisma.exercice.findMany({
+    where: {
+      groups: {
+        some: {
+          id: groupId,
+        },
+      },
+      lesson: {
+        LessonSubject: {
+          label: subject,
+        },
+      },
+    },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      lesson: {
+        select: {
+          id: true,
+          LessonSubject: true,
+        },
+      },
+      level: true,
+      type: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};
+
+export const getStudentExerciceByIdData = async (studentExerciceId: string) => {
+  return await prisma.studentExercice.findUnique({
+    where: {
+      id: studentExerciceId,
+    },
+    include: {
+      exercice: {
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          content: true,
+          type: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+      student: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     },
   });
 };

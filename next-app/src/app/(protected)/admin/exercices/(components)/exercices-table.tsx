@@ -142,9 +142,7 @@ export default function ExercicesTable({
         data={exerciceData ?? []}
         viewOptionsButton
         inputSearchColumnId="Titre"
-        handleDelete={async () => {
-          console.log("Suppression de l'exercice");
-        }}
+        handleDelete={async () => {}}
       />
     );
   }

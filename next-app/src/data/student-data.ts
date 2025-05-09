@@ -26,11 +26,25 @@ export const createStudentData = async (
 };
 
 export const getStudentByIdData = async (id: string) => {
-  try {
-    return await prisma.student.findUnique({ where: { id } });
-  } catch (error) {
-    throw error;
-  }
+  return await prisma.student.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      identifier: true,
+      name: true,
+      image: true,
+      role: true,
+      professorId: true,
+      isActive: true,
+      createdAt: true,
+      groupStudent: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
 };
 
 export const getStudentByIdentifierlData = async (identifier: string) => {

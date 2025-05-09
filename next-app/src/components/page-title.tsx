@@ -1,5 +1,16 @@
 "use client";
 
-export default function PageTitle({ title }: { title: string }) {
-  return <h1 className="text-6xl font-bold mb-28 text-center">{title}</h1>;
+import { cn } from "@/lib/utils";
+
+interface PageTitleProps {
+  title: string;
+  className?: string;
+}
+
+export default function PageTitle({ title, className }: PageTitleProps) {
+  return (
+    <h1 className={cn("text-6xl font-bold mb-28 text-center", className)}>
+      {title}
+    </h1>
+  );
 }

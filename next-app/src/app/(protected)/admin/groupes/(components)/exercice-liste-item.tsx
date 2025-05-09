@@ -1,6 +1,7 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
+import ExerciceTypeBadge from "@/app/(protected)/eleve/exercices/(components)/exercice-type-badge";
+import SubjectLayout from "@/components/subject-layout";
 import { Switch } from "@/components/ui/switch";
 import { useToggleExerciceGroup } from "@/hooks/mutations/exercice/use-toggle-exercice-group";
 
@@ -39,14 +40,8 @@ export default function ExerciceListeItem({
       <div className="w-full flex flex-col gap-4">
         <div className="flex items-center gap-2">
           <h3 className="text-lg font-bold text-accents">{title}</h3>
-          <Badge className="text-slate-500 border-slate-500 bg-background">
-            {type}
-          </Badge>
-          <Badge
-            className={`${levelColor} text-background hover:${levelColor}`}
-          >
-            {level}
-          </Badge>
+          <ExerciceTypeBadge type={type} />
+          <SubjectLayout label={level} color={levelColor} />
           <div className="w-fit flex items-center ms-auto">
             <Switch checked={isActive} onCheckedChange={() => handleToggle()} />
           </div>

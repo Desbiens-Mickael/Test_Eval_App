@@ -23,7 +23,7 @@ export default function ShowContentGapFillPreview({
         <h3 className="font-semibold text-gray-700 dark:text-gray-300">
           Reponses à trouver
         </h3>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center flex-wrap gap-2">
           {content.answers?.map((answer, index) => (
             <div key={answer.position} className="flex items-center gap-1">
               <span>

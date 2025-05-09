@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { toast } from "sonner";
 import AnswerList from "./answer-list";
 import AnswerSelector from "./answerSelector";
 import ShowContentGapFillPreview from "./show-content-gap-fill-preview";
@@ -65,10 +64,6 @@ export default function ContentFillGapTextForm({
   }, [content]);
 
   const handleToggleMode = () => {
-    if (content.text?.length === 0 || content.text === undefined) {
-      toast.error("Veuillez entrer un texte.");
-      return;
-    }
     setToggleMode(!toggleMode);
   };
 
@@ -80,13 +75,15 @@ export default function ContentFillGapTextForm({
             {!toggleMode ? (
               <TextEditorWithAlert handleToggleMode={handleToggleMode} />
             ) : (
-              <AnswerSelector
-                handleToggleMode={handleToggleMode}
-                modifiedText={replaceAllTextWithPlaceholder()}
-              />
+              <>
+                <AnswerSelector
+                  handleToggleMode={handleToggleMode}
+                  modifiedText={replaceAllTextWithPlaceholder()}
+                />
+                {content.answers?.length > 0 && <AnswerList />}
+              </>
             )}
           </div>
-          {content.answers?.length > 0 && <AnswerList />}
         </div>
       ) : (
         <ShowContentGapFillPreview

@@ -23,6 +23,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+###### Gestion de l'image d'avatar ######
+
 # Récupération de l'image d'avatar
 @app.get("/avatar/{image_path}")
 async def get_avatar(image_path: str):
@@ -31,7 +33,6 @@ async def get_avatar(image_path: str):
     
     return FileResponse(f"./uploads/images/avatars/{image_path}")
 
-###### Gestion de l'image d'avatar ######
 
 # Enregistrement de l'image d'avatar
 @app.post("/avatar")
@@ -73,7 +74,7 @@ async def delete_avatar(image_path: str):
 
 ###### Gestion de l'image des leçons ######
 
-# Récupération de l'image de la leçon
+# Récupération des images des leçons
 @app.get("/lesson/{image_path}")
 async def get_lesson_image(image_path: str):
     if not os.path.exists(f"./uploads/images/lessons/{image_path}"):
@@ -82,7 +83,7 @@ async def get_lesson_image(image_path: str):
     return FileResponse(f"./uploads/images/lessons/{image_path}")
 
 
-# Enregistrement de l'image de la leçon
+# Enregistrement des images des leçons
 @app.post("/lesson")
 async def create_upload_file(file: Union[UploadFile, None] = File(None)):
     if file is None:
@@ -106,7 +107,7 @@ async def create_upload_file(file: Union[UploadFile, None] = File(None)):
     )
 
 
-# Suppression de l'image de la leçon
+# Suppression des images des leçons
 @app.delete("/lesson/{image_path}")
 async def delete_lesson_image(image_path: str):
     if not os.path.exists(f"./uploads/images/lessons/{image_path}"):

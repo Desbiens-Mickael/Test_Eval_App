@@ -5,10 +5,53 @@ import {
   deleteStudentsData,
   getAllStudentsByAuthorIdData,
   getAllStudentsByAuthorIdwhoDontBelongToTheGroupIdData,
+  getStudentByIdData,
   getStudentByIdentifierlData,
   UpdateStudentData,
 } from "@/data/student-data";
 import { currentUser } from "@/lib/auth";
+
+// Mise à jour d'un élève (uniquement pour l'élève connecté)
+export const updateStudentAction = async (data: object) => {
+  const user = await currentUser();
+  if (!user || !user.id || user.role !== "STUDENT") {
+    return { error: "Action non autoriser !" };
+  }
+
+  try {
+    const updatedStudent = await UpdateStudentData(user.id, data);
+    return { success: "Compte mis à jour avec succès.", data: updatedStudent };
+  } catch (error) {
+    console.error(error);
+    return {
+      error: "Une erreur est survenue lors de la mise à jour du compte.",
+    };
+  }
+};
+
+// Supprimer un ou plusieurs élèves
+export const deleteStudentsAction = async (studentIds: string[]) => {
+  const user = await currentUser();
+  if (!user || !user.id || user.role !== "ADMIN") {
+    return { error: "Action non autoriser !" };
+  }
+
+  try {
+    const deletedStudents = await deleteStudentsData(studentIds);
+    return {
+      success:
+        studentIds.length > 1
+          ? "Les élèves ont bien été supprimés."
+          : "L'élève a bien été supprimé.",
+      data: deletedStudents,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      error: "Une erreur est survenue lors de la suppression des élèves.",
+    };
+  }
+};
 
 // Récupérer tout les élèves de l'utilisateur connecté
 export const getAllStudentsByAuthorIdAction = async () => {
@@ -69,7 +112,11 @@ export const getStudentByIdentifierAction = async (identifier: string) => {
 
   try {
     const student = await getStudentByIdentifierlData(identifier);
-    return { success: "", data: student };
+    if (!student) {
+      return { error: "Cet élève n'existe pas !" };
+    }
+
+    return { success: "Élève récupéré avec succès.", data: student };
   } catch (error) {
     console.error(error);
     return {
@@ -79,44 +126,32 @@ export const getStudentByIdentifierAction = async (identifier: string) => {
   }
 };
 
-// Mise à jour d'un élève (uniquement pour l'élève connecté)
-export const updateStudentAction = async (data: object) => {
-  const user = await currentUser();
-  if (!user || !user.id || user.role !== "STUDENT") {
-    return { error: "Action non autoriser !" };
-  }
-
-  try {
-    const updatedStudent = await UpdateStudentData(user.id, data);
-    return { success: "Compte mis à jour avec succès.", data: updatedStudent };
-  } catch (error) {
-    console.error(error);
-    return {
-      error: "Une erreur est survenue lors de la mise à jour du compte.",
-    };
-  }
-};
-
-// Supprimer un ou plusieurs élèves
-export const deleteStudentsAction = async (studentIds: string[]) => {
+// Récupérer les informations d'un élève par son id
+export const getStudentByIdAction = async (studentId: string) => {
   const user = await currentUser();
   if (!user || !user.id || user.role !== "ADMIN") {
-    return { error: "Action non autoriser !" };
+    return { error: "Action non autoriser !", data: null };
   }
 
   try {
-    const deletedStudents = await deleteStudentsData(studentIds);
-    return {
-      success:
-        studentIds.length > 1
-          ? "Les élèves ont bien été supprimés."
-          : "L'élève a bien été supprimé.",
-      data: deletedStudents,
-    };
+    // Récupération de l'élève
+    const student = await getStudentByIdData(studentId);
+    if (!student) {
+      return { error: "Cet élève n'existe pas !", data: null };
+    }
+
+    // Vérifier si l'élève est bien rattaché au professeur connecté
+    if (student.professorId !== user.id) {
+      return { error: "Action non autoriser !", data: null };
+    }
+
+    return { success: "Élève récupéré avec succès.", data: student };
   } catch (error) {
     console.error(error);
     return {
-      error: "Une erreur est survenue lors de la suppression des élèves.",
+      error:
+        "Une erreur est survenue lors de la récupération des informations de l'élève.",
+      data: null,
     };
   }
 };

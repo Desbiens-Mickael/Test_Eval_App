@@ -20,21 +20,32 @@ export const ExerciseResultGapFillText: React.FC<ExerciseResultTextProps> = ({
   const userRole = useCurrentRole();
 
   return (
-    <div className="flex flex-col gap-10">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Correction</h2>
-        <NoteDisplay note={note} coeficient={coeficient} />
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 space-y-6">
+      <div className="flex justify-between items-center border-b pb-4 dark:border-gray-700">
+        <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
+          Correction
+        </h2>
+        <NoteDisplay note={note} coeficient={coeficient} className="text-md" />
       </div>
+
       {content && response ? (
-        <>
+        <div className="space-y-6">
           {/* Texte original */}
-          <div className="flex flex-col gap-2">
-            <h3 className="text-lg font-bold">Réponse</h3>
-            <div className="flex gap-[0.15rem] flex-wrap text-muted-foreground">
+          <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+            <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-3">
+              Bonne réponse
+            </h3>
+            <div
+              className="leading-relaxed text-gray-600 dark:text-gray-300"
+              style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
+            >
               {content.text.map((word, index) => {
                 if (isInputPosition(index, content.answers)) {
                   return (
-                    <span key={index} className="font-bold">
+                    <span
+                      key={index}
+                      className="font-bold text-primary-600 dark:text-primary-400 bg-primary-100 dark:bg-primary-900 px-1 rounded"
+                    >
                       {`[ ${word} ]`}
                     </span>
                   );
@@ -43,58 +54,68 @@ export const ExerciseResultGapFillText: React.FC<ExerciseResultTextProps> = ({
               })}
             </div>
           </div>
+
+          <div className="border-t dark:border-gray-700 my-4"></div>
+
           {/* Texte modifié */}
-          <div className="flex flex-col gap-2">
-            <h3 className="text-lg font-bold">Texte modifié</h3>
-            <div className="flex gap-[0.15rem] flex-wrap">
+          <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+            <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-3">
+              {userRole === "ADMIN" ? "Réponse de l'élève" : "Votre réponse"}
+            </h3>
+            <div
+              className="leading-relaxed"
+              style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
+            >
               {content.text.map((word, index) => {
                 if (isInputPosition(index, content.answers)) {
                   const correctAnswer = content.answers.find(
                     (a) => a.position === index
                   );
-                  const userAnswer = response[index];
+                  let userAnswer = response[index];
+
                   const isCorrect = userAnswer === correctAnswer?.answer;
+                  if (isCorrect) {
+                    userAnswer = correctAnswer?.placeholder.replace(
+                      /_+/,
+                      correctAnswer?.answer
+                    );
+                  }
 
                   return (
                     <span
                       key={index}
-                      className={`font-semibold ${
-                        isCorrect ? "text-green-600" : "text-red-600"
+                      className={`font-semibold px-1 rounded ${
+                        isCorrect
+                          ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                          : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
                       }`}
                     >
                       {userAnswer || (
-                        <span className="text-red-600 italic">
+                        <span className="italic">
                           {correctAnswer?.placeholder}
                         </span>
                       )}
                     </span>
                   );
-                } else {
-                  return <span key={index}>{word}</span>;
                 }
+                return <span key={index}>{word}</span>;
               })}
             </div>
           </div>
-        </>
+        </div>
       ) : (
-        <div className="flex flex-col gap-2">
-          <p className="text-center">
-            {userRole === "ADMIN" && (
-              <span className="italic text-red-600 font-bold">
-                {
-                  "Le contenu de cet exercice n’est plus disponible car il a été supprimé. Veuillez en informer l’élève si nécessaire."
-                }
-              </span>
-            )}
-
-            {userRole === "STUDENT" && (
-              <span className="italic text-red-600 font-bold">
-                {
-                  "Oups ! Cet exercice a été supprimé par votre professeur. N’hésitez pas à lui demander plus d’infos 😥"
-                }
-              </span>
-            )}
-          </p>
+        <div className="text-center p-6 bg-gray-50 dark:bg-gray-700 rounded-lg">
+          {userRole === "ADMIN" ? (
+            <p className="text-red-600 dark:text-red-400 font-bold italic">
+              Le contenu de cet exercice n'est plus disponible car il a été
+              supprimé. Veuillez en informer l'élève si nécessaire.
+            </p>
+          ) : (
+            <p className="text-red-600 dark:text-red-400 font-bold italic">
+              Oups ! Cet exercice a été supprimé par votre professeur. N'hésitez
+              pas à lui demander plus d'infos 😥
+            </p>
+          )}
         </div>
       )}
     </div>

@@ -30,6 +30,7 @@ export type StudentExerciceCard = {
   lessonSubjectColor?: string;
   studentExerciceId: string;
   note: number;
+  coeficient: number;
   createdAt: Date;
 };
 

@@ -24,6 +24,7 @@ export default function TextEditorWithAlert({
     (value: string) => {
       const words =
         value.match(/[\wÀ-ÿ]+(?:['’-][\wÀ-ÿ]*)?|[.,!?;:]|\s+/g) || [];
+
       // Validation que le texte contient des mots
       const hasRealWord = words.some(
         (w) => w.trim().length > 0 && !/^[.,!?;:\s]+$/.test(w)

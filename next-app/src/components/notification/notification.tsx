@@ -4,9 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useReadNotification } from "@/hooks/mutations/notification/use-read-notification";
@@ -31,22 +29,50 @@ export default function Notification() {
   return (
     <DropdownMenu open={open} onOpenChange={handleOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-full p-2">
-          <div className="relative">
-            <Bell className="text-foreground" size={25} />
-            {data && data.length > 0 && (
-              <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-primary rounded-full">
-                {data.length}
-              </span>
-            )}
-          </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="relative rounded-full p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+        >
+          <Bell className="text-foreground" size={25} />
+          {data && data.length > 0 && (
+            <span
+              className="absolute -top-1 -right-1 flex items-center justify-center
+              w-5 h-5 text-xs font-bold text-white
+              bg-primary rounded-full
+              animate-pulse"
+            >
+              {data.length}
+            </span>
+          )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-[300px]">
-        <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-        <DropdownMenuSeparator />
+      <DropdownMenuContent
+        className="w-[350px] max-h-[500px] overflow-y-auto
+        bg-white dark:bg-gray-800 border dark:border-gray-700 shadow-lg rounded-xl"
+      >
+        <div className="flex justify-between items-center p-4 border-b dark:border-gray-700">
+          <DropdownMenuLabel className="text-xl font-bold text-gray-900 dark:text-white">
+            Notifications
+          </DropdownMenuLabel>
+          {data && data.length > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-primary hover:bg-primary/10"
+              onClick={() => {
+                handleReadAll();
+                handleOpen();
+              }}
+            >
+              <CheckCheck size={16} className="mr-2" />
+              Tout marquer
+            </Button>
+          )}
+        </div>
+
         {data && data.length > 0 ? (
-          <div>
+          <div className="divide-y dark:divide-gray-700">
             {data.map((notification) => {
               if (!notification.isRead) {
                 return (
@@ -54,6 +80,7 @@ export default function Notification() {
                     key={notification.id}
                     id={notification.id}
                     message={notification.notification.message}
+                    createdAt={notification.notification.createdAt}
                     type={notification.notification.type}
                     itemId={
                       notification.notification.lessonId ||
@@ -66,20 +93,11 @@ export default function Notification() {
                 );
               }
             })}
-            <Button
-              variant={"outline"}
-              className="w-full flex items-center gap-2"
-              onClick={() => {
-                handleReadAll();
-                handleOpen();
-              }}
-            >
-              <CheckCheck size={18} className="text-primary" />
-              Marquer comme lues
-            </Button>
           </div>
         ) : (
-          <DropdownMenuItem>Aucune notification</DropdownMenuItem>
+          <div className="text-center p-6 text-gray-500 dark:text-gray-400">
+            <p className="italic">Aucune notification</p>
+          </div>
         )}
       </DropdownMenuContent>
     </DropdownMenu>

@@ -3,11 +3,11 @@
 import SubmitButton from "@/components/form/submit-button";
 import { Button } from "@/components/ui/button";
 import { useAddExerciceResponse } from "@/hooks/mutations/exercice/use-add-exercice-response";
-import { calculateNote, shuffleArray } from "@/lib/utils";
+import { calculateNote } from "@/lib/utils";
 import { gapFillTextResponseType } from "@/shema-zod/exercice-corection.shema";
 import { contentGapFillInput } from "@/shema-zod/exercice.shema";
 import { RefreshCcw } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { isInputPosition } from "../../../(lib)/utils";
 import { ExerciseResultGapFillText } from "./exercise-result-gap-fill-text";
@@ -39,10 +39,6 @@ export default function ExerciseGapFillText({
     },
     [setInputs]
   );
-
-  const shuffledAnswers = useMemo(() => {
-    return shuffleArray(content.answers).map((a) => a.answer);
-  }, [content.answers]);
 
   const handleReset = useCallback(() => {
     setInputs({});
@@ -84,35 +80,51 @@ export default function ExerciseGapFillText({
     setNote,
     content.answers,
   ]);
+  const replacePlaceholderByInputHTML = () => {
+    return content.text.map((word, index) => {
+      if (isInputPosition(index, content.answers)) {
+        const answer = content.answers.find((a) => a.position === index);
+
+        const match = answer?.placeholder.match(/_+/);
+
+        if (!match) {
+          return <span key={index}>{word}</span>;
+        }
+
+        const startIndex = match.index ?? 0;
+        const width = match[0].length;
+
+        const beforeText = answer?.placeholder.slice(0, startIndex);
+        const afterText = answer?.placeholder.slice(startIndex + width);
+
+        return (
+          <React.Fragment key={index}>
+            <span>{beforeText}</span>
+            <input
+              type="text"
+              value={inputs[index] || ""}
+              onChange={(e) => handleInputChange(index, e.target.value)}
+              style={{ width: `${width}ch` }}
+              className="border-b border-b-foreground text-foreground font-semibold"
+            />
+            <span>{afterText}</span>
+          </React.Fragment>
+        );
+      } else {
+        return <span key={index}>{word}</span>;
+      }
+    });
+  };
 
   return (
     <div className="relative flex flex-col gap-10">
-      {level !== "Très difficile" && (
-        <div className="text-sm text-muted-foreground">
-          {shuffledAnswers.join(" | ")}
-        </div>
-      )}
       {!isValidated ? (
         <>
-          <div className="flex gap-[0.15rem] flex-wrap ">
-            {content.text.map((word, index) => {
-              if (isInputPosition(index, content.answers)) {
-                const width = content.answers.find((a) => a.position === index)
-                  ?.answer.length;
-                return (
-                  <input
-                    key={index}
-                    type="text"
-                    value={inputs[index] || ""}
-                    onChange={(e) => handleInputChange(index, e.target.value)}
-                    style={{ width: `${(width || 2) + 1}ch` }}
-                    className="border-b border-b-foreground px-1 text-foreground font-semibold"
-                  />
-                );
-              } else {
-                return <span key={index}>{word}</span>;
-              }
-            })}
+          <div
+            className="leading-8"
+            style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
+          >
+            {replacePlaceholderByInputHTML()}
           </div>
           <div className="flex justify-between items-center">
             <SubmitButton

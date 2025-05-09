@@ -28,7 +28,8 @@ interface DialogState {
 
 interface DataTableRowActionsProps extends DialogState {
   elementId: string;
-  editPath: string;
+  editPath?: string;
+  showPath?: string;
   handleDelete: (id: string) => Promise<void>;
   children?: ReactNode;
 }
@@ -36,6 +37,7 @@ interface DataTableRowActionsProps extends DialogState {
 export function DataTableRowActions({
   elementId,
   editPath,
+  showPath,
   handleDelete,
   openId,
   setOpenId,
@@ -58,16 +60,29 @@ export function DataTableRowActions({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            className="cursor-pointer"
-            onSelect={() => {
-              router.push(editPath);
-            }}
-            aria-label="Modifier la sélection"
-          >
-            Modifier
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
+          {editPath && (
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onSelect={() => {
+                router.push(editPath);
+              }}
+              aria-label="Modifier la sélection"
+            >
+              Modifier
+            </DropdownMenuItem>
+          )}
+          {showPath && (
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onSelect={() => {
+                router.push(showPath);
+              }}
+              aria-label="Voir la sélection"
+            >
+              Voir
+            </DropdownMenuItem>
+          )}
+          {(editPath || showPath) && <DropdownMenuSeparator />}
           {children}
           {children && <DropdownMenuSeparator />}
           <DropdownMenuItem

@@ -10,7 +10,7 @@ export default function StudentsPage() {
   return (
     <>
       <PageTitle title="Mes élèves" />
-      <StudentTable subject="" />
+      <StudentTable />
     </>
   );
 }

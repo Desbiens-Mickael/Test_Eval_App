@@ -11,6 +11,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import AvatarUpload from "@/components/user/avatar-upload";
 import { useCreateLesson } from "@/hooks/mutations/lesson/use-create-lesson";
 import { useUpdateLesson } from "@/hooks/mutations/lesson/use-update-lesson";
 import useGetAllGradeLevels from "@/hooks/queries/use-get-all-grade-levels";
@@ -32,18 +33,31 @@ import LessonPreview from "../lesson-preview";
 interface EditLessonProps {
   id?: string;
   title?: string;
+  imageBanner?: string;
   content?: JSONContent | undefined;
   LessonSubjectID?: string;
   GradeLevelsID?: string;
 }
 
+export interface ImageBanner {
+  formData: FormData | null;
+  preview: string;
+}
+
 export default function LessonForm({
   id,
   title,
+  imageBanner,
   content,
   LessonSubjectID,
   GradeLevelsID,
 }: EditLessonProps) {
+  const [imageBannerFile, setImageBannerFile] = useState<ImageBanner>(
+    imageBanner
+      ? { formData: null, preview: imageBanner }
+      : { formData: null, preview: "" }
+  );
+
   //queries
   const { data: allLessonsSubject, isLoading: isLoadingLessonsSubject } =
     useGetAllLessonsSubject();
@@ -66,6 +80,7 @@ export default function LessonForm({
     resolver: zodResolver(createLessonFormSchema),
     defaultValues: {
       title: title ?? "",
+      imageBanner: imageBanner ?? "",
       content: content,
       LessonSubjectID: LessonSubjectID ?? "",
       GradeLevelsID: GradeLevelsID ?? "",
@@ -74,8 +89,43 @@ export default function LessonForm({
 
   const onSubmit = async () => {
     try {
-      const values = form.getValues();
+      const clientDomainApi = process.env.NEXT_PUBLIC_CLIENT_DOMAIN_API;
+      const serverDomainApi = process.env.NEXT_PUBLIC_SERVER_DOMAIN_API;
+
+      //suppression de l'image de la banière existante
+      if (imageBanner) {
+        const img = imageBanner.split("/").pop();
+        const response = await fetch(`${clientDomainApi}/lesson/${img}`, {
+          method: "DELETE",
+        });
+        if (!response.ok) {
+          toast.error(
+            "Une erreur c'est produite lors de la suppression de l'image !"
+          );
+          return;
+        }
+      }
+      //upload de l'image de la banière
+      if (imageBannerFile.formData) {
+        const response = await fetch(`${clientDomainApi}/lesson`, {
+          method: "POST",
+          body: imageBannerFile.formData,
+        });
+        if (!response.ok) {
+          toast.error(
+            "Une erreur c'est produite lors du l'upload de l'image !"
+          );
+          return;
+        }
+        const { image_path } = (await response.json()) as {
+          image_path: string;
+        };
+        const src = `${serverDomainApi}/lesson/${image_path}`;
+        form.setValue("imageBanner", src);
+      }
+
       // Sérialiser le contenu avant l'envoi
+      const values = form.getValues();
       const serializedData = {
         ...values,
         content: JSON.stringify(values.content),
@@ -106,8 +156,24 @@ export default function LessonForm({
     return <LessonFormSkeleton />;
   }
 
+  const handleImageBanner = (formData: FormData) => {
+    const file = formData.get("file") as File;
+    const preview = URL.createObjectURL(file);
+    setImageBannerFile({
+      formData: formData,
+      preview: preview,
+    });
+  };
+
   return (
     <div className="w-full max-w-screen-xl mx-auto">
+      <AvatarUpload
+        handleUpload={handleImageBanner}
+        isPending={isPendingCreate || isPendingUpdate}
+        image={imageBanner}
+        mode="BANNER"
+      />
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="w-full flex flex-col lg:flex-row  items-center gap-8 lg:gap-16">
@@ -179,7 +245,12 @@ export default function LessonForm({
             />
 
             {/* Preview de la leçon */}
-            {previewContent && <LessonPreview content={previewContent} />}
+            {previewContent && (
+              <LessonPreview
+                content={previewContent}
+                imageBanner={imageBannerFile.preview}
+              />
+            )}
           </div>
         </form>
       </Form>

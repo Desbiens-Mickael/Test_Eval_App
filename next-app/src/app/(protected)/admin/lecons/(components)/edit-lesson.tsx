@@ -25,6 +25,7 @@ export default function EditLesson({ slug }: EditLessonProps) {
       <LessonForm
         id={data?.lesson.id}
         title={data?.lesson.title}
+        imageBanner={data?.lesson.imageBanner}
         content={data?.lesson.content}
         LessonSubjectID={data?.lesson.LessonSubjectID}
         GradeLevelsID={data?.lesson.GradeLevelsID}

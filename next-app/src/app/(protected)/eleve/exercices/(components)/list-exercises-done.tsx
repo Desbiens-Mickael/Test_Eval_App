@@ -39,7 +39,7 @@ export default function ListExercisesDone({
             ? `Exercices terminés en ${selectedSubject}`
             : "Tous les exercices terminés"}
         </h2>
-        <SkeletonExercises />
+        <SkeletonExercises count={4} />
       </div>
     );
   }

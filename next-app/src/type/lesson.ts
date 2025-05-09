@@ -12,6 +12,7 @@ export type CreateLessonType = {
 export type Lesson = {
   id: string;
   title: string;
+  imageBanner: string;
   slug: string;
   subject: string;
   subjectColor: string;

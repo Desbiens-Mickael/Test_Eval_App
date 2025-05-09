@@ -4,6 +4,7 @@ import { CreateLessonType } from "@/type/lesson";
 export type LessonOutput = {
   id: string;
   title: string;
+  imageBanner: string | null;
   slug: string;
   LessonSubject: {
     label: string;
@@ -27,6 +28,7 @@ export const getAllLessonByAuthorIdData = async (
       select: {
         id: true,
         title: true,
+        imageBanner: true,
         slug: true,
         LessonSubject: {
           select: { label: true, color: true },
@@ -58,6 +60,7 @@ export const getAllLessonBySubjectData = async (
     select: {
       id: true,
       title: true,
+      imageBanner: true,
       slug: true,
       LessonSubject: {
         select: { label: true, color: true },
@@ -109,6 +112,7 @@ export const getLessonsWithAuthor = async (lessonIds: string[]) => {
     select: {
       id: true,
       authorId: true,
+      imageBanner: true,
     },
   });
 };
@@ -223,6 +227,7 @@ export const getLessonsInfoBeforeDelete = async (lessonIds: string[]) => {
     },
     select: {
       slug: true,
+      imageBanner: true,
       LessonSubject: {
         select: { label: true },
       },

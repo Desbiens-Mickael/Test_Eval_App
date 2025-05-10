@@ -1,21 +1,21 @@
 import { NoteDisplay } from "@/components/note-display";
 import { useCurrentRole } from "@/hooks/use-current-role";
+import { gapFillTextResponseType } from "@/shema-zod/exercice-corection.shema";
 import { contentGapFillInput } from "@/shema-zod/exercice.shema";
+import { noteExerciceStudent } from "@/type/exercice";
 import React from "react";
 import { isInputPosition } from "../../../(lib)/utils";
 
 interface ExerciseResultTextProps {
   content?: contentGapFillInput;
-  response: { [key: number]: string };
-  note: number;
-  coeficient: number;
+  response: gapFillTextResponseType;
+  note: noteExerciceStudent;
 }
 
 export const ExerciseResultGapFillText: React.FC<ExerciseResultTextProps> = ({
   content,
   response,
   note,
-  coeficient,
 }) => {
   const userRole = useCurrentRole();
 
@@ -25,7 +25,11 @@ export const ExerciseResultGapFillText: React.FC<ExerciseResultTextProps> = ({
         <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
           Correction
         </h2>
-        <NoteDisplay note={note} coeficient={coeficient} className="text-md" />
+        <NoteDisplay
+          note={note.note}
+          coeficient={note.coeficient}
+          className="text-md"
+        />
       </div>
 
       {content && response ? (
@@ -107,13 +111,15 @@ export const ExerciseResultGapFillText: React.FC<ExerciseResultTextProps> = ({
         <div className="text-center p-6 bg-gray-50 dark:bg-gray-700 rounded-lg">
           {userRole === "ADMIN" ? (
             <p className="text-red-600 dark:text-red-400 font-bold italic">
-              Le contenu de cet exercice n'est plus disponible car il a été
-              supprimé. Veuillez en informer l'élève si nécessaire.
+              {
+                "Le contenu de cet exercice n'est plus disponible car il a été supprimé. Veuillez en informer l'élève si nécessaire."
+              }
             </p>
           ) : (
             <p className="text-red-600 dark:text-red-400 font-bold italic">
-              Oups ! Cet exercice a été supprimé par votre professeur. N'hésitez
-              pas à lui demander plus d'infos 😥
+              {
+                "Oups ! Cet exercice a été supprimé par votre professeur. N'hésitez pas à lui demander plus d'infos 😥"
+              }
             </p>
           )}
         </div>

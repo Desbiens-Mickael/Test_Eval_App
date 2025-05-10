@@ -26,7 +26,7 @@ import { ComponentType } from "./dynamic-content-components";
 
 interface ExerciceFormProps {
   lessonSlug?: string;
-  exerciceData?: Exercice;
+  exerciceData?: Exercice | null;
 }
 
 export default function ExerciceForm({

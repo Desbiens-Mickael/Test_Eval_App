@@ -6,16 +6,15 @@ import { useAddExerciceResponse } from "@/hooks/mutations/exercice/use-add-exerc
 import { calculateNote } from "@/lib/utils";
 import { gapFillTextResponseType } from "@/shema-zod/exercice-corection.shema";
 import { contentGapFillInput } from "@/shema-zod/exercice.shema";
+import { baseResponseExercice, noteExerciceStudent } from "@/type/exercice";
 import { RefreshCcw } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { isInputPosition } from "../../../(lib)/utils";
 import { ExerciseResultGapFillText } from "./exercise-result-gap-fill-text";
 
-interface ExerciseGapFillTextProps {
-  exerciceId: string;
+interface ExerciseGapFillTextProps extends baseResponseExercice {
   content: contentGapFillInput;
-  level: string;
 }
 
 export default function ExerciseGapFillText({
@@ -24,14 +23,16 @@ export default function ExerciseGapFillText({
   level,
 }: ExerciseGapFillTextProps) {
   const [inputs, setInputs] = useState<gapFillTextResponseType>({});
-  const [isValidated, setIsValidated] = useState(false);
-  const [note, setNote] = useState<{ note: number; coeficient: number }>({
+  const [note, setNote] = useState<noteExerciceStudent>({
     note: 0,
     coeficient: 0,
   });
 
-  const { mutateAsync: addExerciceResponse, isPending } =
-    useAddExerciceResponse();
+  const {
+    mutateAsync: addExerciceResponse,
+    isPending,
+    isSuccess,
+  } = useAddExerciceResponse();
 
   const handleInputChange = useCallback(
     (pos: number, value: string) => {
@@ -42,7 +43,6 @@ export default function ExerciseGapFillText({
 
   const handleReset = useCallback(() => {
     setInputs({});
-    setIsValidated(false);
   }, [setInputs]);
 
   const handleSubmit = useCallback(async () => {
@@ -51,21 +51,19 @@ export default function ExerciseGapFillText({
       const correctAnswers = content.answers.filter(
         (a) => a.answer === inputs[a.position]
       ).length;
-      const note: { note: number; coeficient: number } = calculateNote(
+
+      const { note, coeficient } = calculateNote(
         level,
         maxCorrectAnswers,
         correctAnswers
       );
-      setNote(note);
+      setNote({ note, coeficient });
       const result = await addExerciceResponse({
         exerciceId,
-        note: note.note,
-        coeficient: note.coeficient,
+        note,
+        coeficient,
         response: inputs,
       });
-      if (result.success) {
-        setIsValidated(true);
-      }
     } catch (error) {
       toast.error(
         "Une erreur est survenue lors de la validation de l'exercice"
@@ -118,7 +116,7 @@ export default function ExerciseGapFillText({
 
   return (
     <div className="relative flex flex-col gap-10">
-      {!isValidated ? (
+      {!isSuccess ? (
         <>
           <div
             className="leading-8"
@@ -148,8 +146,7 @@ export default function ExerciseGapFillText({
         <ExerciseResultGapFillText
           content={content}
           response={inputs}
-          note={note.note}
-          coeficient={note.coeficient}
+          note={note}
         />
       )}
     </div>

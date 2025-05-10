@@ -107,13 +107,15 @@ export const ExerciseResultGapFillText: React.FC<ExerciseResultTextProps> = ({
         <div className="text-center p-6 bg-gray-50 dark:bg-gray-700 rounded-lg">
           {userRole === "ADMIN" ? (
             <p className="text-red-600 dark:text-red-400 font-bold italic">
-              Le contenu de cet exercice n'est plus disponible car il a été
-              supprimé. Veuillez en informer l'élève si nécessaire.
+              {
+                "Le contenu de cet exercice n'est plus disponible car il a été supprimé. Veuillez en informer l'élève si nécessaire."
+              }
             </p>
           ) : (
             <p className="text-red-600 dark:text-red-400 font-bold italic">
-              Oups ! Cet exercice a été supprimé par votre professeur. N'hésitez
-              pas à lui demander plus d'infos 😥
+              {
+                "Oups ! Cet exercice a été supprimé par votre professeur. N'hésitez pas à lui demander plus d'infos 😥"
+              }
             </p>
           )}
         </div>

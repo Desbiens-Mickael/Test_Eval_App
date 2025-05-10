@@ -17,7 +17,7 @@ export default function StudentPreferencesForm({
         Mes préférences
       </h2>
       <AvatarUpload
-        mutate={mutate}
+        handleUpload={mutate}
         isPending={isPending}
         image={imgPath ?? ""}
       />

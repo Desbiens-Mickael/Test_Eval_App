@@ -77,7 +77,7 @@ export default function ListExercisesToDo({
               <CardFooter className="p-2">
                 <Button asChild className="w-full">
                   <Link href={`/eleve/exercices/${exercice.id}`}>
-                    Faire l'exercice
+                    {"Faire l'exercice"}
                   </Link>
                 </Button>
               </CardFooter>

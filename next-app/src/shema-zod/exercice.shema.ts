@@ -127,7 +127,11 @@ export const globalExerciceSchema = createExerciceBaseSchema.extend({
 // Définition des types d'entrée
 export type columnInput = z.infer<typeof columnSchema>;
 export type trueOrFalseInput = z.infer<typeof trueOrFalseShema>;
+export type contentTrueOrFalseInput = z.infer<typeof contentTrueOrFalseSchema>;
 export type multipleChoiceInput = z.infer<typeof multipleChoiceShema>;
+export type contentMultipleChoiceInput = z.infer<
+  typeof contentMultipleChoiceShema
+>;
 export type contentGapFillInput = z.infer<typeof contentGapFillSchema>;
 export type contentInput = z.infer<typeof contentSchema>;
 export type createExerciceFormInput = z.infer<typeof globalExerciceSchema>;

@@ -1,21 +1,21 @@
 import { NoteDisplay } from "@/components/note-display";
 import { useCurrentRole } from "@/hooks/use-current-role";
+import { gapFillTextResponseType } from "@/shema-zod/exercice-corection.shema";
 import { contentGapFillInput } from "@/shema-zod/exercice.shema";
+import { noteExerciceStudent } from "@/type/exercice";
 import React from "react";
 import { isInputPosition } from "../../../(lib)/utils";
 
 interface ExerciseResultTextProps {
   content?: contentGapFillInput;
-  response: { [key: number]: string };
-  note: number;
-  coeficient: number;
+  response: gapFillTextResponseType;
+  note: noteExerciceStudent;
 }
 
 export const ExerciseResultGapFillText: React.FC<ExerciseResultTextProps> = ({
   content,
   response,
   note,
-  coeficient,
 }) => {
   const userRole = useCurrentRole();
 
@@ -25,7 +25,11 @@ export const ExerciseResultGapFillText: React.FC<ExerciseResultTextProps> = ({
         <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
           Correction
         </h2>
-        <NoteDisplay note={note} coeficient={coeficient} className="text-md" />
+        <NoteDisplay
+          note={note.note}
+          coeficient={note.coeficient}
+          className="text-md"
+        />
       </div>
 
       {content && response ? (

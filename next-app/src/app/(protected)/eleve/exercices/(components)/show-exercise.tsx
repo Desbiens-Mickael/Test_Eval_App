@@ -5,10 +5,15 @@ import Loader from "@/components/loader";
 import PageTitle from "@/components/page-title";
 import { Badge } from "@/components/ui/badge";
 import useGetExerciceById from "@/hooks/queries/exercice/use-get-exercice-by-id";
-import { contentGapFillInput } from "@/shema-zod/exercice.shema";
+import {
+  contentGapFillInput,
+  contentTrueOrFalseInput,
+  trueOrFalseInput,
+} from "@/shema-zod/exercice.shema";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import ExerciseGapFillText from "./exerciseTypes/gap-fill-text/exercise-gap-fill-text";
+import ExerciceTrueFalse from "./exerciseTypes/true-false/exercice-true-false";
 
 interface ShowExerciseProps {
   exerciceId: string;
@@ -56,7 +61,13 @@ export default function ShowExercise({ exerciceId }: ShowExerciseProps) {
       </div>
 
       {data?.type === "Carte" && <ConstructionPanel />}
-      {data?.type === "Vrai ou Faux" && <ConstructionPanel />}
+      {data?.type === "Vrai ou Faux" && (
+        <ExerciceTrueFalse
+          exerciceId={data?.id}
+          level={data?.level}
+          content={data?.content as contentTrueOrFalseInput}
+        />
+      )}
       {data?.type === "Texte à trou" && (
         <ExerciseGapFillText
           exerciceId={data?.id}

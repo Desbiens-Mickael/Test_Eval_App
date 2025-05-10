@@ -18,13 +18,15 @@ export const cardResponseShema = z.object({
 
 export const multipleChoiceResponseShema = z.object({
   question: z.number(),
-  answer: z.number(),
+  answer: z.number().nullable(),
 });
 
-export const trueOrFalseResponseShema = z.object({
-  question: z.number(),
-  answer: z.boolean(),
-});
+export const trueOrFalseResponseShema = z.array(
+  z.object({
+    index: z.number(),
+    answer: z.boolean().nullable(),
+  })
+);
 
 const responseSchema = z.union([
   gapFillTextResponseShema,

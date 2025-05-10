@@ -14,13 +14,15 @@ interface Notification {
   itemId: string;
   createdAt: Date;
   createdStudentId?: string;
+  createdTeacherId?: string;
   handleOpen: () => void;
 }
 
 const getNotificationHref = (
   type: string,
   itemId: string,
-  createdStudentId?: string
+  createdStudentId?: string,
+  createdTeacherId?: string
 ) => {
   switch (type) {
     case "LESSON":
@@ -39,7 +41,7 @@ const getNotificationHref = (
       return {
         image: "/assets/images/new-completion.png",
         title: "Exercice terminé",
-        href: `/admin/eleves/${createdStudentId}/exercices/${itemId}`,
+        href: `/admin/eleves/${createdStudentId}/exercices/correction/${itemId}`,
       };
     default:
       return {
@@ -57,6 +59,7 @@ export default function NotificationItem({
   message,
   createdAt,
   createdStudentId,
+  createdTeacherId,
   handleOpen,
 }: Notification) {
   const { mutate } = useReadNotification();
@@ -70,7 +73,7 @@ export default function NotificationItem({
     itemId,
     createdStudentId
   );
-
+  console.log(createdStudentId);
   return (
     <div className="group">
       <DropdownMenuItem

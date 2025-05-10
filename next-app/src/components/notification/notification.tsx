@@ -88,6 +88,12 @@ export default function Notification() {
                       notification.notification.completionId ||
                       ""
                     }
+                    createdStudentId={
+                      notification.notification.createdByStudentId || ""
+                    }
+                    createdTeacherId={
+                      notification.notification.createdByTeacherId || ""
+                    }
                     handleOpen={handleOpen}
                   />
                 );

@@ -40,7 +40,7 @@ export type StudentExerciceById = {
   studentId: string;
   note: number;
   createdAt: Date;
-  response: string;
+  response: JsonValue;
   coeficient: number;
   exercice?: {
     id: string;
@@ -55,4 +55,14 @@ export type StudentExerciceById = {
     id: string;
     name: string;
   };
+};
+
+export type noteExerciceStudent = {
+  note: number;
+  coeficient: number;
+};
+
+export type baseResponseExercice = {
+  exerciceId: string;
+  level: string;
 };

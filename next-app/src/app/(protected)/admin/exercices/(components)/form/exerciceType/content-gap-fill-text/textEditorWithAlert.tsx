@@ -41,7 +41,7 @@ export default function TextEditorWithAlert({
       updateContent(words, filteredAnswers);
       handleToggleMode();
     },
-    [handleToggleMode, updateContent]
+    [handleToggleMode, updateContent, content.answers]
   );
 
   return (

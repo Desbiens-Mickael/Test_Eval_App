@@ -54,27 +54,36 @@ export const shuffleArray = <T>(array: T[]): T[] => {
 };
 
 // calcule la note d'un exercice
-export const calculateNote = (
-  level: string,
-  maxCorrectAnswers: number,
-  correctAnswers: number
-) => {
-  let coeficient: number;
-  switch (level) {
-    case "Facile":
-      coeficient = 5;
-      break;
-    case "Difficile":
-      coeficient = 10;
-      break;
-    case "Très difficile":
-      coeficient = 20;
-      break;
-    default:
-      coeficient = 5; // Coeficient par defaut
+export const calculateNote = ({
+  level,
+  maxCorrectAnswers,
+  correctAnswers,
+}: {
+  level: string;
+  maxCorrectAnswers: number;
+  correctAnswers: number;
+}) => {
+  const coefMap: Record<string, number> = {
+    Facile: 5,
+    Difficile: 10,
+    "Très difficile": 20,
+  };
+
+  const coeficient = coefMap[level] ?? 5;
+
+  if (maxCorrectAnswers === 0) {
+    return {
+      note: 0,
+      coeficient,
+    };
   }
-  const result = ((correctAnswers / maxCorrectAnswers) * coeficient).toFixed(2);
-  return { note: Number(result), coeficient: coeficient };
+
+  const result = (correctAnswers / maxCorrectAnswers) * coeficient;
+
+  return {
+    note: Number(result.toFixed(2)),
+    coeficient,
+  };
 };
 
 // formate une date au format français jj/mm/yyyy

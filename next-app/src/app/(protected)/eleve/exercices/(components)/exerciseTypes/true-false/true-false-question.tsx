@@ -61,4 +61,6 @@ const TrueFalseQuestion = React.memo(
   }
 );
 
+TrueFalseQuestion.displayName = "TrueFalseQuestion";
+
 export default TrueFalseQuestion;

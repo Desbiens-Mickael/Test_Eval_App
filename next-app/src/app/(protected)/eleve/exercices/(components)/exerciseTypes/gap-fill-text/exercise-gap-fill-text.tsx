@@ -52,11 +52,11 @@ export default function ExerciseGapFillText({
         (a) => a.answer === inputs[a.position]
       ).length;
 
-      const { note, coeficient } = calculateNote(
+      const { note, coeficient } = calculateNote({
         level,
         maxCorrectAnswers,
-        correctAnswers
-      );
+        correctAnswers,
+      });
       setNote({ note, coeficient });
       const result = await addExerciceResponse({
         exerciceId,

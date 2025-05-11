@@ -5,16 +5,19 @@ import PageTitle from "@/components/page-title";
 import { useGetStudentExerciceById } from "@/hooks/queries/exercice/use-get-student-exercice-by-id";
 import {
   gapFillTextResponseType,
+  multipleChoiceResponseType,
   trueOrFalseResponseType,
 } from "@/shema-zod/exercice-corection.shema";
 import {
   contentGapFillInput,
+  contentMultipleChoiceInput,
   contentTrueOrFalseInput,
 } from "@/shema-zod/exercice.shema";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { ExerciseResultGapFillText } from "../../(components)/exerciseTypes/gap-fill-text/exercise-result-gap-fill-text";
 import { ExerciceResultTrueOrFalse } from "../../(components)/exerciseTypes/true-false/exercice-result-true-or-false";
+import ExerciceResultMultipleChoice from "../../(components)/exerciseTypes/multiple-choice/exercice-result-multiple-choice";
 
 interface ShowCorrectionProps {
   studentExerciceId: string;
@@ -76,7 +79,14 @@ export default function ShowCorrection({
         />
       )}
       {data?.exercice?.type.name === "Choix multiple" && (
-        <div>Choix multiple</div>
+        <ExerciceResultMultipleChoice
+          content={data?.exercice?.content as contentMultipleChoiceInput}
+          response={data?.response as multipleChoiceResponseType}
+          note={{
+            note: data?.note,
+            coeficient: data?.coeficient,
+          }}
+        />
       )}
     </div>
   );

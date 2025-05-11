@@ -1,11 +1,10 @@
-import { contentTrueOrFalseInput } from "@/shema-zod/exercice.shema";
-import { useState } from "react";
-import { trueOrFalseResponseType } from "@/shema-zod/exercice-corection.shema";
-import { noteExerciceStudent } from "@/type/exercice";
 import { useAddExerciceResponse } from "@/hooks/mutations/exercice/use-add-exercice-response";
-import { toast } from "sonner";
-import { useCallback } from "react";
 import { calculateNote } from "@/lib/utils";
+import { trueOrFalseResponseType } from "@/shema-zod/exercice-corection.shema";
+import { contentTrueOrFalseInput } from "@/shema-zod/exercice.shema";
+import { noteExerciceStudent } from "@/type/exercice";
+import { useCallback, useState } from "react";
+import { toast } from "sonner";
 
 // Hook personnalisé pour gérer les réponses
 const useTrueFalseExercice = (
@@ -58,11 +57,11 @@ const useTrueFalseExercice = (
           (a) => a.answer === content[a.index].answer
         ).length;
 
-        const { note, coeficient } = calculateNote(
+        const { note, coeficient } = calculateNote({
           level,
           maxCorrectAnswers,
-          correctAnswers
-        );
+          correctAnswers,
+        });
 
         setNote({ note, coeficient });
         await addExerciceResponse({

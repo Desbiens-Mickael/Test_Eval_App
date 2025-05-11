@@ -9,13 +9,13 @@ import { Button } from "@/components/ui/button";
 import { ExerciceResultTrueOrFalse } from "./exercice-result-true-or-false";
 
 // Hooks
+import useTrueFalseExercice from "./hook/use-true-false-Exercice";
 
 // Types
 import { contentTrueOrFalseInput } from "@/shema-zod/exercice.shema";
 import { baseResponseExercice } from "@/type/exercice";
 
 // Utilitaires
-import useTrueFalseExercice from "../../../(hook)/use-true-false-Exercice";
 import TrueFalseQuestion from "./true-false-question";
 
 interface ExerciceTrueFalseProps extends baseResponseExercice {

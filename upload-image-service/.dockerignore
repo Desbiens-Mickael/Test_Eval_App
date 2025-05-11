@@ -9,3 +9,4 @@ uploads/
 .vscode/
 Dockerfile
 Dockerfile.prod
+/.windsurf

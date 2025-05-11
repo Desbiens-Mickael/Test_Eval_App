@@ -7,12 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import useGetExerciceById from "@/hooks/queries/exercice/use-get-exercice-by-id";
 import {
   contentGapFillInput,
+  contentMultipleChoiceInput,
   contentTrueOrFalseInput,
-  trueOrFalseInput,
 } from "@/shema-zod/exercice.shema";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import ExerciseGapFillText from "./exerciseTypes/gap-fill-text/exercise-gap-fill-text";
+import ExerciceMultipleChoice from "./exerciseTypes/multiple-choice/exercice-multiple-choice";
 import ExerciceTrueFalse from "./exerciseTypes/true-false/exercice-true-false";
 
 interface ShowExerciseProps {
@@ -75,7 +76,13 @@ export default function ShowExercise({ exerciceId }: ShowExerciseProps) {
           content={data?.content as contentGapFillInput}
         />
       )}
-      {data?.type === "Choix multiple" && <ConstructionPanel />}
+      {data?.type === "Choix multiple" && (
+        <ExerciceMultipleChoice
+          exerciceId={data?.id}
+          level={data?.level}
+          content={data?.content as contentMultipleChoiceInput}
+        />
+      )}
     </>
   );
 }

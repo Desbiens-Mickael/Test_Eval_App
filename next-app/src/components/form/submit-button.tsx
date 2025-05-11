@@ -9,6 +9,7 @@ interface submitButtonProps {
   className?: string;
   form?: string;
   onClick?: () => void;
+  disabled?: boolean;
 }
 
 export default function SubmitButton({
@@ -18,12 +19,13 @@ export default function SubmitButton({
   isLoading = false,
   form,
   onClick,
+  disabled = false,
 }: submitButtonProps) {
   return (
     <Button
       form={form}
       onClick={onClick}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
       type="submit"
       className={cn(
         "flex w-full text-lg font-semibold px-5 cursor-pointer",

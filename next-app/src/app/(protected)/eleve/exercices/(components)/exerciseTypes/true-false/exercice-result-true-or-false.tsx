@@ -2,7 +2,6 @@ import { NoteDisplay } from "@/components/note-display";
 import { trueOrFalseResponseType } from "@/shema-zod/exercice-corection.shema";
 import { contentTrueOrFalseInput } from "@/shema-zod/exercice.shema";
 import { noteExerciceStudent } from "@/type/exercice";
-import React from "react";
 
 interface ExerciceResultTrueOrFalseProps {
   content: contentTrueOrFalseInput;
@@ -10,9 +9,11 @@ interface ExerciceResultTrueOrFalseProps {
   note: noteExerciceStudent;
 }
 
-export const ExerciceResultTrueOrFalse: React.FC<
-  ExerciceResultTrueOrFalseProps
-> = ({ content, response, note }) => {
+export const ExerciceResultTrueOrFalse = ({
+  content,
+  response,
+  note,
+}: ExerciceResultTrueOrFalseProps) => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 space-y-6">
       <div className="flex justify-between items-center border-b pb-4 dark:border-gray-700">

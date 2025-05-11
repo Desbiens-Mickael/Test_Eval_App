@@ -16,10 +16,14 @@ export const cardResponseShema = z.object({
   card: z.number(),
 });
 
-export const multipleChoiceResponseShema = z.object({
-  question: z.number(),
-  answer: z.number().nullable(),
+const multipleChoiceResponseItemShema = z.object({
+  questionIndex: z.number(),
+  selectedAnswers: z.array(z.number()),
 });
+
+export const multipleChoiceResponseShema = z.array(
+  multipleChoiceResponseItemShema
+);
 
 export const trueOrFalseResponseShema = z.array(
   z.object({
@@ -41,6 +45,9 @@ export const globalExerciceCorectionShema = exerciceCorectionBaseShema.extend({
 
 export type gapFillTextResponseType = z.infer<typeof gapFillTextResponseShema>;
 export type cardResponseType = z.infer<typeof cardResponseShema>;
+export type multipleChoiceResponseItemType = z.infer<
+  typeof multipleChoiceResponseItemShema
+>;
 export type multipleChoiceResponseType = z.infer<
   typeof multipleChoiceResponseShema
 >;

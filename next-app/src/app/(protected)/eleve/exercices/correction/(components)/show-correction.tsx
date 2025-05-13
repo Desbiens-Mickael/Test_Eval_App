@@ -18,10 +18,10 @@ import {
 } from "@/shema-zod/exercice.shema";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import ExerciceResultCard from "../../(components)/exerciseTypes/card/exercice-result-card";
-import { ExerciseResultGapFillText } from "../../(components)/exerciseTypes/gap-fill-text/exercise-result-gap-fill-text";
-import ExerciceResultMultipleChoice from "../../(components)/exerciseTypes/multiple-choice/exercice-result-multiple-choice";
-import { ExerciceResultTrueOrFalse } from "../../(components)/exerciseTypes/true-false/exercice-result-true-or-false";
+import ExerciceResultCard from "./exercice-result-card";
+import ExerciseResultGapFillText from "./exercise-result-gap-fill-text";
+import ExerciceResultMultipleChoice from "./exercice-result-multiple-choice";
+import ExerciceResultTrueOrFalse from "./exercice-result-true-or-false";
 
 interface ShowCorrectionProps {
   studentExerciceId: string;

@@ -6,10 +6,10 @@ interface ExerciceResultTrueOrFalseProps {
   response: trueOrFalseResponseType;
 }
 
-export const ExerciceResultTrueOrFalse = ({
+export default function ExerciceResultTrueOrFalse({
   content,
   response,
-}: ExerciceResultTrueOrFalseProps) => {
+}: ExerciceResultTrueOrFalseProps) {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 space-y-6">
       <div className="space-y-6">
@@ -69,4 +69,4 @@ export const ExerciceResultTrueOrFalse = ({
       </div>
     </div>
   );
-};
+}

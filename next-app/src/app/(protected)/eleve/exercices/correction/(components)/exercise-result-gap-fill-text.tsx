@@ -1,18 +1,17 @@
+import { isInputPosition } from "@/app/(protected)/eleve/exercices/(lib)/utils";
 import { useCurrentRole } from "@/hooks/use-current-role";
 import { gapFillTextResponseType } from "@/shema-zod/exercice-corection.shema";
 import { contentGapFillInput } from "@/shema-zod/exercice.shema";
-import React from "react";
-import { isInputPosition } from "../../../(lib)/utils";
 
 interface ExerciseResultTextProps {
   content?: contentGapFillInput;
   response: gapFillTextResponseType;
 }
 
-export const ExerciseResultGapFillText: React.FC<ExerciseResultTextProps> = ({
+export default function ExerciseResultGapFillText({
   content,
   response,
-}) => {
+}: ExerciseResultTextProps) {
   const userRole = useCurrentRole();
 
   return (
@@ -117,4 +116,4 @@ export const ExerciseResultGapFillText: React.FC<ExerciseResultTextProps> = ({
       )}
     </div>
   );
-};
+}

@@ -6,26 +6,23 @@ import { ExerciceResultMultipleChoiceProps } from "./types";
 export default function ExerciceResultMultipleChoice({
   content,
   response,
-  note,
 }: ExerciceResultMultipleChoiceProps) {
   // Cherche si la réponse answerIndex a été sélectionnée pour la question questionIndex
   const isAnswerSelected = (questionIndex: number, answerIndex: number) => {
-    const answerObj = response.find(r => r.questionIndex === questionIndex);
+    const answerObj = response.find((r) => r.questionIndex === questionIndex);
     return answerObj ? answerObj.selectedAnswers.includes(answerIndex) : false;
   };
 
   return (
     <div className="w-full max-w-2xl mx-auto p-4 space-y-8">
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold mb-4 text-center">
-          Résultat : {note.note}/{note.coeficient}
-        </h2>
-      </div>
-
       {content.map((question, questionIndex) => {
         // On récupère les réponses sélectionnées pour cette question
-        const answerObj = response.find(r => r.questionIndex === questionIndex);
-        const selectedAnswers = new Set<number>(answerObj ? answerObj.selectedAnswers : []);
+        const answerObj = response.find(
+          (r) => r.questionIndex === questionIndex
+        );
+        const selectedAnswers = new Set<number>(
+          answerObj ? answerObj.selectedAnswers : []
+        );
         const correctAnswers = new Set(
           question.answers
             .map((a, index) => (a.isCorrect ? index : -1))

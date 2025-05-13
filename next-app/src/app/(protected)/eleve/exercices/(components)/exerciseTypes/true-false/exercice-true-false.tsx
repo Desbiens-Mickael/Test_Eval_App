@@ -1,12 +1,9 @@
 "use client";
 
-import { RefreshCcw } from "lucide-react";
 import { useCallback } from "react";
 
 // Composants
 import SubmitButton from "@/components/form/submit-button";
-import { Button } from "@/components/ui/button";
-import { ExerciceResultTrueOrFalse } from "./exercice-result-true-or-false";
 
 // Hooks
 import useTrueFalseExercice from "./hook/use-true-false-Exercice";
@@ -14,8 +11,10 @@ import useTrueFalseExercice from "./hook/use-true-false-Exercice";
 // Types
 import { contentTrueOrFalseInput } from "@/shema-zod/exercice.shema";
 import { baseResponseExercice } from "@/type/exercice";
+import { redirect } from "next/navigation";
 
 // Utilitaires
+import ButtonReset from "@/components/button-reset";
 import TrueFalseQuestion from "./true-false-question";
 
 interface ExerciceTrueFalseProps extends baseResponseExercice {
@@ -30,10 +29,10 @@ export default function ExerciceTrueFalse({
 }: ExerciceTrueFalseProps) {
   const {
     response,
-    note,
     isFullFilled,
     isPending,
     isSuccess,
+    data,
     updateResponse,
     submitResponses,
     resetResponses,
@@ -43,14 +42,8 @@ export default function ExerciceTrueFalse({
     submitResponses(exerciceId);
   }, [submitResponses, exerciceId]);
 
-  if (isSuccess) {
-    return (
-      <ExerciceResultTrueOrFalse
-        content={content}
-        response={response}
-        note={note}
-      />
-    );
+  if (isSuccess && data?.data) {
+    redirect(`/eleve/exercices/correction/${data?.data.id}`);
   }
 
   return (
@@ -72,15 +65,7 @@ export default function ExerciceTrueFalse({
           texte="Soumettre"
           isLoading={isPending}
         />
-        <Button
-          title="Reinitialiser"
-          size="icon"
-          onClick={resetResponses}
-          className="bg-background text-primary hover:bg-primary hover:text-background"
-          disabled={isPending}
-        >
-          <RefreshCcw className="h-6 w-6" />
-        </Button>
+        <ButtonReset onClick={resetResponses} isPending={isPending} />
       </div>
     </div>
   );

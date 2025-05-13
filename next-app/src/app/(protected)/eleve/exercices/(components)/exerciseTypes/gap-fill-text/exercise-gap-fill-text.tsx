@@ -1,17 +1,16 @@
 "use client";
 
+import ButtonReset from "@/components/button-reset";
 import SubmitButton from "@/components/form/submit-button";
-import { Button } from "@/components/ui/button";
 import { useAddExerciceResponse } from "@/hooks/mutations/exercice/use-add-exercice-response";
 import { calculateNote } from "@/lib/utils";
 import { gapFillTextResponseType } from "@/shema-zod/exercice-corection.shema";
 import { contentGapFillInput } from "@/shema-zod/exercice.shema";
 import { baseResponseExercice, noteExerciceStudent } from "@/type/exercice";
-import { RefreshCcw } from "lucide-react";
+import { redirect } from "next/navigation";
 import React, { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { isInputPosition } from "../../../(lib)/utils";
-import { ExerciseResultGapFillText } from "./exercise-result-gap-fill-text";
 
 interface ExerciseGapFillTextProps extends baseResponseExercice {
   content: contentGapFillInput;
@@ -32,6 +31,7 @@ export default function ExerciseGapFillText({
     mutateAsync: addExerciceResponse,
     isPending,
     isSuccess,
+    data,
   } = useAddExerciceResponse();
 
   const handleInputChange = useCallback(
@@ -58,7 +58,7 @@ export default function ExerciseGapFillText({
         correctAnswers,
       });
       setNote({ note, coeficient });
-      const result = await addExerciceResponse({
+      await addExerciceResponse({
         exerciceId,
         note,
         coeficient,
@@ -114,41 +114,29 @@ export default function ExerciseGapFillText({
     });
   };
 
+  if (isSuccess && data?.data) {
+    redirect(`/eleve/exercices/correction/${data?.data.id}`);
+  }
+
   return (
     <div className="relative flex flex-col gap-10">
-      {!isSuccess ? (
-        <>
-          <div
-            className="leading-8"
-            style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
-          >
-            {replacePlaceholderByInputHTML()}
-          </div>
-          <div className="flex justify-between items-center">
-            <SubmitButton
-              onClick={handleSubmit}
-              className="w-fit"
-              texte="Soumettre"
-              isLoading={isPending}
-            />
-            <Button
-              title="Reinitialiser"
-              size="icon"
-              onClick={handleReset}
-              className="bg-background text-primary hover:bg-primary hover:text-background"
-              disabled={isPending}
-            >
-              <RefreshCcw className="h-6 w-6" />
-            </Button>
-          </div>
-        </>
-      ) : (
-        <ExerciseResultGapFillText
-          content={content}
-          response={inputs}
-          note={note}
-        />
-      )}
+      <>
+        <div
+          className="leading-8"
+          style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
+        >
+          {replacePlaceholderByInputHTML()}
+        </div>
+        <div className="flex justify-between items-center">
+          <SubmitButton
+            onClick={handleSubmit}
+            className="w-fit"
+            texte="Soumettre"
+            isLoading={isPending}
+          />
+          <ButtonReset onClick={handleReset} isPending={isPending} />
+        </div>
+      </>
     </div>
   );
 }

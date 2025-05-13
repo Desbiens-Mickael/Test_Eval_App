@@ -1,10 +1,12 @@
 // store.js
+import { stringToSlug } from "@/lib/utils";
+import { cardItemInput } from "@/shema-zod/exercice.shema";
 import { toast } from "sonner";
 import { create } from "zustand";
 
 export interface Column {
   column: string;
-  cards: string[];
+  cards: cardItemInput[];
 }
 
 interface Store {
@@ -20,10 +22,10 @@ interface Store {
   addCard: (columnIndex: number, card: string) => void;
   updateCard: (
     columnIndex: number,
-    cardIndex: number,
+    cardIndex: string,
     newValue: string
   ) => void;
-  removeCard: (columnIndex: number, cardIndex: number) => void;
+  removeCard: (columnIndex: number, cardIndex: string) => void;
 }
 
 const useContentCardStore = create<Store>((set, get) => ({
@@ -105,16 +107,26 @@ const useContentCardStore = create<Store>((set, get) => ({
     }
 
     // Vérification de l'absence de cartes vides
-    if (columns[columnIndex].cards.includes("")) {
+    if (columns[columnIndex].cards.includes({ id: "", content: "" })) {
       toast.error(
         "Veuillez remplir toutes les cartes existantes dans la colonne avant d'ajouter une nouvelle."
       );
       return;
     }
 
-    const updatedColumns = columns.map((col, idx) =>
-      idx === columnIndex ? { ...col, cards: [...col.cards, card.trim()] } : col
-    );
+    const updatedColumns = columns.map((col, idx) => {
+      if (idx === columnIndex) {
+        const columnNameFormated = stringToSlug(col.column);
+
+        const cardId = `${columnNameFormated}-${col.cards.length}`;
+        return {
+          ...col,
+          cards: [...col.cards, { id: cardId, content: card.trim() }],
+        };
+      } else {
+        return col;
+      }
+    });
 
     set({ columns: updatedColumns });
     onChange?.(updatedColumns);
@@ -130,7 +142,7 @@ const useContentCardStore = create<Store>((set, get) => ({
     }
 
     const column = columns[columnIndex];
-    if (cardIndex < 0 || cardIndex >= column.cards.length) {
+    if (cardIndex === "" || cardIndex === undefined) {
       toast.error("Index de carte invalide.");
       return;
     }
@@ -140,9 +152,9 @@ const useContentCardStore = create<Store>((set, get) => ({
     // Vérification de l'absence de cartes en double dans la même colonne
     if (
       column.cards.some(
-        (card, index) =>
-          index !== cardIndex &&
-          card.trim().toLowerCase() === trimmedValue.toLowerCase()
+        (card) =>
+          card.id !== cardIndex &&
+          card.content.trim().toLowerCase() === trimmedValue.toLowerCase()
       )
     ) {
       toast.error("Une carte avec cette valeur existe déjà dans la colonne.");
@@ -150,7 +162,7 @@ const useContentCardStore = create<Store>((set, get) => ({
         index === columnIndex
           ? {
               ...col,
-              cards: col.cards.filter((card, idx) => idx !== cardIndex),
+              cards: col.cards.filter((card) => card.id !== cardIndex),
             }
           : col
       );
@@ -159,8 +171,10 @@ const useContentCardStore = create<Store>((set, get) => ({
         index === columnIndex
           ? {
               ...col,
-              cards: col.cards.map((card, idx) =>
-                idx === cardIndex ? trimmedValue : card
+              cards: col.cards.map((card) =>
+                card.id === cardIndex
+                  ? { ...card, content: trimmedValue }
+                  : card
               ),
             }
           : col
@@ -181,7 +195,7 @@ const useContentCardStore = create<Store>((set, get) => ({
     }
     const column = columns[columnIndex];
 
-    if (cardIndex < 0 || cardIndex >= column.cards.length) {
+    if (cardIndex === "" || cardIndex === undefined) {
       toast.error("Index de carte invalide.");
       return;
     }
@@ -190,7 +204,7 @@ const useContentCardStore = create<Store>((set, get) => ({
       index === columnIndex
         ? {
             ...col,
-            cards: col.cards.filter((_, i) => i !== cardIndex),
+            cards: col.cards.filter((card) => card.id !== cardIndex),
           }
         : col
     );

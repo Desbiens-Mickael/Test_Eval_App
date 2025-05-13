@@ -24,6 +24,7 @@ const useTrueFalseExercice = (
     mutateAsync: addExerciceResponse,
     isPending,
     isSuccess,
+    data,
   } = useAddExerciceResponse();
 
   const validateResponses = useCallback(() => {
@@ -99,6 +100,7 @@ const useTrueFalseExercice = (
     isFullFilled,
     isPending,
     isSuccess,
+    data,
     updateResponse,
     submitResponses,
     resetResponses,

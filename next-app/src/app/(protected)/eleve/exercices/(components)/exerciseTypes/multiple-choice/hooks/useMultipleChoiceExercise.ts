@@ -24,6 +24,7 @@ export const useMultipleChoiceExercise = ({
     mutateAsync: addExerciceResponse,
     isPending,
     isSuccess,
+    data,
   } = useAddExerciceResponse();
 
   // Fonction pour mettre à jour la sélection d'une réponse
@@ -129,6 +130,7 @@ export const useMultipleChoiceExercise = ({
     note,
     isPending,
     isSuccess,
+    data,
     updateAnswerSelection,
     handleExerciseSubmission,
   };

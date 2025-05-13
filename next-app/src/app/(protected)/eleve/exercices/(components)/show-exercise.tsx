@@ -1,17 +1,18 @@
 "use client";
 
-import { ConstructionPanel } from "@/components/construction-panel";
 import Loader from "@/components/loader";
 import PageTitle from "@/components/page-title";
 import { Badge } from "@/components/ui/badge";
 import useGetExerciceById from "@/hooks/queries/exercice/use-get-exercice-by-id";
 import {
+  contentCardInput,
   contentGapFillInput,
   contentMultipleChoiceInput,
   contentTrueOrFalseInput,
 } from "@/shema-zod/exercice.shema";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import ExerciceCard from "./exerciseTypes/card/exercice-card";
 import ExerciseGapFillText from "./exerciseTypes/gap-fill-text/exercise-gap-fill-text";
 import ExerciceMultipleChoice from "./exerciseTypes/multiple-choice/exercice-multiple-choice";
 import ExerciceTrueFalse from "./exerciseTypes/true-false/exercice-true-false";
@@ -61,7 +62,13 @@ export default function ShowExercise({ exerciceId }: ShowExerciseProps) {
         </div>
       </div>
 
-      {data?.type === "Carte" && <ConstructionPanel />}
+      {data?.type === "Carte" && (
+        <ExerciceCard
+          exerciceId={data?.id}
+          level={data?.level}
+          content={data?.content as contentCardInput}
+        />
+      )}
       {data?.type === "Vrai ou Faux" && (
         <ExerciceTrueFalse
           exerciceId={data?.id}

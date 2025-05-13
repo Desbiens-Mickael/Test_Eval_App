@@ -23,8 +23,6 @@ export const NoteDisplay: React.FC<NoteDisplayProps> = ({
     <div
       className={cn(
         "inline-flex items-center gap-2 px-3 py-1 rounded-full",
-        "bg-gray-100 dark:bg-gray-700",
-        "text-gray-800 dark:text-gray-200",
         "text-sm font-semibold",
         className
       )}

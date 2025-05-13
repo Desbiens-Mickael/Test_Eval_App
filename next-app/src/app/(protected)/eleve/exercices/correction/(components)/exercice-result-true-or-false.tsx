@@ -1,28 +1,17 @@
-import { NoteDisplay } from "@/components/note-display";
 import { trueOrFalseResponseType } from "@/shema-zod/exercice-corection.shema";
 import { contentTrueOrFalseInput } from "@/shema-zod/exercice.shema";
-import { noteExerciceStudent } from "@/type/exercice";
 
 interface ExerciceResultTrueOrFalseProps {
   content: contentTrueOrFalseInput;
   response: trueOrFalseResponseType;
-  note: noteExerciceStudent;
 }
 
-export const ExerciceResultTrueOrFalse = ({
+export default function ExerciceResultTrueOrFalse({
   content,
   response,
-  note,
-}: ExerciceResultTrueOrFalseProps) => {
+}: ExerciceResultTrueOrFalseProps) {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 space-y-6">
-      <div className="flex justify-between items-center border-b pb-4 dark:border-gray-700">
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white">
-          Correction
-        </h2>
-        <NoteDisplay note={note.note} coeficient={note.coeficient} />
-      </div>
-
       <div className="space-y-6">
         {content.map((question, index) => (
           <div
@@ -80,4 +69,4 @@ export const ExerciceResultTrueOrFalse = ({
       </div>
     </div>
   );
-};
+}

@@ -3,7 +3,7 @@ import { calculateNote } from "@/lib/utils";
 import { cardResponseItemType } from "@/shema-zod/exercice-corection.shema";
 import { cardItemInput, contentCardInput } from "@/shema-zod/exercice.shema";
 import { DropResult } from "@hello-pangea/dnd";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { shuffleArray } from "../lib/lib";
 
 interface UseCardExerciseProps {
@@ -27,15 +27,15 @@ export function useCardExercise({
     data,
   } = useAddExerciceResponse();
 
-  const resetExercise = () => {
+  const resetExercise = useCallback(() => {
     const allCards = content.flatMap((col) => col.cards);
     setStartCards(shuffleArray(allCards));
     setResponse(content.map((col) => ({ column: col.column, cards: [] })));
-  };
+  }, [content]);
 
   useEffect(() => {
     resetExercise();
-  }, [content]);
+  }, [content, resetExercise]);
 
   const handleDragEnd = (result: DropResult) => {
     const { source, destination } = result;

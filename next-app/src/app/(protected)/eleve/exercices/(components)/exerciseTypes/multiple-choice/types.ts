@@ -4,7 +4,7 @@ import {
   contentMultipleChoiceInput,
   multipleChoiceInput,
 } from "@/shema-zod/exercice.shema";
-import { baseResponseExercice, noteExerciceStudent } from "@/type/exercice";
+import { baseResponseExercice } from "@/type/exercice";
 
 export interface MultipleChoiceExerciseProps extends baseResponseExercice {
   content: contentMultipleChoiceInput;
@@ -26,5 +26,4 @@ export interface QuestionCardProps {
 export interface ExerciceResultMultipleChoiceProps {
   content: contentMultipleChoiceInput;
   response: multipleChoiceResponseType;
-  note: noteExerciceStudent;
 }

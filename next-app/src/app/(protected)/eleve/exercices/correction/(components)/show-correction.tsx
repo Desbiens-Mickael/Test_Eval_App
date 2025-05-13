@@ -1,23 +1,27 @@
 "use client";
 
 import Loader from "@/components/loader";
+import { NoteDisplay } from "@/components/note-display";
 import PageTitle from "@/components/page-title";
 import { useGetStudentExerciceById } from "@/hooks/queries/exercice/use-get-student-exercice-by-id";
 import {
+  cardResponseItemType,
   gapFillTextResponseType,
   multipleChoiceResponseType,
   trueOrFalseResponseType,
 } from "@/shema-zod/exercice-corection.shema";
 import {
+  contentCardInput,
   contentGapFillInput,
   contentMultipleChoiceInput,
   contentTrueOrFalseInput,
 } from "@/shema-zod/exercice.shema";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import ExerciceResultCard from "../../(components)/exerciseTypes/card/exercice-result-card";
 import { ExerciseResultGapFillText } from "../../(components)/exerciseTypes/gap-fill-text/exercise-result-gap-fill-text";
-import { ExerciceResultTrueOrFalse } from "../../(components)/exerciseTypes/true-false/exercice-result-true-or-false";
 import ExerciceResultMultipleChoice from "../../(components)/exerciseTypes/multiple-choice/exercice-result-multiple-choice";
+import { ExerciceResultTrueOrFalse } from "../../(components)/exerciseTypes/true-false/exercice-result-true-or-false";
 
 interface ShowCorrectionProps {
   studentExerciceId: string;
@@ -57,35 +61,35 @@ export default function ShowCorrection({
       <div className="flex flex-col gap-2 mb-4">
         {data?.exercice?.description}
       </div>
+      <div className="w-full flex justify-center items-center bg-white rounded-lg shadow-md p-6">
+        <NoteDisplay
+          note={data?.note}
+          coeficient={data?.coeficient}
+          className="text-2xl font-bold"
+        />
+      </div>
       {data?.exercice?.type.name === "Texte à trou" && (
         <ExerciseResultGapFillText
           content={data?.exercice?.content as contentGapFillInput}
           response={data?.response as gapFillTextResponseType}
-          note={{
-            note: data?.note,
-            coeficient: data?.coeficient,
-          }}
         />
       )}
-      {data?.exercice?.type.name === "Carte" && <div>Carte</div>}
+      {data?.exercice?.type.name === "Carte" && (
+        <ExerciceResultCard
+          content={data?.exercice?.content as contentCardInput}
+          response={data?.response as cardResponseItemType[]}
+        />
+      )}
       {data?.exercice?.type.name === "Vrai ou Faux" && (
         <ExerciceResultTrueOrFalse
           content={data?.exercice?.content as contentTrueOrFalseInput}
           response={data?.response as trueOrFalseResponseType}
-          note={{
-            note: data?.note,
-            coeficient: data?.coeficient,
-          }}
         />
       )}
       {data?.exercice?.type.name === "Choix multiple" && (
         <ExerciceResultMultipleChoice
           content={data?.exercice?.content as contentMultipleChoiceInput}
           response={data?.response as multipleChoiceResponseType}
-          note={{
-            note: data?.note,
-            coeficient: data?.coeficient,
-          }}
         />
       )}
     </div>

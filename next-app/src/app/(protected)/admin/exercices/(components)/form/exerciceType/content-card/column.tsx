@@ -92,13 +92,13 @@ const Column = memo(({ column, columnIndex, isEditing }: ColumnProps) => {
         )}
       </div>
       <div className="min-h-[80px] flex flex-col py-2 gap-2">
-        {column.cards.map((card, cardIndex) => (
+        {column.cards.map((card) => (
           <Card
             isEditing={isEditing}
-            key={card}
+            key={card.id}
             columnIndex={columnIndex}
-            cardIndex={cardIndex}
-            card={card}
+            cardIndex={card.id}
+            contentCard={card.content}
           />
         ))}
       </div>

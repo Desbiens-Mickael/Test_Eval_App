@@ -1,10 +1,14 @@
 import { z } from "zod";
+const cardItemSchema = z.object({
+  id: z.string(),
+  content: z.string().min(1, "Les cartes doivent contenir des valeurs"),
+});
 
 // Schéma des differents types de base pour la création des leçons
 const columnSchema = z.object({
   column: z.string().min(1, "La colonne ne peut pas etre vide"),
   cards: z
-    .array(z.string().min(1, "Les cartes doivent contenir des valeurs"))
+    .array(cardItemSchema)
     .nonempty("Chaque colonne doit avoir au moins une carte"),
 });
 
@@ -53,7 +57,7 @@ export const contentCardSchema = z
       (item) =>
         item.column.trim() === "" ||
         item.cards.length === 0 ||
-        item.cards.some((card) => card.trim() === "")
+        item.cards.some((card) => card.content.trim() === "")
     );
     if (hasInvalidColumnOrCards) {
       // Ajoute un message d'erreur personnalisé si une colonne ou une carte est invalide
@@ -125,7 +129,9 @@ export const globalExerciceSchema = createExerciceBaseSchema.extend({
 });
 
 // Définition des types d'entrée
+export type cardItemInput = z.infer<typeof cardItemSchema>;
 export type columnInput = z.infer<typeof columnSchema>;
+export type contentCardInput = z.infer<typeof contentCardSchema>;
 export type trueOrFalseInput = z.infer<typeof trueOrFalseShema>;
 export type contentTrueOrFalseInput = z.infer<typeof contentTrueOrFalseSchema>;
 export type multipleChoiceInput = z.infer<typeof multipleChoiceShema>;

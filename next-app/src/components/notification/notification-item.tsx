@@ -73,7 +73,7 @@ export default function NotificationItem({
     itemId,
     createdStudentId
   );
-  console.log(createdStudentId);
+
   return (
     <div className="group">
       <DropdownMenuItem

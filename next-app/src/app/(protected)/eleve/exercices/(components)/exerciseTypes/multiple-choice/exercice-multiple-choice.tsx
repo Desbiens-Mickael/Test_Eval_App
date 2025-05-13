@@ -1,8 +1,7 @@
 "use client";
 
 import SubmitButton from "@/components/form/submit-button";
-import { useEffect } from "react";
-import ExerciceResultMultipleChoice from "./exercice-result-multiple-choice";
+import { redirect } from "next/navigation";
 import { useMultipleChoiceExercise } from "./hooks/useMultipleChoiceExercise";
 import QuestionCard from "./question-card";
 import { MultipleChoiceExerciseProps } from "./types";
@@ -14,9 +13,9 @@ export default function ExerciceMultipleChoice({
 }: MultipleChoiceExerciseProps) {
   const {
     selectedAnswers,
-    note,
     isPending,
     isSuccess,
+    data,
     updateAnswerSelection,
     handleExerciseSubmission,
   } = useMultipleChoiceExercise({
@@ -25,40 +24,30 @@ export default function ExerciceMultipleChoice({
     level,
   });
 
-  useEffect(() => {
-    if (isSuccess) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  }, [isSuccess]);
+  if (isSuccess && data?.data) {
+    redirect(`/eleve/exercices/correction/${data?.data.id}`);
+  }
 
   return (
     <>
-      {!isSuccess ? (
-        <div className="w-full max-w-2xl mx-auto p-4 space-y-8">
-          {content.map((question, index) => (
-            <QuestionCard
-              key={`question-${index}`}
-              question={question}
-              questionIndex={index}
-              selectedAnswers={selectedAnswers}
-              onAnswerToggle={updateAnswerSelection}
-            />
-          ))}
-          <div className="p-4">
-            <SubmitButton
-              onClick={handleExerciseSubmission}
-              texte="Soumettre"
-              isLoading={isPending}
-            />
-          </div>
+      <div className="w-full max-w-2xl mx-auto p-4 space-y-8">
+        {content.map((question, index) => (
+          <QuestionCard
+            key={`question-${index}`}
+            question={question}
+            questionIndex={index}
+            selectedAnswers={selectedAnswers}
+            onAnswerToggle={updateAnswerSelection}
+          />
+        ))}
+        <div className="p-4">
+          <SubmitButton
+            onClick={handleExerciseSubmission}
+            texte="Soumettre"
+            isLoading={isPending}
+          />
         </div>
-      ) : (
-        <ExerciceResultMultipleChoice
-          content={content}
-          response={selectedAnswers}
-          note={note}
-        />
-      )}
+      </div>
     </>
   );
 }

@@ -23,17 +23,12 @@ const config = {
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: {
-          "200": "hsl(var(--background-200))",
-          "300": "hsl(var(--background-300))",
           DEFAULT: "hsl(var(--background))",
         },
         foreground: {
           DEFAULT: "hsl(var(--foreground))",
-          light: "hsl(var(--foreground-light))",
         },
         primary: {
-          "200": "hsl(var(--primary-200))",
-          "300": "hsl(var(--primary-300))",
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
         },
@@ -61,10 +56,20 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar-background))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          primary: "hsl(var(--sidebar-primary))",
+          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
+          accent: "hsl(var(--sidebar-accent))",
+          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+          border: "hsl(var(--sidebar-border))",
+          ring: "hsl(var(--sidebar-ring))",
+        },
       },
       backgroundImage: {
         "primary-gradient":
-          "linear-gradient(to right, hsl(var(--primary)), hsl(var(--primary-200)), hsl(var(--primary-300)))",
+          "linear-gradient(to right, hsl(var(--primary)), hsl(var(--amber-200)), hsl(var(--amber-300)))",
       },
       borderRadius: {
         lg: "var(--radius)",

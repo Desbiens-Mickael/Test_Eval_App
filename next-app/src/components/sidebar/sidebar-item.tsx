@@ -21,8 +21,22 @@ import SidebarDRopdownMenu from "./sidebar-dropdown-menu";
  * // Example usage in a parent component
  * <SidebarItem menu={menu} />
  */
-export default function SidebarItem({ menu }: { menu: MenuItem }): JSX.Element {
+export default function SidebarItem({
+  menu,
+  isChild,
+}: {
+  menu: MenuItem;
+  isChild?: boolean;
+}): JSX.Element {
   const pathName = usePathname();
 
-  return menu.href && !menu.submenus ? <LinkSidebar {...menu} className={pathName === menu.href ? "active-sidebar-link" : ""} /> : <SidebarDRopdownMenu {...menu} />;
+  return menu.href && !menu.submenus ? (
+    <LinkSidebar
+      {...menu}
+      className={pathName === menu.href ? "active-sidebar-link" : ""}
+      isChild={isChild}
+    />
+  ) : (
+    <SidebarDRopdownMenu {...menu} />
+  );
 }

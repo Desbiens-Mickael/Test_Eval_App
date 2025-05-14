@@ -1,6 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { TemplateComponentProps } from "./table/filter-button/data-table-button-filter";
 
 export default function SubjectLayout({
@@ -11,7 +12,7 @@ export default function SubjectLayout({
   return (
     <Badge
       variant="outline"
-      className={`${color} rounded-md text-white shadow-lg ${className}`}
+      className={cn("rounded-md text-white shadow-lg", color, className)}
     >
       {label}
     </Badge>

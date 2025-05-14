@@ -83,12 +83,12 @@ const adminMenus: MenuSideBar = [
     menus: [
       {
         icon: Users,
-        title: "Mes groupes",
+        title: "Groupes",
         href: "/admin/groupes",
       },
       {
         icon: Users,
-        title: "Mes élèves",
+        title: "Éleves",
         href: "/admin/eleves",
       },
     ],
@@ -98,7 +98,7 @@ const adminMenus: MenuSideBar = [
     menus: [
       {
         icon: User,
-        title: "Mon profil",
+        title: "Profil",
         href: "/profil",
       },
     ],

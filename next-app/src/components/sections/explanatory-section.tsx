@@ -23,7 +23,7 @@ export default function ExplanatorySection() {
             <h3
               className={cn(
                 kodchasanFont,
-                "text-primary-200 text-xl md:text-3xl text-center font-bold"
+                "text-primary text-xl md:text-3xl text-center font-bold"
               )}
             >
               Création de leçons personnalisées
@@ -55,7 +55,7 @@ export default function ExplanatorySection() {
             <h3
               className={cn(
                 kodchasanFont,
-                "text-primary-200 text-xl md:text-3xl text-center font-bold"
+                "text-primary text-xl md:text-3xl text-center font-bold"
               )}
             >
               {"Création d'exercices interactifs"}
@@ -82,7 +82,7 @@ export default function ExplanatorySection() {
             <h3
               className={cn(
                 kodchasanFont,
-                "text-primary-200 text-xl md:text-3xl text-center font-bold"
+                "text-primary text-xl md:text-3xl text-center font-bold"
               )}
             >
               {"Suivi de la progression de l'apprentissage"}

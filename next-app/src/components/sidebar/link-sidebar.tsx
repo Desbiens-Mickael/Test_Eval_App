@@ -1,11 +1,13 @@
 "use client";
 
+import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { MenuItem } from "@/type/sidebar";
 import Link from "next/link";
 
 interface LinkSidebarProps extends MenuItem {
   className?: string;
+  isChild?: boolean;
 }
 
 /**
@@ -31,15 +33,62 @@ interface LinkSidebarProps extends MenuItem {
  *   title="Dashboard"
  * />
  */
-export default function LinkSidebar({ href, icon: Icon, title, className }: LinkSidebarProps): JSX.Element {
-  const styleMain = "w-full font-bold rounded-md transition-all p-2";
-  const defaultStyle = "hover:bg-slate-200";
+export default function LinkSidebar({
+  href,
+  icon: Icon,
+  title,
+  className,
+  isChild,
+}: LinkSidebarProps): JSX.Element {
+  const styleMain = "w-full font-bold rounded-md transition-all p-0";
+  const defaultStyle = "";
 
   return (
-    <Link href={href ?? ""} className={cn(styleMain, className ? className : defaultStyle, "text-foreground")}>
-      <span className="flex gap-3">
-        <Icon /> <span className="grow">{title}</span>
-      </span>
-    </Link>
+    <>
+      {!isChild ? (
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            tooltip={title}
+            asChild
+            size="lg"
+            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+          >
+            <Link
+              href={href ?? ""}
+              className={cn(
+                styleMain,
+                className ? className : defaultStyle,
+                "text-foreground"
+              )}
+            >
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary">
+                <Icon size={20} />
+              </div>
+              <span className="grow">{title}</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      ) : (
+        <SidebarMenuButton
+          asChild
+          size="lg"
+          className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+        >
+          <Link
+            href={href ?? ""}
+            className={cn(
+              styleMain,
+              className ? className : defaultStyle,
+              "text-foreground"
+            )}
+          >
+            <div className="flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary">
+              <Icon size={20} />
+            </div>
+            <span className="grow">{title}</span>
+          </Link>
+        </SidebarMenuButton>
+      )}
+    </>
   );
 }

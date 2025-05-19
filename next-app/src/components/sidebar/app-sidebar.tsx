@@ -1,5 +1,4 @@
 "use client";
-import LogoutButton from "@/components/auth/logout-button";
 import adminMenus from "@/config/admin-menu";
 import studentMenus from "@/config/student-menu";
 import { useCurrentUser } from "@/hooks/use-current-user";
@@ -21,6 +20,7 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { User } from "next-auth";
+import NavUser from "./nav-user";
 
 export default function AppSidebar() {
   const user = useCurrentUser() as User;
@@ -69,7 +69,7 @@ export default function AppSidebar() {
         ))}
       </SidebarContent>
       <SidebarFooter>
-        <LogoutButton theme="destructive" />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

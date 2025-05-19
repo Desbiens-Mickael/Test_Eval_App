@@ -25,7 +25,9 @@ describe("LogoutButton", () => {
     });
 
     it("should render LogoutButton component with default theme", () => {
-      expect(screen.getByRole("button")).toHaveClass("bg-secondary text-secondary-foreground hover:bg-secondary/80");
+      expect(screen.getByRole("button")).toHaveClass(
+        "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+      );
     });
 
     it("should call logout action when clicked", () => {
@@ -37,7 +39,13 @@ describe("LogoutButton", () => {
   });
   describe("with full props", () => {
     beforeEach(() => {
-      render(<LogoutButton text="Logout" icon={<span data-testid="logout-icon-test">👋</span>} theme="outline" />);
+      render(
+        <LogoutButton
+          text="Logout"
+          icon={<span data-testid="logout-icon-test">👋</span>}
+          variant="outline"
+        />
+      );
     });
     it("should render LogoutButton component correctly", () => {
       expect(screen.getByRole("button")).toBeInTheDocument();
@@ -56,7 +64,9 @@ describe("LogoutButton", () => {
     });
 
     it("should render LogoutButton component with outline theme", () => {
-      expect(screen.getByRole("button")).toHaveClass("border border-input bg-background hover:bg-accent hover:text-accent-foreground");
+      expect(screen.getByRole("button")).toHaveClass(
+        "hover:bg-accent hover:text-accent-foreground"
+      );
     });
   });
 });

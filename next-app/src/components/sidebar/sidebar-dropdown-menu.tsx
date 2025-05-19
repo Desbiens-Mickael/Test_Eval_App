@@ -53,19 +53,18 @@ export default function SidebarDRopdownMenu({
   submenus,
 }: SidebarDRopdownMenuProps): JSX.Element {
   const isActive = useIsPathActive(submenus);
-  const styleMain =
-    "data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground";
 
   const { isMobile } = useSidebar();
 
   return (
     <SidebarMenuItem>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild className="focus-visible:ring-0">
+        <DropdownMenuTrigger asChild>
           <SidebarMenuButton
+            isActive={isActive}
             tooltip={title}
             size="lg"
-            className={!isActive ? styleMain : "active-sidebar-link"}
+            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
           >
             <div className="flex aspect-square size-8 items-center justify-center rounded-lg ">
               <Icon size={20} />

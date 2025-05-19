@@ -47,4 +47,6 @@ const LogoutButton = React.forwardRef<HTMLButtonElement, LogoutButtonProps>(
   )
 );
 
+LogoutButton.displayName = "LogoutButton";
+
 export default LogoutButton;

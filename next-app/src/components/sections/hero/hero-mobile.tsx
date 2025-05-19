@@ -25,7 +25,7 @@ export default function HeroMobile() {
                 "text-3xl font-black text-foreground leading-tight tracking-tight"
               )}
             >
-              Rendez l'apprentissage amusant et interactif pour vos enfants
+              {" Rendez l'apprentissage amusant et interactif pour vos enfants"}
             </h1>
 
             <p className="text-muted-foreground text-base leading-relaxed">

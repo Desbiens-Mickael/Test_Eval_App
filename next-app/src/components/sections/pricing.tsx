@@ -17,7 +17,7 @@ export default function Pricing() {
                 "text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
               )}
             >
-              Prêt à révolutionner l'apprentissage ?
+              {"Prêt à révolutionner l'apprentissage ?"}
             </h2>
             <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
               Rejoignez la communauté{" "}

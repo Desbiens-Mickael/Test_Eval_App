@@ -26,7 +26,7 @@ export default function HeroDesktop() {
                 "text-4xl font-black text-foreground leading-tight"
               )}
             >
-              Rendez l'apprentissage amusant et interactif pour vos enfants
+              {"Rendez l'apprentissage amusant et interactif pour vos enfants"}
             </h1>
 
             <p className="text-muted-foreground text-lg max-w-2xl">

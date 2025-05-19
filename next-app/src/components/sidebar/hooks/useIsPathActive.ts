@@ -9,6 +9,26 @@ interface MenuItem {
 type PathParam = string | MenuItem[] | undefined;
 
 /**
+ * Fonction utilitaire pour vérifier si un chemin est actif (peut être utilisée de manière récursive)
+ */
+function checkPathActive(pathname: string, item: MenuItem): boolean {
+  if (!item.href) return false;
+
+  // Cas où le pathname est exactement égal au href
+  if (pathname === item.href) return true;
+
+  // Cas où le pathname commence par le href suivi d'un /
+  if (pathname.startsWith(item.href + "/")) return true;
+
+  // Vérification récursive des sous-menus
+  if (item.submenus?.length) {
+    return item.submenus.some(subItem => checkPathActive(pathname, subItem));
+  }
+
+  return false;
+}
+
+/**
  * Hook personnalisé pour vérifier si un chemin est actif
  * @param {PathParam} pathParam - Peut être :
  *   - Une chaîne représentant un href unique
@@ -27,20 +47,5 @@ export function useIsPathActive(pathParam?: PathParam): boolean {
   }
 
   // Cas où on passe un tableau de MenuItem
-  return pathParam.some((item) => {
-    if (!item.href) return false;
-
-    // Cas où le pathname est exactement égal au href
-    if (pathname === item.href) return true;
-
-    // Cas où le pathname commence par le href suivi d'un /
-    if (pathname.startsWith(item.href + "/")) return true;
-
-    // Vérification récursive des sous-menus
-    if (item.submenus?.length) {
-      return useIsPathActive(item.submenus);
-    }
-
-    return false;
-  });
+  return pathParam.some(item => checkPathActive(pathname, item));
 }

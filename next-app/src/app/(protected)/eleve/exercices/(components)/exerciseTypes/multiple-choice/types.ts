@@ -22,8 +22,3 @@ export interface QuestionCardProps {
   selectedAnswers: multipleChoiceResponseType;
   onAnswerToggle: (questionIndex: number, answerIndex: number) => void;
 }
-
-export interface ExerciceResultMultipleChoiceProps {
-  content: contentMultipleChoiceInput;
-  response: multipleChoiceResponseType;
-}

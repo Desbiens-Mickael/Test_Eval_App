@@ -147,11 +147,7 @@ export default function DataTAbleBUttonFilter<TData, TValue>({
                       "hover:bg-slate-100 data-[state=checked]:bg-slate-100 data-[state=checked]:text-slate-900"
                     }
                   >
-                    <TemplateComponent
-                      className="h-4 w-4 grow"
-                      label={label}
-                      color={value.color}
-                    />
+                    <TemplateComponent label={label} color={value.color} />
                     <span className="ml-auto">{valueCount}</span>
                   </DropdownMenuCheckboxItem>
                 );
@@ -175,11 +171,7 @@ export default function DataTAbleBUttonFilter<TData, TValue>({
                     "hover:bg-slate-100 data-[state=checked]:bg-slate-100 data-[state=checked]:text-slate-900"
                   }
                 >
-                  <TemplateComponent
-                    className="h-4 w-4 grow"
-                    label={label}
-                    color={value.color}
-                  />
+                  <TemplateComponent label={label} color={value.color} />
                   <span className="ml-auto">{valueCount}</span>
                 </DropdownMenuCheckboxItem>
               ) : null;

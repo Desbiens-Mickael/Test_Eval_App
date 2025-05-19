@@ -1,5 +1,8 @@
-import Header from "@/components/header";
-import Sidebar from "@/components/sidebar/sidebar";
+import { cookies } from "next/headers";
+
+import Header from "@/components/header/protected-header";
+import AppSidebar from "@/components/sidebar/app-sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { Inter } from "next/font/google";
 
@@ -10,15 +13,20 @@ export default function AdminDashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const cookieStore = cookies();
+  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+
   return (
-    <div className={cn(inter.className, "flex w-full relative flex-1")}>
-      <Sidebar />
-      <div className="flex flex-col w-full ml-[300px] relative">
+    <SidebarProvider defaultOpen={defaultOpen}>
+      <AppSidebar />
+      <SidebarInset className="overflow-hidden">
         <Header />
-        <main className="w-full h-full flex flex-col p-8 pb-16 max-w-screen-xl mx-auto">
+        <div
+          className={cn(inter.className, "flex flex-1 flex-col gap-4 p-4 pt-0")}
+        >
           {children}
-        </main>
-      </div>
-    </div>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

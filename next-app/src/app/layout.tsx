@@ -39,7 +39,7 @@ export default async function RootLayout({
         <body
           className={cn(
             inter.className,
-            "flex flex-col min-h-screen text-secondary"
+            "flex flex-col min-h-screen text-foreground"
           )}
         >
           <Providers>

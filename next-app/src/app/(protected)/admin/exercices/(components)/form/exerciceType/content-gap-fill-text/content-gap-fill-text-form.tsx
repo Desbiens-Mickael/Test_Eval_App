@@ -70,7 +70,7 @@ export default function ContentFillGapTextForm({
   return (
     <>
       {isEditing ? (
-        <div className="flex flex-col gap-4 border border-dashed border-primary-200 p-4 rounded-lg">
+        <div className="flex flex-col gap-4 border border-dashed border-primary p-4 rounded-lg">
           <div className="flex flex-col gap-1">
             {!toggleMode ? (
               <TextEditorWithAlert handleToggleMode={handleToggleMode} />

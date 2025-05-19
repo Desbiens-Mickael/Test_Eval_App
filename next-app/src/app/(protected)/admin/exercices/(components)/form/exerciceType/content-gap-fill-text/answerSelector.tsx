@@ -125,7 +125,7 @@ export default function AnswerSelector({
           {modifiedText}
         </p>
         {inputAnswer && (
-          <div className="w-fit flex items-center gap-2 bg-background-200 rounded-lg p-2 shadow-md mx-auto">
+          <div className="w-fit flex items-center gap-2 bg-background rounded-lg p-2 shadow-md mx-auto">
             <span className="font-semibold">{inputAnswer}</span>
             <Button size={"sm"} type="button" onClick={handleAnswerAdd}>
               Remplacer

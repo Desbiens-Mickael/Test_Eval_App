@@ -21,7 +21,7 @@ export default function QuestionComponent({
     useContentMultipleChoiceStore();
 
   return (
-    <div className="flex flex-col gap-2 border border-dashed border-primary-200 p-4 rounded-lg">
+    <div className="flex flex-col gap-2 border border-dashed border-primary p-4 rounded-lg">
       <div className="flex justify-between items-center">
         <Label className="text-lg font-bold" htmlFor={`question-${index}`}>
           Question {index + 1}

@@ -1,7 +1,13 @@
 "use client";
 
+import { multipleChoiceResponseType } from "@/shema-zod/exercice-corection.shema";
+import { contentMultipleChoiceInput } from "@/shema-zod/exercice.shema";
 import { CheckCircle2, XCircle } from "lucide-react";
-import { ExerciceResultMultipleChoiceProps } from "./types";
+
+export interface ExerciceResultMultipleChoiceProps {
+  content: contentMultipleChoiceInput;
+  response: multipleChoiceResponseType;
+}
 
 export default function ExerciceResultMultipleChoice({
   content,

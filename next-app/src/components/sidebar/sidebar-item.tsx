@@ -1,7 +1,6 @@
 "use client";
 
 import { MenuItem } from "@/type/sidebar";
-import { usePathname } from "next/navigation";
 import LinkSidebar from "./link-sidebar";
 import SidebarDRopdownMenu from "./sidebar-dropdown-menu";
 
@@ -21,8 +20,16 @@ import SidebarDRopdownMenu from "./sidebar-dropdown-menu";
  * // Example usage in a parent component
  * <SidebarItem menu={menu} />
  */
-export default function SidebarItem({ menu }: { menu: MenuItem }): JSX.Element {
-  const pathName = usePathname();
-
-  return menu.href && !menu.submenus ? <LinkSidebar {...menu} className={pathName === menu.href ? "active-sidebar-link" : ""} /> : <SidebarDRopdownMenu {...menu} />;
+export default function SidebarItem({
+  menu,
+  isChild,
+}: {
+  menu: MenuItem;
+  isChild?: boolean;
+}): JSX.Element {
+  return menu.href && !menu.submenus ? (
+    <LinkSidebar {...menu} isChild={isChild} />
+  ) : (
+    <SidebarDRopdownMenu {...menu} />
+  );
 }

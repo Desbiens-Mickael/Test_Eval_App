@@ -3,7 +3,7 @@
 import { ChartNoAxesCombined, PencilRuler, SquarePen } from "lucide-react";
 import ServiceCard from "../service-card";
 
-export default function ServiceCArdSection() {
+export default function ServiceCardSection() {
   const services = [
     {
       title: "Simplicité de création",

@@ -12,23 +12,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import AvatarUpload from "@/components/user/avatar-upload";
-import { useCreateLesson } from "@/hooks/mutations/lesson/use-create-lesson";
-import { useUpdateLesson } from "@/hooks/mutations/lesson/use-update-lesson";
 import useGetAllGradeLevels from "@/hooks/queries/use-get-all-grade-levels";
 import useGetAllLessonsSubject from "@/hooks/queries/use-get-all-lesson-subjects";
-import { stringToSlug } from "@/lib/utils";
-import {
-  CreateLessonFormInput,
-  createLessonFormSchema,
-} from "@/shema-zod/lesson.shema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { JSONContent } from "novel";
-import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { Controller } from "react-hook-form";
 import LessonFormSkeleton from "../lesson-form-skeleton";
 import LessonPreview from "../lesson-preview";
+import { useLessonFormSubmission } from "./hook/useLessonFormSubmission";
 
 interface EditLessonProps {
   id?: string;
@@ -52,11 +42,24 @@ export default function LessonForm({
   LessonSubjectID,
   GradeLevelsID,
 }: EditLessonProps) {
-  const [imageBannerFile, setImageBannerFile] = useState<ImageBanner>(
-    imageBanner
-      ? { formData: null, preview: imageBanner }
-      : { formData: null, preview: "" }
-  );
+  //hooks
+  const {
+    onSubmit,
+    form,
+    imageBannerFile,
+    handleImageBanner,
+    isPendingCreate,
+    isPendingUpdate,
+    previewContent,
+    setPreviewContent,
+  } = useLessonFormSubmission({
+    id,
+    title,
+    imageBanner,
+    content,
+    LessonSubjectID,
+    GradeLevelsID,
+  });
 
   //queries
   const { data: allLessonsSubject, isLoading: isLoadingLessonsSubject } =
@@ -64,106 +67,9 @@ export default function LessonForm({
   const { data: allGradeLevels, isLoading: isLoadingGradeLevels } =
     useGetAllGradeLevels();
 
-  // mutations
-  const { isPending: isPendingCreate, mutateAsync: mutateAsyncCreate } =
-    useCreateLesson();
-  const { isPending: isPendingUpdate, mutateAsync: mutateAsyncUpdate } =
-    useUpdateLesson();
-
-  const [previewContent, setPreviewContent] = useState<JSONContent | undefined>(
-    content
-  );
-
-  const router = useRouter();
-
-  const form = useForm<CreateLessonFormInput>({
-    resolver: zodResolver(createLessonFormSchema),
-    defaultValues: {
-      title: title ?? "",
-      imageBanner: imageBanner ?? "",
-      content: content,
-      LessonSubjectID: LessonSubjectID ?? "",
-      GradeLevelsID: GradeLevelsID ?? "",
-    },
-  });
-
-  const onSubmit = async () => {
-    try {
-      const clientDomainApi = process.env.NEXT_PUBLIC_CLIENT_DOMAIN_API;
-      const serverDomainApi = process.env.NEXT_PUBLIC_SERVER_DOMAIN_API;
-
-      //suppression de l'image de la banière existante
-      if (imageBanner) {
-        const img = imageBanner.split("/").pop();
-        const response = await fetch(`${clientDomainApi}/lesson/${img}`, {
-          method: "DELETE",
-        });
-        if (!response.ok) {
-          toast.error(
-            "Une erreur c'est produite lors de la suppression de l'image !"
-          );
-          return;
-        }
-      }
-      //upload de l'image de la banière
-      if (imageBannerFile.formData) {
-        const response = await fetch(`${clientDomainApi}/lesson`, {
-          method: "POST",
-          body: imageBannerFile.formData,
-        });
-        if (!response.ok) {
-          toast.error(
-            "Une erreur c'est produite lors du l'upload de l'image !"
-          );
-          return;
-        }
-        const { image_path } = (await response.json()) as {
-          image_path: string;
-        };
-        const src = `${serverDomainApi}/lesson/${image_path}`;
-        form.setValue("imageBanner", src);
-      }
-
-      // Sérialiser le contenu avant l'envoi
-      const values = form.getValues();
-      const serializedData = {
-        ...values,
-        content: JSON.stringify(values.content),
-      };
-
-      let data;
-      if (id) {
-        data = await mutateAsyncUpdate({ lessonId: id, data: serializedData });
-      } else {
-        data = await mutateAsyncCreate(serializedData);
-      }
-
-      if (data?.error) toast.error(data.error);
-      if (data?.success) {
-        const subject = stringToSlug(data.data.LessonSubject.label);
-
-        toast.success(data.success);
-        form.reset();
-        router.push(`/admin/lecons/${subject}`);
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Une erreur c'est produite !");
-    }
-  };
-
   if (isLoadingLessonsSubject || isLoadingGradeLevels) {
     return <LessonFormSkeleton />;
   }
-
-  const handleImageBanner = (formData: FormData) => {
-    const file = formData.get("file") as File;
-    const preview = URL.createObjectURL(file);
-    setImageBannerFile({
-      formData: formData,
-      preview: preview,
-    });
-  };
 
   return (
     <div className="w-full max-w-screen-xl mx-auto">
@@ -248,7 +154,7 @@ export default function LessonForm({
             {previewContent && (
               <LessonPreview
                 content={previewContent}
-                imageBanner={imageBannerFile.preview}
+                imageBanner={imageBannerFile?.preview}
               />
             )}
           </div>

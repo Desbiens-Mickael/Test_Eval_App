@@ -1,11 +1,20 @@
 "use client";
 
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+import { useIsPathActive } from "@/components/sidebar/hooks/useIsPathActive";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  useSidebar,
+} from "@/components/ui/sidebar";
 import { MenuItem } from "@/type/sidebar";
-import { ChevronDown } from "lucide-react";
-import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { ChevronsUpDown } from "lucide-react";
 import SidebarItem from "./sidebar-item";
 
 interface SidebarDRopdownMenuProps extends MenuItem {
@@ -38,38 +47,47 @@ interface SidebarDRopdownMenuProps extends MenuItem {
  *   ]}
  * />
  */
-export default function SidebarDRopdownMenu({ icon: Icon, title, submenus }: SidebarDRopdownMenuProps): JSX.Element {
-  const pathname = usePathname();
-  const [isActive, setIsActive] = useState(false);
-  const styleMain = "w-full h-full flex items-center gap-3 font-bold rounded-md transition-all p-2";
+export default function SidebarDRopdownMenu({
+  icon: Icon,
+  title,
+  submenus,
+}: SidebarDRopdownMenuProps): JSX.Element {
+  const isActive = useIsPathActive(submenus);
 
-  const checkActiveSubmenu = useCallback(() => {
-    // Checks whether the href of a child is the same as the pathname
-    const foundItem = submenus?.find((item) => item.href === pathname);
-    setIsActive(!!foundItem);
-  }, [pathname, submenus]);
-
-  useEffect(() => {
-    checkActiveSubmenu();
-  }, [checkActiveSubmenu]);
+  const { isMobile } = useSidebar();
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger className="w-full h-full">
-        <div className={cn(styleMain, isActive ? "active-sidebar-link" : "text-foreground hover:bg-slate-200")}>
-          <Icon />
-          <h3>{title}</h3>
-          <ChevronDown className="ml-auto" size={20} />
-        </div>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="min-w-[250px] flex flex-col gap-y-1">
-        {submenus?.map((submenu, submenuKey) => (
-          <DropdownMenuItem key={submenuKey} className="p-0">
-            {/* As long as there are sub-menus, they are displayed recursively */}
-            <SidebarItem menu={submenu} key={submenuKey} />
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <SidebarMenuItem>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <SidebarMenuButton
+            isActive={isActive}
+            tooltip={title}
+            size="lg"
+            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+          >
+            <div className="flex aspect-square size-8 items-center justify-center rounded-lg ">
+              <Icon size={20} />
+            </div>
+            <h3>{title}</h3>
+            <ChevronsUpDown className="ml-auto" size={20} />
+          </SidebarMenuButton>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg2"
+          align="start"
+          side={isMobile ? "bottom" : "right"}
+          sideOffset={4}
+        >
+          <SidebarMenuSub className="border-l-0 mx-0">
+            {submenus?.map((submenu, submenuKey) => (
+              <SidebarMenuSubItem key={submenuKey}>
+                <SidebarItem menu={submenu} key={submenuKey} isChild={true} />
+              </SidebarMenuSubItem>
+            ))}
+          </SidebarMenuSub>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </SidebarMenuItem>
   );
 }

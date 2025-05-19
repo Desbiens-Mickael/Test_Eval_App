@@ -10,7 +10,6 @@ import {
   ListTodo,
   NotebookPen,
   Trello,
-  User,
   Users,
   WholeWord,
 } from "lucide-react";
@@ -83,23 +82,13 @@ const adminMenus: MenuSideBar = [
     menus: [
       {
         icon: Users,
-        title: "Mes groupes",
+        title: "Groupes",
         href: "/admin/groupes",
       },
       {
         icon: Users,
-        title: "Mes élèves",
+        title: "Éleves",
         href: "/admin/eleves",
-      },
-    ],
-  },
-  {
-    group: "Paramètres",
-    menus: [
-      {
-        icon: User,
-        title: "Mon profil",
-        href: "/profil",
       },
     ],
   },

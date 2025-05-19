@@ -234,14 +234,14 @@ mark[style] > strong {
     }
 
     th {
-      background-color: hsl(var(--background-200));
+      background-color: hsl(var(--accent));
       font-weight: bold;
       text-align: left;
     }
 
     .selectedCell:after {
       background: hsl(var(--primary));
-      opacity: .3;
+      opacity: 0.3;
       content: "";
       left: 0;
       right: 0;

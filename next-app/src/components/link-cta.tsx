@@ -12,7 +12,7 @@ interface linkCtaProps {
 }
 
 const classLink = {
-  default: "bg-gradient-to-r from-primary  to-primary-200  text-primary-foreground",
+  default: "bg-gradient-to-r from-primary  to-amber-500  text-primary-foreground",
   outline: "bg-primary-foreground text-primary border border-primary hover:bg-orange-500 hover:text-white",
 };
 

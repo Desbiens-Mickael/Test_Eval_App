@@ -1,8 +1,9 @@
 import { cookies } from "next/headers";
 
-import Header from "@/components/header";
+import Header from "@/components/header/protected-header";
 import AppSidebar from "@/components/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -17,17 +18,15 @@ export default function AdminDashboardLayout({
 
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
-      {/* <div className={cn(inter.className, "flex w-full relative flex-1")}> */}
       <AppSidebar />
-      <SidebarInset className="overflow-hidden relative">
+      <SidebarInset className="overflow-hidden">
         <Header />
-        {/* <div className="flex flex-col w-full relative"> */}
-        <main className="w-full h-full flex flex-col p-8 pb-16 max-w-screen-xl mx-auto">
+        <div
+          className={cn(inter.className, "flex flex-1 flex-col gap-4 p-4 pt-0")}
+        >
           {children}
-        </main>
-        {/* </div> */}
+        </div>
       </SidebarInset>
-      {/* </div> */}
     </SidebarProvider>
   );
 }

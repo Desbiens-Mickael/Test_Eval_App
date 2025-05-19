@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { kodchasan } from "@/style/fonts";
-import Image from "next/image";
+import ExplanatoryCard from "../explanatory-card";
 
 export default function ExplanatorySection() {
   const kodchasanFont = kodchasan.className;
@@ -13,100 +13,68 @@ export default function ExplanatorySection() {
         )}
       >
         {"Fonctionnalités principales d'"}
-        <span className="text-start font-extrabold bg-clip-text text-transparent bg-primary-gradient drop-shadow">
+        <span
+          className={cn(
+            kodchasanFont,
+            "text-start font-extrabold bg-clip-text text-transparent bg-primary-gradient drop-shadow"
+          )}
+        >
           EduCraft
         </span>
       </h2>
       <div className="w-full flex flex-col gap-y-20">
-        <div className="w-full lg:h-[500px] flex flex-col md:flex-row p-4 bg-secondary-foreground">
-          <div className="md:w-1/2 flex flex-col justify-center items-center lg:p-16">
-            <h3
+        <ExplanatoryCard
+          title="Création de leçons personnalisées"
+          image="/assets/images/lesson.webp"
+          reverseMode={false}
+        >
+          <p className="text-md text-muted-foreground md:text-lg">
+            Donnez vie aux leçons de votre choix avec une liberté totale ! Que
+            ce soit pour approfondir un sujet ou créer une nouvelle compétence,{" "}
+            <span
               className={cn(
                 kodchasanFont,
-                "text-primary text-xl md:text-3xl text-center font-bold"
+                "font-extrabold bg-clip-text text-transparent bg-primary-gradient drop-shadow"
               )}
             >
-              Création de leçons personnalisées
-            </h3>
-            <p className="text-secondary text-sm md:text-lg p-4 md:p-8">
-              Donnez vie aux leçons de votre choix avec une liberté totale ! Que
-              ce soit pour approfondir un sujet ou créer une nouvelle
-              compétence,{" "}
-              <span className="text-lg md:text-xl font-extrabold bg-clip-text text-transparent bg-primary-gradient drop-shadow">
-                EduCraft
-              </span>{" "}
-              vous permet de concevoir des leçons adaptées aux besoins de chaque
-              élève.
-            </p>
-          </div>
-          <div className="md:w-1/2">
-            <Image
-              src={"/assets/images/lesson.webp"}
-              width={480}
-              height={400}
-              alt="lesson"
-              className="h-auto w-full md:w-auto md:h-full mx-auto object-cover rounded-xl md:rounded-3xl md:rounded-tl-[150px] md:rounded-br-[150px] drop-shadow-lg"
-            />
-          </div>
-        </div>
-
-        <div className="w-full lg:h-[500px] flex flex-col md:flex-row-reverse p-4 bg-secondary-foreground">
-          <div className="md:w-1/2 flex flex-col justify-center items-center lg:p-16">
-            <h3
+              EduCraft
+            </span>{" "}
+            vous permet de concevoir des leçons adaptées aux besoins de chaque
+            élève.
+          </p>
+        </ExplanatoryCard>
+        <ExplanatoryCard
+          title="Création d'exercices interactifs"
+          image="/assets/images/exercice.webp"
+          reverseMode={true}
+        >
+          <p className="text-md text-muted-foreground md:text-lg">
+            Engagez vos enfants avec des exercices ludiques et interactifs. Nos
+            outils intuitifs vous permettent de créer des activités captivantes
+            comme des glisser-déposer, des quiz, et des exercices à trous, pour
+            un apprentissage dynamique.
+          </p>
+        </ExplanatoryCard>
+        <ExplanatoryCard
+          title="Suivi de la progression de l'apprentissage"
+          image="/assets/images/graphique.webp"
+          reverseMode={false}
+        >
+          <p className="text-md text-muted-foreground md:text-lg">
+            Gardez un œil sur les progrès de votre enfant !{" "}
+            <span
               className={cn(
                 kodchasanFont,
-                "text-primary text-xl md:text-3xl text-center font-bold"
+                "font-extrabold bg-clip-text text-transparent bg-primary-gradient drop-shadow"
               )}
             >
-              {"Création d'exercices interactifs"}
-            </h3>
-            <p className="text-secondary text-sm md:text-lg p-4 md:p-8">
-              {
-                "Engagez vos enfants avec des exercices ludiques et interactifs. Nos outils intuitifs vous permettent de créer des activités captivantes comme des glisser-déposer, des quiz, et des exercices à trous, pour un apprentissage dynamique."
-              }
-            </p>
-          </div>
-          <div className="md:w-1/2">
-            <Image
-              src={"/assets/images/exercice.webp"}
-              width={480}
-              height={400}
-              alt="lesson"
-              className="h-auto w-full md:w-auto md:h-full mx-auto object-cover rounded-xl md:rounded-3xl md:rounded-tl-[150px] md:rounded-br-[150px] drop-shadow-lg"
-            />
-          </div>
-        </div>
-
-        <div className="w-full lg:h-[500px] flex flex-col md:flex-row p-4 bg-secondary-foreground">
-          <div className="md:w-1/2 flex flex-col justify-center items-center lg:p-16">
-            <h3
-              className={cn(
-                kodchasanFont,
-                "text-primary text-xl md:text-3xl text-center font-bold"
-              )}
-            >
-              {"Suivi de la progression de l'apprentissage"}
-            </h3>
-            <p className="text-secondary text-sm md:text-lg p-4 md:p-8">
-              {"Gardez un œil sur les progrès de votre enfant !"}
-              <span className="text-lg md:text-xl font-extrabold bg-clip-text text-transparent bg-primary-gradient drop-shadow">
-                EduCraft
-              </span>
-              {
-                "propose des graphiques clairs et faciles à lire qui montrent l’évolution dans chaque matière, pour un accompagnement personnalisé tout au long de son parcours."
-              }
-            </p>
-          </div>
-          <div className="md:w-1/2">
-            <Image
-              src={"/assets/images/graphique.webp"}
-              width={480}
-              height={400}
-              alt="lesson"
-              className="h-auto w-full md:w-auto md:h-full mx-auto object-cover rounded-xl md:rounded-3xl md:rounded-tl-[150px] md:rounded-br-[150px] drop-shadow-lg"
-            />
-          </div>
-        </div>
+              EduCraft
+            </span>{" "}
+            propose des graphiques clairs et faciles à lire qui montrent
+            l’évolution dans chaque matière, pour un accompagnement personnalisé
+            tout au long de son parcours.
+          </p>
+        </ExplanatoryCard>
       </div>
     </section>
   );

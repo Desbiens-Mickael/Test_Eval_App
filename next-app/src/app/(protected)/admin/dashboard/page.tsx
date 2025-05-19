@@ -1,3 +1,4 @@
+import PageTitle from "@/components/page-title";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -5,9 +6,5 @@ export const metadata: Metadata = {
 };
 
 export default function Dashboard() {
-  return (
-    <>
-      <h1 className="text-6xl text-primary text-center">Dashboard</h1>
-    </>
-  );
+  return <PageTitle title="Tableau de bord" />;
 }

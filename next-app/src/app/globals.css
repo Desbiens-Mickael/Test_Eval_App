@@ -130,7 +130,7 @@
 
 /* Active Sidebar Link */
 .active-sidebar-link {
-  @apply bg-primary text-primary-foreground hover:bg-primary;
+  @apply bg-primary text-primary-foreground hover:!bg-primary/80 hover:!text-primary-foreground;
 }
 
 /* Scrollbar */

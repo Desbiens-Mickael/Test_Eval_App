@@ -1,9 +1,11 @@
 "use client";
 
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { MenuItem } from "@/type/sidebar";
 import Link from "next/link";
+import { useIsPathActive } from "./hooks/useIsPathActive";
 
 interface LinkSidebarProps extends MenuItem {
   className?: string;
@@ -40,55 +42,56 @@ export default function LinkSidebar({
   className,
   isChild,
 }: LinkSidebarProps): JSX.Element {
-  const styleMain = "w-full font-bold rounded-md transition-all p-0";
-  const defaultStyle = "";
+  const isActive = useIsPathActive(href);
 
-  return (
-    <>
-      {!isChild ? (
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            tooltip={title}
-            asChild
-            size="lg"
-            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-          >
-            <Link
-              href={href ?? ""}
-              className={cn(
-                styleMain,
-                className ? className : defaultStyle,
-                "text-foreground"
-              )}
-            >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary">
-                <Icon size={20} />
-              </div>
-              <span className="grow">{title}</span>
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      ) : (
-        <SidebarMenuButton
-          asChild
-          size="lg"
-          className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+  const styleMain = "w-full font-semibold rounded-md transition-all p-0";
+  const defaultStyle = "text-sidebar-primary";
+
+  // Rendu conditionnel en fonction de isChild
+  return isChild ? (
+    <SidebarMenuButton
+      asChild
+      size="lg"
+      className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer focus-visible:ring-0"
+    >
+      <DropdownMenuItem asChild>
+        <Link
+          href={href ?? ""}
+          className={cn(
+            styleMain,
+            className,
+            isActive ? "active-sidebar-link" : defaultStyle
+          )}
         >
-          <Link
-            href={href ?? ""}
-            className={cn(
-              styleMain,
-              className ? className : defaultStyle,
-              "text-foreground"
-            )}
-          >
-            <div className="flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary">
-              <Icon size={20} />
-            </div>
-            <span className="grow">{title}</span>
-          </Link>
-        </SidebarMenuButton>
-      )}
-    </>
+          <div className="mr-2 flex aspect-square size-7 items-center justify-center rounded-lg">
+            <Icon size={18} />
+          </div>
+          <span className="grow">{title}</span>
+        </Link>
+      </DropdownMenuItem>
+    </SidebarMenuButton>
+  ) : (
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        asChild
+        size="lg"
+        className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+        {...(!isChild && { tooltip: title })}
+      >
+        <Link
+          href={href ?? ""}
+          className={cn(
+            styleMain,
+            className,
+            isActive ? "active-sidebar-link" : defaultStyle
+          )}
+        >
+          <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
+            <Icon size={20} />
+          </div>
+          <span className="grow">{title}</span>
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
   );
 }

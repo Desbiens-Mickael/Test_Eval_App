@@ -19,9 +19,9 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import ExerciceResultCard from "./exercice-result-card";
-import ExerciseResultGapFillText from "./exercise-result-gap-fill-text";
 import ExerciceResultMultipleChoice from "./exercice-result-multiple-choice";
 import ExerciceResultTrueOrFalse from "./exercice-result-true-or-false";
+import ExerciseResultGapFillText from "./exercise-result-gap-fill-text";
 
 interface ShowCorrectionProps {
   studentExerciceId: string;
@@ -61,7 +61,7 @@ export default function ShowCorrection({
       <div className="flex flex-col gap-2 mb-4">
         {data?.exercice?.description}
       </div>
-      <div className="w-full flex justify-center items-center bg-white rounded-lg shadow-md p-6">
+      <div className="w-full flex justify-center items-center bg-background p-6">
         <NoteDisplay
           note={data?.note}
           coeficient={data?.coeficient}

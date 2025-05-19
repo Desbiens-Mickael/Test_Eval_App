@@ -69,7 +69,7 @@ const config = {
       },
       backgroundImage: {
         "primary-gradient":
-          "linear-gradient(to right, hsl(var(--primary)), hsl(var(--amber-200)), hsl(var(--amber-300)))",
+          "linear-gradient(to right, hsl(var(--primary)), theme('colors.amber.400'))",
       },
       borderRadius: {
         lg: "var(--radius)",

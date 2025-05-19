@@ -1,5 +1,6 @@
 "use client";
 
+import { useIsPathActive } from "@/components/sidebar/hooks/useIsPathActive";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,8 +15,6 @@ import {
 } from "@/components/ui/sidebar";
 import { MenuItem } from "@/type/sidebar";
 import { ChevronsUpDown } from "lucide-react";
-import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
 import SidebarItem from "./sidebar-item";
 
 interface SidebarDRopdownMenuProps extends MenuItem {
@@ -53,33 +52,22 @@ export default function SidebarDRopdownMenu({
   title,
   submenus,
 }: SidebarDRopdownMenuProps): JSX.Element {
-  const pathname = usePathname();
-  const [isActive, setIsActive] = useState(false);
+  const isActive = useIsPathActive(submenus);
   const styleMain =
-    "w-full h-full flex items-center gap-3 font-bold rounded-md transition-all p-2";
+    "data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground";
 
   const { isMobile } = useSidebar();
-
-  const checkActiveSubmenu = useCallback(() => {
-    // Vérifie si le href d'un enfant est identique au chemin d'accès
-    const foundItem = submenus?.find((item) => item.href === pathname);
-    setIsActive(!!foundItem);
-  }, [pathname, submenus]);
-
-  useEffect(() => {
-    checkActiveSubmenu();
-  }, [checkActiveSubmenu]);
 
   return (
     <SidebarMenuItem>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+        <DropdownMenuTrigger asChild className="focus-visible:ring-0">
           <SidebarMenuButton
             tooltip={title}
             size="lg"
-            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            className={!isActive ? styleMain : "active-sidebar-link"}
           >
-            <div className="flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary">
+            <div className="flex aspect-square size-8 items-center justify-center rounded-lg ">
               <Icon size={20} />
             </div>
             <h3>{title}</h3>

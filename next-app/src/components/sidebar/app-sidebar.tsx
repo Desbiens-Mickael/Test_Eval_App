@@ -19,6 +19,7 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 import { User } from "next-auth";
 
 export default function AppSidebar() {
@@ -31,7 +32,14 @@ export default function AppSidebar() {
   return (
     <Sidebar variant="inset" collapsible="icon">
       <SidebarHeader>
-        <div className="flex justify-center items-center w-full bg-background rounded-md">
+        <div
+          className={cn(
+            "flex justify-center items-center w-full rounded-md",
+            state === "collapsed" && !isMobile
+              ? "bg-transparent"
+              : "bg-background"
+          )}
+        >
           <Link href={"/"}>
             <Logo
               width={state === "collapsed" && !isMobile ? 50 : 100}

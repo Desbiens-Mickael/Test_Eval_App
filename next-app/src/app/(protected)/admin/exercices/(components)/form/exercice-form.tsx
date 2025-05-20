@@ -14,7 +14,7 @@ import {
 } from "@/shema-zod/exercice.shema";
 import { Exercice } from "@/type/exercice";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { notFound, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -127,74 +127,99 @@ export default function ExerciceForm({
     setStep((prevStep) => Math.max(prevStep - 1, 1));
   };
 
+  // Configuration des étapes pour le stepper
+  const stepsConfig = [
+    { id: 1, label: "Informations" },
+    { id: 2, label: "Contenu" },
+    { id: 3, label: "Validation" },
+  ];
+
   return (
-    <div className="w-full h-full min-h-[600px]">
+    <div className="w-full h-full min-h-[600px] relative">
       <Form {...form}>
-        <Stepper steps={["1", "2", "3"]} currentStep={step} />
+        <div className="mb-8">
+          <Stepper
+            steps={stepsConfig.map((step) => step.label)}
+            currentStep={step}
+          />
+        </div>
+
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className=" w-full flex flex-col justify-between space-y-8"
+          className="w-full flex flex-col flex-1 min-h-[500px]"
         >
-          <AnimatePresence mode="wait">
-            {step === 1 && (
-              <CreateExerciceStep1
-                isEditing={!!exerciceData}
-                key={"step1"}
-                form={form}
-                setType={setType}
-                setLevel={setLevel}
-              />
-            )}
+          <div className="flex-1">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`step-${step}`}
+                initial={{ opacity: 0, x: step > 1 ? 50 : -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: step > 1 ? -50 : 50 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className="h-full"
+              >
+                {step === 1 && (
+                  <CreateExerciceStep1
+                    isEditing={!!exerciceData}
+                    form={form}
+                    setType={setType}
+                    setLevel={setLevel}
+                  />
+                )}
 
-            {step === 2 && (
-              <CreateExerciceStep2 key={"step2"} form={form} type={type} />
-            )}
+                {step === 2 && <CreateExerciceStep2 form={form} type={type} />}
 
-            {step === 3 && (
-              <CreateEXerciceSTep3
-                key={"step3"}
-                form={form}
-                type={type}
-                level={level}
-              />
-            )}
-          </AnimatePresence>
-          <div className="w-full flex mt-auto">
-            {step > 1 && (
-              <div className="size-min me-auto">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => handlePreviousStep()}
-                >
-                  Prédécent
-                </Button>
-              </div>
-            )}
-            {step < 3 ? (
-              <div className="size-min ms-auto">
-                <Button
-                  type={step < 3 ? "button" : "submit"}
-                  variant="secondary"
-                  onClick={() => handleNextStep()}
-                >
-                  Suivant
-                </Button>
-              </div>
-            ) : (
-              <div className="size-min ms-auto">
-                <SubmitButton
-                  texte={exerciceData ? "Mettre à jour" : "Créer"}
-                  isLoading={isPendingCreate || isPendingUpdate}
-                  loadindText={
-                    exerciceData
-                      ? "Mise à jour en cours..."
-                      : "Création en cours..."
-                  }
-                />
-              </div>
-            )}
+                {step === 3 && (
+                  <CreateEXerciceSTep3 form={form} type={type} level={level} />
+                )}
+              </motion.div>
+            </AnimatePresence>
           </div>
+
+          <motion.div
+            className="w-full flex mt-12 pt-6 border-t border-border"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <div className="flex w-full justify-between items-center">
+              <div>
+                {step > 1 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handlePreviousStep}
+                    className="min-w-[120px]"
+                  >
+                    Précédent
+                  </Button>
+                )}
+              </div>
+
+              <div className="flex items-center gap-4">
+                {step < 3 ? (
+                  <Button
+                    type="button"
+                    onClick={handleNextStep}
+                    className="min-w-[120px]"
+                  >
+                    Suivant
+                  </Button>
+                ) : (
+                  <SubmitButton
+                    texte={exerciceData ? "Mettre à jour" : "Créer l'exercice"}
+                    isLoading={isPendingCreate || isPendingUpdate}
+                    loadindText={
+                      exerciceData
+                        ? "Mise à jour en cours..."
+                        : "Création en cours..."
+                    }
+                    className="min-w-[160px]"
+                  />
+                )}
+              </div>
+            </div>
+          </motion.div>
         </form>
       </Form>
     </div>

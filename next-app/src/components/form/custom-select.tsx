@@ -29,7 +29,7 @@ interface CustomSelectProps<T extends FieldValues> {
   isRequired?: boolean;
   className?: string;
   onChange?: (value: string) => void;
-  desabled?: boolean;
+  disabled?: boolean;
 }
 
 export default function CustomSelect<T extends FieldValues>({
@@ -42,7 +42,7 @@ export default function CustomSelect<T extends FieldValues>({
   isRequired,
   className,
   onChange,
-  desabled,
+  disabled,
 }: CustomSelectProps<T>) {
   return (
     <FormField
@@ -54,7 +54,7 @@ export default function CustomSelect<T extends FieldValues>({
             {label} {isRequired && <span className="text-red-500">*</span>}
           </FormLabel>
           <Select
-            disabled={desabled}
+            disabled={disabled}
             onValueChange={(value) => {
               field.onChange(value);
               if (onChange) {

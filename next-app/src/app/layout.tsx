@@ -40,7 +40,7 @@ export default async function RootLayout({
         <body
           className={cn(
             inter.className,
-            "flex flex-col min-h-screen text-foreground"
+            "flex flex-col min-h-screen text-foreground selection:bg-primary selection:text-primary-foreground"
           )}
         >
           <Providers>

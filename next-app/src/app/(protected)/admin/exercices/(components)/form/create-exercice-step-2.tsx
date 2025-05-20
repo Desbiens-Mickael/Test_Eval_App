@@ -1,14 +1,20 @@
 "use client";
 
+import { motion } from "framer-motion";
+import { FileText, AlertCircle } from "lucide-react";
+import { Controller, UseFormReturn } from "react-hook-form";
+
+import { Button } from "@/components/ui/button";
 import {
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { createExerciceFormInput } from "@/shema-zod/exercice.shema";
-import { motion } from "framer-motion";
-import { Controller, UseFormReturn } from "react-hook-form";
 import { ComponentType, DynamicComponent } from "./dynamic-content-components";
 
 interface CreateExerciceStep2Props {
@@ -20,42 +26,85 @@ export default function CreateExerciceStep2({
   form,
   type,
 }: CreateExerciceStep2Props) {
+  // Vérifie s'il y a des erreurs de validation
+  const hasErrors = form.formState.errors.content;
+
   return (
     <motion.div
-      initial={{ x: 20, opacity: 0, scale: 0.95 }}
-      animate={{ x: 0, opacity: 1, scale: 1 }}
-      exit={{ x: -20, opacity: 0, scale: 0.95 }}
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      className="h-full flex flex-col space-y-8 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.2 }}
+      className="h-full space-y-6"
     >
-      <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 border-b pb-3 border-gray-200 dark:border-gray-700">
-        {`Étape 2: Contenu de l'exercice de type : ${type}`}
-      </h2>
-      <FormField
-        control={form.control}
-        name="content"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>
-              {"Contenu de l'exercice"} <span className="text-red-500">*</span>
-            </FormLabel>
-            <Controller
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <DynamicComponent
-                  type={type}
-                  initialValue={field.value}
-                  onChange={(newContent) => {
-                    field.onChange(newContent); // Synchronise avec react-hook-form
-                  }}
-                />
-              )}
-            />
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <FileText className="w-5 h-5 text-primary" />
+          <h2 className="text-2xl font-semibold tracking-tight">
+            Configuration du contenu
+          </h2>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          {`Définissez le contenu de votre exercice de type : ${type}`}
+        </p>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="w-5 h-5" />
+            Contenu de l'exercice
+          </CardTitle>
+          <CardDescription>
+            Configurez le contenu spécifique à votre type d'exercice
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <FormField
+            control={form.control}
+            name="content"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="sr-only">
+                  Contenu de l'exercice
+                </FormLabel>
+                <div className="space-y-2">
+                  <Controller
+                    control={form.control}
+                    name="content"
+                    render={({ field, fieldState }) => (
+                      <div className="space-y-2">
+                        <DynamicComponent
+                          type={type}
+                          initialValue={field.value}
+                          onChange={(newContent) => {
+                            field.onChange(newContent);
+                          }}
+                        />
+                        {fieldState.error && (
+                          <p className="text-sm font-medium text-destructive">
+                            {fieldState.error.message}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  />
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </CardContent>
+      </Card>
+
+      {hasErrors && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Veuillez corriger les erreurs dans le formulaire avant de continuer.
+          </AlertDescription>
+        </Alert>
+      )}
     </motion.div>
   );
 }

@@ -1,4 +1,4 @@
-import { MultipleChoiceExerciseProps } from "@/app/(protected)/eleve/exercices/(components)/exerciseTypes/multiple-choice/types";
+import { MultipleChoiceExerciseProps } from "@/app/(protected)/eleve/(learning)/exercices/(components)/exerciseTypes/multiple-choice/types";
 import { useAddExerciceResponse } from "@/hooks/mutations/exercice/use-add-exercice-response";
 import { calculateNote } from "@/lib/utils";
 import {
@@ -26,6 +26,11 @@ export const useMultipleChoiceExercise = ({
     isSuccess,
     data,
   } = useAddExerciceResponse();
+
+  const resetExercise = () => {
+    setSelectedAnswers([]);
+    setNote({ note: 0, coeficient: 0 });
+  };
 
   // Fonction pour mettre à jour la sélection d'une réponse
   const updateAnswerSelection = (
@@ -133,5 +138,6 @@ export const useMultipleChoiceExercise = ({
     data,
     updateAnswerSelection,
     handleExerciseSubmission,
+    resetExercise,
   };
 };

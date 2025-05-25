@@ -1,7 +1,7 @@
 "use client";
 
-import SubmitButton from "@/components/form/submit-button";
 import { redirect } from "next/navigation";
+import { ExerciseActions } from "../../exercise-actions";
 import { useMultipleChoiceExercise } from "./hooks/useMultipleChoiceExercise";
 import QuestionCard from "./question-card";
 import { MultipleChoiceExerciseProps } from "./types";
@@ -18,6 +18,7 @@ export default function ExerciceMultipleChoice({
     data,
     updateAnswerSelection,
     handleExerciseSubmission,
+    resetExercise,
   } = useMultipleChoiceExercise({
     exerciceId,
     content,
@@ -40,13 +41,16 @@ export default function ExerciceMultipleChoice({
             onAnswerToggle={updateAnswerSelection}
           />
         ))}
-        <div className="p-4">
-          <SubmitButton
-            onClick={handleExerciseSubmission}
-            texte="Soumettre"
-            isLoading={isPending}
-          />
-        </div>
+
+        <ExerciseActions
+          textCount="Questions répondues"
+          filledCount={selectedAnswers.length}
+          totalCount={content.length}
+          onReset={resetExercise}
+          onSubmit={handleExerciseSubmission}
+          isPending={isPending}
+          disabled={selectedAnswers.length === 0}
+        />
       </div>
     </>
   );

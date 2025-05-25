@@ -1,9 +1,7 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import { useCallback } from "react";
-
-// Composants
-import SubmitButton from "@/components/form/submit-button";
 
 // Hooks
 import useTrueFalseExercice from "./hook/use-true-false-Exercice";
@@ -14,7 +12,8 @@ import { baseResponseExercice } from "@/type/exercice";
 import { redirect } from "next/navigation";
 
 // Utilitaires
-import ButtonReset from "@/components/button-reset";
+import { container, item } from "@/animations/exercice-true-false";
+import { ExerciseActions } from "../../exercise-actions";
 import TrueFalseQuestion from "./true-false-question";
 
 interface ExerciceTrueFalseProps extends baseResponseExercice {
@@ -48,25 +47,46 @@ export default function ExerciceTrueFalse({
 
   return (
     <div className="space-y-6">
-      {content.map((question, index) => (
-        <TrueFalseQuestion
-          key={index}
-          question={question.question}
-          index={index}
-          currentAnswer={response[index]?.answer}
-          onAnswerChange={(answer) => updateResponse(index, answer)}
-          isError={response[index]?.answer === null && !isFullFilled}
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="space-y-4 max-w-2xl mx-auto"
+      >
+        <AnimatePresence mode="wait">
+          {content.map((question, index) => (
+            <motion.div
+              key={index}
+              variants={item}
+              layoutId={`question-${index}`}
+              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+            >
+              <TrueFalseQuestion
+                question={question.question}
+                index={index}
+                currentAnswer={response[index]?.answer}
+                onAnswerChange={(answer) => updateResponse(index, answer)}
+                isError={response[index]?.answer === null && !isFullFilled}
+              />
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+      >
+        <ExerciseActions
+          textCount="Questions répondues"
+          filledCount={response.filter((r) => r.answer !== null).length}
+          totalCount={content.length}
+          isPending={isPending}
+          onSubmit={handleSubmit}
+          onReset={resetResponses}
         />
-      ))}
-      <div className="flex justify-between items-center">
-        <SubmitButton
-          onClick={handleSubmit}
-          className="w-fit"
-          texte="Soumettre"
-          isLoading={isPending}
-        />
-        <ButtonReset onClick={resetResponses} isPending={isPending} />
-      </div>
+      </motion.div>
     </div>
   );
 }

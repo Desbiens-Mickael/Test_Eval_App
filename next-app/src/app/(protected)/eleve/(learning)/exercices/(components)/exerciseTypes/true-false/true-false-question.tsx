@@ -1,6 +1,71 @@
 "use client";
 
+import { motion } from "framer-motion";
 import React from "react";
+
+// Animation variants
+const buttonVariants = {
+  initial: { scale: 1, y: 0 },
+  hover: {
+    scale: 1.03,
+    y: -2,
+    transition: { duration: 0.2 },
+  },
+  tap: {
+    scale: 0.98,
+    y: 1,
+  },
+  selected: {
+    scale: 1.02,
+    y: 0,
+    boxShadow:
+      "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+    transition: {
+      type: "spring",
+      stiffness: 400,
+      damping: 15,
+    },
+  },
+};
+
+// Colors based on app's color scheme
+const getButtonColors = (
+  isSelected: boolean,
+  isTrue: boolean,
+  isError: boolean
+) => {
+  if (isError && !isSelected) {
+    return {
+      bg: "bg-destructive/10 dark:bg-destructive/20",
+      text: "text-destructive dark:text-destructive-foreground",
+      border: "border-destructive/30 dark:border-destructive/50",
+      hover: "hover:bg-destructive/20 dark:hover:bg-destructive/30",
+    };
+  }
+
+  if (isSelected) {
+    return isTrue
+      ? {
+          bg: "bg-green-500/10 dark:bg-green-500/20",
+          text: "text-green-700 dark:text-green-300",
+          border: "border-green-500/30 dark:border-green-500/40",
+          hover: "hover:bg-green-500/20 dark:hover:bg-green-500/30",
+        }
+      : {
+          bg: "bg-destructive/10 dark:bg-destructive/20",
+          text: "text-destructive dark:text-destructive-foreground",
+          border: "border-destructive/30 dark:border-destructive/50",
+          hover: "hover:bg-destructive/20 dark:hover:bg-destructive/30",
+        };
+  }
+
+  return {
+    bg: "bg-muted/50 dark:bg-muted/30",
+    text: "text-muted-foreground/80 dark:text-muted-foreground/90",
+    border: "border-border/50 dark:border-border/50",
+    hover: "hover:bg-muted/80 dark:hover:bg-muted/50",
+  };
+};
 
 interface TrueFalseQuestionProps {
   question: string;
@@ -19,44 +84,60 @@ const TrueFalseQuestion = React.memo(
     isError,
   }: TrueFalseQuestionProps) => {
     return (
-      <div
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
         className={`
-      bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border 
-      ${isError ? "border-red-500 dark:border-red-700" : "dark:border-gray-700"}
-    `}
+          bg-card text-card-foreground p-6 rounded-xl border shadow-sm
+          ${isError ? "border-destructive/50" : "border-border/50"}
+          transition-all duration-200
+        `}
       >
-        <p className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-          {`${index + 1}. ${question}`}
+        <p className="text-lg font-medium mb-6 flex items-center gap-3">
+          <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary text-sm font-semibold">
+            {index + 1}
+          </span>
+          <span>{question}</span>
         </p>
         <div className="flex items-center gap-4">
-          {[true, false].map((value) => (
-            <label
-              key={value.toString()}
-              className={`
-            flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer
-            transition-all duration-200 ease-in-out
-            ${
-              currentAnswer === value
-                ? value
-                  ? "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 border border-green-200 dark:border-green-700"
-                  : "bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 border border-red-200 dark:border-red-700"
-                : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600"
-            }
-          `}
-            >
-              <input
-                type="radio"
-                name={`question-${index}`}
-                value={value.toString()}
-                className="hidden"
-                checked={currentAnswer === value}
-                onChange={() => onAnswerChange(value)}
-              />
-              <span className="font-semibold">{value ? "Vrai" : "Faux"}</span>
-            </label>
-          ))}
+          {[true, false].map((value) => {
+            const isSelected = currentAnswer === value;
+            const colors = getButtonColors(
+              isSelected,
+              value,
+              isError && currentAnswer === null
+            );
+
+            return (
+              <motion.label
+                key={value.toString()}
+                className={`
+                  flex items-center justify-center gap-2 px-4 py-2 rounded-lg cursor-pointer
+                  border transition-colors duration-200
+                  ${colors.bg} ${colors.text} ${colors.border} ${colors.hover}
+                  font-medium
+                `}
+                variants={buttonVariants}
+                initial="initial"
+                whileHover={!isSelected ? "hover" : undefined}
+                whileTap="tap"
+                animate={isSelected ? "selected" : "initial"}
+              >
+                <input
+                  type="radio"
+                  name={`question-${index}`}
+                  value={value.toString()}
+                  className="hidden"
+                  checked={isSelected}
+                  onChange={() => onAnswerChange(value)}
+                />
+                <span className="font-semibold">{value ? "Vrai" : "Faux"}</span>
+              </motion.label>
+            );
+          })}
         </div>
-      </div>
+      </motion.div>
     );
   }
 );

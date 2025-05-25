@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LessonSubjectChips } from "../../../../../components/lesson/LessonSubjectChips";
+import { LearningDashboard } from "../../(components)/learning-dashboard";
 import ListExercisesToDo from "./list-exercises-to-do";
 
 export default function ExerciseDashboard() {
@@ -10,13 +10,13 @@ export default function ExerciseDashboard() {
   );
 
   return (
-    <div className="flex flex-col gap-10">
-      <LessonSubjectChips
-        selectedSubject={selectedSubject}
-        onClick={setSelectedSubject}
-      />
-
+    <LearningDashboard
+      title="Mes exercices"
+      description="Pratiquez et révisez vos exercices par matière"
+      selectedSubject={selectedSubject}
+      onSubjectChange={setSelectedSubject}
+    >
       <ListExercisesToDo selectedSubject={selectedSubject} />
-    </div>
+    </LearningDashboard>
   );
 }

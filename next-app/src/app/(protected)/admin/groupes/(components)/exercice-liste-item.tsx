@@ -1,6 +1,6 @@
 "use client";
 
-import ExerciceTypeBadge from "@/app/(protected)/eleve/exercices/(components)/exercice-type-badge";
+import ExerciceTypeBadge from "@/app/(protected)/eleve/(learning)/exercices/(components)/exercice-type-badge";
 import SubjectLayout from "@/components/subject-layout";
 import { Switch } from "@/components/ui/switch";
 import {

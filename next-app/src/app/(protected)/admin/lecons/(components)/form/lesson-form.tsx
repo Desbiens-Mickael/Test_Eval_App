@@ -155,6 +155,31 @@ export default function LessonForm({
               <LessonPreview
                 content={previewContent}
                 imageBanner={imageBannerFile?.preview}
+                title={form.getValues("title")}
+                subject={
+                  allLessonsSubject?.find(
+                    (subject) =>
+                      subject.id === form.getValues("LessonSubjectID")
+                  )?.label || undefined
+                }
+                subjectColor={
+                  allLessonsSubject?.find(
+                    (subject) =>
+                      subject.id === form.getValues("LessonSubjectID")
+                  )?.color || undefined
+                }
+                gradeLevel={
+                  allGradeLevels?.find(
+                    (gradeLevel) =>
+                      gradeLevel.id === form.getValues("GradeLevelsID")
+                  )?.label || undefined
+                }
+                gradeLevelColor={
+                  allGradeLevels?.find(
+                    (gradeLevel) =>
+                      gradeLevel.id === form.getValues("GradeLevelsID")
+                  )?.color || undefined
+                }
               />
             )}
           </div>

@@ -1,7 +1,7 @@
-import { isInputPosition } from "@/app/(protected)/eleve/exercices/(lib)/utils";
 import { useCurrentRole } from "@/hooks/use-current-role";
 import { gapFillTextResponseType } from "@/shema-zod/exercice-corection.shema";
 import { contentGapFillInput } from "@/shema-zod/exercice.shema";
+import { isInputPosition } from "../../(lib)/utils";
 
 interface ExerciseResultTextProps {
   content?: contentGapFillInput;

@@ -381,6 +381,9 @@ export const getAllLessonsForStudentAction = async (subject?: string) => {
 
 // Récupération d'une leçon par son ID
 export const getLessonByIdForStudentAction = async (id: string) => {
+  const user = await currentUser();
+  if (!user || !user.id) return { error: "Action non autoriser !" };
+
   try {
     const lesson = await getLessonByIdForStudentData(id);
     if (!lesson) return { error: "Cette leçon n'existe pas !" };

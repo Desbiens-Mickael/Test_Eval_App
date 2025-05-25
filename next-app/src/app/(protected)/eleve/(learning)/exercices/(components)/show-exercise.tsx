@@ -1,8 +1,9 @@
 "use client";
 
+import { badgeItem, container, item } from "@/animations/show-exercise";
 import Loader from "@/components/loader";
 import PageTitle from "@/components/page-title";
-import { Badge } from "@/components/ui/badge";
+import SubjectLayout from "@/components/subject-layout";
 import useGetExerciceById from "@/hooks/queries/exercice/use-get-exercice-by-id";
 import {
   contentCardInput,
@@ -10,6 +11,7 @@ import {
   contentMultipleChoiceInput,
   contentTrueOrFalseInput,
 } from "@/shema-zod/exercice.shema";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import ExerciceCard from "./exerciseTypes/card/exercice-card";
@@ -48,19 +50,31 @@ export default function ShowExercise({ exerciceId }: ShowExerciseProps) {
   return (
     <>
       <PageTitle title={data?.title || "Exercice"} />
-      <div
-        className="leading-8 mb-4"
-        style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
+      <motion.div
+        className="space-y-4 mb-6 px-4 sm:px-6 py-8"
+        initial="hidden"
+        animate="show"
+        variants={container}
       >
-        {data?.description}
+        <motion.div
+          className="text-foreground/90 leading-relaxed whitespace-pre-wrap break-words"
+          variants={item}
+        >
+          {data?.description}
+        </motion.div>
 
-        <div className="text-sm text-muted-foreground">
-          Niveau:{" "}
-          <Badge className={`${data?.levelColor} hover:${data?.levelColor}`}>
-            {data?.level}
-          </Badge>
-        </div>
-      </div>
+        <motion.div
+          className="flex items-center gap-2 text-sm text-muted-foreground border-t pt-3"
+          variants={item}
+        >
+          <motion.span className="font-medium" variants={badgeItem}>
+            Niveau :
+          </motion.span>
+          <motion.div variants={badgeItem}>
+            <SubjectLayout label={data?.level} color={data?.levelColor} />
+          </motion.div>
+        </motion.div>
+      </motion.div>
 
       {data?.type === "Carte" && (
         <ExerciceCard

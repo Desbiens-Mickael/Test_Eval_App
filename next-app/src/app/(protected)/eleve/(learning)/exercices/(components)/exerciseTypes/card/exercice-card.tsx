@@ -1,13 +1,11 @@
 "use client";
 
 import { container, item } from "@/animations/exercice-and-lesson-list";
-import SubmitButton from "@/components/form/submit-button";
-import { Button } from "@/components/ui/button";
 import { contentCardInput } from "@/shema-zod/exercice.shema";
 import { DragDropContext } from "@hello-pangea/dnd";
 import { motion } from "framer-motion";
-import { RotateCcw } from "lucide-react";
 import { redirect } from "next/navigation";
+import { ExerciseActions } from "../../exercise-actions";
 import CardColumn from "./components/card-column";
 import StartZone from "./components/start-zone";
 import { useCardExercise } from "./hooks/use-card-exercise";
@@ -78,45 +76,20 @@ export default function ExerciceCard({
         </motion.div>
 
         {/* Zone des boutons d'action */}
-        <motion.div
-          className="flex flex-col md:flex-row gap-4 p-6 bg-card rounded-xl border border-border shadow-sm"
-          variants={item}
-        >
-          <div className="flex-1 flex items-center">
-            <div className="inline-flex items-center px-4 py-2 bg-background rounded-full border border-border shadow-sm">
-              <span className="font-medium text-foreground">
-                <span className="font-bold text-lg">
-                  {response.reduce((total, col) => total + col.cards.length, 0)}
-                </span>
-                <span className="mx-1">/</span>
-                <span className="text-primary">{startCards.length}</span>
-                <span className="ml-2 text-sm font-normal">cartes placées</span>
-              </span>
-            </div>
-          </div>
-          <div className="flex flex-col lg:flex-row gap-3">
-            <Button
-              onClick={resetExercise}
-              variant="outline"
-              size="lg"
-              disabled={isPending}
-              className="gap-2"
-            >
-              <RotateCcw className="h-4 w-4" />
-              Réinitialiser
-            </Button>
-            <SubmitButton
-              onClick={handleSubmit}
-              texte="Valider"
-              isLoading={isPending}
-              className="w-full lg:w-auto shadow-md hover:shadow-lg transition-all"
-              disabled={
-                response.reduce((total, col) => total + col.cards.length, 0) ===
-                0
-              }
-            />
-          </div>
-        </motion.div>
+        <ExerciseActions
+          textCount="Cartes placées"
+          filledCount={response.reduce(
+            (total, col) => total + col.cards.length,
+            0
+          )}
+          totalCount={startCards.length}
+          onReset={resetExercise}
+          onSubmit={handleSubmit}
+          isPending={isPending}
+          disabled={
+            response.reduce((total, col) => total + col.cards.length, 0) === 0
+          }
+        />
       </DragDropContext>
     </motion.div>
   );

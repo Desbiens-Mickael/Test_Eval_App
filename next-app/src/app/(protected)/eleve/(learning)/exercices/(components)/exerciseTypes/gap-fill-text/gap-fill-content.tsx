@@ -2,7 +2,7 @@ import { container, item } from "@/animations/exercice-gap-fill";
 import { contentGapFillInput } from "@/shema-zod/exercice.shema";
 import { AnimatePresence, motion } from "framer-motion";
 import { isInputPosition } from "../../../(lib)/utils";
-import { GapFillWord } from "./GapFillWord";
+import { GapFillWord } from "./gap-fill-word";
 
 /**
  * Propriétés du composant GapFillContent

@@ -1,6 +1,6 @@
 import { item } from "@/animations/exercice-gap-fill";
 import { motion } from "framer-motion";
-import { GapFillInput } from "./GapFillInput";
+import { GapFillInput } from "./gap-fill-input";
 
 /**
  * Propriétés du composant GapFillWord

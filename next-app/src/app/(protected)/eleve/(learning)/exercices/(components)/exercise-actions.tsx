@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 /**
  * Propriétés du composant GapFillActions
  * @interface GapFillActionsProps
+ * @property {string} textCount - Texte affiché avant le compteur
  * @property {number} filledCount - Nombre de champs remplis
  * @property {number} totalCount - Nombre total de champs à remplir
  * @property {() => void} onReset - Fonction appelée lors du clic sur le bouton de réinitialisation
@@ -12,7 +13,8 @@ import { motion } from "framer-motion";
  * @property {boolean} isPending - Indique si une action est en cours
  * @property {boolean} [disabled=false] - Indique si les boutons doivent être désactivés
  */
-interface GapFillActionsProps {
+interface ExerciseActionsProps {
+  textCount?: string;
   filledCount: number;
   totalCount: number;
   onReset: () => void;
@@ -26,17 +28,18 @@ interface GapFillActionsProps {
  * Inclut le compteur de champs remplis et les boutons de réinitialisation et de soumission.
  *
  * @component
- * @param {GapFillActionsProps} props - Les propriétés du composant
+ * @param {ExerciseActionsProps} props - Les propriétés du composant
  * @returns {JSX.Element} Le composant d'actions de l'exercice
  */
-export function GapFillActions({
+export function ExerciseActions({
+  textCount = "Accomplis",
   filledCount,
   totalCount,
   onReset,
   onSubmit,
   isPending,
   disabled = false,
-}: GapFillActionsProps) {
+}: ExerciseActionsProps) {
   return (
     <motion.div
       className="flex flex-col sm:flex-row justify-between items-center gap-4 p-6 bg-card rounded-xl border border-border shadow-sm"
@@ -51,7 +54,7 @@ export function GapFillActions({
           transition: { delay: 0.3 },
         }}
       >
-        <span className="mr-2">Champs remplis :</span>
+        <span className="mr-2">{textCount} :</span>
         <motion.span
           className="font-bold text-foreground"
           key={filledCount}

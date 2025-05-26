@@ -18,7 +18,7 @@ export default function ListeMembers({ students }: ListeMembersProps) {
         className="p-6 text-center rounded-lg bg-muted/30"
       >
         <p className="text-muted-foreground">
-          Aucun élève n'est inscrit dans ce groupe.
+          {" Aucun élève n'est inscrit dans ce groupe."}
         </p>
       </motion.div>
     );

@@ -95,7 +95,7 @@ export default function CreateExerciceStep1({
         <div className="flex items-center gap-2">
           <BookOpen className="w-5 h-5 text-primary" />
           <h2 className="text-2xl font-semibold tracking-tight">
-            Informations de l'exercice
+            {" Informations de l'exercice"}
           </h2>
         </div>
         <p className="text-sm text-muted-foreground">
@@ -143,7 +143,7 @@ export default function CreateExerciceStep1({
               Configuration
             </CardTitle>
             <CardDescription>
-              Définissez le niveau de difficulté et le type d'exercice.
+              {"Définissez le niveau de difficulté et le type d'exercice."}
             </CardDescription>
           </CardHeader>
           <CardContent>

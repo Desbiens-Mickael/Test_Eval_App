@@ -28,13 +28,12 @@ export default function ShowContentGapFillPreview({
   modifiedText,
 }: ShowContentGapFillPreviewProps) {
   const { content } = useContentGapFillTextStore();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { once: true, amount: 0.1 });
 
   if (!content.answers?.length) {
     return null;
   }
-
-  const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, { once: true, amount: 0.1 });
 
   return (
     <motion.div
@@ -58,7 +57,7 @@ export default function ShowContentGapFillPreview({
       >
         <motion.div className="space-y-2" variants={itemVariants} custom={0}>
           <h3 className="text-lg font-semibold text-foreground">
-            Aperçu de l'exercice
+            {"Aperçu de l'exercice"}
           </h3>
           <div className="rounded-lg bg-muted/50 p-4 border">
             <p className="whitespace-pre-wrap leading-relaxed text-foreground/90">

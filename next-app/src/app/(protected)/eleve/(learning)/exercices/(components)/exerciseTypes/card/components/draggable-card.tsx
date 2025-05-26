@@ -25,13 +25,6 @@ const DraggableCard = ({
   style = {},
   className = "",
 }: DraggableCardProps) => {
-  // Styles pour le drag
-  const dragStyles: CSSProperties = {
-    zIndex: isDragging ? 1000 : 1,
-    touchAction: "none",
-    position: isDragging ? "relative" : "static",
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 10, scale: 0.98 }}
@@ -64,7 +57,7 @@ const DraggableCard = ({
         transition: { duration: 0.1 },
       }}
       className={cn(
-        "bg-card border rounded-xl p-3 cursor-grab active:cursor-grabbing relative",
+        "bg-card border rounded-xl p-3 relative",
         isDragging
           ? "border-primary shadow-lg bg-primary/5"
           : "border-border hover:border-primary/50",
@@ -73,7 +66,10 @@ const DraggableCard = ({
       style={style}
     >
       <div className="flex items-center">
-        <div className="text-primary mr-2" {...dragHandleProps}>
+        <div
+          className="text-primary mr-2 cursor-grab active:cursor-grabbing"
+          {...dragHandleProps}
+        >
           <GripVertical className="h-4 w-4" />
         </div>
         {children || (

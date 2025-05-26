@@ -89,7 +89,7 @@ export default function TextEditorWithAlert({
             htmlFor="baseText"
             className="text-sm font-medium text-foreground"
           >
-            Texte de l'exercice
+            {" Texte de l'exercice"}
           </Label>
           <span className="text-xs text-muted-foreground">
             {inputValue.length} caractères

@@ -101,7 +101,7 @@ export default function AnswerList() {
                   >
                     <X className="h-3.5 w-3.5" />
                     <span className="sr-only">
-                      Supprimer la réponse "{answer.answer}"
+                      {`Supprimer la réponse ${answer.answer}`}
                     </span>
                   </Button>
                 </Badge>

@@ -34,7 +34,7 @@ export function GapFillContent({
     <motion.div variants={item}>
       <AnimatePresence>
         <motion.div
-          className="leading-relaxed p-6 bg-card rounded-xl border border-border shadow-sm whitespace-pre-line break-words"
+          className="leading-8 p-6 bg-card rounded-xl border border-border shadow-sm whitespace-pre-line break-words"
           variants={container}
           initial="hidden"
           animate="show"

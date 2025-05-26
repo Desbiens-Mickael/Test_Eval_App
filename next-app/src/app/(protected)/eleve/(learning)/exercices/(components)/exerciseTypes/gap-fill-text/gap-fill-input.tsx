@@ -1,5 +1,6 @@
 import { inputVariants } from "@/animations/exercice-gap-fill";
 import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Propriétés du composant GapFillInput
@@ -11,6 +12,7 @@ import { motion } from "framer-motion";
  */
 interface GapFillInputProps {
   value: string;
+  answer: string;
   onChange: (value: string) => void;
   width: number;
   placeholder?: string;
@@ -26,24 +28,57 @@ interface GapFillInputProps {
  */
 export function GapFillInput({
   value,
+  answer,
   onChange,
   width,
   placeholder = "?",
 }: GapFillInputProps) {
+  const [inputWidth, setInputWidth] = useState<string>(
+    `${Math.max(width, 2)}ch`
+  );
+  const spanRef = useRef<HTMLSpanElement>(null);
+
+  // Calcule la largeur du texte à afficher
+  useEffect(() => {
+    if (spanRef.current) {
+      // Utilise la valeur si elle existe, sinon utilise le placeholder
+      const textToMeasure = answer || placeholder;
+      spanRef.current.textContent = textToMeasure;
+
+      // Obtient la largeur du texte et ajoute une petite marge
+      const textWidth = spanRef.current.getBoundingClientRect().width;
+      const minWidth = Math.max(width, 2) * 8; // Approximation de la largeur d'un caractère en pixels
+
+      // Utilise la plus grande des deux valeurs
+      setInputWidth(`${Math.max(textWidth, minWidth)}px`);
+    }
+  }, [value, answer, placeholder, width]);
+
   return (
     <motion.div
       className="inline-flex relative"
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
     >
+      {/* Span invisible pour mesurer la largeur du texte */}
+      <span
+        ref={spanRef}
+        className="absolute opacity-0 pointer-events-none font-medium whitespace-pre"
+        aria-hidden="true"
+      >
+        {value || answer || placeholder}
+      </span>
+
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        style={{ width: `${Math.max(width, 2)}ch` }}
-        className="min-w-[1ch] text-center bg-background border-b-2 border-primary/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30 rounded-sm transition-all duration-200 text-foreground font-medium"
+        style={{ width: inputWidth }}
+        className="min-w-[1ch] h-5 text-center bg-background border-b-2 border-primary/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30 rounded-sm transition-all duration-200 text-foreground font-medium"
         placeholder={placeholder}
         autoComplete="off"
+        autoCorrect="off"
+        autoCapitalize="off"
         data-variants={JSON.stringify(inputVariants)}
         data-initial="initial"
         data-while-focus="focus"

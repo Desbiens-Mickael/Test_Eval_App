@@ -1,5 +1,6 @@
 "use client";
 
+import { badgeItem, container, item } from "@/animations/show-exercise";
 import Loader from "@/components/loader";
 import { NoteDisplay } from "@/components/note-display";
 import PageTitle from "@/components/page-title";
@@ -16,6 +17,7 @@ import {
   contentMultipleChoiceInput,
   contentTrueOrFalseInput,
 } from "@/shema-zod/exercice.shema";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import ExerciceResultCard from "./exercice-result-card";
@@ -56,18 +58,35 @@ export default function ShowCorrection({
   }
 
   return (
-    <div>
+    <>
       <PageTitle title={data?.exercice?.title || "Correction"} />
-      <div className="flex flex-col gap-2 mb-4">
-        {data?.exercice?.description}
-      </div>
-      <div className="w-full flex justify-center items-center bg-background p-6">
-        <NoteDisplay
-          note={data?.note}
-          coeficient={data?.coeficient}
-          className="text-2xl font-bold"
-        />
-      </div>
+      <motion.div
+        className="space-y-4 mb-6 px-4 sm:px-6 py-8"
+        initial="hidden"
+        animate="show"
+        variants={container}
+      >
+        <motion.div
+          className="text-foreground/90 leading-relaxed whitespace-pre-wrap break-words"
+          variants={item}
+        >
+          {data?.exercice?.description}
+        </motion.div>
+
+        <motion.div
+          className="flex items-center gap-2 text-sm text-muted-foreground border-t pt-3"
+          variants={item}
+        >
+          <motion.div variants={badgeItem}>
+            <NoteDisplay
+              note={data?.note}
+              coeficient={data?.coeficient}
+              className="text-2xl font-bold"
+            />
+          </motion.div>
+        </motion.div>
+      </motion.div>
+
       {data?.exercice?.type.name === "Texte à trou" && (
         <ExerciseResultGapFillText
           content={data?.exercice?.content as contentGapFillInput}
@@ -92,6 +111,6 @@ export default function ShowCorrection({
           response={data?.response as multipleChoiceResponseType}
         />
       )}
-    </div>
+    </>
   );
 }

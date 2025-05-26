@@ -60,12 +60,13 @@ export default function CreateEXerciceSTep3({
         <div className="flex items-center gap-2">
           <CheckCircle className="w-6 h-6 text-green-500" />
           <h2 className="text-2xl font-semibold tracking-tight">
-            Récapitulatif de l'exercice
+            {"Récapitulatif de l'exercice"}
           </h2>
         </div>
         <p className="text-sm text-muted-foreground">
-          Vérifiez les informations avant de finaliser la création de votre
-          exercice
+          {
+            "Vérifiez les informations avant de finaliser la création de votre exercice"
+          }
         </p>
       </div>
 
@@ -75,7 +76,7 @@ export default function CreateEXerciceSTep3({
           <CardHeader>
             <div className="flex items-center gap-2">
               <FileText className="w-5 h-5 text-primary" />
-              <CardTitle>Détails de l'exercice</CardTitle>
+              <CardTitle>{"Détails de l'exercice"}</CardTitle>
             </div>
             <CardDescription>
               Informations générales et configuration
@@ -93,7 +94,7 @@ export default function CreateEXerciceSTep3({
               <div className="space-y-2 p-4 bg-muted/30 rounded-lg">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Award className="w-4 h-4" />
-                  <span>Type d'exercice</span>
+                  <span>{"Type d'exercice"}</span>
                 </div>
                 <div className="font-medium">
                   <Badge variant="outline" className="text-sm">
@@ -122,9 +123,9 @@ export default function CreateEXerciceSTep3({
           <CardHeader>
             <div className="flex items-center gap-2">
               <ClipboardList className="w-5 h-5 text-primary" />
-              <CardTitle>Aperçu du contenu</CardTitle>
+              <CardTitle>{"Aperçu du contenu"}</CardTitle>
             </div>
-            <CardDescription>Visualisation de l'exercice</CardDescription>
+            <CardDescription>{"Visualisation de l'exercice"}</CardDescription>
           </CardHeader>
           <CardContent className="flex-1">
             <div className="p-4 border rounded-lg bg-background">
@@ -139,8 +140,9 @@ export default function CreateEXerciceSTep3({
             <div className="flex items-start gap-2 text-sm text-muted-foreground">
               <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
               <p>
-                Vérifiez que toutes les informations sont correctes avant de
-                finaliser la création de l'exercice.
+                {
+                  "Vérifiez que toutes les informations sont correctes avant de finaliser la création de l'exercice."
+                }
               </p>
             </div>
           </CardFooter>

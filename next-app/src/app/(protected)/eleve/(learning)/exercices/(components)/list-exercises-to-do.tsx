@@ -152,7 +152,7 @@ export default function ListExercisesToDo({
                   >
                     <Link href={`/eleve/exercices/${exercice.id}`}>
                       <Pencil className="h-4 w-4" />
-                      <span>Commencer l'exercice</span>
+                      <span>{"Commencer l'exercice"}</span>
                       <ArrowRight className="h-4 w-4 -mr-1 group-hover/btn:translate-x-0.5 transition-transform" />
                     </Link>
                   </Button>

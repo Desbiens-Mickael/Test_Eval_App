@@ -1,19 +1,23 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FileText, AlertCircle } from "lucide-react";
+import { AlertCircle, FileText } from "lucide-react";
 import { Controller, UseFormReturn } from "react-hook-form";
 
-import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
 } from "@/components/ui/form";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { createExerciceFormInput } from "@/shema-zod/exercice.shema";
 import { ComponentType, DynamicComponent } from "./dynamic-content-components";
 
@@ -53,10 +57,10 @@ export default function CreateExerciceStep2({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="w-5 h-5" />
-            Contenu de l'exercice
+            {"Contenu de l'exercice"}
           </CardTitle>
           <CardDescription>
-            Configurez le contenu spécifique à votre type d'exercice
+            {"Configurez le contenu spécifique à votre type d'exercice"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -66,7 +70,7 @@ export default function CreateExerciceStep2({
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="sr-only">
-                  Contenu de l'exercice
+                  {"Contenu de l'exercice"}
                 </FormLabel>
                 <div className="space-y-2">
                   <Controller
@@ -101,7 +105,9 @@ export default function CreateExerciceStep2({
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            Veuillez corriger les erreurs dans le formulaire avant de continuer.
+            {
+              "Veuillez corriger les erreurs dans le formulaire avant de continuer."
+            }
           </AlertDescription>
         </Alert>
       )}

@@ -1,14 +1,11 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronDown, Loader2, X } from "lucide-react";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronDown, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import SubjectLayout from "@/components/subject-layout";
-import { Button } from "@/components/ui/button";
-import { useRemoveLessonFromGroup } from "@/hooks/mutations/group/use-remove-lesson-from-group";
-import { Lesson } from "@/type/lesson";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,6 +17,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { useRemoveLessonFromGroup } from "@/hooks/mutations/group/use-remove-lesson-from-group";
+import { Lesson } from "@/type/lesson";
 import ExerciceListe from "./exercice-liste";
 
 interface LessonListeProps {
@@ -29,7 +29,8 @@ interface LessonListeProps {
 
 export default function LessonListe({ lessons, groupId }: LessonListeProps) {
   const [expandedLesson, setExpandedLesson] = useState<string | null>(null);
-  const { mutateAsync: removeLessonFromGroup, isPending } = useRemoveLessonFromGroup();
+  const { mutateAsync: removeLessonFromGroup, isPending } =
+    useRemoveLessonFromGroup();
 
   const toggleLesson = (lessonId: string) => {
     setExpandedLesson(expandedLesson === lessonId ? null : lessonId);
@@ -57,12 +58,14 @@ export default function LessonListe({ lessons, groupId }: LessonListeProps) {
 
   if (lessons.length === 0) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         className="p-6 text-center rounded-lg bg-muted/30"
       >
-        <p className="text-muted-foreground">Aucune leçon n'a été ajoutée à ce groupe.</p>
+        <p className="text-muted-foreground">
+          {"Aucune leçon n'a été ajoutée à ce groupe."}
+        </p>
       </motion.div>
     );
   }
@@ -84,19 +87,21 @@ export default function LessonListe({ lessons, groupId }: LessonListeProps) {
                   <button
                     onClick={() => toggleLesson(lesson.id)}
                     className="p-1 -ml-2 rounded-full hover:bg-muted transition-colors"
-                    aria-label={expandedLesson === lesson.id ? "Réduire" : "Développer"}
+                    aria-label={
+                      expandedLesson === lesson.id ? "Réduire" : "Développer"
+                    }
                   >
-                    <ChevronDown 
+                    <ChevronDown
                       className={`h-5 w-5 text-muted-foreground transition-transform duration-200 ${
-                        expandedLesson === lesson.id ? 'rotate-180' : ''
-                      }`} 
+                        expandedLesson === lesson.id ? "rotate-180" : ""
+                      }`}
                     />
                   </button>
                   <h3 className="text-lg font-semibold truncate">
                     {lesson.title}
                   </h3>
                 </div>
-                
+
                 <div className="flex gap-2 mt-2 ml-8 flex-wrap">
                   <SubjectLayout
                     label={lesson.subject}
@@ -113,9 +118,9 @@ export default function LessonListe({ lessons, groupId }: LessonListeProps) {
 
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     className="h-8 w-8 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                     disabled={isPending}
                   >
@@ -135,7 +140,9 @@ export default function LessonListe({ lessons, groupId }: LessonListeProps) {
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel disabled={isPending}>Annuler</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isPending}>
+                      Annuler
+                    </AlertDialogCancel>
                     <AlertDialogAction
                       onClick={(e) => {
                         e.preventDefault();
@@ -162,7 +169,7 @@ export default function LessonListe({ lessons, groupId }: LessonListeProps) {
               {expandedLesson === lesson.id && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
+                  animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.2 }}
                   className="overflow-hidden"

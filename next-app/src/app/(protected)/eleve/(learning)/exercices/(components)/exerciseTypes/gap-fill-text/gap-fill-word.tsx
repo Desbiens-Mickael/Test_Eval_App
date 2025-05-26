@@ -57,7 +57,12 @@ export function GapFillWord({
   return (
     <motion.span variants={item} className="inline-flex items-baseline" layout>
       {beforeText && <span>{beforeText}</span>}
-      <GapFillInput value={value} onChange={onChange} width={width} />
+      <GapFillInput
+        value={value}
+        answer={answer.answer}
+        onChange={onChange}
+        width={width}
+      />
       {afterText && <span>{afterText} </span>}
     </motion.span>
   );

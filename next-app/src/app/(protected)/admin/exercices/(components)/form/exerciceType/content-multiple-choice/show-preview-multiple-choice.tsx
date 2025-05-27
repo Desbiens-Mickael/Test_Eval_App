@@ -1,4 +1,6 @@
+import { cn } from "@/lib/utils";
 import { multipleChoiceInput } from "@/shema-zod/exercice.shema";
+import { Check, X } from "lucide-react";
 
 interface ShowPReviewMUltipleChoiceProps {
   content: multipleChoiceInput[];
@@ -7,43 +9,70 @@ interface ShowPReviewMUltipleChoiceProps {
 export default function ShowPReviewMUltipleChoice({
   content,
 }: ShowPReviewMUltipleChoiceProps) {
+  if (content.length === 0) {
+    return (
+      <div className="text-center py-8 text-muted-foreground">
+        Aucune question à afficher
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-white shadow-md rounded-lg p-6 border border-gray-200">
-      <h3 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">
-        Réponses
-      </h3>
-      <div className="space-y-6">
-        {content.map((question, index) => (
-          <div key={index} className="bg-gray-50 p-4 rounded-md">
-            <h4 className="text-lg font-medium text-gray-700 mb-3">
-              {question.question}
+    <div className="space-y-8">
+      {content.map((question, index) => (
+        <div key={index} className="space-y-4">
+          <div className="space-y-1">
+            <h4 className="text-lg font-medium leading-none">
+              {question.question || "Question sans titre"}
             </h4>
-            <div className="space-y-3 ms-4">
-              {question.answers.map((answer, answerIndex) => (
+            <p className="text-sm text-muted-foreground">
+              Sélectionnez la ou les bonnes réponses
+            </p>
+          </div>
+          
+          <div className="space-y-2">
+            {question.answers.map((answer, answerIndex) => {
+              const isCorrect = answer.isCorrect;
+              return (
                 <div
                   key={answerIndex}
-                  className={`p-3 rounded-md transition-colors duration-200 ${
-                    answer.isCorrect
-                      ? "bg-green-100 border-l-4 border-green-500"
-                      : "bg-red-100 border-l-4 border-red-500"
-                  }`}
+                  className={cn(
+                    "flex items-center gap-3 p-4 rounded-lg border transition-colors",
+                    isCorrect 
+                      ? "bg-green-50 border-green-200" 
+                      : "bg-muted/30 border-border"
+                  )}
                 >
-                  <p className="text-gray-800 font-normal">{answer.answer}</p>
-                  <p
-                    className={`text-sm font-semibold ${
-                      answer.isCorrect ? "text-green-700" : "text-red-700"
-                    }`}
-                  >
-                    {answer.isCorrect
-                      ? "Réponse Correcte"
-                      : "Réponse Incorrecte"}
-                  </p>
+                  <div className={cn(
+                    "flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full text-xs font-medium",
+                    isCorrect 
+                      ? "bg-green-100 text-green-600 border border-green-200"
+                      : "bg-muted text-muted-foreground"
+                  )}>
+                    {String.fromCharCode(65 + answerIndex)}
+                  </div>
+                  
+                  <span className={cn(
+                    "flex-1 text-base",
+                    isCorrect ? "font-medium text-foreground" : "text-muted-foreground"
+                  )}>
+                    {answer.answer || "(Réponse vide)"}
+                  </span>
+                  
+                  {isCorrect ? (
+                    <div className="flex items-center gap-1 text-sm text-green-600">
+                      <Check className="h-4 w-4" />
+                      <span>Bonne réponse</span>
+                    </div>
+                  ) : (
+                    <div className="h-4 w-4 flex-shrink-0" />
+                  )}
                 </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 }

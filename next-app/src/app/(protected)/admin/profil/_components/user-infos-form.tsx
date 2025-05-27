@@ -1,8 +1,11 @@
 "use client";
 
+import { motion } from "framer-motion";
+import { Mail, User as UserIcon } from "lucide-react";
 import { sendResetForEmailAction } from "@/actions/reset-email.action";
 import SubmitButton from "@/components/form/submit-button";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -19,6 +22,19 @@ import { UserRole } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+
+const fadeIn = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
+};
+
+const stagger = {
+  visible: {
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
 
 type UserPreferencesForm = {
   name: string | null;
@@ -42,7 +58,6 @@ export function UserInfosForm({
     defaultValues: {
       firstname: firstname,
       lastname: lastname,
-      // email: email || undefined,
       role: role,
     },
   });
@@ -64,73 +79,116 @@ export function UserInfosForm({
   }
 
   return (
-    <div className="space-y-8">
-      <h2 className="text-2xl font-semibold text-center">Mes infos</h2>
+    <motion.div 
+      className="space-y-6"
+      initial="hidden"
+      animate="visible"
+      variants={stagger}
+    >
       {!isOAuth && (
-        <div className="relative flex flex-col gap-8 p-4 my-4 border rounded-md ">
-          <span className="absolute -top-3 left-4 text-slate-400 px-2 bg-white">
-            {"Adresse e-mail"}
-          </span>
-          <p className="text-[.8rem] text-slate-500">
-            Une fois que vous aurez cliqué sur le bouton ci-dessous, un lien
-            sécurisé contenant des instructions sur la manière de modifier votre
-            adresse e-mail sera envoyé à votre boîte mail.
-          </p>
-          <div className="flex flex-col lg:flex-row justify-between items-end gap-4">
-            <div className="relative w-full px-4 py-3 border rounded-md">
-              <span className="absolute -top-3 left-4 text-slate-400 text-sm px-2 bg-white">
-                Adresse e-mail actuelle
-              </span>
-              {email}
-            </div>
-            <Button
-              className="w-full"
-              onClick={() => handleSendResetEmail(email as string)}
-            >
-              {"ENVOYER LE LIEN DE MODIFICATION D'E-MAIL"}
-            </Button>
-          </div>
-        </div>
+        <motion.div 
+          variants={fadeIn}
+          className="relative"
+        >
+          <Card className="border-0 shadow-sm">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-2">
+                <Mail className="w-5 h-5 text-primary" />
+                <CardTitle className="text-lg">Adresse e-mail</CardTitle>
+              </div>
+              <CardDescription className="text-sm">
+                Un lien de modification sécurisé sera envoyé à votre adresse e-mail actuelle.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col space-y-4">
+                <div className="relative p-3 bg-muted/30 rounded-md">
+                  <span className="text-xs font-medium text-muted-foreground absolute -top-2 left-3 bg-background px-2">
+                    Adresse e-mail actuelle
+                  </span>
+                  <p className="text-sm font-medium pt-1">{email}</p>
+                </div>
+                <Button
+                  variant="outline"
+                  className="w-full sm:w-auto self-end"
+                  onClick={() => handleSendResetEmail(email as string)}
+                  disabled={isPending}
+                >
+                  Envoyer le lien de modification
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       )}
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
-            <FormField
-              control={form.control}
-              name="firstname"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Prénom</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Akira" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
-            <FormField
-              control={form.control}
-              name="lastname"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Nom</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Toryama" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+      <motion.div variants={fadeIn}>
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-2">
+              <UserIcon className="w-5 h-5 text-primary" />
+              <CardTitle className="text-lg">Informations personnelles</CardTitle>
+            </div>
+            <CardDescription className="text-sm">
+              Mettez à jour vos informations personnelles
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="firstname"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Prénom</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="Votre prénom" 
+                              {...field} 
+                              className="bg-background"
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
 
-          <SubmitButton
-            texte="MODIFIER"
-            isLoading={isPending}
-            loadindText="En cour de modification"
-          />
-        </form>
-      </Form>
-    </div>
+                    <FormField
+                      control={form.control}
+                      name="lastname"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nom</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="Votre nom" 
+                              {...field} 
+                              className="bg-background"
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="pt-2">
+                    <SubmitButton
+                      className="w-full sm:w-auto"
+                      texte="Mettre à jour"
+                      isLoading={isPending}
+                      loadindText="Enregistrement..."
+                    />
+                  </div>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </motion.div>
   );
 }

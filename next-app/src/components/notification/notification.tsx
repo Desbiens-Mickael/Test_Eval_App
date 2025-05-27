@@ -32,7 +32,7 @@ export default function Notification() {
         <Button
           variant="ghost"
           size="icon"
-          className="relative rounded-full p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+          className="relative rounded-full p-2"
         >
           <Bell className="text-foreground" size={25} />
           {data && data.length > 0 && (

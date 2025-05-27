@@ -1,4 +1,4 @@
-import ShowCorrection from "@/app/(protected)/eleve/exercices/correction/(components)/show-correction";
+import ShowCorrection from "@/app/(protected)/eleve/(learning)/exercices/correction/(components)/show-correction";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

@@ -49,8 +49,8 @@ export const useContentMultipleChoiceStore = create<ContentMultipleChoiceStore>(
           { answer: "", isCorrect: false },
         ],
       };
-      set({ content: [...content, defaultQuestion] });
-      onChange?.([...content, defaultQuestion]);
+      set({ content: [defaultQuestion, ...content] });
+      onChange?.([defaultQuestion, ...content]);
     },
 
     updateQuestion: (index, value) => {

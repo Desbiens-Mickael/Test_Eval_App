@@ -22,7 +22,10 @@ export default function AdminDashboardLayout({
       <SidebarInset className="overflow-hidden">
         <Header />
         <div
-          className={cn(inter.className, "flex flex-1 flex-col gap-4 p-4 pt-0")}
+          className={cn(
+            inter.className,
+            "flex flex-1 flex-col gap-4 p-4 pt-0 w-full max-w-screen-2xl mx-auto"
+          )}
         >
           {children}
         </div>

@@ -1,9 +1,26 @@
 "use client";
 
-import { createExerciceFormInput } from "@/shema-zod/exercice.shema";
 import { motion } from "framer-motion";
+import {
+  Award,
+  CheckCircle,
+  ClipboardList,
+  FileText,
+  Info,
+} from "lucide-react";
 import dynamic from "next/dynamic";
 import { UseFormReturn } from "react-hook-form";
+
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { createExerciceFormInput } from "@/shema-zod/exercice.shema";
 import { ComponentType, DynamicComponent } from "./dynamic-content-components";
 
 interface CreateEXerciceSTep3Props {
@@ -33,51 +50,103 @@ export default function CreateEXerciceSTep3({
   // Vérification et assertion du type de contenu
   return (
     <motion.div
-      initial={{ x: 20, opacity: 0, scale: 0.95 }}
-      animate={{ x: 0, opacity: 1, scale: 1 }}
-      exit={{ x: -20, opacity: 0, scale: 0.95 }}
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      className="h-full flex flex-col space-y-8 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.2 }}
+      className="h-full space-y-6"
     >
-      <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 border-b pb-3 border-gray-200 dark:border-gray-700">
-        Étape 3: Récapitulatif
-      </h2>
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <CheckCircle className="w-6 h-6 text-green-500" />
+          <h2 className="text-2xl font-semibold tracking-tight">
+            {"Récapitulatif de l'exercice"}
+          </h2>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          {
+            "Vérifiez les informations avant de finaliser la création de votre exercice"
+          }
+        </p>
+      </div>
 
-      <div className="min-w-[50%] w-fit mx-auto bg-gray-50 dark:bg-gray-900 rounded-lg p-6 border border-gray-200 dark:border-gray-700 space-y-4">
-        <div className="flex flex-col gap-2">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-            {form.getValues("title")}
-          </h3>
-          <p className="w-[80%] text-gray-600 dark:text-gray-400">
-            {form.getValues("description")}
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 bg-white dark:bg-gray-800 p-4 rounded-md border border-gray-100 dark:border-gray-700">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-gray-700 dark:text-gray-300">
-              Type:
-            </span>
-            <p className="text-gray-800 dark:text-gray-200">{type}</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-gray-700 dark:text-gray-300">
-              Niveau:
-            </span>
-            <p className="text-gray-800 dark:text-gray-200">{level}</p>
-          </div>
-        </div>
-        <div className="space-y-2">
-          <span className="font-semibold text-gray-700 dark:text-gray-300 block">
-            Contenu:
-          </span>
-          <div className="w-full mx-auto p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700">
-            <DynamicComponent
-              initialValue={content}
-              type={type}
-              isEditing={false}
-            />
-          </div>
-        </div>
+      <div className="flex flex-col gap-6">
+        {/* Carte d'information principale */}
+        <Card className="">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <FileText className="w-5 h-5 text-primary" />
+              <CardTitle>{"Détails de l'exercice"}</CardTitle>
+            </div>
+            <CardDescription>
+              Informations générales et configuration
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <h3 className="font-medium text-lg">{form.getValues("title")}</h3>
+              <p className="text-muted-foreground">
+                {form.getValues("description")}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2 p-4 bg-muted/30 rounded-lg">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Award className="w-4 h-4" />
+                  <span>{"Type d'exercice"}</span>
+                </div>
+                <div className="font-medium">
+                  <Badge variant="outline" className="text-sm">
+                    {type}
+                  </Badge>
+                </div>
+              </div>
+
+              <div className="space-y-2 p-4 bg-muted/30 rounded-lg">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Award className="w-4 h-4" />
+                  <span>Niveau de difficulté</span>
+                </div>
+                <div className="font-medium">
+                  <Badge variant="outline" className="text-sm">
+                    {level}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Aperçu du contenu */}
+        <Card className="h-full flex flex-col">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <ClipboardList className="w-5 h-5 text-primary" />
+              <CardTitle>{"Aperçu du contenu"}</CardTitle>
+            </div>
+            <CardDescription>{"Visualisation de l'exercice"}</CardDescription>
+          </CardHeader>
+          <CardContent className="flex-1">
+            <div className="p-4 border rounded-lg bg-background">
+              <DynamicComponent
+                initialValue={content}
+                type={type}
+                isEditing={false}
+              />
+            </div>
+          </CardContent>
+          <CardFooter className="flex flex-col items-start gap-2 pt-4">
+            <div className="flex items-start gap-2 text-sm text-muted-foreground">
+              <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
+              <p>
+                {
+                  "Vérifiez que toutes les informations sont correctes avant de finaliser la création de l'exercice."
+                }
+              </p>
+            </div>
+          </CardFooter>
+        </Card>
       </div>
     </motion.div>
   );

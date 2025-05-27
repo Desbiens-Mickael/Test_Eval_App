@@ -1,7 +1,9 @@
 "use client";
 
-import Loader from "@/components/loader";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useGetGroupById } from "@/hooks/queries/group/use-get-group-by-id";
+import { motion } from "framer-motion";
+import { BookOpen, Info, Users } from "lucide-react";
 import { toast } from "sonner";
 import AddLessonToGroup from "./add-lesson-to-group-form";
 import AddStudentToGroupForm from "./add-student-to-group-form";
@@ -17,8 +19,18 @@ export default function EditGroupForm({ id }: EditGroupFormProps) {
   const { data, isLoading, isError, error } = useGetGroupById(id);
 
   if (isLoading || !data) {
-    // TODO: Ajouter le skeleton du formulaire
-    return <Loader />;
+    return (
+      <div className="space-y-8">
+        <div className="flex justify-end">
+          <Skeleton className="h-9 w-28" />
+        </div>
+        <div className="space-y-8">
+          <Skeleton className="h-40 w-full" />
+          <Skeleton className="h-64 w-full" />
+          <Skeleton className="h-64 w-full" />
+        </div>
+      </div>
+    );
   }
 
   if (isError) {
@@ -26,34 +38,100 @@ export default function EditGroupForm({ id }: EditGroupFormProps) {
   }
 
   return (
-    <div className="w-full flex flex-col">
-      <div className="w-full flex justify-end">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="w-full flex flex-col space-y-8"
+    >
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Gestion du groupe
+          </h1>
+          <p className="text-muted-foreground">
+            Gérez les paramètres et le contenu de votre groupe
+          </p>
+        </div>
         <DeleteGroupButton id={id} />
       </div>
-      <div className="w-full flex flex-col space-y-10">
-        <form className="w-full flex flex-col space-y-4">
-          <fieldset className="w-full flex border-2 border-dashed border-gray-300 rounded-lg p-4">
-            <legend className="text-lg font-bold">
-              Informations du groupe
-            </legend>
-            <h3>{data.name}</h3>
-          </fieldset>
-        </form>
-        <div className="w-full flex flex-col border-2 border-dashed border-gray-300 rounded-lg p-4 relative">
-          <h3 className="text-lg font-bold absolute top-[-15px] bg-white">
-            Gestion des élèves
-          </h3>
-          <AddStudentToGroupForm groupId={id} />
-          <ListeMembers students={data.students} />
-        </div>
-        <div className="w-full flex flex-col border-2 border-dashed border-gray-300 rounded-lg p-4 relative">
-          <h3 className="text-lg font-bold absolute top-[-15px] bg-white">
-            Gestion des Leçons
-          </h3>
-          <AddLessonToGroup groupId={id} />
-          <LessonListe lessons={data.lessons} groupId={id} />
-        </div>
+
+      <div className="space-y-8">
+        {/* Section Informations */}
+        <motion.section
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="bg-card rounded-lg border p-6 shadow-sm"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 rounded-lg bg-primary/10 text-primary">
+              <Info className="h-5 w-5" />
+            </div>
+            <h2 className="text-xl font-semibold">Informations du groupe</h2>
+          </div>
+
+          <div className="space-y-4 md:pl-11">
+            <div>
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Nom du groupe
+              </h3>
+              <p className="text-lg font-medium">{data.name}</p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Date de création
+              </h3>
+              <p className="text-foreground">
+                {new Date(data.createdAt).toLocaleDateString("fr-FR", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </p>
+            </div>
+          </div>
+        </motion.section>
+
+        {/* Section Élèves */}
+        <motion.section
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-card rounded-lg border p-6 shadow-sm"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+              <Users className="h-5 w-5" />
+            </div>
+            <h2 className="text-xl font-semibold">Gestion des élèves</h2>
+          </div>
+
+          <div className="space-y-6 md:pl-11">
+            <AddStudentToGroupForm groupId={id} />
+            <ListeMembers students={data.students} />
+          </div>
+        </motion.section>
+
+        {/* Section Leçons */}
+        <motion.section
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-card rounded-lg border p-6 shadow-sm"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 rounded-lg bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400">
+              <BookOpen className="h-5 w-5" />
+            </div>
+            <h2 className="text-xl font-semibold">Gestion des leçons</h2>
+          </div>
+
+          <div className="space-y-6 md:pl-11">
+            <AddLessonToGroup groupId={id} />
+            <LessonListe lessons={data.lessons} groupId={id} />
+          </div>
+        </motion.section>
       </div>
-    </div>
+    </motion.div>
   );
 }

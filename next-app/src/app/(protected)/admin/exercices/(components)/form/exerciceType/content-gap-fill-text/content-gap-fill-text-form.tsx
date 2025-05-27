@@ -1,5 +1,7 @@
 "use client";
 
+import { cn } from "@/lib/utils";
+import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import AnswerList from "./answer-list";
 import AnswerSelector from "./answerSelector";
@@ -22,6 +24,7 @@ interface ContentFillGapTextFormProps {
   initialValue?: contentGapFillInput;
   onChange?: (newValue: contentGapFillInput) => void;
   isEditing?: boolean;
+  className?: string;
 }
 
 export default function ContentFillGapTextForm({
@@ -67,29 +70,83 @@ export default function ContentFillGapTextForm({
     setToggleMode(!toggleMode);
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        when: "beforeChildren",
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 25,
+      },
+    },
+  };
+
   return (
-    <>
-      {isEditing ? (
-        <div className="flex flex-col gap-4 border border-dashed border-primary p-4 rounded-lg">
-          <div className="flex flex-col gap-1">
+    <div className="w-full">
+      <AnimatePresence mode="wait" initial={false}>
+        {isEditing ? (
+          <motion.div
+            key="editing"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className={cn(
+              "flex flex-col gap-6 p-6 bg-background rounded-xl",
+              "border shadow-sm"
+            )}
+          >
             {!toggleMode ? (
               <TextEditorWithAlert handleToggleMode={handleToggleMode} />
             ) : (
-              <>
+              <div className="space-y-6">
                 <AnswerSelector
                   handleToggleMode={handleToggleMode}
                   modifiedText={replaceAllTextWithPlaceholder()}
                 />
-                {content.answers?.length > 0 && <AnswerList />}
-              </>
+                
+                {content.answers?.length > 0 && (
+                  <motion.div
+                    key="answer-list-container"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="overflow-hidden"
+                  >
+                    <AnswerList />
+                  </motion.div>
+                )}
+              </div>
             )}
-          </div>
-        </div>
-      ) : (
-        <ShowContentGapFillPreview
-          modifiedText={replaceAllTextWithPlaceholder()}
-        />
-      )}
-    </>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="preview"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ShowContentGapFillPreview
+              modifiedText={replaceAllTextWithPlaceholder()}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

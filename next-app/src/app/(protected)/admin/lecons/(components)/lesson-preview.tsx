@@ -9,17 +9,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { JSONContent } from "novel";
+import { ShowLessonType } from "@/type/lesson";
 
-interface LessonContentProps {
-  imageBanner?: string;
-  content: JSONContent | undefined;
+interface LessonContentProps extends ShowLessonType {
   className?: string;
 }
 
 export default function LessonPreview({
   content,
   imageBanner,
+  title,
+  subject,
+  subjectColor,
+  gradeLevel,
+  gradeLevelColor,
   className,
 }: LessonContentProps) {
   return (
@@ -35,7 +38,15 @@ export default function LessonPreview({
             Visuel de votre leçon qui sera affiché aux élèves.
           </DialogTitle>
         </DialogHeader>
-        <LessonContent content={content} imageBanner={imageBanner} />
+        <LessonContent
+          content={content}
+          imageBanner={imageBanner}
+          title={title}
+          subject={subject}
+          subjectColor={subjectColor}
+          gradeLevel={gradeLevel}
+          gradeLevelColor={gradeLevelColor}
+        />
       </DialogContent>
     </Dialog>
   );

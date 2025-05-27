@@ -80,7 +80,22 @@ export const getLessonByIdData = async (id: string, authorId: string) => {
 
 // Récupération d'une leçon par son ID pour un élève
 export const getLessonByIdForStudentData = async (id: string) => {
-  return await prisma.lesson.findUnique({ where: { id } });
+  return await prisma.lesson.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      title: true,
+      imageBanner: true,
+      slug: true,
+      content: true,
+      LessonSubject: {
+        select: { id: true, label: true, color: true },
+      },
+      GradeLevels: {
+        select: { id: true, label: true, color: true },
+      },
+    },
+  });
 };
 
 // Récupération des leçons par leurs ID

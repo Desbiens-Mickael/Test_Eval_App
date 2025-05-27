@@ -1,6 +1,6 @@
 "use client";
 
-import ExerciseDoneDashboard from "@/app/(protected)/eleve/exercices/(components)/exercise-done-dashboard";
+import ExerciseDoneDashboard from "@/app/(protected)/eleve/(learning)/exercices/(components)/exercise-done-dashboard";
 import Loader from "@/components/loader";
 import PageTitle from "@/components/page-title";
 import { Badge } from "@/components/ui/badge";

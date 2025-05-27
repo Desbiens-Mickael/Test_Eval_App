@@ -1,4 +1,4 @@
-import FormResetEmail from "@/app/(protected)/profil/_components/form-reset-email";
+import FormResetEmail from "@/app/(protected)/admin/profil/_components/form-reset-email";
 import AuthenticationWrapper from "@/components/auth/authentication-wrapper";
 import { LogIn } from "lucide-react";
 import { Metadata } from "next";

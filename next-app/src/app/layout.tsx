@@ -1,3 +1,4 @@
+import { ThemeProvider } from "@/components/dark-mode/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import Providers from "@/lib/providers";
 import { cn } from "@/lib/utils";
@@ -35,21 +36,28 @@ export default async function RootLayout({
 
   return (
     <SessionProvider session={session}>
-      <html lang="fr" className="">
+      <html lang="fr" suppressHydrationWarning>
         <body
           className={cn(
             inter.className,
-            "flex flex-col min-h-screen text-foreground"
+            "flex flex-col min-h-screen text-foreground selection:bg-primary selection:text-primary-foreground"
           )}
         >
           <Providers>
-            {children}
-            <Toaster
-              position="top-right"
-              richColors={true}
-              duration={5000}
-              theme="light"
-            />
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="light"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+              <Toaster
+                position="top-right"
+                richColors={true}
+                duration={5000}
+                theme="light"
+              />
+            </ThemeProvider>
           </Providers>
         </body>
       </html>

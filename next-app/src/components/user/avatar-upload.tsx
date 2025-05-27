@@ -111,9 +111,9 @@ export default function AvatarUpload({
           )}
         >
           <Button
-            variant={"ghost"}
+            variant="secondary"
             onClick={() => handleShowformUpload()}
-            className="absolute z-10 w-8 h-8 bg-slate-50 p-1 rounded-full top-0 right-0 cursor-pointer hover:bg-slate-200"
+            className="absolute z-10 w-8 h-8 p-1 rounded-full top-0 right-0 cursor-pointer"
           >
             <Pencil size={20} />
           </Button>
@@ -164,7 +164,7 @@ export default function AvatarUpload({
           : ""
       }
       ${isFocused ? "border-blue-500" : ""}
-      ${!isDragActive && !isFocused ? "border-slate-400/25" : ""}
+      ${!isDragActive && !isFocused ? "border-foreground/25" : ""}
     `,
                 })}
               >
@@ -180,7 +180,7 @@ export default function AvatarUpload({
                   </p>
                 )}
                 {!isDragActive && (
-                  <p className="text-lg text-slate-400/35 font-semibold">
+                  <p className="text-lg text-accent-foreground font-semibold">
                     {acceptText}
                   </p>
                 )}

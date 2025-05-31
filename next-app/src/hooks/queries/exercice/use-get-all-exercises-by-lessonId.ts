@@ -1,7 +1,16 @@
 import { getExercicesByLessonIdAction } from "@/actions/exercice.action";
-import { Exercice } from "@/type/exercice";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { toast } from "sonner";
+
+interface ExerciceResponse {
+  id: string;
+  title: string;
+  description: string;
+  level: string;
+  levelColor: string;
+  type: string;
+  groups: { id: string }[];
+}
 
 /**
  * Hook for getting all exercices card.
@@ -9,7 +18,7 @@ import { toast } from "sonner";
  */
 const useGetAllExercicesByLessonId = (
   lessonId: string
-): UseQueryResult<Exercice[], Error> => {
+): UseQueryResult<ExerciceResponse[] | undefined, Error> => {
   return useQuery({
     queryKey: ["allExercicesByLessonId", lessonId],
     queryFn: async () => {
@@ -17,6 +26,7 @@ const useGetAllExercicesByLessonId = (
 
       if (response.error) {
         toast.error(response.error);
+        return [];
       }
       return response.data;
     },

@@ -10,11 +10,14 @@ import { toast } from "sonner";
 
 import { DataTableRowActions } from "@/components/table/data-table-row-action";
 import { useDeleteStudents } from "@/hooks/mutations/student/use-delete-students";
-import { useGetAllStudentsByProfessorId } from "@/hooks/queries/student/use-get-all-students-by-professorId ";
+import {
+  StudentResponse,
+  useGetAllStudentsByProfessorId,
+} from "@/hooks/queries/student/use-get-all-students-by-professorId ";
 import { formatDate } from "@/lib/utils";
-import { Student } from "@/type/student";
 import { useRouter } from "next/navigation";
 import CreateStudentButton from "./create-student-button";
+interface StudentTableProps extends StudentResponse {}
 
 export default function StudentTable() {
   const { data: studentData, isLoading } = useGetAllStudentsByProfessorId();
@@ -38,7 +41,7 @@ export default function StudentTable() {
     [mutateAsyncDelete]
   );
 
-  const columns: ColumnDef<Student>[] = [
+  const columns: ColumnDef<StudentTableProps>[] = [
     {
       id: "select",
       header: ({ table }) => (

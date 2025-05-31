@@ -38,7 +38,7 @@ export default function Notification() {
           {data && data.length > 0 && (
             <span
               className="absolute -top-1 -right-1 flex items-center justify-center
-              w-5 h-5 text-xs font-bold text-white
+              w-5 h-5 text-xs font-bold text-foreground
               bg-primary rounded-full
               animate-pulse"
             >
@@ -48,11 +48,11 @@ export default function Notification() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-[350px] max-h-[500px] overflow-y-auto
-        bg-white dark:bg-gray-800 border dark:border-gray-700 shadow-lg rounded-xl"
+        className="w-[350px] max-h-[500px] 
+        bg-background shadow-lg rounded-xl"
       >
-        <div className="flex justify-between items-center p-4 border-b dark:border-gray-700">
-          <DropdownMenuLabel className="text-xl font-bold text-gray-900 dark:text-white">
+        <div className="flex justify-between items-center p-4 border-b">
+          <DropdownMenuLabel className="text-xl font-bold text-foreground">
             Notifications
           </DropdownMenuLabel>
           {data && data.length > 0 && (
@@ -72,7 +72,7 @@ export default function Notification() {
         </div>
 
         {data && data.length > 0 ? (
-          <div className="divide-y dark:divide-gray-700">
+          <div className="divide-y w-full max-h-[400px] overflow-y-auto">
             {data.map((notification) => {
               if (!notification.isRead) {
                 return (

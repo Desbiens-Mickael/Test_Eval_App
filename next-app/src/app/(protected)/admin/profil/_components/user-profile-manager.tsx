@@ -51,6 +51,7 @@ export default function UserProfileManager() {
             const isActive = activeTab === tab.value;
             return (
               <TabsTrigger
+                disabled={tab.value === "security" && user?.isOAuth}
                 key={tab.value}
                 value={tab.value}
                 className={cn(

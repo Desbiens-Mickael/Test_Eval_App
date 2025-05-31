@@ -13,13 +13,17 @@ interface GetExercisesDoneProps {
 export const useGetExercisesDone = ({
   subject,
   studentId,
-}: GetExercisesDoneProps): UseQueryResult<StudentExerciceCard[], Error> => {
+}: GetExercisesDoneProps): UseQueryResult<
+  StudentExerciceCard[] | undefined,
+  Error
+> => {
   return useQuery({
     queryKey: ["exercises-done", subject, studentId],
     queryFn: async () => {
       const response = await getExercisesDoneAction(subject, studentId);
       if (response.error) {
         toast.error(response.error);
+        return [];
       }
       return response.data;
     },

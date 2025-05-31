@@ -18,15 +18,14 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { User } from "next-auth";
 import NavUser from "./nav-user";
 
 export default function AppSidebar() {
-  const user = useCurrentUser() as User;
+  const userRole = useCurrentUser();
 
   const { isMobile, state } = useSidebar();
 
-  const menus = user?.role === "ADMIN" ? adminMenus : studentMenus;
+  const menus = userRole?.role === "ADMIN" ? adminMenus : studentMenus;
 
   return (
     <Sidebar variant="inset" collapsible="icon">

@@ -14,6 +14,7 @@ export const useGetStudentExerciceById = ({
       const response = await getStudentExerciceByIdAction(studentExerciceId);
       if (response.error) {
         toast.error(response.error);
+        return null;
       }
       return response.data;
     },

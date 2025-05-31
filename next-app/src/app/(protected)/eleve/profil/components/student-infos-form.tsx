@@ -24,12 +24,12 @@ interface StudentInfosFormProps {
 }
 
 export default function StudentInfosForm({ student }: StudentInfosFormProps) {
-  const name = student.name.split(" ");
+  const name = student?.name?.split(" ");
   const form = useForm<studentInfosFormType>({
     resolver: zodResolver(studentInfosFormSchema),
     defaultValues: {
-      firstname: name[0],
-      lastname: name[1],
+      firstname: name ? name[0] : "",
+      lastname: name ? name[1] : "",
     },
   });
 
@@ -52,7 +52,7 @@ export default function StudentInfosForm({ student }: StudentInfosFormProps) {
               <FormLabel>Identifiant</FormLabel>
               <FormControl>
                 <Input
-                  value={student.identifier}
+                  value={student?.identifier}
                   readOnly
                   className="bg-gray-100 text-gray-600"
                 />

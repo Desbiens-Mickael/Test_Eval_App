@@ -22,7 +22,7 @@ import { createExerciceFormInput } from "@/shema-zod/exercice.shema";
 import { ComponentType, DynamicComponent } from "./dynamic-content-components";
 
 interface CreateExerciceStep2Props {
-  form: UseFormReturn<createExerciceFormInput, any, undefined>;
+  form: UseFormReturn<createExerciceFormInput>;
   type: ComponentType;
 }
 

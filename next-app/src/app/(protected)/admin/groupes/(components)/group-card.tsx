@@ -1,7 +1,6 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Student } from "@/type/student";
 import { motion } from "framer-motion";
 import { ChevronRight, FolderKanban, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -9,7 +8,7 @@ import { useRouter } from "next/navigation";
 interface GroupCardProps {
   id: string;
   name: string;
-  students: Student[];
+  students: { id: string; identifier: string }[];
 }
 
 export default function GroupCard({ id, name, students }: GroupCardProps) {

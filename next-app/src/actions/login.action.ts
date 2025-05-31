@@ -77,15 +77,21 @@ const loginAction = async (credentials: loginUserFormType) => {
     }
   }
 
-  const urlRedirect =
-    existingUser.role === "ADMIN" ? "/admin/dashboard" : "/user/dashboard";
+  // const urlRedirect = "/admin/dashboard";
 
   try {
-    await signIn("credentials", {
+    const result = await signIn("credentials", {
       email,
       password,
-      redirectTo: urlRedirect,
+      redirect: false,
+      // redirectTo: urlRedirect,
     });
+
+    if (result?.error) {
+      return { error: "Une erreur c'est produite !" };
+    }
+
+    return { redirect: true };
   } catch (err) {
     if (err instanceof AuthError) {
       switch (err.type) {

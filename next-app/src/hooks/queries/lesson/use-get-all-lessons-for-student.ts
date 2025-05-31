@@ -7,7 +7,7 @@ const useGetAllLessonsForStudent = ({
   subject,
 }: {
   subject?: string;
-}): UseQueryResult<Lesson[] | [], Error> => {
+}): UseQueryResult<Lesson[] | undefined, Error> => {
   return useQuery({
     queryKey: ["allTheStudentLessons", subject],
     queryFn: async () => {

@@ -44,6 +44,7 @@ WORKDIR /app
 
 # Define the environment
 ENV NODE_ENV=production
+ENV NEXT_BASE_URL=https://educraft.mickaeldesbiens.com
 
 # If sharp is enabled and not found, define the path to the sharp module
 # ENV NEXT_SHARP_PATH=/app/node_modules/sharp

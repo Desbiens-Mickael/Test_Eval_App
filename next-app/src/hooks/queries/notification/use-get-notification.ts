@@ -7,7 +7,10 @@ import { toast } from "sonner";
  * Hook for getting all notifications.
  * @returns {Promise} a promise resolving to all notifications
  */
-const useGetNotification = (): UseQueryResult<Notification[], Error> => {
+const useGetNotification = (): UseQueryResult<
+  Notification[] | undefined,
+  Error
+> => {
   return useQuery({
     queryKey: ["notifications"],
     queryFn: async () => {

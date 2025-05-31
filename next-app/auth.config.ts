@@ -1,4 +1,4 @@
-import CredentialsProvider from "next-auth/providers/credentials";
+import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 
 import {
@@ -53,9 +53,10 @@ export default {
     signIn: "/auth/connexion",
     error: "/auth/error",
   },
+  basePath: "/api/auth",
   providers: [
-    CredentialsProvider({
-      async authorize(credentials) {
+    Credentials({
+      authorize: async (credentials) => {
         const isCredentialsAdminValide =
           loginUserFormSchema.safeParse(credentials); // Vérification Admin
         const isCredentialsStudentValide =
@@ -94,10 +95,18 @@ export default {
         return null;
       },
     }),
-    Google,
+    Google({
+      authorization: {
+        params: {
+          access_type: "offline", // Permet de récupérer un refresh token
+          prompt: "consent", // Force l'utilisateur à accepter les conditions
+          response_type: "code", // Type de réponse
+        },
+      },
+    }),
   ],
   callbacks: {
-    async signIn({ user, account }) {
+    signIn: async ({ user, account }) => {
       // Allow OAuth without email verification
       if (account?.provider !== "credentials") {
         return true;
@@ -142,7 +151,7 @@ export default {
 
       return false;
     },
-    async jwt({ token, account, trigger }) {
+    jwt: async ({ token, account, trigger, user }) => {
       if (!token.sub) return token;
 
       // Gérer l'OAuth
@@ -170,7 +179,7 @@ export default {
           token.picture = user.image;
         } else {
           console.warn(
-            "Aucun user ni student trouvé pour le token.sub :",
+            "Aucun utilisateur trouvé pour le token.sub :",
             token.sub
           );
         }
@@ -178,22 +187,26 @@ export default {
 
       return token;
     },
-    async session({ session, token }) {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          identifier: token.identifier,
-          role: token.role,
-          isTwoFactorEnabled: token.isTwoFactorEnabled,
-          isOAuth: token.isOAuth,
-          id: token.sub,
-        },
-      };
+    session: async ({ session, token }) => {
+      if (token) {
+        session = {
+          ...session,
+          user: {
+            ...session.user,
+            identifier: token.identifier,
+            role: token.role,
+            isTwoFactorEnabled: token.isTwoFactorEnabled,
+            isOAuth: token.isOAuth,
+            id: token.sub as string,
+          },
+        };
+      }
+
+      return session;
     },
   },
   events: {
-    async linkAccount({ user }) {
+    linkAccount: async ({ user }) => {
       await UpdateUserData(user.id as string, { emailVerified: new Date() });
     },
   },

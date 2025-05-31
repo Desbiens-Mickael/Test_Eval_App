@@ -1,6 +1,13 @@
 "use client";
 
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { resetPasswordSendFormSchema } from "@/shema-zod/auth.shema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,8 +23,8 @@ export default function PasswordResetSubmissionForm({}) {
   const { mutate, isPending } = useMutation({
     mutationFn: resetPasswordAction,
     onSuccess: (data) => {
-      if (data.error) toast.error(data.error);
-      if (data.success) toast.error(data.success);
+      if (data?.error) toast.error(data.error);
+      if (data?.success) toast.success(data.success);
       form.reset();
     },
   });
@@ -39,7 +46,10 @@ export default function PasswordResetSubmissionForm({}) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full xl:w-[80%] lg:h-1/2 space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="w-full xl:w-[80%] lg:h-1/2 space-y-8"
+      >
         <FormField
           control={form.control}
           name="email"
@@ -47,13 +57,21 @@ export default function PasswordResetSubmissionForm({}) {
             <FormItem>
               <FormLabel className="font-bold text-lg">Email</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="exemple@gmail.com" {...field} />
+                <Input
+                  type="email"
+                  placeholder="exemple@gmail.com"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <SubmitButton texte="Modifier" isLoading={isPending} loadindText="Création en cour" />
+        <SubmitButton
+          texte="Modifier"
+          isLoading={isPending}
+          loadindText="Création en cour"
+        />
       </form>
     </Form>
   );

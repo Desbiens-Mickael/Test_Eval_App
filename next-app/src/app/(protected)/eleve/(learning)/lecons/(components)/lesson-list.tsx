@@ -54,23 +54,16 @@ const LessonList = ({ selectedSubject }: LessonListProps) => {
   }
 
   return (
-    <motion.div
-      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-      variants={container}
-      initial="hidden"
-      animate="show"
-      key={selectedSubject || "all-lessons"}
-    >
-      <AnimatePresence mode="wait">
+    <AnimatePresence mode="wait">
+      <motion.div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        variants={container}
+        initial="hidden"
+        animate="show"
+        key={selectedSubject || "all-lessons"}
+      >
         {data.map((lesson, index) => (
-          <motion.div
-            key={lesson.id}
-            variants={item}
-            layout
-            initial="hidden"
-            animate="show"
-            className="h-full"
-          >
+          <motion.div key={lesson.id} variants={item} layout className="h-full">
             <Card className="group relative h-full flex flex-col overflow-hidden border border-border/10 dark:border-border/80 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 dark:hover:shadow-primary/10 dark:hover:border-primary/30">
               <div className="aspect-[4/3] bg-muted relative overflow-hidden">
                 <Image
@@ -96,7 +89,7 @@ const LessonList = ({ selectedSubject }: LessonListProps) => {
                 />
               </div>
 
-              <CardContent className="p-5 space-y-3 flex-1 flex flex-col">
+              <CardContent className="p-5 space-y-3 flex-1 flex flex-col justify-between">
                 <h3 className="font-semibold text-lg leading-tight line-clamp-2 text-foreground group-hover:text-primary transition-colors">
                   {lesson.title}
                 </h3>
@@ -118,8 +111,8 @@ const LessonList = ({ selectedSubject }: LessonListProps) => {
             </Card>
           </motion.div>
         ))}
-      </AnimatePresence>
-    </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 

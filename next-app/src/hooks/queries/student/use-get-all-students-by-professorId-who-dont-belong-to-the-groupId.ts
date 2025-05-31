@@ -1,10 +1,16 @@
 import { getAllStudentsByAuthorIdwhoDontBelongToTheGroupIdAction } from "@/actions/student.action";
-import { Student } from "@/type/student";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
+
+interface StudentResponse {
+  name: string;
+  id: string;
+  identifier: string;
+  isActive: boolean;
+}
 
 export const useGetAllStudentsByAuthorIdwhoDontBelongToTheGroupId = (
   groupId: string
-): UseQueryResult<Student[] | [], Error> => {
+): UseQueryResult<StudentResponse[] | undefined, Error> => {
   return useQuery({
     queryKey: ["TeacherStudentsByGroup", groupId],
     queryFn: async () => {

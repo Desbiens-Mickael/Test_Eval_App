@@ -21,7 +21,7 @@ export default function FormResetPassword({}) {
     mutationFn: newResetPasswordAction,
     onSuccess: (data) => {
       if (data?.error) toast.error(data.error);
-      if (data?.success) toast.error(data.success);
+      if (data?.success) toast.success(data.success);
       form.reset();
     },
   });
@@ -43,9 +43,21 @@ export default function FormResetPassword({}) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full xl:w-[80%] lg:h-1/2 space-y-8">
-        <PasswordInput control={form.control} name="password" label="Mot de passe" placeholder="******" />
-        <SubmitButton texte="Modifier" isLoading={isPending} loadindText="Création en cour" />
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="w-full xl:w-[80%] lg:h-1/2 space-y-8"
+      >
+        <PasswordInput
+          control={form.control}
+          name="password"
+          label="Mot de passe"
+          placeholder="******"
+        />
+        <SubmitButton
+          texte="Modifier"
+          isLoading={isPending}
+          loadindText="Création en cour"
+        />
       </form>
     </Form>
   );

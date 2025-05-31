@@ -36,13 +36,12 @@ export type StudentExerciceCard = {
 
 export type StudentExerciceById = {
   id: string;
-  exerciceId?: string;
   studentId: string;
   note: number;
   createdAt: Date;
   response: JsonValue;
   coeficient: number;
-  exercice?: {
+  exercice: {
     id: string;
     title: string;
     description: string;
@@ -50,12 +49,12 @@ export type StudentExerciceById = {
     type: {
       name: string;
     };
-  };
+  } | null;
   student: {
     id: string;
     name: string;
   };
-};
+} | null;
 
 export type noteExerciceStudent = {
   note: number;

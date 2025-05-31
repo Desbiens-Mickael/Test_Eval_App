@@ -23,7 +23,7 @@ import { createExerciceFormInput } from "@/shema-zod/exercice.shema";
 import { ComponentType } from "./dynamic-content-components";
 
 interface createExerciceStep1Props {
-  form: UseFormReturn<createExerciceFormInput, any, undefined>;
+  form: UseFormReturn<createExerciceFormInput>;
   setType: Dispatch<React.SetStateAction<ComponentType>>;
   setLevel: Dispatch<React.SetStateAction<string>>;
   isEditing: boolean;

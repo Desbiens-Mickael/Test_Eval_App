@@ -1,8 +1,10 @@
 import loginAction from "@/actions/login.action";
 import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 const useLogin = () => {
+  const router = useRouter();
   return useMutation({
     mutationFn: loginAction,
     onSuccess: (data) => {
@@ -11,6 +13,9 @@ const useLogin = () => {
       }
       if (data?.success) {
         toast.success(data.success);
+      }
+      if (data?.redirect) {
+        window.location.replace("/admin/dashboard");
       }
       if (data?.error) {
         toast.error(data.error);

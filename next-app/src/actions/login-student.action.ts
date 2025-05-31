@@ -39,14 +39,18 @@ const loginStudentAction = async (credentials: loginStudentFormType) => {
     await UpdateStudentData(existingStudent.id, { isActive: true });
   }
 
-  const urlRedirect = "/eleve/dashboard";
-
   try {
-    await signIn("credentials", {
+    const result = await signIn("credentials", {
       identifier,
       password,
-      redirectTo: urlRedirect,
+      redirect: false,
     });
+
+    if (result?.error) {
+      return { error: "Une erreur c'est produite !" };
+    }
+
+    return { redirect: true };
   } catch (err) {
     if (err instanceof AuthError) {
       switch (err.type) {

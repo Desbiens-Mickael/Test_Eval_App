@@ -1,9 +1,20 @@
 import { getAllStudentsByAuthorIdAction } from "@/actions/student.action";
-import { Student } from "@/type/student";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
+export interface StudentResponse {
+  name: string;
+  id: string;
+  createdAt: Date;
+  identifier: string;
+  isActive: boolean;
+  groupStudent: {
+    name: string;
+    id: string;
+  } | null;
+}
+
 export const useGetAllStudentsByProfessorId = (): UseQueryResult<
-  Student[] | [],
+  StudentResponse[] | undefined,
   Error
 > => {
   return useQuery({

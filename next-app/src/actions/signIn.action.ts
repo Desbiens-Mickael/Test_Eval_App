@@ -2,8 +2,8 @@
 
 import { signIn } from "auth";
 
-const signInAction = async (provider: string) => {
-  await signIn(provider);
+const signInAction = async (provider: string, redirectTo?: string) => {
+  await signIn(provider, { redirectTo });
 };
 
 export default signInAction;

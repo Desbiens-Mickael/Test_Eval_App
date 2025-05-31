@@ -12,7 +12,7 @@ export type CreateLessonType = {
 export type Lesson = {
   id: string;
   title: string;
-  imageBanner: string;
+  imageBanner?: string | null;
   slug: string;
   subject: string;
   subjectColor: string;
@@ -23,7 +23,7 @@ export type Lesson = {
 export type LessonForStudent = {
   id: string;
   title: string;
-  imageBanner: string;
+  imageBanner: string | null;
   slug: string;
   content: JSONContent;
   LessonSubject: {
@@ -39,7 +39,7 @@ export type LessonForStudent = {
 };
 
 export type ShowLessonType = {
-  imageBanner?: string;
+  imageBanner?: string | null;
   title: string;
   subject?: string;
   subjectColor?: string;

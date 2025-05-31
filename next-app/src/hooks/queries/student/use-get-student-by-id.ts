@@ -1,15 +1,28 @@
 import { getStudentByIdAction } from "@/actions/student.action";
-import { StudentInfosTeacher } from "@/type/student";
+import { UserRole } from "@prisma/client";
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-interface StudentById {
-  studentId: string;
+interface StudentResponse {
+  name: string;
+  id: string;
+  image: string | null;
+  role: UserRole;
+  createdAt: Date;
+  identifier: string;
+  isActive: boolean;
+  professorId: string;
+  groupStudent: {
+    name: string;
+    id: string;
+  } | null;
 }
 
 export const useGetStudentById = ({
   studentId,
-}: StudentById): UseQueryResult<StudentInfosTeacher | null, Error> => {
+}: {
+  studentId: string;
+}): UseQueryResult<StudentResponse | null | undefined, Error> => {
   return useQuery({
     queryKey: ["studentById", studentId],
     queryFn: async ({ queryKey }) => {

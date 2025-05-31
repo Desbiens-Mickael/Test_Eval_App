@@ -8,8 +8,8 @@ interface AuthenticationWraperProps {
   imagePath?: string;
   children: React.ReactNode;
   sociale?: boolean;
-  backButtonText: string;
-  backButtonHref: string;
+  backButtonText?: string;
+  backButtonHref?: string;
   backButtonIcon?: JSX.Element;
 }
 
@@ -43,11 +43,13 @@ export default function AuthenticationWrapper({
           </div>
           {children}
 
-          <Button variant={"link"} asChild>
-            <Link href={backButtonHref} className="gap-2">
-              {backButtonIcon && backButtonIcon} {backButtonText}
-            </Link>
-          </Button>
+          {backButtonText && backButtonHref && (
+            <Button variant={"link"} asChild>
+              <Link href={backButtonHref} className="gap-2">
+                {backButtonIcon && backButtonIcon} {backButtonText}
+              </Link>
+            </Button>
+          )}
         </div>
       </div>
     </div>

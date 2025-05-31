@@ -20,7 +20,7 @@ import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { z } from "zod";
 
-export default function FormResetEmail({}) {
+export default function FormResetEmail() {
   const { update } = useSession();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");

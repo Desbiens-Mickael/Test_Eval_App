@@ -29,8 +29,6 @@ describe("LoginPage", () => {
       expect.objectContaining({
         title: "Connexion",
         imagePath: "/assets/images/login.webp",
-        backButtonHref: "/auth/inscription",
-        backButtonText: "Pas encore de compte ? CRÉER UN COMPTE",
       }),
       expect.anything()
     );

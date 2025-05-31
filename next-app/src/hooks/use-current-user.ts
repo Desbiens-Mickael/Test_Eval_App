@@ -1,11 +1,13 @@
+"use client";
+import { User } from "next-auth";
 import { useSession } from "next-auth/react";
 
 /**
  * Hook for getting the current user.
- * @returns {User} the current user
+ * @returns {User | undefined} the current user
  */
 export const useCurrentUser = () => {
-  const session = useSession();
+  const { data: session } = useSession();
 
-  return session.data?.user;
+  return session?.user as User;
 };

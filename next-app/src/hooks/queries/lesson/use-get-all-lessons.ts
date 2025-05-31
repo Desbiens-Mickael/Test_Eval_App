@@ -3,7 +3,7 @@ import { Lesson } from "@/type/lesson";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-const useGetAllLessons = (): UseQueryResult<Lesson[] | [], Error> => {
+const useGetAllLessons = (): UseQueryResult<Lesson[] | undefined, Error> => {
   return useQuery({
     queryKey: ["allTheAuthorLessons"],
     queryFn: async () => {

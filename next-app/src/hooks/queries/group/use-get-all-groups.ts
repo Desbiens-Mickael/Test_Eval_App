@@ -1,9 +1,22 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
 import { getAllGroupsAction } from "@/actions/group.action";
-import { Group } from "@/type/group";
 
-export const useGetAllGroups = (): UseQueryResult<Group[], Error> => {
+interface GroupListItem {
+  name: string;
+  id: string;
+  createdAt: Date;
+  authorId: string;
+  students: {
+    id: string;
+    identifier: string;
+  }[];
+}
+
+export const useGetAllGroups = (): UseQueryResult<
+  GroupListItem[] | undefined,
+  Error
+> => {
   return useQuery({
     queryKey: ["allGroups"],
     queryFn: async () => {

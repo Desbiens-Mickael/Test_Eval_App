@@ -35,7 +35,6 @@ export default function ShowLesson({ id }: ShowLessonProps) {
     notFound();
   }
 
-  console.log(lesson);
   return (
     <div className="container max-w-5xl py-8">
       <BackButton text="Retour aux leçons" />

@@ -50,8 +50,6 @@ export default function LessonForm({
     handleImageBanner,
     isPendingCreate,
     isPendingUpdate,
-    previewContent,
-    setPreviewContent,
   } = useLessonFormSubmission({
     id,
     title,
@@ -73,13 +71,14 @@ export default function LessonForm({
 
   return (
     <div className="w-full max-w-screen-xl mx-auto">
-      <AvatarUpload
-        handleUpload={handleImageBanner}
-        isPending={isPendingCreate || isPendingUpdate}
-        image={imageBanner}
-        mode="BANNER"
-      />
-
+      <div className="mb-16">
+        <AvatarUpload
+          handleUpload={handleImageBanner}
+          isPending={isPendingCreate || isPendingUpdate}
+          image={imageBanner}
+          mode="BANNER"
+        />
+      </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="w-full flex flex-col lg:flex-row  items-center gap-8 lg:gap-16">
@@ -131,7 +130,6 @@ export default function LessonForm({
                       initialValue={field.value} // Lie la valeur actuelle
                       onChange={(newContent) => {
                         field.onChange(newContent); // Synchronise avec react-hook-form
-                        setPreviewContent(newContent); // Met à jour le contenu de la preview
                       }}
                     />
                   )}
@@ -151,33 +149,31 @@ export default function LessonForm({
             />
 
             {/* Preview de la leçon */}
-            {previewContent && (
+            {form.getValues("content") && (
               <LessonPreview
-                content={previewContent}
+                content={form.watch("content")}
                 imageBanner={imageBannerFile?.preview}
-                title={form.getValues("title")}
+                title={form.watch("title")}
                 subject={
                   allLessonsSubject?.find(
-                    (subject) =>
-                      subject.id === form.getValues("LessonSubjectID")
+                    (subject) => subject.id === form.watch("LessonSubjectID")
                   )?.label || undefined
                 }
                 subjectColor={
                   allLessonsSubject?.find(
-                    (subject) =>
-                      subject.id === form.getValues("LessonSubjectID")
+                    (subject) => subject.id === form.watch("LessonSubjectID")
                   )?.color || undefined
                 }
                 gradeLevel={
                   allGradeLevels?.find(
                     (gradeLevel) =>
-                      gradeLevel.id === form.getValues("GradeLevelsID")
+                      gradeLevel.id === form.watch("GradeLevelsID")
                   )?.label || undefined
                 }
                 gradeLevelColor={
                   allGradeLevels?.find(
                     (gradeLevel) =>
-                      gradeLevel.id === form.getValues("GradeLevelsID")
+                      gradeLevel.id === form.watch("GradeLevelsID")
                   )?.color || undefined
                 }
               />

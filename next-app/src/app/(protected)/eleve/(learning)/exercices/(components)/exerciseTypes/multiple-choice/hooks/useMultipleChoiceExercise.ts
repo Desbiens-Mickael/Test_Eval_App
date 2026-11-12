@@ -1,6 +1,5 @@
 import { MultipleChoiceExerciseProps } from "@/app/(protected)/eleve/(learning)/exercices/(components)/exerciseTypes/multiple-choice/types";
 import { useAddExerciceResponse } from "@/hooks/mutations/exercice/use-add-exercice-response";
-import { calculateNote } from "@/lib/utils";
 import {
   multipleChoiceResponseItemType,
   multipleChoiceResponseType,
@@ -10,8 +9,6 @@ import { useState } from "react";
 
 export const useMultipleChoiceExercise = ({
   exerciceId,
-  content,
-  level,
 }: MultipleChoiceExerciseProps) => {
   const [selectedAnswers, setSelectedAnswers] =
     useState<multipleChoiceResponseType>([]);
@@ -72,62 +69,19 @@ export const useMultipleChoiceExercise = ({
     });
   };
 
-  // Fonction pour obtenir les indices des réponses correctes pour une question
-  const getCorrectAnswersForQuestion = (questionIndex: number): number[] => {
-    const question = content[questionIndex];
-    const correctIndices = question.answers
-      .map((answer, index) => (answer.isCorrect ? index : -1))
-      .filter((index) => index !== -1);
-    return correctIndices;
-  };
-
-  // Fonction pour évaluer les réponses de l'étudiant
-  const evaluateStudentAnswer = (answer: multipleChoiceResponseItemType) => {
-    const selectedAnswersSet = answer.selectedAnswers;
-    const correctAnswersSet = getCorrectAnswersForQuestion(
-      answer.questionIndex
-    );
-
-    const isCorrect =
-      selectedAnswersSet.length === correctAnswersSet.length &&
-      selectedAnswersSet.every((index) => correctAnswersSet.includes(index));
-
-    return {
-      isCorrect,
-      selectedAnswers: selectedAnswersSet,
-      correctAnswers: correctAnswersSet,
-    };
-  };
-
-  // Fonction pour calculer le score total
-  const calculateTotalScore = (answers: multipleChoiceResponseType): number => {
-    return answers.reduce((total, answer) => {
-      const { isCorrect } = evaluateStudentAnswer(answer);
-      return isCorrect ? total + 1 : total;
-    }, 0);
-  };
-
-  // Fonction pour soumettre les réponses
+  // Fonction pour soumettre les réponses (la note est calculée côté serveur)
   const handleExerciseSubmission = async (): Promise<void> => {
-    const studentAnswers = selectedAnswers;
-    const correctAnswersCount = calculateTotalScore(studentAnswers);
-    const maxPossibleScore = content.length;
-
-    // Calcul de la note
-    const exerciseNote = calculateNote({
-      level,
-      maxCorrectAnswers: maxPossibleScore,
-      correctAnswers: correctAnswersCount,
-    });
-
-    setNote(exerciseNote);
-
-    // Ajout de la réponse de l'étudiant dans la base de données
-    await addExerciceResponse({
+    const result = await addExerciceResponse({
       exerciceId: exerciceId.toString(),
-      ...exerciseNote,
-      response: studentAnswers,
+      response: selectedAnswers,
     });
+
+    if (result?.data) {
+      setNote({
+        note: result.data.note,
+        coeficient: result.data.coeficient,
+      });
+    }
   };
 
   return {

@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useAddExerciceResponse } from "@/hooks/mutations/exercice/use-add-exercice-response";
-import { calculateNote } from "@/lib/utils";
 import { gapFillTextResponseType } from "@/shema-zod/exercice-corection.shema";
 import { contentGapFillInput } from "@/shema-zod/exercice.shema";
 import { baseResponseExercice } from "@/type/exercice";
@@ -37,28 +36,16 @@ export const useExerciseGapFill = ({
 
   const handleSubmit = useCallback(async () => {
     try {
-      const maxCorrectAnswers = content.answers.length;
-      const correctAnswers = content.answers.filter(
-        (a) => a.answer === inputs[a.position]
-      ).length;
-
-      const { note, coeficient } = calculateNote({
-        level,
-        maxCorrectAnswers,
-        correctAnswers,
-      });
-
+      // La note est calculée côté serveur
       await addExerciceResponse({
         exerciceId,
-        note,
-        coeficient,
         response: inputs,
       });
     } catch (error) {
       toast.error("Une erreur est survenue lors de la validation de l'exercice");
       console.error("Error checking answers:", error);
     }
-  }, [addExerciceResponse, exerciceId, inputs, level, content.answers]);
+  }, [addExerciceResponse, exerciceId, inputs]);
 
   // Gestion de la redirection après succès
   useEffect(() => {

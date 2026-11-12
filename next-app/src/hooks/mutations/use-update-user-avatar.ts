@@ -10,8 +10,6 @@ import { toast } from "sonner";
  * @return {Promise} a promise resolving to the updated avatar
  */
 export const useUpdateUserAvatar = () => {
-  const NEXT_PUBLIC_CLIENT_DOMAIN_API =
-    process.env.NEXT_PUBLIC_CLIENT_DOMAIN_API;
   const NEXT_PUBLIC_SERVER_DOMAIN_API =
     process.env.NEXT_PUBLIC_SERVER_DOMAIN_API;
 
@@ -21,12 +19,12 @@ export const useUpdateUserAvatar = () => {
     mutationFn: async (formData: FormData) => {
       const img = data?.user?.image?.split("/").pop();
       if (img) {
-        await fetch(`${NEXT_PUBLIC_CLIENT_DOMAIN_API}/avatar/${img}`, {
+        await fetch(`/api/upload/avatar/${img}`, {
           method: "DELETE",
         });
       }
 
-      const res = await fetch(`${NEXT_PUBLIC_CLIENT_DOMAIN_API}/avatar`, {
+      const res = await fetch(`/api/upload/avatar`, {
         method: "POST",
         body: formData,
       });

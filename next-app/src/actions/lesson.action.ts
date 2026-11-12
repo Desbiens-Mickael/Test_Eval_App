@@ -1,6 +1,10 @@
 "use server";
 
-import { getAuthorIdOfGroupByUserIdData } from "@/data/group.data";
+import {
+  getAuthorIdOfGroupByUserIdData,
+  getGroupByIdAndAuthorIdData,
+  getGroupByStudentIdData,
+} from "@/data/group.data";
 import {
   createLessonData,
   deleteLessonsData,
@@ -299,8 +303,17 @@ export async function deleteLessonsAction(lessonIds: string[]) {
 
 // Récupération des leçons non contenu dans le groupe donné
 export const getAllLessonsNotInGroupAction = async (groupId: string) => {
+  const user = await currentUser();
+  if (!user || !user.id || user.role !== "ADMIN") {
+    return { error: "Action non autoriser !" };
+  }
+
   try {
-    const lessonsData = await getAllLessonsNotInGroupData(groupId);
+    // Le groupe doit appartenir au professeur connecté
+    const group = await getGroupByIdAndAuthorIdData(groupId, user.id);
+    if (!group) return { error: "Ce groupe n'existe pas !" };
+
+    const lessonsData = await getAllLessonsNotInGroupData(groupId, user.id);
 
     const lessons = lessonsData.map((lesson) => {
       return {
@@ -325,7 +338,16 @@ export const getAllLessonsNotInGroupAction = async (groupId: string) => {
 
 // Récupération des leçons par leur groupe
 export const getAllLessonsByGroupIdAction = async (groupId: string) => {
+  const user = await currentUser();
+  if (!user || !user.id || user.role !== "ADMIN") {
+    return { error: "Action non autoriser !" };
+  }
+
   try {
+    // Le groupe doit appartenir au professeur connecté
+    const group = await getGroupByIdAndAuthorIdData(groupId, user.id);
+    if (!group) return { error: "Ce groupe n'existe pas !" };
+
     const lessons = await getAllLessonsByGroupIdData(groupId);
     return {
       success: "Les leçons ont été récupérées avec succès.",
@@ -388,10 +410,23 @@ export const getLessonByIdForStudentAction = async (id: string) => {
     const lesson = await getLessonByIdForStudentData(id);
     if (!lesson) return { error: "Cette leçon n'existe pas !" };
 
+    // Un élève ne voit que les leçons de son groupe,
+    // un professeur uniquement ses propres leçons.
+    if (user.role === "STUDENT") {
+      const group = await getGroupByStudentIdData(user.id);
+      if (!group || !lesson.groups.some((g) => g.id === group.id)) {
+        return { error: "Cette leçon n'existe pas !" };
+      }
+    } else if (lesson.authorId !== user.id) {
+      return { error: "Cette leçon n'existe pas !" };
+    }
+
+    const { groups: _groups, authorId: _authorId, ...lessonData } = lesson;
+
     // Sérialiser le contenu
-    const contentSerialized = JSON.stringify(lesson.content);
+    const contentSerialized = JSON.stringify(lessonData.content);
     const lessonSerialized = {
-      ...lesson,
+      ...lessonData,
       content: contentSerialized,
     };
 

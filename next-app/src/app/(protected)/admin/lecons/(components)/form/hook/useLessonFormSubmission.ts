@@ -1,10 +1,11 @@
 // hooks/use-lesson-form-submission.ts
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
+import { pendingUploads } from "@/components/block-editor/image-upload";
 import { useCreateLesson } from "@/hooks/mutations/lesson/use-create-lesson";
 import { useUpdateLesson } from "@/hooks/mutations/lesson/use-update-lesson";
 import { stringToSlug } from "@/lib/utils";
@@ -13,7 +14,6 @@ import {
   createLessonFormSchema,
 } from "@/shema-zod/lesson.shema";
 import { JSONContent } from "novel";
-import { useEffect } from "react";
 
 /**
  * Interface des propriétés d'entrée du hook de soumission de formulaire de leçon
@@ -84,14 +84,13 @@ export const useLessonFormSubmission = ({
    */
   const extractImagesUrls = (content: JSONContent) => {
     const images: string[] =
-      content.content
+      content?.content
         ?.filter((node) => node.type === "image")
         .map((node) => node.attrs?.src) || [];
     return images;
   };
 
   const getImagesUrlsSource = extractImagesUrls(form.getValues("content"));
-
   useEffect(() => {
     previousImagesRef.current = getImagesUrlsSource;
   }, []);
@@ -101,6 +100,29 @@ export const useLessonFormSubmission = ({
     handleImagesChange();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchedContent]);
+
+  // Nettoyage lors d'un rafraîchissement (F5), fermeture d'onglet ou navigation
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      pendingUploads.forEach((url) => {
+        const img = url.split("/").pop();
+        if (!img) return;
+        fetch(`/api/upload/lesson/${img}`, {
+          method: "DELETE",
+          keepalive: true,
+        });
+      });
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    // Safari/iOS utilise parfois pagehide plutôt que beforeunload
+    window.addEventListener("pagehide", handleBeforeUnload);
+    return () => {
+      pendingUploads.forEach((url) => handleDeleteImage(url));
+      pendingUploads.clear();
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("pagehide", handleBeforeUnload);
+    };
+  }, [clientDomainApi]);
 
   /**
    * Gestion du téléchargement d'image
@@ -123,8 +145,10 @@ export const useLessonFormSubmission = ({
    */
   const handleDeleteImage = async (image: string) => {
     const img = image.split("/").pop();
-    const response = await fetch(`${clientDomainApi}/lesson/${img}`, {
+    const response = await fetch(`/api/upload/lesson/${img}`, {
       method: "DELETE",
+      // keepalive permet l'envoi même lors d'un rafraîchissement / fermeture onglet
+      keepalive: true,
     });
     if (!response.ok) {
       toast.error(
@@ -133,6 +157,7 @@ export const useLessonFormSubmission = ({
       return;
     }
     toast.success("Image supprimée avec succès !");
+    pendingUploads.delete(image);
   };
 
   /**
@@ -184,7 +209,7 @@ export const useLessonFormSubmission = ({
       // Upload de l'image de la banière
       if (imageBannerFile.formData) {
         try {
-          const response = await fetch(`${clientDomainApi}/lesson`, {
+          const response = await fetch(`/api/upload/lesson`, {
             method: "POST",
             body: imageBannerFile.formData,
           });
@@ -231,6 +256,7 @@ export const useLessonFormSubmission = ({
         const subject = stringToSlug(data.data.LessonSubject.label);
 
         toast.success(data.success);
+        pendingUploads.clear();
         resetForm();
         router.push(`/admin/lecons/${subject}`);
       }

@@ -1,5 +1,4 @@
 import { useAddExerciceResponse } from "@/hooks/mutations/exercice/use-add-exercice-response";
-import { calculateNote } from "@/lib/utils";
 import { trueOrFalseResponseType } from "@/shema-zod/exercice-corection.shema";
 import { contentTrueOrFalseInput } from "@/shema-zod/exercice.shema";
 import { noteExerciceStudent } from "@/type/exercice";
@@ -53,24 +52,17 @@ const useTrueFalseExercice = (
       if (!validateResponses()) return;
 
       try {
-        const maxCorrectAnswers = content.length;
-        const correctAnswers = response.filter(
-          (a) => a.answer === content[a.index].answer
-        ).length;
-
-        const { note, coeficient } = calculateNote({
-          level,
-          maxCorrectAnswers,
-          correctAnswers,
-        });
-
-        setNote({ note, coeficient });
-        await addExerciceResponse({
+        // La note est calculée côté serveur
+        const result = await addExerciceResponse({
           exerciceId,
-          note,
-          coeficient,
           response,
         });
+        if (result?.data) {
+          setNote({
+            note: result.data.note,
+            coeficient: result.data.coeficient,
+          });
+        }
         setIsFullFilled(true);
       } catch (error) {
         toast.error(
@@ -79,7 +71,7 @@ const useTrueFalseExercice = (
         console.error("Error checking answers:", error);
       }
     },
-    [addExerciceResponse, response, level, content, validateResponses]
+    [addExerciceResponse, response, validateResponses]
   );
 
   const updateResponse = useCallback((index: number, answer: boolean) => {

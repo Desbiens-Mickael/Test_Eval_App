@@ -33,13 +33,12 @@ export const useDeleteLessons = () => {
           });
         });
 
-        const clientDomainApi = process.env.NEXT_PUBLIC_CLIENT_DOMAIN_API;
         // Delete the images
         data.data.forEach(async (lesson) => {
           if (lesson.imageBanner) {
             const img = lesson.imageBanner.split("/").pop();
             if (img) {
-              const response = await fetch(`${clientDomainApi}/lesson/${img}`, {
+              const response = await fetch(`/api/upload/lesson/${img}`, {
                 method: "DELETE",
               });
               if (!response.ok) {

@@ -13,7 +13,6 @@ export type StudentInfos = {
   id: string;
   name: string;
   identifier: string;
-  password: string;
   image: string | null;
   role: UserRole;
   isActive: boolean;

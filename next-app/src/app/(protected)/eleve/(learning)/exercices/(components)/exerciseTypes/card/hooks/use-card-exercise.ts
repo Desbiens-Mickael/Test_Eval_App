@@ -1,5 +1,4 @@
 import { useAddExerciceResponse } from "@/hooks/mutations/exercice/use-add-exercice-response";
-import { calculateNote } from "@/lib/utils";
 import { cardResponseItemType } from "@/shema-zod/exercice-corection.shema";
 import { cardItemInput, contentCardInput } from "@/shema-zod/exercice.shema";
 import { DropResult } from "@hello-pangea/dnd";
@@ -9,13 +8,13 @@ import { shuffleArray } from "../lib/lib";
 interface UseCardExerciseProps {
   exerciceId: string;
   content: contentCardInput;
-  level: string;
+  cards: cardItemInput[];
 }
 
 export function useCardExercise({
   exerciceId,
   content,
-  level,
+  cards,
 }: UseCardExerciseProps) {
   const [startCards, setStartCards] = useState<cardItemInput[]>([]);
   const [response, setResponse] = useState<cardResponseItemType[]>([]);
@@ -28,14 +27,13 @@ export function useCardExercise({
   } = useAddExerciceResponse();
 
   const resetExercise = useCallback(() => {
-    const allCards = content.flatMap((col) => col.cards);
-    setStartCards(shuffleArray(allCards));
+    setStartCards(shuffleArray(cards));
     setResponse(content.map((col) => ({ column: col.column, cards: [] })));
-  }, [content]);
+  }, [content, cards]);
 
   useEffect(() => {
     resetExercise();
-  }, [content, resetExercise]);
+  }, [resetExercise]);
 
   const handleDragEnd = (result: DropResult) => {
     const { source, destination } = result;
@@ -120,30 +118,10 @@ export function useCardExercise({
     }
   };
 
+  // La note est calculée côté serveur
   const handleSubmit = async () => {
-    const correctAnswersByColumn = content.map((col) => {
-      const colResponse = response.find((r) => r.column === col.column);
-      if (!colResponse) return 0;
-      return col.cards.filter((card) =>
-        colResponse.cards.some((rCard) => rCard.id === card.id)
-      ).length;
-    });
-
-    const maxCorrectAnswers = content
-      .map((col) => col.cards.length)
-      .reduce((a, b) => a + b, 0);
-    const correctAnswers = correctAnswersByColumn.reduce((a, b) => a + b, 0);
-
-    const { note, coeficient } = calculateNote({
-      level,
-      maxCorrectAnswers,
-      correctAnswers,
-    });
-
     await addExerciceResponse({
       exerciceId,
-      note,
-      coeficient,
       response,
     });
   };

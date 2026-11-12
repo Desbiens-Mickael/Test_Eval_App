@@ -15,7 +15,6 @@ import AvatarUpload from "@/components/user/avatar-upload";
 import useGetAllGradeLevels from "@/hooks/queries/use-get-all-grade-levels";
 import useGetAllLessonsSubject from "@/hooks/queries/use-get-all-lesson-subjects";
 import { JSONContent } from "novel";
-import { Controller } from "react-hook-form";
 import LessonFormSkeleton from "../lesson-form-skeleton";
 import LessonPreview from "../lesson-preview";
 import { useLessonFormSubmission } from "./hook/useLessonFormSubmission";
@@ -122,17 +121,11 @@ export default function LessonForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Contenu de la leçon</FormLabel>
-                <Controller
-                  control={form.control}
-                  name="content"
-                  render={({ field }) => (
-                    <NovelEditor
-                      initialValue={field.value} // Lie la valeur actuelle
-                      onChange={(newContent) => {
-                        field.onChange(newContent); // Synchronise avec react-hook-form
-                      }}
-                    />
-                  )}
+                <NovelEditor
+                  initialValue={field.value} // Lie la valeur actuelle
+                  onChange={(newContent) => {
+                    field.onChange(newContent); // Synchronise avec react-hook-form
+                  }}
                 />
                 <FormMessage />
               </FormItem>

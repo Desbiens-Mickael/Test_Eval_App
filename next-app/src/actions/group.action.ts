@@ -133,8 +133,9 @@ export const addStudentToGroupAction = async (
     }
 
     // Vérifier si l'éleve existe
+    // Vérifier si l'éleve existe et appartient au professeur connecté
     const student = await getStudentByIdentifierlData(identifier);
-    if (!student) {
+    if (!student || student.professorId !== user.id) {
       return { error: "Cet élève n'existe pas !" };
     }
 

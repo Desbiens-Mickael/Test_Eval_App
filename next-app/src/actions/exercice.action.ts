@@ -37,6 +37,11 @@ import {
 } from "@/data/student-data";
 import { currentUser } from "@/lib/auth";
 import {
+  gradeExercice,
+  stripExerciceSolutions,
+} from "@/lib/exercice-grading";
+import { Prisma } from "@prisma/client";
+import {
   globalExerciceCorectionShema,
   globalExerciceCorectionType,
 } from "@/shema-zod/exercice-corection.shema";
@@ -290,23 +295,24 @@ export const addExerciceResultAction = async (
     }
 
     // Vérifier que l'exercice appartient au groupe de l'élève
-    if (!exercice.groups?.some((group) => group.id === group.id)) {
+    if (!exercice.groups?.some((g) => g.id === group.id)) {
       return {
         error: "Action non autorisée !",
       };
     }
 
-    // Récupérer tout les réponses de l'élève
-    const studentExercice = await getStudentExerciceByStudentIdData(student.id);
-
-    // Vérifier que l'exercice n'a pas déjà été corrigé
-    if (
-      studentExercice.some(
-        (e) => e.exerciceId === validatedData.data.exerciceId
-      )
-    ) {
+    // Calcul de la note côté serveur à partir de la solution stockée en base
+    let result: { note: number; coeficient: number };
+    try {
+      result = gradeExercice({
+        type: exercice.type.name,
+        level: exercice.level.label,
+        content: exercice.content,
+        response: validatedData.data.response,
+      });
+    } catch {
       return {
-        error: "Vous avez déjà réalisé cet exercice !",
+        error: "Données non valide !",
       };
     }
 
@@ -314,11 +320,26 @@ export const addExerciceResultAction = async (
     const subject = exercice.lesson.LessonSubject.label;
 
     // Ajouter le résultat de l'exercice
-    const createdExerciceResult = await addExerciceResultData(
-      student.id,
-      subject,
-      validatedData.data
-    );
+    // (la contrainte unique [studentId, exerciceId] empêche une double soumission)
+    let createdExerciceResult;
+    try {
+      createdExerciceResult = await addExerciceResultData(
+        student.id,
+        subject,
+        validatedData.data,
+        result
+      );
+    } catch (err) {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === "P2002"
+      ) {
+        return {
+          error: "Vous avez déjà réalisé cet exercice !",
+        };
+      }
+      throw err;
+    }
 
     if (!createdExerciceResult) {
       return {
@@ -425,7 +446,18 @@ export const getExerciceByIdAction = async (id: string) => {
 
     const exercice = await getExerciceByIdData(id);
 
-    if (!exercice) {
+    // Un élève ne voit que les exercices de son groupe,
+    // un professeur uniquement ses propres exercices.
+    let isAllowed = false;
+    if (exercice && user.role === "STUDENT") {
+      const group = await getGroupByStudentIdData(user.id);
+      isAllowed =
+        !!group && !!exercice.groups?.some((g) => g.id === group.id);
+    } else if (exercice && user.role === "ADMIN") {
+      isAllowed = exercice.authorId === user.id;
+    }
+
+    if (!exercice || !isAllowed) {
       if (user.role === "STUDENT") {
         return {
           error: "Exercice non trouvé",
@@ -441,11 +473,18 @@ export const getExerciceByIdAction = async (id: string) => {
       };
     }
 
+    // Les solutions ne sont jamais envoyées au navigateur d'un élève
+    const { content, cards } =
+      user.role === "STUDENT"
+        ? stripExerciceSolutions(exercice.type.name, exercice.content)
+        : { content: exercice.content, cards: undefined };
+
     const exerciceModified = {
       id: exercice.id,
       title: exercice.title,
       description: exercice.description,
-      content: exercice.content,
+      content,
+      cards,
       lesson: exercice.lesson.title,
       levelId: exercice.level.id,
       level: exercice.level.label,
@@ -666,7 +705,14 @@ export const getStudentExerciceByIdAction = async (
 
   try {
     const studentExercice = await getStudentExerciceByIdData(studentExerciceId);
-    if (!studentExercice) {
+
+    // Seul l'élève concerné ou son professeur peuvent voir la correction
+    const isOwner =
+      (user.role === "STUDENT" && studentExercice?.studentId === user.id) ||
+      (user.role === "ADMIN" &&
+        studentExercice?.student.professorId === user.id);
+
+    if (!studentExercice || !isOwner) {
       return {
         error: "Correction non trouvée",
         data: null,

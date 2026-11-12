@@ -230,7 +230,8 @@ export const removeExerciceFromGroupData = async (
 export const addExerciceResultData = async (
   studentId: string,
   subject: string,
-  data: globalExerciceCorectionType
+  data: globalExerciceCorectionType,
+  result: { note: number; coeficient: number }
 ) => {
   return await prisma.studentExercice.create({
     data: {
@@ -238,8 +239,8 @@ export const addExerciceResultData = async (
       exerciceId: data.exerciceId,
       subject,
       response: data.response,
-      note: data.note,
-      coeficient: data.coeficient,
+      note: result.note,
+      coeficient: result.coeficient,
     },
   });
 };
@@ -657,6 +658,7 @@ export const getStudentExerciceByIdData = async (studentExerciceId: string) => {
         select: {
           id: true,
           name: true,
+          professorId: true,
         },
       },
     },

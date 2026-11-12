@@ -2,11 +2,12 @@ import { createImageUpload } from "novel/plugins";
 import { toast } from "sonner";
 
 const NEXT_PUBLIC_CLIENT_DOMAIN_API = process.env.NEXT_PUBLIC_CLIENT_DOMAIN_API;
+export const pendingUploads = new Set<string>();
 
 const onUpload = (file: File) => {
   const formData = new FormData();
   formData.append("file", file);
-  const promise = fetch(`${NEXT_PUBLIC_CLIENT_DOMAIN_API}/lesson`, {
+  const promise = fetch(`/api/upload/lesson`, {
     method: "POST",
     body: formData,
   });
@@ -20,6 +21,7 @@ const onUpload = (file: File) => {
           // preload the image
           const image = new Image();
           const src = `${NEXT_PUBLIC_CLIENT_DOMAIN_API}/lesson/${image_path}`;
+          pendingUploads.add(src);
           image.src = src;
           image.onload = () => {
             resolve(src);

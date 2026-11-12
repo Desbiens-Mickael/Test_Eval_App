@@ -46,9 +46,9 @@ export const updateNotifications = async (notificationIds: string[]) => {
 
   try {
     if (user.role === "STUDENT") {
-      await updateAllStudentNotificationData(notificationIds);
+      await updateAllStudentNotificationData(notificationIds, user.id);
     } else if (user.role === "ADMIN") {
-      await updateAllTeacherNotificationData(notificationIds);
+      await updateAllTeacherNotificationData(notificationIds, user.id);
     }
     return { success: "Notifications marquées comme lues." };
   } catch (error) {

@@ -1,5 +1,6 @@
-"use server";
-
+// Couche d'accès aux données : uniquement côté serveur.
+// Ne pas ajouter "use server" ici, sinon chaque fonction exportée devient
+// une server action appelable depuis le navigateur sans contrôle d'accès.
 import { prisma } from "@/lib/db";
 import { hashPassword } from "@/lib/hash-password";
 
@@ -43,6 +44,25 @@ export const getStudentByIdData = async (id: string) => {
           name: true,
         },
       },
+    },
+  });
+};
+
+// Profil d'un élève sans le hash du mot de passe (pour l'envoyer au navigateur)
+export const getStudentPublicByIdentifierData = async (identifier: string) => {
+  return await prisma.student.findUnique({
+    where: { identifier },
+    select: {
+      id: true,
+      identifier: true,
+      name: true,
+      image: true,
+      role: true,
+      isActive: true,
+      createdAt: true,
+      updatedAt: true,
+      professorId: true,
+      groupId: true,
     },
   });
 };
@@ -132,11 +152,14 @@ export const UpdateStudentData = async (id: string, data: object) => {
   }
 };
 
-// Suppression d'un ou plusieurs élèves
-export const deleteStudentsData = async (studentIds: string[]) => {
+// Suppression d'un ou plusieurs élèves appartenant au professeur donné
+export const deleteStudentsData = async (
+  studentIds: string[],
+  professorId: string
+) => {
   try {
     return await prisma.student.deleteMany({
-      where: { id: { in: studentIds } },
+      where: { id: { in: studentIds }, professorId },
     });
   } catch (error) {
     throw error;

@@ -48,6 +48,7 @@ services:
       MAILER_TO_ADDRESS: ${MAILER_TO_ADDRESS}
       UPLOAD_API_URL: ${UPLOAD_API_URL}
       NEXT_PUBLIC_UPLOAD_API_URL: ${NEXT_PUBLIC_UPLOAD_API_URL}
+      UPLOAD_API_KEY: ${UPLOAD_API_KEY}
     networks:
       - traefik-net
     labels:
@@ -63,6 +64,7 @@ services:
       - .env
     environment:
       CORS_URL: ${CORS_URL}
+      UPLOAD_API_KEY: ${UPLOAD_API_KEY}
     volumes:
       - ./upload-images_educraft:/app/uploads/images
     networks:

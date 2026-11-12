@@ -79,8 +79,8 @@ export default function ShowExercise({ exerciceId }: ShowExerciseProps) {
       {data?.type === "Carte" && (
         <ExerciceCard
           exerciceId={data?.id}
-          level={data?.level}
           content={data?.content as contentCardInput}
+          cards={data?.cards ?? []}
         />
       )}
       {data?.type === "Vrai ou Faux" && (

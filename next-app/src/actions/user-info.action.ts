@@ -44,3 +44,20 @@ export const updateUserInfosAction = async (
 
   return { success: "Vos infos ont été modifiées avec succès." };
 };
+
+// Récupère le profil de l'utilisateur connecté (sans données sensibles)
+export const getCurrentUserProfileAction = async () => {
+  const user = await currentUser();
+  if (!user || !user.id || user.role !== "ADMIN") return null;
+
+  const existingUser = await getUserByIdData(user.id);
+  if (!existingUser) return null;
+
+  return {
+    name: existingUser.name,
+    email: existingUser.email,
+    image: existingUser.image,
+    role: existingUser.role,
+    isTwoFactorEnabled: existingUser.isTwoFactorEnabled,
+  };
+};

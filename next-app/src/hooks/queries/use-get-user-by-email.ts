@@ -1,21 +1,16 @@
-import { getUserByEmailData } from "@/data/user-data";
+import { getCurrentUserProfileAction } from "@/actions/user-info.action";
 import { useQuery } from "@tanstack/react-query";
 
 /**
- * Hook for getting a user by email.
- * @param {string} userEmail - the email of the user to get
- * @returns {Promise} a promise resolving to the user
+ * Hook pour récupérer le profil du professeur connecté.
+ * Le paramètre `userEmail` sert uniquement de clé de cache : le serveur
+ * renvoie toujours le profil de l'utilisateur en session.
+ * @param {string} userEmail - l'email de l'utilisateur connecté
  */
 export const useGetUserByEmail = (userEmail: string) => {
   return useQuery({
     queryKey: ["userByEmail", userEmail],
-    queryFn: ({ queryKey }) => {
-      const [, email] = queryKey;
-      if (typeof email === "string") {
-        return getUserByEmailData(email);
-      }
-      throw new Error("Email is required and must be a string");
-    },
+    queryFn: () => getCurrentUserProfileAction(),
     enabled: !!userEmail,
   });
 };

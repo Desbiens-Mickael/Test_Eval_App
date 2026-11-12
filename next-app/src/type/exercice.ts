@@ -6,6 +6,8 @@ export type Exercice = {
   title: string;
   description: string;
   content: JsonValue;
+  /** Exercice "Carte" vu par un élève : cartes mélangées, sans leur colonne */
+  cards?: { id: string; content: string }[];
   levelId: string;
   level: string;
   levelColor: string;

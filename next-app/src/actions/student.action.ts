@@ -6,10 +6,19 @@ import {
   getAllStudentsByAuthorIdData,
   getAllStudentsByAuthorIdwhoDontBelongToTheGroupIdData,
   getStudentByIdData,
-  getStudentByIdentifierlData,
+  getStudentPublicByIdentifierData,
   UpdateStudentData,
 } from "@/data/student-data";
 import { currentUser } from "@/lib/auth";
+import { z } from "zod";
+
+// Seuls ces champs peuvent être modifiés par l'élève lui-même
+const updateStudentSchema = z
+  .object({
+    name: z.string().trim().min(1).max(100),
+  })
+  .partial()
+  .strict();
 
 // Mise à jour d'un élève (uniquement pour l'élève connecté)
 export const updateStudentAction = async (data: object) => {
@@ -18,8 +27,12 @@ export const updateStudentAction = async (data: object) => {
     return { error: "Action non autoriser !" };
   }
 
+  const parsed = updateStudentSchema.safeParse(data);
+  if (!parsed.success) return { error: "Données non valide !" };
+
   try {
-    const updatedStudent = await UpdateStudentData(user.id, data);
+    const { password: _password, ...updatedStudent } =
+      await UpdateStudentData(user.id, parsed.data);
     return { success: "Compte mis à jour avec succès.", data: updatedStudent };
   } catch (error) {
     console.error(error);
@@ -37,7 +50,15 @@ export const deleteStudentsAction = async (studentIds: string[]) => {
   }
 
   try {
-    const deletedStudents = await deleteStudentsData(studentIds);
+    // Seuls les élèves du professeur connecté sont supprimés
+    const deletedStudents = await deleteStudentsData(studentIds, user.id);
+    if (deletedStudents.count !== studentIds.length) {
+      return {
+        error:
+          "Certains élèves n'ont pas été supprimés car ils ne vous appartiennent pas.",
+        data: deletedStudents,
+      };
+    }
     return {
       success:
         studentIds.length > 1
@@ -103,15 +124,20 @@ export const getAllStudentsByAuthorIdwhoDontBelongToTheGroupIdAction = async (
   }
 };
 
-// Récupérer un élève par son identifiant
+// Récupérer l'élève connecté par son identifiant
 export const getStudentByIdentifierAction = async (identifier: string) => {
   const user = await currentUser();
   if (!user || !user.id || user.role !== "STUDENT") {
     return { error: "Action non autoriser !" };
   }
 
+  // Un élève ne peut consulter que son propre profil
+  if (identifier !== user.identifier) {
+    return { error: "Action non autoriser !" };
+  }
+
   try {
-    const student = await getStudentByIdentifierlData(identifier);
+    const student = await getStudentPublicByIdentifierData(identifier);
     if (!student) {
       return { error: "Cet élève n'existe pas !" };
     }

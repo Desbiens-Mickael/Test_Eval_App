@@ -123,10 +123,11 @@ export const updateStudentNotificationData = async (
 
 // Met à jour toutes les notifications données d'un élève comme étant lu
 export const updateAllStudentNotificationData = async (
-  studentNotificationIds: string[]
+  studentNotificationIds: string[],
+  studentId: string
 ) => {
   return await prisma.studentNotification.updateMany({
-    where: { id: { in: studentNotificationIds } },
+    where: { id: { in: studentNotificationIds }, studentId },
     data: { isRead: true },
   });
 };
@@ -143,10 +144,11 @@ export const updateTeacherNotificationData = async (
 
 // Met à jour toutes les notifications données d'un professeur comme étant lu
 export const updateAllTeacherNotificationData = async (
-  teacherNotificationIds: string[]
+  teacherNotificationIds: string[],
+  teacherId: string
 ) => {
   return await prisma.teacherNotification.updateMany({
-    where: { id: { in: teacherNotificationIds } },
+    where: { id: { in: teacherNotificationIds }, teacherId },
     data: { isRead: true },
   });
 };

@@ -1,10 +1,9 @@
 import { z } from "zod";
 
-// Schéma de base pour la correction des exercices
+// Schéma de base pour la correction des exercices.
+// La note et le coefficient sont calculés côté serveur (voir lib/exercice-grading.ts).
 export const exerciceCorectionBaseShema = z.object({
   exerciceId: z.string(),
-  note: z.number(),
-  coeficient: z.number(),
 });
 
 // Schéma de la réponse pour le texte à trou

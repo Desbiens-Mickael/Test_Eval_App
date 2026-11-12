@@ -48,7 +48,7 @@ services:
       - 8000:8000
     develop:
       watch:
-        - path: ./upload-image-service/requirement.txt
+        - path: ./upload-image-service/requirements.txt
           action: rebuild
         - path: ./upload-image-service
           target: /app

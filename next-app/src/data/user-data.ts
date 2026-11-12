@@ -1,5 +1,6 @@
-"use server";
-
+// Couche d'accès aux données : uniquement côté serveur.
+// Ne pas ajouter "use server" ici, sinon chaque fonction exportée devient
+// une server action appelable depuis le navigateur sans contrôle d'accès.
 import { prisma } from "@/lib/db";
 import { hashPassword } from "@/lib/hash-password";
 

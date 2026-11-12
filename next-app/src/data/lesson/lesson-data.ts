@@ -84,6 +84,8 @@ export const getLessonByIdForStudentData = async (id: string) => {
     where: { id },
     select: {
       id: true,
+      authorId: true,
+      groups: { select: { id: true } },
       title: true,
       imageBanner: true,
       slug: true,
@@ -161,9 +163,13 @@ export const getAllLessonsByGroupIdData = async (
 };
 
 // Récupération de toutes les leçons non contenu dans le groupe donné
-export const getAllLessonsNotInGroupData = async (groupId: string) => {
+export const getAllLessonsNotInGroupData = async (
+  groupId: string,
+  authorId: string
+) => {
   return await prisma.lesson.findMany({
     where: {
+      authorId,
       groups: {
         none: {
           id: groupId,

@@ -1,7 +1,7 @@
 "use client";
 
 import { container, item } from "@/animations/exercice-and-lesson-list";
-import { contentCardInput } from "@/shema-zod/exercice.shema";
+import { cardItemInput, contentCardInput } from "@/shema-zod/exercice.shema";
 import { DragDropContext } from "@hello-pangea/dnd";
 import { motion } from "framer-motion";
 import { redirect } from "next/navigation";
@@ -13,13 +13,13 @@ import { useCardExercise } from "./hooks/use-card-exercise";
 interface CardExerciseProps {
   exerciceId: string;
   content: contentCardInput;
-  level: string;
+  cards: cardItemInput[];
 }
 
 export default function ExerciceCard({
   exerciceId,
   content,
-  level,
+  cards,
 }: CardExerciseProps) {
   const {
     startCards,
@@ -33,7 +33,7 @@ export default function ExerciceCard({
   } = useCardExercise({
     exerciceId,
     content,
-    level,
+    cards,
   });
 
   if (isSuccess && data?.data) {

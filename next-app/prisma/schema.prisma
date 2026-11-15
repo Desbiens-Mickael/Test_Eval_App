@@ -246,9 +246,9 @@ model Notification {
 
 model StudentNotification {
   id             String       @id @default(cuid())
-  student        Student      @relation(fields: [studentId], references: [id])
+  student        Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
   studentId      String
-  notification   Notification @relation(fields: [notificationId], references: [id])
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
   notificationId String
   isRead         Boolean      @default(false)
   createdAt      DateTime     @default(now())
@@ -258,9 +258,9 @@ model StudentNotification {
 
 model TeacherNotification {
   id             String   @id @default(cuid())
-  teacher        User         @relation(fields: [teacherId], references: [id])
+  teacher        User         @relation(fields: [teacherId], references: [id], onDelete: Cascade)
   teacherId      String
-  notification   Notification @relation(fields: [notificationId], references: [id])
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
   notificationId String
   isRead         Boolean      @default(false)
   createdAt      DateTime     @default(now())
@@ -272,6 +272,7 @@ enum NotificationType {
   LESSON
   EXERCISE
   COMPLETION
+  CORRECTION
 }
 
 model StudentExercice {
@@ -284,6 +285,12 @@ model StudentExercice {
   response                Json
   note                    Float
   coeficient              Int
+  // Note calculée automatiquement, conservée quand le professeur ajuste `note`
+  autoNote                Float?
+  // Commentaire du professeur pour l'élève
+  teacherComment          String?  @db.Text
+  // Date de la dernière relecture par le professeur
+  reviewedAt              DateTime?
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
 

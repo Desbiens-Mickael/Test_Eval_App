@@ -240,8 +240,27 @@ export const addExerciceResultData = async (
       subject,
       response: data.response,
       note: result.note,
+      autoNote: result.note,
       coeficient: result.coeficient,
     },
+  });
+};
+
+/**
+ * Enregistre la relecture d'une copie par le professeur.
+ * `autoNote` garde la note calculée automatiquement à l'origine.
+ */
+export const updateStudentExerciceReviewData = async (
+  studentExerciceId: string,
+  data: {
+    note: number;
+    autoNote: number;
+    teacherComment: string | null;
+  }
+) => {
+  return await prisma.studentExercice.update({
+    where: { id: studentExerciceId },
+    data: { ...data, reviewedAt: new Date() },
   });
 };
 

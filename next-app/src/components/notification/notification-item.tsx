@@ -43,6 +43,12 @@ const getNotificationHref = (
         title: "Exercice terminé",
         href: `/admin/eleves/${createdStudentId}/exercices/correction/${itemId}`,
       };
+    case "CORRECTION":
+      return {
+        image: "/assets/images/new-completion.png",
+        title: "Ta copie a été relue",
+        href: `/eleve/exercices/correction/${itemId}`,
+      };
     default:
       return {
         image: "/assets/images/new-lesson.png",

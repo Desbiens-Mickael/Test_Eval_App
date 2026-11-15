@@ -24,13 +24,18 @@ import ExerciceResultCard from "./exercice-result-card";
 import ExerciceResultMultipleChoice from "./exercice-result-multiple-choice";
 import ExerciceResultTrueOrFalse from "./exercice-result-true-or-false";
 import ExerciseResultGapFillText from "./exercise-result-gap-fill-text";
+import TeacherFeedback from "./teacher-feedback";
+import TeacherReviewPanel from "./teacher-review-panel";
 
 interface ShowCorrectionProps {
   studentExerciceId: string;
+  /** "teacher" affiche le panneau de relecture (note ajustée, commentaire) */
+  mode?: "student" | "teacher";
 }
 
 export default function ShowCorrection({
   studentExerciceId,
+  mode = "student",
 }: ShowCorrectionProps) {
   const router = useRouter();
   const { data, isLoading, error } = useGetStudentExerciceById({
@@ -39,9 +44,9 @@ export default function ShowCorrection({
 
   useEffect(() => {
     if (!isLoading && !data) {
-      router.replace("/eleve/exercices");
+      router.replace(mode === "teacher" ? "/admin/eleves" : "/eleve/exercices");
     }
-  }, [isLoading, data, router]);
+  }, [isLoading, data, router, mode]);
 
   if (isLoading) {
     return <Loader />;
@@ -87,6 +92,15 @@ export default function ShowCorrection({
         </motion.div>
       </motion.div>
 
+      {mode === "student" && (
+        <TeacherFeedback
+          note={data.note}
+          autoNote={data.autoNote}
+          coeficient={data.coeficient}
+          teacherComment={data.teacherComment}
+        />
+      )}
+
       {data?.exercice?.type.name === "Texte à trou" && (
         <ExerciseResultGapFillText
           content={data?.exercice?.content as contentGapFillInput}
@@ -110,6 +124,20 @@ export default function ShowCorrection({
           content={data?.exercice?.content as contentMultipleChoiceInput}
           response={data?.response as multipleChoiceResponseType}
         />
+      )}
+
+      {mode === "teacher" && (
+        <div className="mt-8">
+          <TeacherReviewPanel
+            studentExerciceId={studentExerciceId}
+            studentName={data.student.name}
+            note={data.note}
+            autoNote={data.autoNote}
+            coeficient={data.coeficient}
+            teacherComment={data.teacherComment}
+            reviewedAt={data.reviewedAt}
+          />
+        </div>
       )}
     </>
   );

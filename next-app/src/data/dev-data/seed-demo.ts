@@ -57,7 +57,8 @@ type ExerciseDef = {
 );
 
 const gapFill = (sentence: string, blanks: string[]) => {
-  const text = sentence.split(" ");
+  // Même format que l'éditeur du professeur : les espaces sont des éléments à part
+  const text = sentence.split(/(\s+)/);
   return {
     text,
     answers: blanks.map((word) => {

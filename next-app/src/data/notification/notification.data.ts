@@ -52,6 +52,20 @@ export const createNotificationCompletionData = async (
   });
 };
 
+// Création d'une notification de correction relue par le professeur
+export const createNotificationCorrectionData = async (
+  data: CreateNotificationInput
+) => {
+  return await prisma.notification.create({
+    data: {
+      type: NotificationType.CORRECTION,
+      message: data.message,
+      completionId: data.completionId,
+      createdByTeacherId: data.createdByTeacherId,
+    },
+  });
+};
+
 // Création des StudentNotification
 export const createStudentNotificationData = async (
   notificationId: string,

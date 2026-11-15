@@ -76,16 +76,6 @@ export const getStudentByIdentifierlData = async (identifier: string) => {
   }
 };
 
-export const getCountAllStudentsByIdentifierData = async (
-  identifier: string
-) => {
-  try {
-    return await prisma.student.count({ where: { identifier } });
-  } catch (error) {
-    throw error;
-  }
-};
-
 // Récupérer tout les élèves de l'utilisateur connecté
 export const getAllStudentsByAuthorIdData = async (authorId: string) => {
   return await prisma.student.findMany({
@@ -152,6 +142,33 @@ export const UpdateStudentData = async (id: string, data: object) => {
   } catch (error) {
     throw error;
   }
+};
+
+/**
+ * Identifiants déjà pris qui commencent par l'une des bases données
+ * (« l.martin », « l.martin-02 »…). Les identifiants sont uniques pour
+ * toute l'application, pas seulement pour un professeur.
+ */
+export const getTakenIdentifiersData = async (bases: string[]) => {
+  if (bases.length === 0) return [];
+  const students = await prisma.student.findMany({
+    where: { OR: bases.map((base) => ({ identifier: { startsWith: base } })) },
+    select: { identifier: true },
+  });
+  return students.map((s) => s.identifier);
+};
+
+// Création de plusieurs élèves en une seule requête (mots de passe déjà hashés)
+export const createStudentsData = async (
+  students: {
+    name: string;
+    identifier: string;
+    password: string;
+    professorId: string;
+    groupId: string | null;
+  }[]
+) => {
+  return await prisma.student.createMany({ data: students });
 };
 
 // Nouveau mot de passe (déjà hashé) pour un élève

@@ -1,6 +1,7 @@
 "use client";
 
 import ExerciseDoneDashboard from "@/app/(protected)/eleve/(learning)/exercices/(components)/exercise-done-dashboard";
+import ExportGradesButton from "@/components/grade-export/export-grades-button";
 import Loader from "@/components/loader";
 import PageTitle from "@/components/page-title";
 import { useGetStudentById } from "@/hooks/queries/student/use-get-student-by-id";
@@ -49,6 +50,7 @@ export default function ShowStudent({ studentId }: ShowStudentProps) {
           {data && (
             <AccountStatusBadge isActive={data.isActive} disabledAt={data.disabledAt} />
           )}
+          <ExportGradesButton kind="student" id={studentId} />
         </div>
       </div>
 

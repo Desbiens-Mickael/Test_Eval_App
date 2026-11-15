@@ -8,7 +8,8 @@ import { createUserData, getUserByEmailData } from "@/data/user-data";
 import { currentUser } from "@/lib/auth";
 import { sendCredentialStudentEmail, sendVerificationEmail } from "@/lib/mail";
 import { generateVerificationToken } from "@/lib/tokens";
-import { capitalize, generateTemporaryPassword } from "@/lib/utils";
+import { generateStudentPassword } from "@/lib/student-password";
+import { capitalize } from "@/lib/utils";
 import {
   registerStudentFormSchema,
   registerStudentFormType,
@@ -62,7 +63,7 @@ export const createNewStudentAction = async (
   }
 
   try {
-    const password = generateTemporaryPassword();
+    const password = generateStudentPassword();
     const name = `${capitalize(firstname)} ${capitalize(lastname)}`;
     const student = await createStudentData(
       user.id,

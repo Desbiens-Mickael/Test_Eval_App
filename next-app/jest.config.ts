@@ -18,6 +18,7 @@ const config: Config = {
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
+    "^server-only$": "<rootDir>/__mocks__/server-only.ts",
     // "^auth$": "<rootDir>/auth",
     // "^@auth/prisma-adapter$": "<rootDir>/node_modules/@auth/prisma-adapter",
     // "^next-auth/react$": "<rootDir>/node_modules/next-auth/react",

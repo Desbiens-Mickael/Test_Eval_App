@@ -10,3 +10,6 @@ uploads/
 Dockerfile
 Dockerfile.prod
 /.windsurf
+tests/
+.pytest_cache/
+requirements-dev.txt

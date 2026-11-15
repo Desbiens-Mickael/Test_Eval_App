@@ -16,6 +16,7 @@ import {
 } from "@/hooks/queries/student/use-get-all-students-by-professorId ";
 import { formatDate } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import AccountStatusBadge from "./account-status-badge";
 import CreateStudentButton from "./create-student-button";
 interface StudentTableProps extends StudentResponse {}
 
@@ -90,15 +91,17 @@ export default function StudentTable() {
     },
 
     {
-      id: "Activé",
+      id: "Compte",
       accessorKey: "isActive",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Activé" />
+        <DataTableColumnHeader column={column} title="Compte" />
       ),
-      cell: ({ row }) => {
-        const isActive = row.original.isActive;
-        return <>{isActive ? "Oui" : "Non"}</>;
-      },
+      cell: ({ row }) => (
+        <AccountStatusBadge
+          isActive={row.original.isActive}
+          disabledAt={row.original.disabledAt}
+        />
+      ),
     },
     {
       id: "Date de création",

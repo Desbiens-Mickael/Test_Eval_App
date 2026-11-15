@@ -144,7 +144,7 @@ export default {
       // Vérification si role est STUDENT
       if (user.role === "STUDENT") {
         const existingUser = await getStudentByIdData(user.id as string);
-        if (!existingUser) return false;
+        if (!existingUser || existingUser.disabledAt) return false;
 
         return true;
       }

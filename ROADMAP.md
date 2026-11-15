@@ -5,11 +5,10 @@ Cocher une case quand la fonctionnalité est fusionnée dans `dev`.
 
 ## 👩‍🏫 Côté professeur
 
-- [ ] **Ajuster une note à la main après correction**, avec un commentaire pour l'élève
-      *(en cours — branche `feat/correction-manuelle`)*
-- [ ] **Gestion des comptes élèves**
+- [ ] **Gestion des comptes élèves** *(en cours — branche `feat/gestion-comptes-eleves`)*
   - réinitialiser le mot de passe d'un élève (il n'a pas d'email pour le faire lui-même) ;
-  - désactiver / réactiver un compte : le champ `Student.isActive` existe mais n'est jamais vérifié à la connexion.
+  - désactiver / réactiver un compte (nouveau champ `Student.disabledAt` ;
+    `isActive` garde son sens actuel : « s'est déjà connecté »).
 - [ ] **Import d'élèves en masse depuis un CSV**, avec génération des identifiants et des mots de passe
 - [ ] **Export des notes** en CSV et en PDF (par élève, par groupe)
 
@@ -50,3 +49,4 @@ Cocher une case quand la fonctionnalité est fusionnée dans `dev`.
 - [x] Correction des failles d'autorisation et notation côté serveur (#52)
 - [x] Intégration continue GitHub Actions et tests de notation / d'upload (#53)
 - [x] Tableau de bord professeur (#54)
+- [x] Relecture des copies : note ajustée et commentaire pour l'élève (#55)

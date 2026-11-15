@@ -104,7 +104,10 @@ model Student {
   password                String
   image                   String?
   role                    UserRole @default(STUDENT)
+  // true dès la première connexion de l'élève
   isActive                Boolean @default(false)
+  // Compte désactivé par le professeur (null = compte actif)
+  disabledAt              DateTime?
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
   professorId             String

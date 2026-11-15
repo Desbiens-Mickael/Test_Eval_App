@@ -7,6 +7,7 @@ export interface StudentResponse {
   createdAt: Date;
   identifier: string;
   isActive: boolean;
+  disabledAt: Date | null;
   groupStudent: {
     name: string;
     id: string;

@@ -37,6 +37,7 @@ export const getStudentByIdData = async (id: string) => {
       role: true,
       professorId: true,
       isActive: true,
+      disabledAt: true,
       createdAt: true,
       groupStudent: {
         select: {
@@ -94,6 +95,7 @@ export const getAllStudentsByAuthorIdData = async (authorId: string) => {
       identifier: true,
       name: true,
       isActive: true,
+      disabledAt: true,
       createdAt: true,
       groupStudent: {
         select: {
@@ -150,6 +152,30 @@ export const UpdateStudentData = async (id: string, data: object) => {
   } catch (error) {
     throw error;
   }
+};
+
+// Nouveau mot de passe (déjà hashé) pour un élève
+export const updateStudentPasswordData = async (
+  studentId: string,
+  hashedPassword: string
+) => {
+  return await prisma.student.update({
+    where: { id: studentId },
+    data: { password: hashedPassword },
+    select: { id: true, identifier: true, name: true },
+  });
+};
+
+// Désactive (date) ou réactive (null) le compte d'un élève
+export const setStudentDisabledData = async (
+  studentId: string,
+  disabledAt: Date | null
+) => {
+  return await prisma.student.update({
+    where: { id: studentId },
+    data: { disabledAt },
+    select: { id: true, disabledAt: true },
+  });
 };
 
 // Suppression d'un ou plusieurs élèves appartenant au professeur donné

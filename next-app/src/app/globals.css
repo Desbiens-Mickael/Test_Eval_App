@@ -150,3 +150,40 @@
   background: transparent;
   margin-right: 10px;
 }
+
+/* Graphiques du tableau de bord : couleurs par rôle (palette validée, claire et sombre) */
+.viz {
+  --viz-series: #2a78d6;
+  --viz-series-hover: #256abf;
+  --viz-track: #cde2fb;
+  --viz-grid: #e1e0d9;
+  --viz-axis: #c3c2b7;
+  --viz-seq-0: #f0efec;
+  --viz-seq-1: #b7d3f6;
+  --viz-seq-2: #86b6ef;
+  --viz-seq-3: #5598e7;
+  --viz-seq-4: #2a78d6;
+  --viz-seq-5: #1c5cab;
+  --viz-good: #0ca30c;
+  --viz-warning: #fab219;
+  --viz-serious: #ec835a;
+  --viz-critical: #d03b3b;
+  --viz-delta-up: #006300;
+  --viz-delta-down: #b42828;
+}
+
+.dark .viz {
+  --viz-series: #3987e5;
+  --viz-series-hover: #5598e7;
+  --viz-track: #0d366b;
+  --viz-grid: #2c2c2a;
+  --viz-axis: #383835;
+  --viz-seq-0: #1f1f1d;
+  --viz-seq-1: #104281;
+  --viz-seq-2: #1c5cab;
+  --viz-seq-3: #2a78d6;
+  --viz-seq-4: #5598e7;
+  --viz-seq-5: #9ec5f4;
+  --viz-delta-up: #0ca30c;
+  --viz-delta-down: #e66767;
+}

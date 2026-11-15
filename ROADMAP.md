@@ -5,9 +5,8 @@ Cocher une case quand la fonctionnalité est fusionnée dans `dev`.
 
 ## 👩‍🏫 Côté professeur
 
-- [ ] **Import d'élèves en masse** depuis un fichier CSV ou Excel, ou par copier-coller,
-      avec génération des identifiants et des mots de passe *(en cours — branche `feat/import-eleves`)*
 - [ ] **Export des notes** en CSV et en PDF (par élève, par groupe)
+      *(en cours — branche `feat/export-notes`)*
 
 ## 🧒 Côté élève
 
@@ -48,3 +47,4 @@ Cocher une case quand la fonctionnalité est fusionnée dans `dev`.
 - [x] Tableau de bord professeur (#54)
 - [x] Relecture des copies : note ajustée et commentaire pour l'élève (#55)
 - [x] Gestion des comptes élèves : réinitialisation du mot de passe, désactivation (#56)
+- [x] Import d'élèves en masse : CSV, Excel ou copier-coller (#57)

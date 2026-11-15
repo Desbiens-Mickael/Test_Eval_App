@@ -111,3 +111,39 @@ export async function sendCredentialStudentEmail(
     throw new Error("Echec lors de l'envoi de l'email.");
   }
 }
+
+const escapeHtml = (value: string) =>
+  value.replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] ?? c
+  );
+
+/** Identifiants des élèves créés par un import, envoyés au professeur */
+export async function sendImportedStudentsCredentialsEmail(
+  destinationEmail: string,
+  students: { name: string; identifier: string; password: string; group: string | null }[]
+) {
+  const rows = students
+    .map(
+      (s) =>
+        `<tr><td>${escapeHtml(s.name)}</td><td>${escapeHtml(s.group ?? "")}</td>` +
+        `<td><code>${escapeHtml(s.identifier)}</code></td><td><code>${escapeHtml(s.password)}</code></td></tr>`
+    )
+    .join("");
+  try {
+    await transporter.sendMail({
+      from: MAILER_FROM_ADDRESS,
+      to: destinationEmail,
+      subject:
+        students.length > 1
+          ? `Identifiants de ${students.length} nouveaux élèves`
+          : "Identifiants d'un nouvel élève",
+      html:
+        `<p>Voici les identifiants des élèves que vous venez d'importer :</p>` +
+        `<table border="1" cellpadding="6" cellspacing="0">` +
+        `<thead><tr><th>Élève</th><th>Groupe</th><th>Identifiant</th><th>Mot de passe</th></tr></thead>` +
+        `<tbody>${rows}</tbody></table>`,
+    });
+  } catch (error) {
+    throw new Error("Echec lors de l'envoi de l'email.");
+  }
+}

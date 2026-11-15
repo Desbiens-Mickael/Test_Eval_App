@@ -60,7 +60,7 @@ export default function CreateStudentButton() {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button size="sm" className="ml-auto hidden h-8 lg:flex">
+        <Button size="sm" className="hidden h-8 lg:flex" aria-label="Créer un élève">
           <Plus />
         </Button>
       </AlertDialogTrigger>

@@ -17,6 +17,7 @@ import {
   updateExerciceData,
 } from "@/data/exercice/exercice-data";
 import { getExerciceTypeByNameData } from "@/data/exercice/exercice-type.data";
+import { countExerciceSubmissionsData } from "@/data/exercice/practice-data";
 import {
   getGroupByIdAndAuthorIdData,
   getGroupByStudentIdData,
@@ -36,10 +37,8 @@ import {
   getStudentByIdData,
 } from "@/data/student-data";
 import { currentUser } from "@/lib/auth";
-import {
-  gradeExercice,
-  stripExerciceSolutions,
-} from "@/lib/exercice-grading";
+import { formatExercice } from "@/lib/exercice-format";
+import { gradeExercice } from "@/lib/exercice-grading";
 import { Prisma } from "@prisma/client";
 import {
   globalExerciceCorectionShema,
@@ -119,7 +118,23 @@ export const updateExerciceAction = async (
       };
     }
 
-    const exercice = await updateExerciceData(id, user.id, data);
+    // Le type (entraînement / contrôle) ne change plus une fois que des
+    // élèves ont rendu une copie ou fait un essai
+    const current = await getExerciceByIdData(id);
+    if (!current || current.authorId !== user.id) {
+      return { error: "Exercice non trouvé !" };
+    }
+    if (
+      current.kind !== validatedData.data.kind &&
+      (await countExerciceSubmissionsData(id)) > 0
+    ) {
+      return {
+        error:
+          "Des élèves ont déjà fait cet exercice : son type (entraînement ou contrôle) ne peut plus être changé.",
+      };
+    }
+
+    const exercice = await updateExerciceData(id, user.id, validatedData.data);
     return {
       success: "Exercice mis à jour avec successe",
       data: exercice,
@@ -301,6 +316,13 @@ export const addExerciceResultAction = async (
       };
     }
 
+    // Un entraînement ne donne jamais de copie notée
+    if (exercice.kind !== "CONTROL") {
+      return {
+        error: "Cet exercice est un entraînement : il n'est pas noté.",
+      };
+    }
+
     // Calcul de la note côté serveur à partir de la solution stockée en base
     let result: { note: number; coeficient: number };
     try {
@@ -400,21 +422,10 @@ export const getAllExercicesByTypeAction = async (
       user.id
     );
 
-    // Formatage des exercices
-    return exercicesData.map((exercice) => ({
-      id: exercice.id,
-      title: exercice.title,
-      description: exercice.description,
-      content: exercice.content,
-      lesson: exercice.lesson.title,
-      levelId: exercice.level.id,
-      level: exercice.level.label,
-      levelColor: exercice.level.color,
-      subject: exercice.lesson.LessonSubject.label,
-      subjectColor: exercice.lesson.LessonSubject.color,
-      typeId: exercice.type.id,
-      type: exercice.type.name,
-    }));
+    // Formatage des exercices (vue professeur : avec les solutions)
+    return exercicesData.map((exercice) =>
+      formatExercice(exercice, { withSolutions: true })
+    );
   } catch (error) {
     console.error("Error fetching exercises:", error);
     throw Error("Échec de la récupération des exercices");
@@ -457,6 +468,15 @@ export const getExerciceByIdAction = async (id: string) => {
       isAllowed = exercice.authorId === user.id;
     }
 
+    // Un entraînement se joue depuis sa propre page
+    if (exercice && isAllowed && user.role === "STUDENT" && exercice.kind !== "CONTROL") {
+      return {
+        error: "Cet exercice est un entraînement",
+        redirect: `/eleve/entrainements/${exercice.id}`,
+        data: null,
+      };
+    }
+
     if (!exercice || !isAllowed) {
       if (user.role === "STUDENT") {
         return {
@@ -474,26 +494,9 @@ export const getExerciceByIdAction = async (id: string) => {
     }
 
     // Les solutions ne sont jamais envoyées au navigateur d'un élève
-    const { content, cards } =
-      user.role === "STUDENT"
-        ? stripExerciceSolutions(exercice.type.name, exercice.content)
-        : { content: exercice.content, cards: undefined };
-
-    const exerciceModified = {
-      id: exercice.id,
-      title: exercice.title,
-      description: exercice.description,
-      content,
-      cards,
-      lesson: exercice.lesson.title,
-      levelId: exercice.level.id,
-      level: exercice.level.label,
-      levelColor: exercice.level.color,
-      subject: exercice.lesson.LessonSubject.label,
-      subjectColor: exercice.lesson.LessonSubject.color,
-      typeId: exercice.type.id,
-      type: exercice.type.name,
-    };
+    const exerciceModified = formatExercice(exercice, {
+      withSolutions: user.role !== "STUDENT",
+    });
 
     return {
       success: "Exercice trouvé",
@@ -544,6 +547,7 @@ export const getExercicesByLessonIdAction = async (lessonId: string) => {
     const exercicesModified = exercices.map((exercice) => ({
       id: exercice.id,
       title: exercice.title,
+      kind: exercice.kind,
       description: exercice.description,
       level: exercice.level.label,
       levelColor: exercice.level.color,

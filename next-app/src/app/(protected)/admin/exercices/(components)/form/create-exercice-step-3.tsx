@@ -11,6 +11,7 @@ import {
 import dynamic from "next/dynamic";
 import { UseFormReturn } from "react-hook-form";
 
+import ExerciceKindBadge from "@/components/exercice-kind-badge";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -90,7 +91,17 @@ export default function CreateEXerciceSTep3({
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-2 p-4 bg-muted/30 rounded-lg">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Info className="w-4 h-4" />
+                  <span>{"Usage"}</span>
+                </div>
+                <div className="font-medium">
+                  <ExerciceKindBadge kind={form.getValues("kind")} className="text-sm" />
+                </div>
+              </div>
+
               <div className="space-y-2 p-4 bg-muted/30 rounded-lg">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Award className="w-4 h-4" />

@@ -1,5 +1,5 @@
 import { MenuSideBar } from "@/type/sidebar";
-import { Book, Check, LayoutDashboard, ListTodo } from "lucide-react";
+import { Book, Check, Dumbbell, LayoutDashboard, ListTodo } from "lucide-react";
 
 const userMenus: MenuSideBar = [
   {
@@ -14,6 +14,11 @@ const userMenus: MenuSideBar = [
         icon: Book,
         title: "Mes leçons",
         href: "/eleve/lecons",
+      },
+      {
+        icon: Dumbbell,
+        title: "Entraînements",
+        href: "/eleve/entrainements",
       },
       {
         icon: ListTodo,

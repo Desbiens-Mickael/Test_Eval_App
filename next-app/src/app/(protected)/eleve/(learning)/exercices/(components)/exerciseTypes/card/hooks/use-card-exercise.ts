@@ -1,4 +1,4 @@
-import { useAddExerciceResponse } from "@/hooks/mutations/exercice/use-add-exercice-response";
+import { useSubmitExerciceResponse } from "@/hooks/mutations/exercice/use-submit-exercice-response";
 import { cardResponseItemType } from "@/shema-zod/exercice-corection.shema";
 import { cardItemInput, contentCardInput } from "@/shema-zod/exercice.shema";
 import { DropResult } from "@hello-pangea/dnd";
@@ -24,7 +24,7 @@ export function useCardExercise({
     isPending,
     isSuccess,
     data,
-  } = useAddExerciceResponse();
+  } = useSubmitExerciceResponse();
 
   const resetExercise = useCallback(() => {
     setStartCards(shuffleArray(cards));

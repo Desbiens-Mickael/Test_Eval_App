@@ -5,6 +5,7 @@ import { toast } from "sonner";
 interface ExerciceResponse {
   id: string;
   title: string;
+  kind: "CONTROL" | "PRACTICE";
   description: string;
   level: string;
   levelColor: string;

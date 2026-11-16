@@ -50,6 +50,7 @@ export default function ExerciceForm({
     resolver: zodResolver(globalExerciceSchema),
     defaultValues: {
       title: exerciceData?.title || "",
+      kind: exerciceData?.kind ?? "CONTROL",
       description: exerciceData?.description || "",
       exerciceTypeId: exerciceData?.typeId || "",
       exerciceLevelId: exerciceData?.levelId || "",
@@ -103,6 +104,7 @@ export default function ExerciceForm({
     switch (step) {
       case 1:
         const isValid = await form.trigger([
+          "kind",
           "exerciceLevelId",
           "exerciceTypeId",
           "title",

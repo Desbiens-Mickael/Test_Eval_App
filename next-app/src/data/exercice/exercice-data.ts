@@ -1,13 +1,14 @@
 import { prisma } from "@/lib/db";
 import { globalExerciceCorectionType } from "@/shema-zod/exercice-corection.shema";
 import { createExerciceFormInput } from "@/shema-zod/exercice.shema";
-import { Exercice, ExerciceType } from "@prisma/client";
+import { Exercice, ExerciceKind, ExerciceType } from "@prisma/client";
 import { JsonValue } from "@prisma/client/runtime/library";
 
 export type ExerciceOutput = {
   id: string;
   authorId?: string;
   title: string;
+  kind: ExerciceKind;
   description: string;
   content: JsonValue;
   lesson: {
@@ -63,6 +64,7 @@ export const createExerciceData = async (
     data: {
       title: data.title,
       description: data.description,
+      kind: data.kind,
       content: data.content,
       authorId: authorId,
       levelID: data.exerciceLevelId,
@@ -104,6 +106,7 @@ export const updateExerciceData = async (
     data: {
       title: data.title,
       description: data.description,
+      kind: data.kind,
       content: data.content,
       authorId: authorId,
       levelID: data.exerciceLevelId,
@@ -305,6 +308,7 @@ export const getAllExercicesData = async (): Promise<ExerciceOutput[]> => {
       select: {
         id: true,
         title: true,
+        kind: true,
         description: true,
         content: true,
         lesson: {
@@ -370,6 +374,7 @@ export const getAllExercicesByTypeData = async (
     select: {
       id: true,
       title: true,
+      kind: true,
       description: true,
       content: true,
       lesson: {
@@ -429,6 +434,7 @@ export const getExerciceByIdData = async (
     select: {
       id: true,
       title: true,
+      kind: true,
       description: true,
       content: true,
       authorId: true,
@@ -518,6 +524,7 @@ export const getAllExercicesByLessonIdData = async (lessonId: string) => {
     select: {
       id: true,
       title: true,
+      kind: true,
       description: true,
       level: {
         select: {
@@ -624,6 +631,8 @@ export const getExercisesByGroupIdAndSubjectData = async (
 ) => {
   return await prisma.exercice.findMany({
     where: {
+      // Les entraînements ont leur propre page
+      kind: "CONTROL",
       groups: {
         some: {
           id: groupId,
@@ -683,3 +692,4 @@ export const getStudentExerciceByIdData = async (studentExerciceId: string) => {
     },
   });
 };
+

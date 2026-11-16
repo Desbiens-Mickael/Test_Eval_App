@@ -5,25 +5,10 @@ import Loader from "@/components/loader";
 import { NoteDisplay } from "@/components/note-display";
 import PageTitle from "@/components/page-title";
 import { useGetStudentExerciceById } from "@/hooks/queries/exercice/use-get-student-exercice-by-id";
-import {
-  cardResponseItemType,
-  gapFillTextResponseType,
-  multipleChoiceResponseType,
-  trueOrFalseResponseType,
-} from "@/shema-zod/exercice-corection.shema";
-import {
-  contentCardInput,
-  contentGapFillInput,
-  contentMultipleChoiceInput,
-  contentTrueOrFalseInput,
-} from "@/shema-zod/exercice.shema";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import ExerciceResultCard from "./exercice-result-card";
-import ExerciceResultMultipleChoice from "./exercice-result-multiple-choice";
-import ExerciceResultTrueOrFalse from "./exercice-result-true-or-false";
-import ExerciseResultGapFillText from "./exercise-result-gap-fill-text";
+import CorrectionByType from "./correction-by-type";
 import TeacherFeedback from "./teacher-feedback";
 import TeacherReviewPanel from "./teacher-review-panel";
 
@@ -101,28 +86,11 @@ export default function ShowCorrection({
         />
       )}
 
-      {data?.exercice?.type.name === "Texte à trou" && (
-        <ExerciseResultGapFillText
-          content={data?.exercice?.content as contentGapFillInput}
-          response={data?.response as gapFillTextResponseType}
-        />
-      )}
-      {data?.exercice?.type.name === "Carte" && (
-        <ExerciceResultCard
-          content={data?.exercice?.content as contentCardInput}
-          response={data?.response as cardResponseItemType[]}
-        />
-      )}
-      {data?.exercice?.type.name === "Vrai ou Faux" && (
-        <ExerciceResultTrueOrFalse
-          content={data?.exercice?.content as contentTrueOrFalseInput}
-          response={data?.response as trueOrFalseResponseType}
-        />
-      )}
-      {data?.exercice?.type.name === "Choix multiple" && (
-        <ExerciceResultMultipleChoice
-          content={data?.exercice?.content as contentMultipleChoiceInput}
-          response={data?.response as multipleChoiceResponseType}
+      {data.exercice && (
+        <CorrectionByType
+          type={data.exercice.type.name}
+          content={data.exercice.content}
+          response={data.response}
         />
       )}
 

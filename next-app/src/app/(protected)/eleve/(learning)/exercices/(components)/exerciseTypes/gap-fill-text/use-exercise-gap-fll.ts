@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { useAddExerciceResponse } from "@/hooks/mutations/exercice/use-add-exercice-response";
+import { useSubmitExerciceResponse } from "@/hooks/mutations/exercice/use-submit-exercice-response";
 import { gapFillTextResponseType } from "@/shema-zod/exercice-corection.shema";
 import { contentGapFillInput } from "@/shema-zod/exercice.shema";
 import { baseResponseExercice } from "@/type/exercice";
@@ -24,7 +24,7 @@ export const useExerciseGapFill = ({
     isPending,
     isSuccess,
     data,
-  } = useAddExerciceResponse();
+  } = useSubmitExerciceResponse();
 
   const handleInputChange = useCallback((pos: number, value: string) => {
     setInputs((prev) => ({ ...prev, [pos]: value.trim() }));

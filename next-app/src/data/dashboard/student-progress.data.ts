@@ -27,7 +27,8 @@ export const getStudentProgressRawData = async (studentId: string) => {
     }),
     student.groupId
       ? prisma.exercice.findMany({
-          where: { groups: { some: { id: student.groupId } } },
+          // Seuls les contrôles comptent (les entraînements ne sont pas notés)
+          where: { kind: "CONTROL", groups: { some: { id: student.groupId } } },
           select: {
             id: true,
             lesson: { select: { LessonSubject: { select: { label: true } } } },

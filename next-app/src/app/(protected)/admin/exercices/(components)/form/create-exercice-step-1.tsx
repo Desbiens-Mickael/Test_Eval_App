@@ -21,6 +21,7 @@ import useGetAllExerciceLevels from "@/hooks/queries/use-get-all-exercice-levels
 import useGetAllExerciceType from "@/hooks/queries/use-get-all-exercice-type";
 import { createExerciceFormInput } from "@/shema-zod/exercice.shema";
 import { ComponentType } from "./dynamic-content-components";
+import ExerciceKindField from "./exercice-kind-field";
 
 interface createExerciceStep1Props {
   form: UseFormReturn<createExerciceFormInput>;
@@ -143,10 +144,11 @@ export default function CreateExerciceStep1({
               Configuration
             </CardTitle>
             <CardDescription>
-              {"Définissez le niveau de difficulté et le type d'exercice."}
+              {"Définissez l'usage, le niveau de difficulté et le type d'exercice."}
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-6">
+            <ExerciceKindField form={form} isEditing={isEditing} />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <CustomSelect
                 isRequired={true}

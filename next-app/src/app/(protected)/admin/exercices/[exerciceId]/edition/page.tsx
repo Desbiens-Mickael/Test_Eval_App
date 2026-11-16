@@ -1,10 +1,9 @@
-import PageTitle from "@/components/page-title";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import EditExercice from "../../(components)/edit-exercice";
 
 export const metadata: Metadata = {
-  title: "Edition de l'exercice",
+  title: "Modifier un exercice ou un contrôle",
 };
 
 export default async function EditeExercicePage({
@@ -19,9 +18,6 @@ export default async function EditeExercicePage({
   }
 
   return (
-    <>
-      <PageTitle title="Edition de l'exercice" />
-      <EditExercice exerciceId={exerciceId} />
-    </>
+    <EditExercice exerciceId={exerciceId} />
   );
 }

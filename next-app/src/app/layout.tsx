@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     default: "EduCraft",
   },
   description:
-    "EduCraft est un service de création d'exercices pour l'apprentissage",
+    "EduCraft est un service de création d'exercices et de contrôles pour l'apprentissage",
 };
 
 export const viewport: Viewport = {

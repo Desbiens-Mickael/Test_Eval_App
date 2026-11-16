@@ -36,7 +36,7 @@ export default function BadgesSection({ badges }: { badges: StudentProgress["bad
         <h2 className="text-base font-semibold leading-tight">Mes badges</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           {earned === 0
-            ? "Fais des exercices pour gagner tes premiers badges."
+            ? "Fais des contrôles pour gagner tes premiers badges."
             : `${earned} badge${earned > 1 ? "s" : ""} gagné${earned > 1 ? "s" : ""} sur ${badges.length}`}
         </p>
       </header>

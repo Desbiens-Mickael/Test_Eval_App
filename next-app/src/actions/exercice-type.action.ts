@@ -6,15 +6,15 @@ export const getAllExercicesTypeAction = async () => {
   try {
     const exerciceType = await getAllExerciceTypeData();
     if (!exerciceType || exerciceType.length === 0) {
-      return { error: "Aucun type d'exercice trouvé" };
+      return { error: "Aucun format trouvé" };
     }
 
     return {
-      success: "Types d'exercices trouvés",
+      success: "Formats trouvés",
       data: exerciceType,
     };
   } catch (err) {
     console.error(err);
-    return { error: "Erreur lors de la récupération des types d'exercices" };
+    return { error: "Erreur lors de la récupération des formats" };
   }
 };

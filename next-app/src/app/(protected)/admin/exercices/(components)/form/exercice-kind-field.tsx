@@ -14,7 +14,7 @@ import { EXERCICE_KINDS, createExerciceFormInput } from "@/shema-zod/exercice.sh
 import { Check } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 
-/** Choix entre entraînement (non noté) et contrôle (noté) */
+/** Choix entre exercice (non noté) et contrôle (noté) */
 export default function ExerciceKindField({
   form,
   isEditing,
@@ -71,8 +71,8 @@ export default function ExerciceKindField({
           </FormControl>
           <FormDescription>
             {isEditing
-              ? "Le type ne peut plus être changé une fois que des élèves ont fait l'exercice."
-              : "Un entraînement permet à l'élève de s'exercer sans être noté ; un contrôle compte dans sa moyenne."}
+              ? "L'usage ne peut plus être changé une fois que des élèves l'ont fait."
+              : "Un exercice permet à l'élève de s'entraîner sans être noté ; un contrôle compte dans sa moyenne."}
           </FormDescription>
           <FormMessage />
         </FormItem>

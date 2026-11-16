@@ -1,7 +1,6 @@
 "use client";
 
 // import { exerciceData } from "@/app/(protected)/admin/card-game/data";
-import ExerciceKindBadge from "@/components/exercice-kind-badge";
 import LevelLayout from "@/components/level-layout";
 import SubjectLayout from "@/components/subject-layout";
 import { DataTableColumnHeader } from "@/components/table/data-table-column-header";
@@ -20,15 +19,19 @@ import TableSkeleton from "../../../../../components/table/table-skeleton";
 
 export default function ExercicesTable({
   exerciceType,
+  kind,
 }: {
   exerciceType: ExerciceType;
+  /** Contrôles (notés) ou exercices (non notés) : jamais mélangés */
+  kind: "CONTROL" | "PRACTICE";
 }) {
   const {
-    data: exerciceData,
+    data: allExercices,
     isLoading,
     isError,
     error,
   } = useGetAllExercicesByType(exerciceType);
+  const exerciceData = allExercices?.filter((e) => e.kind === kind);
 
   const { mutateAsync: mutateAsyncDelete } = useDeleteExercices();
   const [openId, setOpenId] = useState<string | null>(null);
@@ -77,14 +80,6 @@ export default function ExercicesTable({
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Titre" />
       ),
-    },
-    {
-      id: "Usage",
-      accessorKey: "kind",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Usage" />
-      ),
-      cell: ({ row }) => <ExerciceKindBadge kind={row.original.kind} />,
     },
     {
       id: "Niveau",

@@ -17,17 +17,17 @@ const userMenus: MenuSideBar = [
       },
       {
         icon: Dumbbell,
-        title: "Entraînements",
+        title: "Exercices",
         href: "/eleve/entrainements",
       },
       {
         icon: ListTodo,
-        title: "Exercices à faire",
+        title: "Contrôles à faire",
         href: "/eleve/exercices",
       },
       {
         icon: Check,
-        title: "Exercices faits",
+        title: "Contrôles faits",
         href: "/eleve/exercices/faits",
       },
     ],

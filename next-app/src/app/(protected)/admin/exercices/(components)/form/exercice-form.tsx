@@ -22,16 +22,20 @@ import { toast } from "sonner";
 import CreateExerciceStep1 from "./create-exercice-step-1";
 import CreateExerciceStep2 from "./create-exercice-step-2";
 import CreateEXerciceSTep3 from "./create-exercice-step-3";
+import { kindBasePath } from "../kind-format-page";
 import { ComponentType } from "./dynamic-content-components";
 
 interface ExerciceFormProps {
   lessonSlug?: string;
   exerciceData?: Exercice | null;
+  /** Usage choisi par le bouton « Ajouter un contrôle / un exercice » */
+  initialKind?: "CONTROL" | "PRACTICE";
 }
 
 export default function ExerciceForm({
   lessonSlug,
   exerciceData,
+  initialKind,
 }: ExerciceFormProps) {
   const [step, setStep] = useState<number>(1);
   const [type, setType] = useState<ComponentType>(
@@ -50,7 +54,7 @@ export default function ExerciceForm({
     resolver: zodResolver(globalExerciceSchema),
     defaultValues: {
       title: exerciceData?.title || "",
-      kind: exerciceData?.kind ?? "CONTROL",
+      kind: exerciceData?.kind ?? initialKind ?? "CONTROL",
       description: exerciceData?.description || "",
       exerciceTypeId: exerciceData?.typeId || "",
       exerciceLevelId: exerciceData?.levelId || "",
@@ -79,7 +83,7 @@ export default function ExerciceForm({
         });
       } else {
         if (!lessonSlug || typeof lessonSlug !== "string") {
-          toast.error("Le slug de la leçon est requis pour créer un exercice.");
+          toast.error("Le slug de la leçon est requis pour créer un exercice ou un contrôle.");
           return;
         }
         res = await createMutation({
@@ -91,8 +95,9 @@ export default function ExerciceForm({
       if (res.success) {
         toast.success(res.success);
         form.reset();
+        // Retour à la liste du bon usage : contrôles ou exercices
         const url = stringToSlug(type);
-        router.push(`/admin/exercices/${url}`);
+        router.push(`${kindBasePath(data.kind)}/${url}`);
       }
     } catch (error) {
       console.error(error);
@@ -163,6 +168,7 @@ export default function ExerciceForm({
                 {step === 1 && (
                   <CreateExerciceStep1
                     isEditing={!!exerciceData}
+                    isKindFixed={!exerciceData && !!initialKind}
                     form={form}
                     setType={setType}
                     setLevel={setLevel}
@@ -209,7 +215,7 @@ export default function ExerciceForm({
                   </Button>
                 ) : (
                   <SubmitButton
-                    texte={exerciceData ? "Mettre à jour" : "Créer l'exercice"}
+                    texte={exerciceData ? "Mettre à jour" : form.watch("kind") === "PRACTICE" ? "Créer l'exercice" : "Créer le contrôle"}
                     isLoading={isPendingCreate || isPendingUpdate}
                     loadindText={
                       exerciceData

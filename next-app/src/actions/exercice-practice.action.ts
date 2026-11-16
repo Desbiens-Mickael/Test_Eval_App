@@ -46,9 +46,9 @@ export type PracticeCorrectionView = {
 };
 
 const UNAUTHORIZED = "Action non autorisée !";
-const NOT_FOUND = "Entraînement non trouvé";
+const NOT_FOUND = "Exercice non trouvé";
 const CORRECTION_SEEN =
-  "Tu as déjà vu la correction de cet entraînement : tu ne peux plus faire d'essai.";
+  "Tu as déjà vu la correction de cet exercice : tu ne peux plus faire d'essai.";
 
 /** Élève connecté et exercice d'entraînement attribué à son groupe */
 const loadPractice = async (exerciceId: string) => {
@@ -99,7 +99,7 @@ export const getPracticeAction = async (exerciceId: string) => {
     const last = state.attempts[state.attempts.length - 1];
 
     return {
-      success: "Entraînement trouvé",
+      success: "Exercice trouvé",
       data: {
         exercice: formatExercice(exercice, { withSolutions: false }),
         summary,
@@ -115,7 +115,7 @@ export const getPracticeAction = async (exerciceId: string) => {
   } catch (error) {
     console.error("Error fetching practice:", error);
     return {
-      error: "Une erreur est survenue lors de la recherche de l'entraînement",
+      error: "Une erreur est survenue lors de la recherche de l'exercice",
       data: null,
     };
   }
@@ -210,7 +210,7 @@ export const getPracticeListAction = async (subject?: string) => {
 
     const exercises = await getPracticeExercisesForStudentData(group.id, student.id, subject);
     return {
-      success: "Entraînements trouvés",
+      success: "Exercices trouvés",
       data: exercises.map((e) => ({
         id: e.id,
         title: e.title,
@@ -229,7 +229,7 @@ export const getPracticeListAction = async (subject?: string) => {
   } catch (error) {
     console.error("Error fetching practice list:", error);
     return {
-      error: "Une erreur est survenue lors de la recherche des entraînements",
+      error: "Une erreur est survenue lors de la recherche des exercices",
       data: null,
     };
   }

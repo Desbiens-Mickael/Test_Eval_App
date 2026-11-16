@@ -49,7 +49,7 @@ export default function CreateExerciceStep2({
           </h2>
         </div>
         <p className="text-sm text-muted-foreground">
-          {`Définissez le contenu de votre exercice de type : ${type}`}
+          {`Définissez le contenu (format : ${type})`}
         </p>
       </div>
 
@@ -57,10 +57,10 @@ export default function CreateExerciceStep2({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="w-5 h-5" />
-            {"Contenu de l'exercice"}
+            {"Contenu"}
           </CardTitle>
           <CardDescription>
-            {"Configurez le contenu spécifique à votre type d'exercice"}
+            {"Configurez le contenu propre à ce format"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -70,7 +70,7 @@ export default function CreateExerciceStep2({
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="sr-only">
-                  {"Contenu de l'exercice"}
+                  {"Contenu"}
                 </FormLabel>
                 <div className="space-y-2">
                   <Controller

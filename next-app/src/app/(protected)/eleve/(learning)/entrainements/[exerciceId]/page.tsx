@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import PracticePlayer from "../(components)/practice-player";
 
 export const metadata: Metadata = {
-  title: "Entraînement",
+  title: "Exercice",
 };
 
 export default async function PracticeExercisePage({

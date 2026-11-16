@@ -1,17 +1,10 @@
-import PageTitle from "@/components/page-title";
-import { ExerciceType } from "@/type/exercice";
 import { Metadata } from "next";
-import ExercicesTable from "../(components)/exercices-table";
+import KindFormatPage, { kindPageTitle } from "../(components)/kind-format-page";
 
 export const metadata: Metadata = {
-  title: "Exercices à trou",
+  title: kindPageTitle("PRACTICE", "texte-a-trou"),
 };
 
-export default function HoleGamePage() {
-  return (
-    <>
-      <PageTitle title="Exercices à trou" />
-      <ExercicesTable exerciceType={ExerciceType.Fill_blank} />
-    </>
-  );
+export default function PracticeFormatPage() {
+  return <KindFormatPage kind="PRACTICE" format="texte-a-trou" />;
 }

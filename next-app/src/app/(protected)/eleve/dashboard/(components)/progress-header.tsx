@@ -15,11 +15,11 @@ const greeting = (now: Date) => {
 /** Phrase d'encouragement écrite à partir des chiffres */
 const summarySentence = ({ summary, badges }: StudentProgress) => {
   if (summary.done === 0) {
-    return "Fais ton premier exercice pour voir ta progression ici.";
+    return "Fais ton premier contrôle pour voir ta progression ici.";
   }
   const earned = badges.filter((b) => b.earnedAt).length;
   const parts = [
-    `Tu as fait ${summary.done} exercice${summary.done > 1 ? "s" : ""}`,
+    `Tu as fait ${summary.done} contrôle${summary.done > 1 ? "s" : ""}`,
     `avec ${formatRate(summary.successRate)} de réussite en moyenne`,
   ];
   let trend = "";

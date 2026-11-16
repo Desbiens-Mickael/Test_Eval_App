@@ -3,20 +3,14 @@
 Liste des améliorations retenues, par ordre de priorité dans chaque section.
 Cocher une case quand la fonctionnalité est fusionnée dans `dev`.
 
-## 🎯 Entraînements et contrôles
+## 🎯 Exercices et contrôles
 
-Comme en classe : le professeur décide ce qui sert à s'exercer (entraînement) et ce qui est évalué (contrôle).
+Comme en classe : le professeur décide ce qui sert à s'exercer (exercice, non noté) et ce qui est évalué (contrôle, noté).
 
-- [ ] **Entraînement ou contrôle** : le professeur choisit le type de chaque exercice
-      *(en cours — branche `feat/mode-entrainement`)*
-  - contrôle : une seule tentative, notée, comptée dans la moyenne (fonctionnement actuel) ;
-  - entraînement : tentatives illimitées, non comptées dans la moyenne. Après chaque essai,
-    l'élève ne voit que sa note, puis choisit « Recommencer » ou « Voir la correction » ;
-    voir la correction met fin aux essais (l'élève est prévenu avant) ;
-  - chaque essai est enregistré pour le suivi du professeur ;
-  - les exercices existants deviennent des contrôles.
-- [ ] **Suivi des entraînements par le professeur** : pour chaque élève et chaque exercice d'entraînement,
-      courbe des notes essai après essai, nombre d'essais et correction vue ou non
+- [ ] **Suivi des exercices par le professeur** : pour chaque élève et chaque exercice (non noté),
+      courbe des notes essai après essai, nombre d'essais et correction vue ou non ;
+      et, partout dans l'application, « exercices » (non notés) séparés des « contrôles » (notés)
+      *(en cours — branche `feat/suivi-entrainements`)*
 - [ ] **Contrôles avec période de validité** : dates d'ouverture et de clôture fixées par le professeur.
       À la clôture :
   - les contrôles non rendus sont notés 0 ;
@@ -63,3 +57,5 @@ Comme en classe : le professeur décide ce qui sert à s'exercer (entraînement)
 - [x] Import d'élèves en masse : CSV, Excel ou copier-coller (#57)
 - [x] Export des notes en PDF et CSV, par élève et par groupe (#58)
 - [x] Progression visible côté élève : réussite par matière, historique et badges (#59)
+- [x] Exercices et contrôles : le professeur choisit l'usage de chaque exercice ; exercices non notés,
+      essais illimités, note seule après chaque essai, correction qui met fin aux essais (#61)

@@ -4,7 +4,7 @@ import ExerciseDoneDashboard from "../(components)/exercise-done-dashboard";
 export default function ExercisesFaitsPage() {
   return (
     <>
-      <PageTitle title="Exercices faits" />
+      <PageTitle title="Contrôles faits" />
       <ExerciseDoneDashboard />
     </>
   );

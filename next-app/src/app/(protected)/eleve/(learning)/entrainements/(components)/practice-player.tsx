@@ -40,7 +40,7 @@ type Phase =
   | { name: "correction"; correction: PracticeCorrectionView };
 
 /**
- * Exercice d'entraînement : l'élève fait des essais et ne voit que sa note.
+ * Exercice non noté : l'élève fait des essais et ne voit que sa note.
  * Il peut recommencer autant qu'il veut, ou afficher la correction, ce qui
  * met fin aux essais (il est prévenu avant).
  */
@@ -122,9 +122,9 @@ export default function PracticePlayer({ exerciceId }: { exerciceId: string }) {
           <Dumbbell className="h-5 w-5" aria-hidden="true" />
         </span>
         <p className="text-sm">
-          <span className="block font-semibold">Entraînement : pas de note dans ta moyenne</span>
+          <span className="block font-semibold">Exercice : pas de note dans ta moyenne</span>
           {correction
-            ? "Tu as vu la correction : cet entraînement est terminé."
+            ? "Tu as vu la correction : cet exercice est terminé."
             : "Réessaie autant de fois que tu veux. Quand tu te sens prêt, tu peux afficher la correction, mais tu ne pourras plus faire d'essai ensuite."}
         </p>
       </div>
@@ -181,7 +181,7 @@ export default function PracticePlayer({ exerciceId }: { exerciceId: string }) {
         <Button asChild variant="ghost" className="gap-2">
           <Link href="/eleve/entrainements">
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-            Mes entraînements
+            Mes exercices
           </Link>
         </Button>
       </div>
@@ -212,7 +212,7 @@ function RevealButton({
           <AlertDialogTitle>Voir la correction ?</AlertDialogTitle>
           <AlertDialogDescription>
             Si tu affiches la correction, tu ne pourras plus faire d&apos;essai sur cet
-            entraînement. Tu peux d&apos;abord réessayer autant de fois que tu veux.
+            exercice. Tu peux d&apos;abord réessayer autant de fois que tu veux.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

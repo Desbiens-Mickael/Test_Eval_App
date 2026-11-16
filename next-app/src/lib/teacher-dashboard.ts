@@ -460,7 +460,7 @@ export const buildTeacherDashboard = (
   inPeriod.forEach((r) => {
     if (!r.exerciceId) return;
     const entry = byExercice.get(r.exerciceId) ?? {
-      title: r.exerciceTitle ?? "Exercice supprimé",
+      title: r.exerciceTitle ?? "Contrôle supprimé",
       subject: r.subject,
       scores: [],
     };
@@ -501,7 +501,7 @@ export const buildTeacherDashboard = (
       id: r.id,
       studentId: r.studentId,
       studentName: studentById.get(r.studentId)?.name ?? "Élève",
-      title: r.exerciceTitle ?? "Exercice supprimé",
+      title: r.exerciceTitle ?? "Contrôle supprimé",
       subject: r.subject,
       note: r.note,
       coeficient: r.coeficient,

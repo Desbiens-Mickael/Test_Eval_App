@@ -89,7 +89,7 @@ const tableStyles = {
 
 const score = (value: number | null) => (value === null ? "—" : formatNumberFr(value));
 
-/** Relevé d'un groupe : une ligne par élève, une colonne par exercice */
+/** Relevé d'un groupe : une ligne par élève, une colonne par contrôle */
 export const downloadGroupReportPdf = async (report: GroupGradeReport) => {
   const landscape = report.exercises.length > 5;
   const { doc, autoTable } = await createDocument(landscape ? "landscape" : "portrait");
@@ -99,7 +99,7 @@ export const downloadGroupReportPdf = async (report: GroupGradeReport) => {
     "Relevé de notes",
     report.groupName,
     `${report.students.length} élève${report.students.length > 1 ? "s" : ""} · ` +
-      `${report.exercises.length} exercice${report.exercises.length > 1 ? "s" : ""} · ` +
+      `${report.exercises.length} contrôle${report.exercises.length > 1 ? "s" : ""} · ` +
       `moyenne du groupe : ${score(report.average)}/20 · notes sur 20, « — » = non fait`
   );
 
@@ -170,7 +170,7 @@ export const downloadStudentReportPdf = async (report: StudentGradeReport) => {
   autoTable(doc, {
     ...tableStyles,
     startY: afterSummary + 8,
-    head: [["Date", "Matière", "Exercice", "Note", "/20", "Commentaire du professeur"]],
+    head: [["Date", "Matière", "Contrôle", "Note", "/20", "Commentaire du professeur"]],
     body: report.rows.map((r) => [
       formatDateFr(r.date),
       r.subject,

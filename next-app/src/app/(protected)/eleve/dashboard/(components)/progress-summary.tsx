@@ -24,28 +24,28 @@ export default function ProgressSummary({ progress }: { progress: StudentProgres
       </section>
 
       <section className="flex flex-col rounded-xl border bg-card p-5 shadow-sm">
-        <h2 className="text-sm font-medium text-muted-foreground">Exercices à faire</h2>
+        <h2 className="text-sm font-medium text-muted-foreground">Contrôles à faire</h2>
         <p className="mt-3 text-3xl font-semibold tracking-tight tabular-nums">
           {summary.assigned > 0 ? `${summary.assignedDone} / ${summary.assigned}` : "—"}
         </p>
         <p className="mt-1 text-sm text-muted-foreground">
           {summary.assigned === 0
-            ? "Aucun exercice attribué pour l'instant"
+            ? "Aucun contrôle attribué pour l'instant"
             : summary.assignedDone === summary.assigned
               ? "Tout est fait, bravo !"
               : `Encore ${summary.assigned - summary.assignedDone} à faire`}
         </p>
-        <Meter value={completion} label="Exercices attribués faits" />
+        <Meter value={completion} label="Contrôles attribués faits" />
       </section>
 
       <section className="flex flex-col rounded-xl border bg-card p-5 shadow-sm">
-        <h2 className="text-sm font-medium text-muted-foreground">Mes 5 derniers exercices</h2>
+        <h2 className="text-sm font-medium text-muted-foreground">Mes 5 derniers contrôles</h2>
         <p className="mt-3 text-3xl font-semibold tracking-tight">
           {formatRate(summary.recentRate)}
         </p>
         <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
           {delta === null ? (
-            "Fais encore quelques exercices pour voir ta tendance"
+            "Fais encore quelques contrôles pour voir ta tendance"
           ) : (
             <>
               <Trend delta={delta} />
@@ -62,7 +62,7 @@ export default function ProgressSummary({ progress }: { progress: StudentProgres
         </p>
         <p className="mt-1 text-sm text-muted-foreground">
           {summary.perfect > 0
-            ? `${summary.perfect} exercice${summary.perfect > 1 ? "s" : ""} réussi${summary.perfect > 1 ? "s" : ""} à 100 %`
+            ? `${summary.perfect} contrôle${summary.perfect > 1 ? "s" : ""} réussi${summary.perfect > 1 ? "s" : ""} à 100 %`
             : "Vise un 100 % pour un nouveau badge"}
         </p>
       </section>

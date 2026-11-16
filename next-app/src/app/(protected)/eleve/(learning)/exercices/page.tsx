@@ -3,13 +3,13 @@ import { Metadata } from "next";
 import ExerciseDashboard from "./(components)/exercise-dashboard";
 
 export const metadata: Metadata = {
-  title: "Mes exercices",
+  title: "Mes contrôles",
 };
 
 export default function ExercisesPage() {
   return (
     <>
-      <PageTitle title="Mes exercices" />
+      <PageTitle title="Mes contrôles" />
       <ExerciseDashboard />
     </>
   );

@@ -56,8 +56,8 @@ export default function ListExercisesDone({
           animate="show"
         >
           {selectedSubject
-            ? `Exercices terminés en ${selectedSubject}`
-            : "Tous les exercices terminés"}
+            ? `Contrôles terminés en ${selectedSubject}`
+            : "Tous les contrôles terminés"}
         </motion.h2>
         <ExerciceListSkeleton count={4} />
       </motion.div>
@@ -66,7 +66,7 @@ export default function ListExercisesDone({
 
   if (isError) {
     throw new Error(
-      "Une erreur est survenue lors de la récupération des exercices"
+      "Une erreur est survenue lors de la récupération des contrôles"
     );
   }
 
@@ -85,12 +85,12 @@ export default function ListExercisesDone({
         </div>
         <div className="space-y-2 max-w-md">
           <h3 className="text-xl font-semibold text-foreground">
-            Aucun exercice terminé
+            Aucun contrôle terminé
           </h3>
           <p className="text-muted-foreground">
             {selectedSubject
-              ? `Vous n'avez pas encore terminé d'exercice en ${selectedSubject}`
-              : "Commencez par faire des exercices pour les voir apparaître ici"}
+              ? `Vous n'avez pas encore terminé de contrôle en ${selectedSubject}`
+              : "Commencez par faire des contrôles pour les voir apparaître ici"}
           </p>
         </div>
       </motion.div>
@@ -111,8 +111,8 @@ export default function ListExercisesDone({
         animate="show"
       >
         {selectedSubject
-          ? `Exercices terminés en ${selectedSubject}`
-          : "Tous les exercices terminés"}
+          ? `Contrôles terminés en ${selectedSubject}`
+          : "Tous les contrôles terminés"}
       </motion.h2>
 
       <AnimatePresence mode="wait">

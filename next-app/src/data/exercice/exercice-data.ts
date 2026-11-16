@@ -11,6 +11,9 @@ export type ExerciceOutput = {
   kind: ExerciceKind;
   description: string;
   content: JsonValue;
+  opensAt?: Date | null;
+  closesAt?: Date | null;
+  closedAt?: Date | null;
   lesson: {
     id: string;
     title: string;
@@ -65,6 +68,9 @@ export const createExerciceData = async (
       title: data.title,
       description: data.description,
       kind: data.kind,
+      // Un exercice (non noté) n'a pas de période de validité
+      opensAt: data.kind === "CONTROL" ? data.opensAt : null,
+      closesAt: data.kind === "CONTROL" ? data.closesAt : null,
       content: data.content,
       authorId: authorId,
       levelID: data.exerciceLevelId,
@@ -107,6 +113,9 @@ export const updateExerciceData = async (
       title: data.title,
       description: data.description,
       kind: data.kind,
+      // Un exercice (non noté) n'a pas de période de validité
+      opensAt: data.kind === "CONTROL" ? data.opensAt : null,
+      closesAt: data.kind === "CONTROL" ? data.closesAt : null,
       content: data.content,
       authorId: authorId,
       levelID: data.exerciceLevelId,
@@ -309,6 +318,9 @@ export const getAllExercicesData = async (): Promise<ExerciceOutput[]> => {
         id: true,
         title: true,
         kind: true,
+        opensAt: true,
+        closesAt: true,
+        closedAt: true,
         description: true,
         content: true,
         lesson: {
@@ -375,6 +387,9 @@ export const getAllExercicesByTypeData = async (
       id: true,
       title: true,
       kind: true,
+      opensAt: true,
+      closesAt: true,
+      closedAt: true,
       description: true,
       content: true,
       lesson: {
@@ -435,6 +450,9 @@ export const getExerciceByIdData = async (
       id: true,
       title: true,
       kind: true,
+      opensAt: true,
+      closesAt: true,
+      closedAt: true,
       description: true,
       content: true,
       authorId: true,
@@ -525,6 +543,9 @@ export const getAllExercicesByLessonIdData = async (lessonId: string) => {
       id: true,
       title: true,
       kind: true,
+      opensAt: true,
+      closesAt: true,
+      closedAt: true,
       description: true,
       level: {
         select: {
@@ -583,6 +604,7 @@ export const getStudentExerciceByStudentIdData = async (
         select: {
           id: true,
           title: true,
+          closesAt: true,
           lesson: {
             select: {
               LessonSubject: {
@@ -648,6 +670,8 @@ export const getExercisesByGroupIdAndSubjectData = async (
       id: true,
       title: true,
       description: true,
+      opensAt: true,
+      closesAt: true,
       lesson: {
         select: {
           id: true,
@@ -675,6 +699,7 @@ export const getStudentExerciceByIdData = async (studentExerciceId: string) => {
           title: true,
           description: true,
           content: true,
+          closesAt: true,
           type: {
             select: {
               name: true,

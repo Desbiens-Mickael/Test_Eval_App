@@ -8,6 +8,9 @@ export type Exercice = {
   kind: "CONTROL" | "PRACTICE";
   description: string;
   content: JsonValue;
+  /** Période de validité d'un contrôle (null = pas de limite) */
+  opensAt?: Date | null;
+  closesAt?: Date | null;
   /** Exercice "Carte" vu par un élève : cartes mélangées, sans leur colonne */
   cards?: { id: string; content: string }[];
   levelId: string;
@@ -33,9 +36,14 @@ export type StudentExerciceCard = {
   lessonSubject?: string;
   lessonSubjectColor?: string;
   studentExerciceId: string;
-  note: number;
+  /** null tant que la note est cachée à l'élève (contrôle pas encore clos) */
+  note: number | null;
   coeficient: number;
   createdAt: Date;
+  /** Copie non rendue à la clôture : notée 0 */
+  isMissing: boolean;
+  /** Date à laquelle la note et la correction seront visibles, si elles ne le sont pas encore */
+  resultsAvailableAt: Date | null;
 };
 
 export type StudentExerciceById = {
@@ -45,6 +53,7 @@ export type StudentExerciceById = {
   autoNote: number | null;
   teacherComment: string | null;
   reviewedAt: Date | null;
+  isMissing: boolean;
   createdAt: Date;
   response: JsonValue;
   coeficient: number;
@@ -53,6 +62,7 @@ export type StudentExerciceById = {
     title: string;
     description: string;
     content: JsonValue;
+    closesAt: Date | null;
     type: {
       name: string;
     };

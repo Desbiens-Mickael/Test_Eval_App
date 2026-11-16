@@ -21,6 +21,8 @@ export const formatExercice = (
     description: exercice.description,
     content,
     cards,
+    opensAt: exercice.opensAt ?? null,
+    closesAt: exercice.closesAt ?? null,
     lesson: exercice.lesson.title,
     levelId: exercice.level.id,
     level: exercice.level.label,

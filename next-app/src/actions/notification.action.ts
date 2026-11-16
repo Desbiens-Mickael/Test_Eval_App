@@ -1,5 +1,6 @@
 "use server";
 
+import { closeExpiredControlsSafeData } from "@/data/exercice/control-closure.data";
 import {
   getStudentNotificationsData,
   getTeacherNotificationsData,
@@ -18,6 +19,8 @@ export const getNotifications = async () => {
 
   try {
     let notifications: Notification[] = [];
+    // Une clôture de contrôle crée la notification « notes disponibles »
+    await closeExpiredControlsSafeData();
     if (user.role === "STUDENT") {
       notifications = await getStudentNotificationsData(user.id);
     } else if (user.role === "ADMIN") {

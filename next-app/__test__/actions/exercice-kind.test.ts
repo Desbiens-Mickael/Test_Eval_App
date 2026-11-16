@@ -47,6 +47,8 @@ const formData = {
   description: "Réponds",
   exerciceTypeId: "t1",
   exerciceLevelId: "lv1",
+  opensAt: null,
+  closesAt: null,
   content: [{ question: "Le ciel est bleu", answer: true }] as [
     { question: string; answer: boolean },
   ],

@@ -6,6 +6,7 @@ import { NoteDisplay } from "@/components/note-display";
 import PageTitle from "@/components/page-title";
 import { useGetStudentExerciceById } from "@/hooks/queries/exercice/use-get-student-exercice-by-id";
 import { motion } from "framer-motion";
+import { FileX } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import CorrectionByType from "./correction-by-type";
@@ -86,7 +87,19 @@ export default function ShowCorrection({
         />
       )}
 
-      {data.exercice && (
+      {data.isMissing && (
+        <div className="mx-4 sm:mx-6 mb-6 flex items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm">
+          <FileX className="h-5 w-5 shrink-0 text-destructive" aria-hidden="true" />
+          <p>
+            {mode === "teacher"
+              ? `${data.student.name} n'a pas rendu ce contrôle avant sa clôture : la copie est notée 0. Vous pouvez ajuster la note ci-dessous (absence justifiée, par exemple).`
+              : "Tu n'as pas rendu ce contrôle avant sa clôture : il est noté 0."}
+          </p>
+        </div>
+      )}
+
+      {/* Une copie non rendue n'a pas de réponse à corriger */}
+      {data.exercice && !data.isMissing && (
         <CorrectionByType
           type={data.exercice.type.name}
           content={data.exercice.content}

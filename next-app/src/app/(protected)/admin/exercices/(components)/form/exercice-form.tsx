@@ -59,8 +59,14 @@ export default function ExerciceForm({
       exerciceTypeId: exerciceData?.typeId || "",
       exerciceLevelId: exerciceData?.levelId || "",
       content: (exerciceData?.content as contentInput) || [],
+      opensAt: exerciceData?.opensAt ? new Date(exerciceData.opensAt) : null,
+      closesAt: exerciceData?.closesAt ? new Date(exerciceData.closesAt) : null,
     },
   });
+
+  // Un contrôle dont la date de clôture est passée est clos (voir control-closure)
+  const isClosed =
+    !!exerciceData?.closesAt && new Date(exerciceData.closesAt) <= new Date();
 
   // Reset du formulaire si le type change
   useEffect(() => {
@@ -114,8 +120,10 @@ export default function ExerciceForm({
           "exerciceTypeId",
           "title",
           "description",
+          "opensAt",
+          "closesAt",
         ]);
-        if (isValid) {
+        if (isValid && checkControlPeriod()) {
           setStep((prevStep) => prevStep + 1);
         }
         break;
@@ -128,6 +136,29 @@ export default function ExerciceForm({
       default:
         break;
     }
+  };
+
+  // Contrôle des dates à l'étape 1 (le schéma complet ne les vérifie
+  // qu'une fois le contenu rempli)
+  const checkControlPeriod = () => {
+    const { kind, opensAt, closesAt } = form.getValues();
+    if (kind !== "CONTROL" || isClosed) return true;
+    if (opensAt && closesAt && closesAt <= opensAt) {
+      form.setError("closesAt", {
+        message: "La clôture doit être après l'ouverture",
+      });
+      return false;
+    }
+    const unchanged =
+      closesAt?.getTime() ===
+      (exerciceData?.closesAt ? new Date(exerciceData.closesAt).getTime() : undefined);
+    if (closesAt && closesAt <= new Date() && !unchanged) {
+      form.setError("closesAt", {
+        message: "La date de clôture doit être dans le futur",
+      });
+      return false;
+    }
+    return true;
   };
 
   const handlePreviousStep = () => {
@@ -169,6 +200,7 @@ export default function ExerciceForm({
                   <CreateExerciceStep1
                     isEditing={!!exerciceData}
                     isKindFixed={!exerciceData && !!initialKind}
+                    isClosed={isClosed}
                     form={form}
                     setType={setType}
                     setLevel={setLevel}

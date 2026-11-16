@@ -7,11 +7,8 @@ Cocher une case quand la fonctionnalité est fusionnée dans `dev`.
 
 Comme en classe : le professeur décide ce qui sert à s'exercer (exercice, non noté) et ce qui est évalué (contrôle, noté).
 
-- [ ] **Suivi des exercices par le professeur** : pour chaque élève et chaque exercice (non noté),
-      courbe des notes essai après essai, nombre d'essais et correction vue ou non ;
-      et, partout dans l'application, « exercices » (non notés) séparés des « contrôles » (notés)
-      *(en cours — branche `feat/suivi-entrainements`)*
 - [ ] **Contrôles avec période de validité** : dates d'ouverture et de clôture fixées par le professeur.
+      *(en cours — branche `feat/periode-controles`)*
       À la clôture :
   - les contrôles non rendus sont notés 0 ;
   - les notes et les corrections deviennent visibles pour les élèves (pas avant) ;
@@ -59,3 +56,5 @@ Comme en classe : le professeur décide ce qui sert à s'exercer (exercice, non 
 - [x] Progression visible côté élève : réussite par matière, historique et badges (#59)
 - [x] Exercices et contrôles : le professeur choisit l'usage de chaque exercice ; exercices non notés,
       essais illimités, note seule après chaque essai, correction qui met fin aux essais (#61)
+- [x] Suivi des exercices par le professeur (courbe des notes, essais, correction vue) ;
+      « exercices » et « contrôles » séparés partout dans l'application (#62)

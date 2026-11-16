@@ -1,5 +1,6 @@
 "use server";
 
+import { closeExpiredControlsSafeData } from "@/data/exercice/control-closure.data";
 import { getTeacherDashboardRawData } from "@/data/dashboard/teacher-dashboard.data";
 import { currentUser } from "@/lib/auth";
 import {
@@ -23,6 +24,7 @@ export const getTeacherDashboardAction = async (
   }
 
   try {
+    await closeExpiredControlsSafeData();
     const raw = await getTeacherDashboardRawData(user.id);
     const safePeriod: DashboardPeriod = isDashboardPeriod(period)
       ? period

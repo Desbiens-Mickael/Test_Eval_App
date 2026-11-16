@@ -15,8 +15,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useGetExercisesToDo } from "@/hooks/queries/exercice/use-get-exercises-to-do";
+import { formatControlDate, getControlStatus } from "@/lib/control-period";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, BookOpen, Pencil } from "lucide-react";
+import { ArrowRight, BookOpen, CalendarClock, Lock, Pencil } from "lucide-react";
 import Link from "next/link";
 import ExerciceListSkeleton from "./exercice-list-skeleton";
 import ExerciceTypeBadge from "./exercice-type-badge";
@@ -111,55 +112,83 @@ export default function ListExercisesToDo({
           initial="hidden"
           animate="show"
         >
-          {data?.map((exercice) => (
-            <motion.div
-              key={exercice.id}
-              variants={item}
-              whileHover={{ y: -4, transition: { duration: 0.2 } }}
-              className="h-full"
-            >
-              <Card className="h-full flex flex-col transition-all duration-200 hover:shadow-md">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-center text-lg line-clamp-2">
-                    {exercice.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex-1 flex flex-col justify-center items-center gap-3 pb-3">
-                  {exercice.description && (
-                    <p className="text-sm text-muted-foreground text-center line-clamp-2">
-                      {exercice.description}
-                    </p>
-                  )}
-                  <div className="flex flex-wrap justify-center gap-2 mt-2">
-                    <ExerciceTypeBadge type={exercice.type.name} />
-                    <SubjectLayout
-                      label={exercice.lesson.LessonSubject.label}
-                      color={exercice.lesson.LessonSubject.color}
-                      className="text-xs"
-                    />
-                    <SubjectLayout
-                      label={exercice.level.label}
-                      color={exercice.level.color}
-                      className="text-xs"
-                    />
-                  </div>
-                </CardContent>
-                <CardFooter className="p-3 pt-0">
-                  <Button
-                    asChild
-                    size="lg"
-                    className="w-full rounded-lg group/btn gap-2 px-6 py-5 text-base font-medium transition-all duration-300 hover:shadow-lg hover:shadow-primary/10"
-                  >
-                    <Link href={`/eleve/exercices/${exercice.id}`}>
-                      <Pencil className="h-4 w-4" />
-                      <span>{"Commencer le contrôle"}</span>
-                      <ArrowRight className="h-4 w-4 -mr-1 group-hover/btn:translate-x-0.5 transition-transform" />
-                    </Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-            </motion.div>
-          ))}
+          {data?.map((exercice) => {
+            const isUpcoming = getControlStatus(exercice) === "UPCOMING";
+            return (
+              <motion.div
+                key={exercice.id}
+                variants={item}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="h-full"
+              >
+                <Card className="h-full flex flex-col transition-all duration-200 hover:shadow-md">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-center text-lg line-clamp-2">
+                      {exercice.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex-1 flex flex-col justify-center items-center gap-3 pb-3">
+                    {exercice.description && (
+                      <p className="text-sm text-muted-foreground text-center line-clamp-2">
+                        {exercice.description}
+                      </p>
+                    )}
+                    <div className="flex flex-wrap justify-center gap-2 mt-2">
+                      <ExerciceTypeBadge type={exercice.type.name} />
+                      <SubjectLayout
+                        label={exercice.lesson.LessonSubject.label}
+                        color={exercice.lesson.LessonSubject.color}
+                        className="text-xs"
+                      />
+                      <SubjectLayout
+                        label={exercice.level.label}
+                        color={exercice.level.color}
+                        className="text-xs"
+                      />
+                    </div>
+                    {isUpcoming && exercice.opensAt ? (
+                      <p className="flex items-center gap-1.5 text-xs text-muted-foreground text-center">
+                        <Lock className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                        Ouvre le {formatControlDate(exercice.opensAt)}
+                      </p>
+                    ) : (
+                      exercice.closesAt && (
+                        <p className="flex items-center gap-1.5 text-xs font-medium text-orange-700 dark:text-orange-300 text-center">
+                          <CalendarClock className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                          À rendre avant le {formatControlDate(exercice.closesAt)}
+                        </p>
+                      )
+                    )}
+                  </CardContent>
+                  <CardFooter className="p-3 pt-0">
+                    {isUpcoming ? (
+                      <Button
+                        size="lg"
+                        variant="secondary"
+                        disabled
+                        className="w-full rounded-lg gap-2 px-6 py-5 text-base font-medium"
+                      >
+                        <Lock className="h-4 w-4" />
+                        <span>Pas encore ouvert</span>
+                      </Button>
+                    ) : (
+                      <Button
+                        asChild
+                        size="lg"
+                        className="w-full rounded-lg group/btn gap-2 px-6 py-5 text-base font-medium transition-all duration-300 hover:shadow-lg hover:shadow-primary/10"
+                      >
+                        <Link href={`/eleve/exercices/${exercice.id}`}>
+                          <Pencil className="h-4 w-4" />
+                          <span>{"Commencer le contrôle"}</span>
+                          <ArrowRight className="h-4 w-4 -mr-1 group-hover/btn:translate-x-0.5 transition-transform" />
+                        </Link>
+                      </Button>
+                    )}
+                  </CardFooter>
+                </Card>
+              </motion.div>
+            );
+          })}
         </motion.div>
       </AnimatePresence>
     </motion.div>

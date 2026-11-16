@@ -9,8 +9,8 @@ import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { EmptyChart } from "./activity-section";
-import ChartCard from "./chart-card";
+import ChartCard from "@/components/charts/chart-card";
+import EmptyChart from "@/components/charts/empty-chart";
 import { formatInteger, formatPercent, formatScore } from "./format";
 
 /** Barres horizontales sur l'échelle 0–20, valeur au bout de la barre */

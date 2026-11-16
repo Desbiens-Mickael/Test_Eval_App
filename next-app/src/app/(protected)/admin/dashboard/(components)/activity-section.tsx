@@ -1,8 +1,9 @@
 "use client";
 
 import { DashboardPeriod, TeacherDashboard } from "@/lib/teacher-dashboard";
-import ChartCard from "./chart-card";
-import ColumnChart from "./column-chart";
+import ChartCard from "@/components/charts/chart-card";
+import ColumnChart from "@/components/charts/column-chart";
+import EmptyChart from "@/components/charts/empty-chart";
 import { PERIOD_LABELS, formatInteger, formatScore } from "./format";
 
 const UNIT_LABEL = { day: "par jour", week: "par semaine", month: "par mois" };
@@ -85,13 +86,5 @@ export function ScoreDistribution({
         />
       )}
     </ChartCard>
-  );
-}
-
-export function EmptyChart({ message }: { message: string }) {
-  return (
-    <div className="flex h-[200px] items-center justify-center rounded-lg border border-dashed text-sm text-muted-foreground">
-      {message}
-    </div>
   );
 }

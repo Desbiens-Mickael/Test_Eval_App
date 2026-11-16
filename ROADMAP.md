@@ -3,14 +3,10 @@
 Liste des améliorations retenues, par ordre de priorité dans chaque section.
 Cocher une case quand la fonctionnalité est fusionnée dans `dev`.
 
-## 👩‍🏫 Côté professeur
-
-- [ ] **Export des notes** en CSV et en PDF (par élève, par groupe)
-      *(en cours — branche `feat/export-notes`)*
-
 ## 🧒 Côté élève
 
 - [ ] **Progression visible** : pourcentage de réussite par matière, historique et badges
+      *(en cours — branche `feat/progression-eleve`)*
 - [ ] **Mode entraînement** : exercices non notés, rejouables à volonté, à côté des exercices notés
 - [ ] **Lien leçon ↔ exercices** : depuis une leçon, accéder directement à ses exercices, et inversement,
       uniquement pour ce que le professeur a attribué au groupe de l'élève
@@ -48,3 +44,4 @@ Cocher une case quand la fonctionnalité est fusionnée dans `dev`.
 - [x] Relecture des copies : note ajustée et commentaire pour l'élève (#55)
 - [x] Gestion des comptes élèves : réinitialisation du mot de passe, désactivation (#56)
 - [x] Import d'élèves en masse : CSV, Excel ou copier-coller (#57)
+- [x] Export des notes en PDF et CSV, par élève et par groupe (#58)

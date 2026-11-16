@@ -11,6 +11,8 @@ interface ExerciceResponse {
   levelColor: string;
   type: string;
   groups: { id: string }[];
+  opensAt: Date | null;
+  closesAt: Date | null;
 }
 
 /**

@@ -5,6 +5,13 @@ import { prisma } from "@/lib/db";
  * attribués à son groupe et la couleur de chaque matière.
  */
 export const getStudentProgressRawData = async (studentId: string) => {
+  // Les contrôles pas encore clos sont ignorés : l'élève ne connaît pas
+  // encore sa note
+  const now = new Date();
+  const notPending = {
+    OR: [{ closesAt: null }, { closesAt: { lte: now } }],
+  };
+
   const student = await prisma.student.findUnique({
     where: { id: studentId },
     select: { name: true, groupId: true },
@@ -13,7 +20,10 @@ export const getStudentProgressRawData = async (studentId: string) => {
 
   const [results, assigned, subjects] = await Promise.all([
     prisma.studentExercice.findMany({
-      where: { studentId },
+      where: {
+        studentId,
+        OR: [{ exerciceId: null }, { exercice: notPending }],
+      },
       select: {
         id: true,
         exerciceId: true,
@@ -28,7 +38,11 @@ export const getStudentProgressRawData = async (studentId: string) => {
     student.groupId
       ? prisma.exercice.findMany({
           // Seuls les contrôles comptent (les entraînements ne sont pas notés)
-          where: { kind: "CONTROL", groups: { some: { id: student.groupId } } },
+          where: {
+            kind: "CONTROL",
+            groups: { some: { id: student.groupId } },
+            ...notPending,
+          },
           select: {
             id: true,
             lesson: { select: { LessonSubject: { select: { label: true } } } },

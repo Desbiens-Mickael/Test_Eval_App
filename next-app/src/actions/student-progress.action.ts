@@ -1,5 +1,6 @@
 "use server";
 
+import { closeExpiredControlsSafeData } from "@/data/exercice/control-closure.data";
 import { getStudentProgressRawData } from "@/data/dashboard/student-progress.data";
 import { currentUser } from "@/lib/auth";
 import { buildStudentProgress } from "@/lib/student-progress";
@@ -15,6 +16,7 @@ export const getStudentProgressAction = async () => {
   }
 
   try {
+    await closeExpiredControlsSafeData();
     const raw = await getStudentProgressRawData(user.id);
     if (!raw) return { error: "Élève introuvable." as const };
 

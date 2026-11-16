@@ -9,6 +9,7 @@ import {
   createStudentNotificationData,
 } from "@/data/notification/notification.data";
 import { currentUser } from "@/lib/auth";
+import { areResultsVisible } from "@/lib/control-period";
 import {
   ExerciceReviewInput,
   buildExerciceReviewSchema,
@@ -58,20 +59,24 @@ export const reviewStudentExerciceAction = async (
       teacherComment: comment,
     });
 
-    // Notification à l'élève (une erreur ici n'annule pas la relecture)
+    // Notification à l'élève (une erreur ici n'annule pas la relecture).
+    // Avant la clôture du contrôle, l'élève ne voit pas encore sa copie :
+    // il sera prévenu par la notification de clôture.
     try {
-      const title = studentExercice.exercice?.title ?? "ton contrôle";
-      const noteChanged = note !== studentExercice.note;
-      const notification = await createNotificationCorrectionData({
-        completionId: studentExerciceId,
-        createdByTeacherId: user.id,
-        message: noteChanged
-          ? `Ta note pour « ${title} » a été ajustée : ${note}/${studentExercice.coeficient}`
-          : `Ton professeur a commenté ta copie « ${title} »`,
-      });
-      await createStudentNotificationData(notification.id, [
-        { id: studentExercice.studentId },
-      ]);
+      if (areResultsVisible({ closesAt: studentExercice.exercice?.closesAt })) {
+        const title = studentExercice.exercice?.title ?? "ton contrôle";
+        const noteChanged = note !== studentExercice.note;
+        const notification = await createNotificationCorrectionData({
+          completionId: studentExerciceId,
+          createdByTeacherId: user.id,
+          message: noteChanged
+            ? `Ta note pour « ${title} » a été ajustée : ${note}/${studentExercice.coeficient}`
+            : `Ton professeur a commenté ta copie « ${title} »`,
+        });
+        await createStudentNotificationData(notification.id, [
+          { id: studentExercice.studentId },
+        ]);
+      }
     } catch (error) {
       console.error("Error notifying student about review:", error);
     }

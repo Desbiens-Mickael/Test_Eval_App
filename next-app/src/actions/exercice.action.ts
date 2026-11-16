@@ -16,6 +16,7 @@ import {
   removeExerciceFromGroupData,
   updateExerciceData,
 } from "@/data/exercice/exercice-data";
+import { closeExpiredControlsSafeData } from "@/data/exercice/control-closure.data";
 import { getExerciceTypeByNameData } from "@/data/exercice/exercice-type.data";
 import { countExerciceSubmissionsData } from "@/data/exercice/practice-data";
 import {
@@ -37,6 +38,11 @@ import {
   getStudentByIdData,
 } from "@/data/student-data";
 import { currentUser } from "@/lib/auth";
+import {
+  areResultsVisible,
+  formatControlDate,
+  getControlStatus,
+} from "@/lib/control-period";
 import { formatExercice } from "@/lib/exercice-format";
 import { gradeExercice } from "@/lib/exercice-grading";
 import { Prisma } from "@prisma/client";
@@ -134,6 +140,21 @@ export const updateExerciceAction = async (
       return {
         error:
           "Des élèves ont déjà fait cet exercice : son usage (exercice ou contrôle) ne peut plus être changé.",
+      };
+    }
+
+    // Une fois clos (copies manquantes notées, élèves notifiés),
+    // un contrôle garde ses dates
+    const sameDate = (a?: Date | null, b?: Date | null) =>
+      (a?.getTime() ?? null) === (b?.getTime() ?? null);
+    if (
+      current.closedAt &&
+      (!sameDate(current.opensAt, validatedData.data.opensAt) ||
+        !sameDate(current.closesAt, validatedData.data.closesAt))
+    ) {
+      return {
+        error:
+          "Ce contrôle est clos : ses dates d'ouverture et de clôture ne peuvent plus être modifiées.",
       };
     }
 
@@ -329,6 +350,19 @@ export const addExerciceResultAction = async (
       };
     }
 
+    // Le contrôle doit être ouvert
+    const status = getControlStatus(exercice);
+    if (status === "UPCOMING" && exercice.opensAt) {
+      return {
+        error: `Ce contrôle ouvrira le ${formatControlDate(exercice.opensAt)}.`,
+      };
+    }
+    if (status === "CLOSED") {
+      return {
+        error: "Ce contrôle est clos : la copie ne peut plus être rendue.",
+      };
+    }
+
     // Calcul de la note côté serveur à partir de la solution stockée en base
     let result: { note: number; coeficient: number };
     try {
@@ -483,6 +517,20 @@ export const getExerciceByIdAction = async (id: string) => {
       };
     }
 
+    if (exercice && isAllowed && user.role === "STUDENT") {
+      const status = getControlStatus(exercice);
+      if (status !== "OPEN") {
+        return {
+          error:
+            status === "UPCOMING" && exercice.opensAt
+              ? `Ce contrôle ouvrira le ${formatControlDate(exercice.opensAt)}.`
+              : "Ce contrôle est clos.",
+          redirect: "/eleve/exercices",
+          data: null,
+        };
+      }
+    }
+
     if (!exercice || !isAllowed) {
       if (user.role === "STUDENT") {
         return {
@@ -559,6 +607,8 @@ export const getExercicesByLessonIdAction = async (lessonId: string) => {
       levelColor: exercice.level.color,
       type: exercice.type.name,
       groups: exercice.groups,
+      opensAt: exercice.opensAt,
+      closesAt: exercice.closesAt,
     }));
 
     return {
@@ -594,6 +644,10 @@ export const getExercisesToDoAction = async (subject?: string) => {
       };
     }
 
+    // Les contrôles dont la date de clôture est passée sont clos d'abord
+    // (copie non rendue notée 0) : ils quittent ainsi la liste « à faire »
+    await closeExpiredControlsSafeData();
+
     // Récupération des exercices du groupe
     const groupExercises = await getExercisesByGroupIdAndSubjectData(
       groupStudent.id,
@@ -607,8 +661,11 @@ export const getExercisesToDoAction = async (subject?: string) => {
     );
 
     // Récupération des exercices qui n'ont pas été fait par l'élève
+    // (les contrôles pas encore ouverts sont listés, sans pouvoir être commencés)
     const exercisesToDo = groupExercises.filter(
-      (exercise) => !studentExercises.some((e) => e.exerciceId === exercise.id)
+      (exercise) =>
+        !studentExercises.some((e) => e.exerciceId === exercise.id) &&
+        getControlStatus(exercise) !== "CLOSED"
     );
 
     return {
@@ -665,6 +722,8 @@ export const getExercisesDoneAction = async (
       };
     }
 
+    await closeExpiredControlsSafeData();
+
     // Récupération des exercices fait par l'élève
     const studentExercises = await getStudentExerciceByStudentIdData(
       studentIdToUse,
@@ -674,6 +733,11 @@ export const getExercisesDoneAction = async (
     // Récupération des exercices qui ont été fait par l'élève ou que l'exerciceId est null
     const exercisesDone = studentExercises
       .map((studentExercice) => {
+        // L'élève ne voit sa note qu'à la clôture du contrôle ;
+        // le professeur la voit toujours
+        const closesAt = studentExercice.exercice?.closesAt ?? null;
+        const hidden =
+          user.role === "STUDENT" && !areResultsVisible({ closesAt });
         return {
           exerciceId: studentExercice.exerciceId || null,
           title: studentExercice.exercice?.title || null,
@@ -682,9 +746,11 @@ export const getExercisesDoneAction = async (
           lessonSubjectColor:
             studentExercice.exercice?.lesson.LessonSubject.color || null,
           studentExerciceId: studentExercice.id,
-          note: studentExercice.note,
+          note: hidden ? null : studentExercice.note,
           coeficient: studentExercice.coeficient,
           createdAt: studentExercice.createdAt,
+          isMissing: studentExercice.isMissing,
+          resultsAvailableAt: hidden ? closesAt : null,
         };
       })
       .filter((exercise) => exercise !== undefined) as StudentExerciceCard[];
@@ -728,6 +794,18 @@ export const getStudentExerciceByIdAction = async (
         data: null,
       };
     }
+
+    // Pas de note ni de correction pour l'élève avant la clôture
+    const closesAt = studentExercice.exercice?.closesAt ?? null;
+    if (user.role === "STUDENT" && !areResultsVisible({ closesAt })) {
+      return {
+        error: closesAt
+          ? `La correction sera disponible le ${formatControlDate(closesAt)}.`
+          : "Correction non disponible",
+        data: null,
+      };
+    }
+
     return {
       success: "Correction trouvée",
       data: studentExercice,

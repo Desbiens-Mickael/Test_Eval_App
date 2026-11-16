@@ -17,9 +17,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useGetExercisesDone } from "@/hooks/queries/exercice/use-get-exercises-done";
+import { formatControlDate } from "@/lib/control-period";
 import { formatDate } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { AlertCircle, ArrowRight, BookOpen, Check } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowRight,
+  BookOpen,
+  Check,
+  Clock,
+  FileX,
+} from "lucide-react";
 import Link from "next/link";
 import ExerciceListSkeleton from "./exercice-list-skeleton";
 
@@ -144,18 +152,36 @@ export default function ListExercisesDone({
                     />
                   )}
                   <div className="w-full flex items-center justify-between px-4">
-                    <NoteDisplay
-                      note={exercice.note}
-                      coeficient={exercice.coeficient}
-                      className="text-lg font-semibold"
-                    />
+                    {exercice.note !== null ? (
+                      <NoteDisplay
+                        note={exercice.note}
+                        coeficient={exercice.coeficient}
+                        className="text-lg font-semibold"
+                      />
+                    ) : (
+                      <span className="text-sm font-medium text-muted-foreground">
+                        Copie rendue
+                      </span>
+                    )}
                     <div className="text-sm text-muted-foreground">
                       {formatDate(exercice.createdAt)}
                     </div>
                   </div>
+                  {exercice.isMissing && (
+                    <p className="flex items-center gap-1.5 text-xs font-medium text-destructive">
+                      <FileX className="h-3.5 w-3.5" aria-hidden="true" />
+                      Non rendu avant la clôture
+                    </p>
+                  )}
                 </CardContent>
                 <CardFooter className="p-3 pt-0">
-                  {exercice.exerciceId ? (
+                  {exercice.resultsAvailableAt ? (
+                    <p className="w-full flex items-center justify-center gap-2 rounded-lg border border-dashed p-3 text-sm text-muted-foreground text-center">
+                      <Clock className="h-4 w-4 shrink-0" aria-hidden="true" />
+                      Note et correction le{" "}
+                      {formatControlDate(exercice.resultsAvailableAt)}
+                    </p>
+                  ) : exercice.exerciceId ? (
                     <Button
                       asChild
                       size="lg"

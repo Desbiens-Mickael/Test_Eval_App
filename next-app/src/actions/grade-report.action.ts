@@ -1,5 +1,6 @@
 "use server";
 
+import { closeExpiredControlsSafeData } from "@/data/exercice/control-closure.data";
 import {
   getGroupGradeReportData,
   getStudentGradeReportData,
@@ -16,6 +17,7 @@ export const getGroupGradeReportAction = async (groupId: string) => {
   if (!user?.id || user.role !== "ADMIN") return { error: "Action non autoriser !" };
 
   try {
+    await closeExpiredControlsSafeData();
     const data = await getGroupGradeReportData(groupId, user.id);
     if (!data) return { error: "Ce groupe n'existe pas !" };
     return { data: buildGroupGradeReport({ ...data, generatedAt: new Date() }) };
@@ -31,6 +33,7 @@ export const getStudentGradeReportAction = async (studentId: string) => {
   if (!user?.id || user.role !== "ADMIN") return { error: "Action non autoriser !" };
 
   try {
+    await closeExpiredControlsSafeData();
     const data = await getStudentGradeReportData(studentId, user.id);
     if (!data) return { error: "Cet élève n'existe pas !" };
     return { data: buildStudentGradeReport({ ...data, generatedAt: new Date() }) };

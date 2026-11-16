@@ -94,6 +94,8 @@ export default function ExerciceListe({ groupId, lessonId }: ExerciceListeProps)
                         level={exercice.level}
                         levelColor={exercice.levelColor}
                         type={exercice.type}
+                        opensAt={exercice.opensAt}
+                        closesAt={exercice.closesAt}
                         isActive={isActive}
                       />
                     </motion.div>

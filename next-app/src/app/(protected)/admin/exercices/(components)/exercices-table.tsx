@@ -1,6 +1,7 @@
 "use client";
 
 // import { exerciceData } from "@/app/(protected)/admin/card-game/data";
+import ControlPeriodBadge from "@/components/control-period-badge";
 import LevelLayout from "@/components/level-layout";
 import SubjectLayout from "@/components/subject-layout";
 import { DataTableColumnHeader } from "@/components/table/data-table-column-header";
@@ -117,6 +118,22 @@ export default function ExercicesTable({
         return <SubjectLayout label={subject} color={color} />;
       },
     },
+    // Seuls les contrôles ont une période de validité
+    ...(kind === "CONTROL"
+      ? [
+          {
+            id: "Période",
+            enableSorting: false,
+            header: "Période",
+            cell: ({ row }) => (
+              <ControlPeriodBadge
+                opensAt={row.original.opensAt}
+                closesAt={row.original.closesAt}
+              />
+            ),
+          } satisfies ColumnDef<Exercice>,
+        ]
+      : []),
     {
       id: "actions",
       header: "Actions",

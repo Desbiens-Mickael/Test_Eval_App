@@ -53,6 +53,12 @@ const getNotificationHref = (
         title: "Ta copie a été relue",
         href: `/eleve/exercices/correction/${itemId}`,
       };
+    case "RESULTS":
+      return {
+        image: "/assets/images/new-completion.png",
+        title: "Contrôle clos : ta note est disponible",
+        href: "/eleve/exercices/faits",
+      };
     default:
       return {
         image: "/assets/images/new-lesson.png",

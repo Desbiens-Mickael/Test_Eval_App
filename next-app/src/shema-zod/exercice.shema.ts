@@ -121,8 +121,26 @@ export const createExerciceBaseSchema = z
     description: z.string().min(1, "La description est requise"),
     exerciceTypeId: z.string().min(1, "Le sujet est requis"),
     exerciceLevelId: z.string().min(1, "Le niveau est requis"),
+    // Période de validité d'un contrôle (ignorée pour un exercice)
+    opensAt: z.coerce.date().nullable(),
+    closesAt: z.coerce.date().nullable(),
   })
   .required();
+
+/** Vérifie la cohérence des dates d'ouverture et de clôture d'un contrôle */
+export const refineControlPeriod = (
+  data: { kind: string; opensAt: Date | null; closesAt: Date | null },
+  ctx: z.RefinementCtx
+) => {
+  if (data.kind !== "CONTROL") return;
+  if (data.opensAt && data.closesAt && data.closesAt <= data.opensAt) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["closesAt"],
+      message: "La clôture doit être après l'ouverture",
+    });
+  }
+};
 
 // Union des différents types de contenu pour pouvoir les utiliser dans le schéma global
 const contentSchema = z.union([
@@ -132,9 +150,11 @@ const contentSchema = z.union([
   contentTrueOrFalseSchema,
 ]);
 
-export const globalExerciceSchema = createExerciceBaseSchema.extend({
-  content: contentSchema,
-});
+export const globalExerciceSchema = createExerciceBaseSchema
+  .extend({
+    content: contentSchema,
+  })
+  .superRefine(refineControlPeriod);
 
 // Définition des types d'entrée
 export type cardItemInput = z.infer<typeof cardItemSchema>;

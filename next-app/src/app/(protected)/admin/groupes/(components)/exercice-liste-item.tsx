@@ -1,5 +1,6 @@
 "use client";
 
+import ControlPeriodBadge from "@/components/control-period-badge";
 import ExerciceKindBadge from "@/components/exercice-kind-badge";
 import ExerciceTypeBadge from "@/app/(protected)/eleve/(learning)/exercices/(components)/exercice-type-badge";
 import SubjectLayout from "@/components/subject-layout";
@@ -23,6 +24,8 @@ interface ExerciceListeItemProps {
   level: string;
   levelColor: string;
   type: string;
+  opensAt: Date | null;
+  closesAt: Date | null;
   isActive: boolean | undefined;
 }
 
@@ -35,6 +38,8 @@ export default function ExerciceListeItem({
   level,
   levelColor,
   type,
+  opensAt,
+  closesAt,
   isActive,
 }: ExerciceListeItemProps) {
   const { mutate, isPending } = useToggleExerciceGroup();
@@ -80,6 +85,13 @@ export default function ExerciceListeItem({
               <p className="mt-1.5 text-sm text-muted-foreground line-clamp-2">
                 {description}
               </p>
+            )}
+            {kind === "CONTROL" && (
+              <ControlPeriodBadge
+                opensAt={opensAt}
+                closesAt={closesAt}
+                className="mt-1.5 text-xs"
+              />
             )}
           </div>
 

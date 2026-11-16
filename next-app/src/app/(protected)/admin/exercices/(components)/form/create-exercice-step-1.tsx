@@ -23,6 +23,7 @@ import { createExerciceFormInput } from "@/shema-zod/exercice.shema";
 import { ComponentType } from "./dynamic-content-components";
 import ExerciceKindBadge from "@/components/exercice-kind-badge";
 import ExerciceKindField from "./exercice-kind-field";
+import ControlPeriodField from "./control-period-field";
 
 interface createExerciceStep1Props {
   form: UseFormReturn<createExerciceFormInput>;
@@ -31,6 +32,8 @@ interface createExerciceStep1Props {
   isEditing: boolean;
   /** Usage déjà choisi (création depuis « Ajouter un contrôle / un exercice ») */
   isKindFixed?: boolean;
+  /** Contrôle déjà clos : ses dates ne changent plus */
+  isClosed?: boolean;
 }
 
 export default function CreateExerciceStep1({
@@ -39,7 +42,9 @@ export default function CreateExerciceStep1({
   setLevel,
   isEditing,
   isKindFixed = false,
+  isClosed = false,
 }: createExerciceStep1Props) {
+  const kind = form.watch("kind");
   const {
     data: exerciceTypeData,
     isLoading: isExerciceTypeLoading,
@@ -186,6 +191,9 @@ export default function CreateExerciceStep1({
                 onChange={handleSelectType}
               />
             </div>
+            {kind === "CONTROL" && (
+              <ControlPeriodField form={form} isClosed={isClosed} />
+            )}
           </CardContent>
         </Card>
       </div>

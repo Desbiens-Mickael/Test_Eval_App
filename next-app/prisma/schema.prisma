@@ -219,6 +219,12 @@ model Exercice {
   title                   String
   kind                    ExerciceKind @default(CONTROL)
   description             String
+  // Période de validité d'un contrôle (null = pas de limite)
+  opensAt                 DateTime?
+  closesAt                DateTime?
+  // Date à laquelle la clôture a été traitée (copies manquantes notées 0,
+  // élèves notifiés). Null tant que le contrôle n'est pas clos.
+  closedAt                DateTime?
   content                 Json
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
@@ -241,6 +247,8 @@ model Exercice {
   studentExercices        StudentExercice[]
   practiceAttempts        PracticeAttempt[]
   practiceCorrections     PracticeCorrection[]
+
+  @@index([kind, closedAt, closesAt])
 }
 
 model Notification {
@@ -288,6 +296,8 @@ enum NotificationType {
   EXERCISE
   COMPLETION
   CORRECTION
+  // Notes et corrections d'un contrôle clos disponibles pour les élèves
+  RESULTS
 }
 
 model StudentExercice {
@@ -306,6 +316,8 @@ model StudentExercice {
   teacherComment          String?  @db.Text
   // Date de la dernière relecture par le professeur
   reviewedAt              DateTime?
+  // Copie non rendue à la clôture du contrôle : note 0, aucune réponse
+  isMissing               Boolean  @default(false)
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
 

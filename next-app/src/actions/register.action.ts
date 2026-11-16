@@ -2,13 +2,15 @@
 
 import {
   createStudentData,
-  getCountAllStudentsByIdentifierData,
+  getTakenIdentifiersData,
 } from "@/data/student-data";
 import { createUserData, getUserByEmailData } from "@/data/user-data";
 import { currentUser } from "@/lib/auth";
 import { sendCredentialStudentEmail, sendVerificationEmail } from "@/lib/mail";
 import { generateVerificationToken } from "@/lib/tokens";
-import { capitalize, generateTemporaryPassword } from "@/lib/utils";
+import { assignIdentifiers, buildIdentifierBase } from "@/lib/student-import";
+import { generateStudentPassword } from "@/lib/student-password";
+import { capitalize } from "@/lib/utils";
 import {
   registerStudentFormSchema,
   registerStudentFormType,
@@ -52,17 +54,13 @@ export const createNewStudentAction = async (
     return { error: "Action non autoriser !" };
 
   const { firstname, lastname } = valuesVerified.data;
-  let identifier = `${firstname.charAt(0)}.${lastname}`.toLowerCase();
-  // récupérer en bdd le compte des utilisateurs avec l'identifiant, si compte > 0 on ajoute 02, 03, 04, 05... au autre identifiant identique
-  const countStudent = await getCountAllStudentsByIdentifierData(identifier);
-  if (countStudent > 0) {
-    // Formater le numéro avec deux chiffres en ajoutant 1 pour éviter 00
-    const suffix = String(countStudent + 1).padStart(2, "0");
-    identifier = `${identifier}-${suffix}`;
-  }
+  // Identifiant sans accents ni espaces ; s'il est pris : -02, -03… (premier numéro libre)
+  const base = buildIdentifierBase(firstname, lastname);
+  if (!/^[a-z]\.[a-z]/.test(base)) return { error: "Nom ou prénom invalide !" };
+  const [identifier] = assignIdentifiers([base], await getTakenIdentifiersData([base]));
 
   try {
-    const password = generateTemporaryPassword();
+    const password = generateStudentPassword();
     const name = `${capitalize(firstname)} ${capitalize(lastname)}`;
     const student = await createStudentData(
       user.id,

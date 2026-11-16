@@ -12,5 +12,5 @@ export default async function ShowCorrectionPage({
 }) {
   const { studentExerciceId } = await params;
 
-  return <ShowCorrection studentExerciceId={studentExerciceId} />;
+  return <ShowCorrection studentExerciceId={studentExerciceId} mode="teacher" />;
 }

@@ -35,6 +35,14 @@ const loginStudentAction = async (credentials: loginStudentFormType) => {
   );
   if (!veriedPassword) return { error: "Données non valide !" };
 
+  // Compte désactivé par le professeur (vérifié après le mot de passe,
+  // pour ne pas révéler l'état d'un compte à quelqu'un qui devine)
+  if (existingStudent.disabledAt) {
+    return {
+      error: "Ton compte est désactivé. Demande à ton professeur de le réactiver.",
+    };
+  }
+
   if (existingStudent.isActive === false) {
     await UpdateStudentData(existingStudent.id, { isActive: true });
   }

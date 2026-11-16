@@ -11,6 +11,7 @@ interface StudentResponse {
   createdAt: Date;
   identifier: string;
   isActive: boolean;
+  disabledAt: Date | null;
   professorId: string;
   groupStudent: {
     name: string;

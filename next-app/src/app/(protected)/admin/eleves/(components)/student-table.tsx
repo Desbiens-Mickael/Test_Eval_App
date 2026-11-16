@@ -14,8 +14,12 @@ import {
   StudentResponse,
   useGetAllStudentsByProfessorId,
 } from "@/hooks/queries/student/use-get-all-students-by-professorId ";
+import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
+import { FileUp } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import AccountStatusBadge from "./account-status-badge";
 import CreateStudentButton from "./create-student-button";
 interface StudentTableProps extends StudentResponse {}
 
@@ -90,15 +94,17 @@ export default function StudentTable() {
     },
 
     {
-      id: "Activé",
+      id: "Compte",
       accessorKey: "isActive",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Activé" />
+        <DataTableColumnHeader column={column} title="Compte" />
       ),
-      cell: ({ row }) => {
-        const isActive = row.original.isActive;
-        return <>{isActive ? "Oui" : "Non"}</>;
-      },
+      cell: ({ row }) => (
+        <AccountStatusBadge
+          isActive={row.original.isActive}
+          disabledAt={row.original.disabledAt}
+        />
+      ),
     },
     {
       id: "Date de création",
@@ -137,7 +143,17 @@ export default function StudentTable() {
       viewOptionsButton
       inputSearchColumnId="Nom"
       handleDelete={handleDelete}
-      createChildren={<CreateStudentButton />}
+      createChildren={
+        <>
+          <Button asChild size="sm" variant="outline" className="ml-auto h-8">
+            <Link href="/admin/eleves/import">
+              <FileUp className="mr-2 h-4 w-4" aria-hidden="true" />
+              Importer
+            </Link>
+          </Button>
+          <CreateStudentButton />
+        </>
+      }
     >
       {/* {(table) => [<FilterGRadeLevel table={table} />]} */}
     </DataTable>

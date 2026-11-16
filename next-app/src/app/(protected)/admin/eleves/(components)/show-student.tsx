@@ -1,13 +1,15 @@
 "use client";
 
 import ExerciseDoneDashboard from "@/app/(protected)/eleve/(learning)/exercices/(components)/exercise-done-dashboard";
+import ExportGradesButton from "@/components/grade-export/export-grades-button";
 import Loader from "@/components/loader";
 import PageTitle from "@/components/page-title";
-import { Badge } from "@/components/ui/badge";
 import { useGetStudentById } from "@/hooks/queries/student/use-get-student-by-id";
 import { generateUserInitials } from "@/lib/utils";
 import Image from "next/image";
 import { toast } from "sonner";
+import AccountStatusBadge from "./account-status-badge";
+import StudentAccountCard from "./student-account-card";
 
 interface ShowStudentProps {
   studentId: string;
@@ -45,17 +47,24 @@ export default function ShowStudent({ studentId }: ShowStudentProps) {
             Groupe :{" "}
             <span className="font-bold">{data?.groupStudent?.name || ""}</span>
           </p>
-          <Badge
-            className={`border-2 bg-inherit font-bold px-2 py-[0.5px] ${
-              data?.isActive
-                ? "border-green-500 text-green-500"
-                : "border-red-500 text-red-500"
-            }`}
-          >
-            {data?.isActive ? "Activé" : "En attente"}
-          </Badge>
+          {data && (
+            <AccountStatusBadge isActive={data.isActive} disabledAt={data.disabledAt} />
+          )}
+          <ExportGradesButton kind="student" id={studentId} />
         </div>
       </div>
+
+      {data && (
+        <div className="mb-10">
+          <StudentAccountCard
+            studentId={studentId}
+            name={data.name}
+            identifier={data.identifier}
+            isActive={data.isActive}
+            disabledAt={data.disabledAt}
+          />
+        </div>
+      )}
 
       <div className="w-full flex flex-col gap-10">
         {/* Box pour les graphiques */}

@@ -40,6 +40,9 @@ export type StudentExerciceById = {
   id: string;
   studentId: string;
   note: number;
+  autoNote: number | null;
+  teacherComment: string | null;
+  reviewedAt: Date | null;
   createdAt: Date;
   response: JsonValue;
   coeficient: number;
@@ -55,6 +58,7 @@ export type StudentExerciceById = {
   student: {
     id: string;
     name: string;
+    professorId: string;
   };
 } | null;
 

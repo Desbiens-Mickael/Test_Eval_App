@@ -1,5 +1,6 @@
 "use client";
 
+import ExportGradesButton from "@/components/grade-export/export-grades-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetGroupById } from "@/hooks/queries/group/use-get-group-by-id";
 import { motion } from "framer-motion";
@@ -52,7 +53,10 @@ export default function EditGroupForm({ id }: EditGroupFormProps) {
             Gérez les paramètres et le contenu de votre groupe
           </p>
         </div>
-        <DeleteGroupButton id={id} />
+        <div className="flex items-center gap-2">
+          <ExportGradesButton kind="group" id={id} />
+          <DeleteGroupButton id={id} />
+        </div>
       </div>
 
       <div className="space-y-8">

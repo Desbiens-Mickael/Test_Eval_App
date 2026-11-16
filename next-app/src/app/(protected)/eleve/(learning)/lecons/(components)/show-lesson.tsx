@@ -5,6 +5,7 @@ import LessonContent from "@/components/lesson/lesson-content";
 import { Skeleton } from "@/components/ui/skeleton";
 import useGetLessonByIdForStudent from "@/hooks/queries/lesson/use-get-lesson-by-Id-for-student";
 import { notFound } from "next/navigation";
+import LessonActivities from "./lesson-activities";
 
 interface ShowLessonProps {
   id: string;
@@ -48,6 +49,8 @@ export default function ShowLesson({ id }: ShowLessonProps) {
         gradeLevelColor={lesson.GradeLevels.color}
         imageBanner={lesson.imageBanner}
       />
+
+      <LessonActivities lessonId={lesson.id} />
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { NoteDisplay } from "@/components/note-display";
 import PageTitle from "@/components/page-title";
 import { useGetStudentExerciceById } from "@/hooks/queries/exercice/use-get-student-exercice-by-id";
 import { motion } from "framer-motion";
+import ReviewLessonLink from "@/components/lesson/review-lesson-link";
 import { FileX } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -51,6 +52,11 @@ export default function ShowCorrection({
   return (
     <>
       <PageTitle title={data?.exercice?.title || "Correction"} />
+      {mode === "student" && (
+        <div className="px-4 sm:px-6">
+          <ReviewLessonLink lesson={data.lesson} className="max-w-full" />
+        </div>
+      )}
       <motion.div
         className="space-y-4 mb-6 px-4 sm:px-6 py-8"
         initial="hidden"

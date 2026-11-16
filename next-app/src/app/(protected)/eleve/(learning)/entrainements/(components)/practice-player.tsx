@@ -8,6 +8,7 @@ import {
 } from "@/actions/exercice-practice.action";
 import Loader from "@/components/loader";
 import { NoteDisplay } from "@/components/note-display";
+import ReviewLessonLink from "@/components/lesson/review-lesson-link";
 import PageTitle from "@/components/page-title";
 import {
   AlertDialog,
@@ -113,6 +114,10 @@ export default function PracticePlayer({ exerciceId }: { exerciceId: string }) {
   return (
     <>
       <PageTitle title={exercice.title} />
+
+      <div className="mx-auto mb-4 flex w-full max-w-3xl">
+        <ReviewLessonLink lesson={data.lesson} className="max-w-full" />
+      </div>
 
       <div
         role="note"

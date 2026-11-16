@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { niceTicks } from "./format";
+import { niceTicks } from "./nice-ticks";
 
 export type ColumnDatum = {
   key: string;
@@ -19,6 +19,8 @@ interface ColumnChartProps {
   height?: number;
   /** Nombre maximum d'étiquettes sur l'axe horizontal */
   maxXLabels?: number;
+  /** Haut de l'échelle imposé (ex. 100 pour des pourcentages) */
+  scaleMax?: number;
 }
 
 /**
@@ -32,10 +34,11 @@ export default function ColumnChart({
   ariaLabel,
   height = 180,
   maxXLabels = 8,
+  scaleMax,
 }: ColumnChartProps) {
   const [active, setActive] = useState<number | null>(null);
   const max = Math.max(0, ...data.map((d) => d.value));
-  const ticks = niceTicks(max);
+  const ticks = niceTicks(scaleMax ?? max);
   const top = ticks[ticks.length - 1];
   const labelEvery = Math.max(1, Math.ceil(data.length / maxXLabels));
   const activeDatum = active !== null ? data[active] : null;

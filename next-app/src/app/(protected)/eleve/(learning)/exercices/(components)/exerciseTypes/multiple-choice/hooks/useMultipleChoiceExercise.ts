@@ -1,5 +1,5 @@
 import { MultipleChoiceExerciseProps } from "@/app/(protected)/eleve/(learning)/exercices/(components)/exerciseTypes/multiple-choice/types";
-import { useAddExerciceResponse } from "@/hooks/mutations/exercice/use-add-exercice-response";
+import { useSubmitExerciceResponse } from "@/hooks/mutations/exercice/use-submit-exercice-response";
 import {
   multipleChoiceResponseItemType,
   multipleChoiceResponseType,
@@ -22,7 +22,7 @@ export const useMultipleChoiceExercise = ({
     isPending,
     isSuccess,
     data,
-  } = useAddExerciceResponse();
+  } = useSubmitExerciceResponse();
 
   const resetExercise = () => {
     setSelectedAnswers([]);

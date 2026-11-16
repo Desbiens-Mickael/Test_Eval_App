@@ -5,19 +5,10 @@ import Loader from "@/components/loader";
 import PageTitle from "@/components/page-title";
 import SubjectLayout from "@/components/subject-layout";
 import useGetExerciceById from "@/hooks/queries/exercice/use-get-exercice-by-id";
-import {
-  contentCardInput,
-  contentGapFillInput,
-  contentMultipleChoiceInput,
-  contentTrueOrFalseInput,
-} from "@/shema-zod/exercice.shema";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import ExerciceCard from "./exerciseTypes/card/exercice-card";
-import ExerciseGapFillText from "./exerciseTypes/gap-fill-text/exercise-gap-fill-text";
-import ExerciceMultipleChoice from "./exerciseTypes/multiple-choice/exercice-multiple-choice";
-import ExerciceTrueFalse from "./exerciseTypes/true-false/exercice-true-false";
+import ExerciseByType from "./exercise-by-type";
 
 interface ShowExerciseProps {
   exerciceId: string;
@@ -76,34 +67,7 @@ export default function ShowExercise({ exerciceId }: ShowExerciseProps) {
         </motion.div>
       </motion.div>
 
-      {data?.type === "Carte" && (
-        <ExerciceCard
-          exerciceId={data?.id}
-          content={data?.content as contentCardInput}
-          cards={data?.cards ?? []}
-        />
-      )}
-      {data?.type === "Vrai ou Faux" && (
-        <ExerciceTrueFalse
-          exerciceId={data?.id}
-          level={data?.level}
-          content={data?.content as contentTrueOrFalseInput}
-        />
-      )}
-      {data?.type === "Texte à trou" && (
-        <ExerciseGapFillText
-          exerciceId={data?.id}
-          level={data?.level}
-          content={data?.content as contentGapFillInput}
-        />
-      )}
-      {data?.type === "Choix multiple" && (
-        <ExerciceMultipleChoice
-          exerciceId={data?.id}
-          level={data?.level}
-          content={data?.content as contentMultipleChoiceInput}
-        />
-      )}
+      <ExerciseByType exercice={data} />
     </>
   );
 }

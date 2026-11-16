@@ -69,6 +69,7 @@ export default function ExerciceListe({ groupId, lessonId }: ExerciceListeProps)
                 exerciceId={exercice.id}
                 groupId={groupId}
                 title={exercice.title}
+                kind={exercice.kind}
                 description={exercice.description}
                 level={exercice.level}
                 levelColor={exercice.levelColor}

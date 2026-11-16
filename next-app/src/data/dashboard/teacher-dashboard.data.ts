@@ -12,7 +12,8 @@ export const getTeacherDashboardRawData = async (teacherId: string) => {
         id: true,
         name: true,
         students: { select: { id: true } },
-        exercices: { select: { id: true } },
+        // Seuls les contrôles comptent (les entraînements ne sont pas notés)
+        exercices: { where: { kind: "CONTROL" }, select: { id: true } },
       },
       orderBy: { name: "asc" },
     }),

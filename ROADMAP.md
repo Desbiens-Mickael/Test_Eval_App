@@ -3,11 +3,28 @@
 Liste des améliorations retenues, par ordre de priorité dans chaque section.
 Cocher une case quand la fonctionnalité est fusionnée dans `dev`.
 
+## 🎯 Entraînements et contrôles
+
+Comme en classe : le professeur décide ce qui sert à s'exercer (entraînement) et ce qui est évalué (contrôle).
+
+- [ ] **Entraînement ou contrôle** : le professeur choisit le type de chaque exercice
+      *(en cours — branche `feat/mode-entrainement`)*
+  - contrôle : une seule tentative, notée, comptée dans la moyenne (fonctionnement actuel) ;
+  - entraînement : tentatives illimitées, non comptées dans la moyenne. Après chaque essai,
+    l'élève ne voit que sa note, puis choisit « Recommencer » ou « Voir la correction » ;
+    voir la correction met fin aux essais (l'élève est prévenu avant) ;
+  - chaque essai est enregistré pour le suivi du professeur ;
+  - les exercices existants deviennent des contrôles.
+- [ ] **Suivi des entraînements par le professeur** : pour chaque élève et chaque exercice d'entraînement,
+      courbe des notes essai après essai, nombre d'essais et correction vue ou non
+- [ ] **Contrôles avec période de validité** : dates d'ouverture et de clôture fixées par le professeur.
+      À la clôture :
+  - les contrôles non rendus sont notés 0 ;
+  - les notes et les corrections deviennent visibles pour les élèves (pas avant) ;
+  - chaque élève reçoit une notification.
+
 ## 🧒 Côté élève
 
-- [ ] **Progression visible** : pourcentage de réussite par matière, historique et badges
-      *(en cours — branche `feat/progression-eleve`)*
-- [ ] **Mode entraînement** : exercices non notés, rejouables à volonté, à côté des exercices notés
 - [ ] **Lien leçon ↔ exercices** : depuis une leçon, accéder directement à ses exercices, et inversement,
       uniquement pour ce que le professeur a attribué au groupe de l'élève
 - [ ] **Accessibilité**
@@ -45,3 +62,4 @@ Cocher une case quand la fonctionnalité est fusionnée dans `dev`.
 - [x] Gestion des comptes élèves : réinitialisation du mot de passe, désactivation (#56)
 - [x] Import d'élèves en masse : CSV, Excel ou copier-coller (#57)
 - [x] Export des notes en PDF et CSV, par élève et par groupe (#58)
+- [x] Progression visible côté élève : réussite par matière, historique et badges (#59)

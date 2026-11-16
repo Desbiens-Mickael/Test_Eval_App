@@ -107,9 +107,17 @@ export const contentTrueOrFalseSchema = z
     }
   });
 
+// Contrôle : noté, une seule tentative. Entraînement : non noté, essais illimités.
+export const EXERCICE_KINDS = ["CONTROL", "PRACTICE"] as const;
+export const exerciceKindSchema = z.enum(EXERCICE_KINDS, {
+  errorMap: () => ({ message: "Choisissez entraînement ou contrôle" }),
+});
+export type ExerciceKindInput = z.infer<typeof exerciceKindSchema>;
+
 export const createExerciceBaseSchema = z
   .object({
     title: z.string().min(1, "Le titre est requis"),
+    kind: exerciceKindSchema,
     description: z.string().min(1, "La description est requise"),
     exerciceTypeId: z.string().min(1, "Le sujet est requis"),
     exerciceLevelId: z.string().min(1, "Le niveau est requis"),

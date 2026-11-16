@@ -1,4 +1,4 @@
-import { useAddExerciceResponse } from "@/hooks/mutations/exercice/use-add-exercice-response";
+import { useSubmitExerciceResponse } from "@/hooks/mutations/exercice/use-submit-exercice-response";
 import { trueOrFalseResponseType } from "@/shema-zod/exercice-corection.shema";
 import { contentTrueOrFalseInput } from "@/shema-zod/exercice.shema";
 import { noteExerciceStudent } from "@/type/exercice";
@@ -24,7 +24,7 @@ const useTrueFalseExercice = (
     isPending,
     isSuccess,
     data,
-  } = useAddExerciceResponse();
+  } = useSubmitExerciceResponse();
 
   const validateResponses = useCallback(() => {
     const allQuestionsAnswered = response.every((r) => r.answer !== null);

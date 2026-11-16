@@ -4,6 +4,8 @@ export type Exercice = {
   id: string;
   lesson: string;
   title: string;
+  /** CONTROL : noté, une tentative. PRACTICE : entraînement non noté */
+  kind: "CONTROL" | "PRACTICE";
   description: string;
   content: JsonValue;
   /** Exercice "Carte" vu par un élève : cartes mélangées, sans leur colonne */

@@ -7,7 +7,9 @@ export const getGroupGradeReportData = async (groupId: string, teacherId: string
     select: {
       name: true,
       students: { select: { id: true, name: true, identifier: true } },
+      // Seuls les contrôles figurent au relevé de notes
       exercices: {
+        where: { kind: "CONTROL" },
         select: { id: true, title: true, lesson: { select: { LessonSubject: { select: { label: true } } } } },
         orderBy: { createdAt: "asc" },
       },

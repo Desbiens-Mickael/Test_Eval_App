@@ -1,5 +1,6 @@
 "use client";
 
+import ExerciceKindBadge from "@/components/exercice-kind-badge";
 import ExerciceTypeBadge from "@/app/(protected)/eleve/(learning)/exercices/(components)/exercice-type-badge";
 import SubjectLayout from "@/components/subject-layout";
 import { Switch } from "@/components/ui/switch";
@@ -18,6 +19,7 @@ interface ExerciceListeItemProps {
   groupId: string;
   title: string;
   description: string;
+  kind: "CONTROL" | "PRACTICE";
   level: string;
   levelColor: string;
   type: string;
@@ -29,6 +31,7 @@ export default function ExerciceListeItem({
   groupId,
   title,
   description,
+  kind,
   level,
   levelColor,
   type,
@@ -63,6 +66,7 @@ export default function ExerciceListeItem({
               </h3>
 
               <div className="flex items-center gap-1.5">
+                <ExerciceKindBadge kind={kind} />
                 <ExerciceTypeBadge type={type} />
                 <SubjectLayout
                   label={level}

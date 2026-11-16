@@ -8,13 +8,13 @@ export const EXERCICE_KIND_LABELS = {
     icon: ClipboardCheck,
   },
   PRACTICE: {
-    label: "Entraînement",
+    label: "Exercice",
     description: "Non noté, essais illimités, ne compte pas dans la moyenne",
     icon: Dumbbell,
   },
 } as const;
 
-/** Badge « Contrôle » ou « Entraînement » d'un exercice */
+/** Badge « Contrôle » (noté) ou « Exercice » (non noté) */
 export default function ExerciceKindBadge({
   kind,
   className,

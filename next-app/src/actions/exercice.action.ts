@@ -87,13 +87,16 @@ export const createExerciceAction = async (
     );
 
     return {
-      success: "Exercice crée avec successe",
+      success:
+        newExercice.kind === "PRACTICE"
+          ? "Exercice créé avec succès"
+          : "Contrôle créé avec succès",
       data: newExercice,
     };
   } catch (error) {
     console.error("Error creating exercise:", error);
     return {
-      error: "Une erreur est survenue lors de la création de l'exercice",
+      error: "Une erreur est survenue lors de la création",
     };
   }
 };
@@ -130,19 +133,22 @@ export const updateExerciceAction = async (
     ) {
       return {
         error:
-          "Des élèves ont déjà fait cet exercice : son type (entraînement ou contrôle) ne peut plus être changé.",
+          "Des élèves ont déjà fait cet exercice : son usage (exercice ou contrôle) ne peut plus être changé.",
       };
     }
 
     const exercice = await updateExerciceData(id, user.id, validatedData.data);
     return {
-      success: "Exercice mis à jour avec successe",
+      success:
+        exercice.kind === "PRACTICE"
+          ? "Exercice mis à jour avec succès"
+          : "Contrôle mis à jour avec succès",
       data: exercice,
     };
   } catch (error) {
     console.error("Error updating exercise:", error);
     return {
-      error: "Une erreur est survenue lors de la mise à jour de l'exercice",
+      error: "Une erreur est survenue lors de la mise à jour",
     };
   }
 };
@@ -161,7 +167,7 @@ export async function deleteExercicesAction(exerciceIds: string[]) {
 
     // Vérifier si toutes les leçons ont été trouvées
     if (lessons.length !== exerciceIds.length) {
-      return { error: "Certains exercices n'existent pas !" };
+      return { error: "Certains exercices ou contrôles n'existent pas !" };
     }
 
     // Vérifier si l'utilisateur est l'auteur de toutes les leçons
@@ -183,8 +189,8 @@ export async function deleteExercicesAction(exerciceIds: string[]) {
     return {
       success:
         exerciceIds.length > 1
-          ? `${exerciceIds.length} exercices ont été supprimées avec succès`
-          : "L'exercice a été supprimée avec succès",
+          ? `${exerciceIds.length} exercices ou contrôles ont été supprimés avec succès`
+          : "Suppression réussie",
       data: lessonsInfo,
     };
   } catch (error) {
@@ -234,10 +240,10 @@ export const toggleExerciceGroupAction = async (
     // Ajoute ou retire l'exercice du groupe
     if (exercice?.groups?.some((group) => group.id === groupId)) {
       await removeExerciceFromGroupData(exerciceId, groupId);
-      message = "Exercice retiré du groupe avec succes";
+      message = `${exercice.kind === "PRACTICE" ? "Exercice retiré" : "Contrôle retiré"} du groupe`;
     } else {
       await addExerciceToGroupData(exerciceId, groupId);
-      message = "Exercice ajouté au groupe avec succes";
+      message = `${exercice.kind === "PRACTICE" ? "Exercice ajouté" : "Contrôle ajouté"} au groupe`;
 
       // Récupérer tout les ids des élèves du groupe
       const studentIds =
@@ -267,7 +273,7 @@ export const toggleExerciceGroupAction = async (
     );
     return {
       error:
-        "Une erreur est survenue lors de la mise à jour de l'exercice au groupe",
+        "Une erreur est survenue lors de la mise à jour du groupe",
     };
   }
 };
@@ -319,7 +325,7 @@ export const addExerciceResultAction = async (
     // Un entraînement ne donne jamais de copie notée
     if (exercice.kind !== "CONTROL") {
       return {
-        error: "Cet exercice est un entraînement : il n'est pas noté.",
+        error: "Cet exercice n'est pas un contrôle : il n'est pas noté.",
       };
     }
 
@@ -357,7 +363,7 @@ export const addExerciceResultAction = async (
         err.code === "P2002"
       ) {
         return {
-          error: "Vous avez déjà réalisé cet exercice !",
+          error: "Vous avez déjà réalisé ce contrôle !",
         };
       }
       throw err;
@@ -366,7 +372,7 @@ export const addExerciceResultAction = async (
     if (!createdExerciceResult) {
       return {
         error:
-          "Une erreur est survenue lors de l'ajout du résultat de l'exercice",
+          "Une erreur est survenue lors de l'enregistrement du contrôle",
       };
     }
 
@@ -394,7 +400,7 @@ export const addExerciceResultAction = async (
     console.error("Error adding exercise result:", error);
     return {
       error:
-        "Une erreur est survenue lors de l'ajout du résultat de l'exercice",
+        "Une erreur est survenue lors de l'enregistrement du contrôle",
     };
   }
 };
@@ -428,7 +434,7 @@ export const getAllExercicesByTypeAction = async (
     );
   } catch (error) {
     console.error("Error fetching exercises:", error);
-    throw Error("Échec de la récupération des exercices");
+    throw Error("Échec de la récupération des exercices et contrôles");
   }
 };
 
@@ -448,7 +454,7 @@ export const getExerciceByIdAction = async (id: string) => {
       const studentExercice = await getStudentExerciceByStudentIdData(user.id);
       if (studentExercice.some((e) => e.exerciceId === id)) {
         return {
-          error: "Vous avez déjà réalisé cet exercice !",
+          error: "Vous avez déjà réalisé ce contrôle !",
           redirect: "/eleve/exercices",
           data: null,
         };
@@ -471,7 +477,7 @@ export const getExerciceByIdAction = async (id: string) => {
     // Un entraînement se joue depuis sa propre page
     if (exercice && isAllowed && user.role === "STUDENT" && exercice.kind !== "CONTROL") {
       return {
-        error: "Cet exercice est un entraînement",
+        error: "Cet exercice n'est pas un contrôle",
         redirect: `/eleve/entrainements/${exercice.id}`,
         data: null,
       };
@@ -540,7 +546,7 @@ export const getExercicesByLessonIdAction = async (lessonId: string) => {
 
     if (!exercices) {
       return {
-        error: "Aucun exercice trouvé",
+        error: "Aucun exercice ni contrôle trouvé",
       };
     }
 

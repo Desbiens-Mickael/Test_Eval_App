@@ -57,7 +57,7 @@ export default function ShowContentGapFillPreview({
       >
         <motion.div className="space-y-2" variants={itemVariants} custom={0}>
           <h3 className="text-lg font-semibold text-foreground">
-            {"Aperçu de l'exercice"}
+            {"Aperçu"}
           </h3>
           <div className="rounded-lg bg-muted/50 p-4 border">
             <p className="whitespace-pre-wrap leading-relaxed text-foreground/90">

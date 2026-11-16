@@ -13,10 +13,10 @@ export default function SubjectProgress({
   return (
     <ChartCard
       title="Réussite par matière"
-      description="Moyenne de tes exercices dans chaque matière"
+      description="Moyenne de tes contrôles dans chaque matière"
       className="h-full"
       table={{
-        headers: ["Matière", "Réussite", "Meilleur résultat", "Exercices faits", "Attribués faits"],
+        headers: ["Matière", "Réussite", "Meilleur résultat", "Contrôles faits", "Attribués faits"],
         rows: bySubject.map((s) => [
           s.subject,
           formatRate(s.successRate),
@@ -43,7 +43,7 @@ export default function SubjectProgress({
                 <span className="text-xs text-muted-foreground">
                   {s.done === 0
                     ? "pas encore commencé"
-                    : `${s.done} exercice${s.done > 1 ? "s" : ""} · meilleur ${formatRate(s.best)}`}
+                    : `${s.done} contrôle${s.done > 1 ? "s" : ""} · meilleur ${formatRate(s.best)}`}
                 </span>
               </div>
               <div className="flex items-center gap-3">
@@ -61,7 +61,7 @@ export default function SubjectProgress({
               </div>
               {s.assigned > 0 && (
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {s.assignedDone} exercice{s.assignedDone > 1 ? "s" : ""} attribué
+                  {s.assignedDone} contrôle{s.assignedDone > 1 ? "s" : ""} attribué
                   {s.assignedDone > 1 ? "s" : ""} fait{s.assignedDone > 1 ? "s" : ""} sur {s.assigned}
                 </p>
               )}

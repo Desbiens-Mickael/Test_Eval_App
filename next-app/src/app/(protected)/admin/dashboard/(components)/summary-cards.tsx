@@ -77,8 +77,8 @@ export default function SummaryCards({ summary, weeklyTrend, period }: SummaryCa
         footer={
           <span className="text-muted-foreground">
             {summary.assigned > 0
-              ? `${formatInteger(summary.done)} exercices faits sur ${formatInteger(summary.assigned)} attribués`
-              : "Aucun exercice attribué à un groupe"}
+              ? `${formatInteger(summary.done)} contrôles faits sur ${formatInteger(summary.assigned)} attribués`
+              : "Aucun contrôle attribué à un groupe"}
           </span>
         }
         meter={summary.completionRate}

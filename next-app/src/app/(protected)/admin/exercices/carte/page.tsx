@@ -1,17 +1,10 @@
-import PageTitle from "@/components/page-title";
-import { ExerciceType } from "@/type/exercice";
 import { Metadata } from "next";
-import ExercicesTable from "../(components)/exercices-table";
+import KindFormatPage, { kindPageTitle } from "../(components)/kind-format-page";
 
 export const metadata: Metadata = {
-  title: "Exercices de cartes",
+  title: kindPageTitle("PRACTICE", "carte"),
 };
 
-export default function CardGamePage() {
-  return (
-    <>
-      <PageTitle title="Exercices de cartes" />
-      <ExercicesTable exerciceType={ExerciceType.Card} />
-    </>
-  );
+export default function PracticeFormatPage() {
+  return <KindFormatPage kind="PRACTICE" format="carte" />;
 }

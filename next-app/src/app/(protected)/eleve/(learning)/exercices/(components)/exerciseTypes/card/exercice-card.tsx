@@ -50,7 +50,7 @@ export default function ExerciceCard({
       {/* En-tête */}
       <motion.div className="flex flex-col gap-3" variants={item}>
         <h1 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-          Exercice de cartes
+          Cartes à classer
         </h1>
         <p className="text-muted-foreground text-base md:text-lg">
           Glissez et déposez les éléments dans les colonnes correspondantes

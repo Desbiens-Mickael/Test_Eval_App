@@ -3,13 +3,13 @@ import { Metadata } from "next";
 import ExerciceForm from "../../(components)/form/exercice-form";
 
 export const metadata: Metadata = {
-  title: "Edition d'un exercice",
+  title: "Modifier un exercice ou un contrôle",
 };
 
 export default function ExerciceEdit() {
   return (
     <>
-      <PageTitle title="Edition d'un exercice" />
+      <PageTitle title="Modifier un exercice ou un contrôle" />
       <ExerciceForm />
     </>
   );

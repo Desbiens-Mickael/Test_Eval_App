@@ -21,12 +21,12 @@ export function ResultsChart({ history }: { history: StudentProgress["history"] 
       title="Mes résultats au fil du temps"
       description={
         history.length > CHART_SIZE
-          ? `Tes ${CHART_SIZE} derniers exercices, du plus ancien au plus récent`
-          : "Chaque colonne est un exercice, du plus ancien au plus récent"
+          ? `Tes ${CHART_SIZE} derniers contrôles, du plus ancien au plus récent`
+          : "Chaque colonne est un contrôle, du plus ancien au plus récent"
       }
       className="h-full"
       table={{
-        headers: ["Date", "Exercice", "Matière", "Réussite"],
+        headers: ["Date", "Contrôle", "Matière", "Réussite"],
         rows: [...shown]
           .reverse()
           .map((h) => [formatShortDate(h.createdAt), h.title, h.subject, formatRate(h.percent)]),
@@ -43,7 +43,7 @@ export function ResultsChart({ history }: { history: StudentProgress["history"] 
             details: [h.title, h.subject],
           }))}
           formatValue={formatRate}
-          ariaLabel="Réussite de chaque exercice, en pourcentage"
+          ariaLabel="Réussite de chaque contrôle, en pourcentage"
           scaleMax={100}
           height={200}
         />
@@ -60,7 +60,7 @@ export function RecentResults({ history }: { history: StudentProgress["history"]
       <header className="mb-3 flex items-start justify-between gap-3">
         <div>
           <h2 className="text-base font-semibold leading-tight">Historique</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Tes derniers exercices corrigés</p>
+          <p className="mt-1 text-sm text-muted-foreground">Tes derniers contrôles corrigés</p>
         </div>
         {history.length > 0 && (
           <Link
@@ -73,7 +73,7 @@ export function RecentResults({ history }: { history: StudentProgress["history"]
       </header>
 
       {recent.length === 0 ? (
-        <EmptyChart message="Aucun exercice fait pour l'instant." />
+        <EmptyChart message="Aucun contrôle fait pour l'instant." />
       ) : (
         <ul className="-mx-2 divide-y">
           {recent.map((h) => (

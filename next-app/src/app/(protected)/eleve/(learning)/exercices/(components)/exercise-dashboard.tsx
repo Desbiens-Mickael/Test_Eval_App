@@ -11,8 +11,8 @@ export default function ExerciseDashboard() {
 
   return (
     <LearningDashboard
-      title="Mes exercices"
-      description="Pratiquez et révisez vos exercices par matière"
+      title="Mes contrôles"
+      description="Les contrôles comptent dans ta moyenne : une seule tentative par contrôle"
       selectedSubject={selectedSubject}
       onSubjectChange={setSelectedSubject}
     >

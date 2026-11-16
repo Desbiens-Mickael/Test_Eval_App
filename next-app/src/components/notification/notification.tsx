@@ -82,6 +82,7 @@ export default function Notification() {
                     message={notification.notification.message}
                     createdAt={notification.notification.createdAt}
                     type={notification.notification.type}
+                    exerciseKind={notification.exerciseKind ?? null}
                     itemId={
                       notification.notification.lessonId ||
                       notification.notification.exerciseId ||

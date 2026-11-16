@@ -28,8 +28,8 @@ export default function ExerciseResultGapFillText({
           <Info className="w-12 h-12 text-primary" />
           <p className="text-lg font-medium text-foreground">
             {isAdmin
-              ? "Le contenu de cet exercice n'est plus disponible."
-              : "Oups ! Cet exercice a été supprimé par votre professeur."}
+              ? "Ce contenu n'est plus disponible."
+              : "Oups ! Ce contenu a été supprimé par votre professeur."}
           </p>
         </div>
       </div>
@@ -46,7 +46,7 @@ export default function ExerciseResultGapFillText({
       <div className="space-y-4">
         <div>
           <h2 className="text-2xl font-bold text-foreground mb-1">
-            {"Correction de l'exercice"}
+            {"Correction"}
           </h2>
           <p className="text-muted-foreground text-sm">
             {isAdmin

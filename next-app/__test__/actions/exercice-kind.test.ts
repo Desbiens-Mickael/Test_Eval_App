@@ -67,7 +67,7 @@ describe("un entraînement ne donne jamais de copie notée", () => {
       exerciceId: "ex1",
       response: [{ index: 0, answer: true }],
     });
-    expect(result.error).toMatch(/entraînement/);
+    expect(result.error).toMatch(/pas un contrôle/);
     expect(addExerciceResultData).not.toHaveBeenCalled();
   });
 

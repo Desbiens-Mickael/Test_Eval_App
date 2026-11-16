@@ -104,3 +104,34 @@ export const countExerciceSubmissionsData = async (exerciceId: string) => {
   ]);
   return results + attempts;
 };
+
+/**
+ * Entraînements attribués au groupe d'un élève, avec tous ses essais,
+ * pour le suivi du professeur. Null si l'élève n'est pas un élève de ce professeur.
+ */
+export const getStudentPracticeTrackingData = async (studentId: string, teacherId: string) => {
+  const student = await prisma.student.findUnique({
+    where: { id: studentId },
+    select: { professorId: true, groupId: true },
+  });
+  if (!student || student.professorId !== teacherId) return null;
+  if (!student.groupId) return [];
+
+  return await prisma.exercice.findMany({
+    where: { kind: "PRACTICE", groups: { some: { id: student.groupId } } },
+    select: {
+      id: true,
+      title: true,
+      lesson: { select: { LessonSubject: { select: { label: true, color: true } } } },
+      type: { select: { name: true } },
+      practiceAttempts: {
+        where: { studentId },
+        select: { note: true, coeficient: true, createdAt: true },
+      },
+      practiceCorrections: {
+        where: { studentId },
+        select: { revealedAt: true },
+      },
+    },
+  });
+};

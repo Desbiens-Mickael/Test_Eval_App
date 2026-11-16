@@ -46,7 +46,7 @@ export default function ListExercisesToDo({
           initial="hidden"
           animate="show"
         >
-          {`Exercices à faire ${
+          {`Contrôles à faire ${
             selectedSubject ? `en ${selectedSubject}` : ""
           }`}
         </motion.h2>
@@ -57,7 +57,7 @@ export default function ListExercisesToDo({
 
   if (isError) {
     throw new Error(
-      "Une erreur est survenue lors de la récupération des exercices"
+      "Une erreur est survenue lors de la récupération des contrôles"
     );
   }
 
@@ -80,8 +80,8 @@ export default function ListExercisesToDo({
           </h3>
           <p className="text-muted-foreground">
             {selectedSubject
-              ? `Vous n'avez pas encore d'exercice à faire en ${selectedSubject}`
-              : "Commencez par faire des exercices pour les voir apparaître ici"}
+              ? `Vous n'avez pas de contrôle à faire en ${selectedSubject}`
+              : "Aucun contrôle à faire pour le moment"}
           </p>
         </div>
       </motion.div>
@@ -101,7 +101,7 @@ export default function ListExercisesToDo({
         initial="hidden"
         animate="show"
       >
-        {`Exercices à faire ${selectedSubject ? `en ${selectedSubject}` : ""}`}
+        {`Contrôles à faire ${selectedSubject ? `en ${selectedSubject}` : ""}`}
       </motion.h2>
 
       <AnimatePresence mode="wait">
@@ -152,7 +152,7 @@ export default function ListExercisesToDo({
                   >
                     <Link href={`/eleve/exercices/${exercice.id}`}>
                       <Pencil className="h-4 w-4" />
-                      <span>{"Commencer l'exercice"}</span>
+                      <span>{"Commencer le contrôle"}</span>
                       <ArrowRight className="h-4 w-4 -mr-1 group-hover/btn:translate-x-0.5 transition-transform" />
                     </Link>
                   </Button>

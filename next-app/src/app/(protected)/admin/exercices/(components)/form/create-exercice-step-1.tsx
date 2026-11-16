@@ -21,6 +21,7 @@ import useGetAllExerciceLevels from "@/hooks/queries/use-get-all-exercice-levels
 import useGetAllExerciceType from "@/hooks/queries/use-get-all-exercice-type";
 import { createExerciceFormInput } from "@/shema-zod/exercice.shema";
 import { ComponentType } from "./dynamic-content-components";
+import ExerciceKindBadge from "@/components/exercice-kind-badge";
 import ExerciceKindField from "./exercice-kind-field";
 
 interface createExerciceStep1Props {
@@ -28,6 +29,8 @@ interface createExerciceStep1Props {
   setType: Dispatch<React.SetStateAction<ComponentType>>;
   setLevel: Dispatch<React.SetStateAction<string>>;
   isEditing: boolean;
+  /** Usage déjà choisi (création depuis « Ajouter un contrôle / un exercice ») */
+  isKindFixed?: boolean;
 }
 
 export default function CreateExerciceStep1({
@@ -35,6 +38,7 @@ export default function CreateExerciceStep1({
   setType,
   setLevel,
   isEditing,
+  isKindFixed = false,
 }: createExerciceStep1Props) {
   const {
     data: exerciceTypeData,
@@ -96,11 +100,13 @@ export default function CreateExerciceStep1({
         <div className="flex items-center gap-2">
           <BookOpen className="w-5 h-5 text-primary" />
           <h2 className="text-2xl font-semibold tracking-tight">
-            {" Informations de l'exercice"}
+            {" Informations générales"}
           </h2>
         </div>
         <p className="text-sm text-muted-foreground">
-          Renseignez les informations générales de votre nouvel exercice.
+          {isKindFixed
+            ? `Renseignez les informations générales de votre ${form.getValues("kind") === "PRACTICE" ? "exercice" : "contrôle"}.`
+            : "Renseignez les informations générales de votre exercice ou contrôle."}
         </p>
       </div>
 
@@ -112,26 +118,25 @@ export default function CreateExerciceStep1({
               Titre et description
             </CardTitle>
             <CardDescription>
-              Donnez un titre clair et une description précise de votre
-              exercice.
+              Donnez un titre clair et une description précise.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <CustomInput
               isRequired={true}
-              label="Titre de l'exercice"
+              label="Titre"
               name="title"
               control={form.control}
               placeholder="Ex: Les fractions niveau débutant"
-              description="Un titre clair et descriptif qui résume l'exercice"
+              description="Un titre clair et descriptif"
             />
             <CustomTextarea
               isRequired={true}
               label="Description détaillée"
               name="description"
               control={form.control}
-              placeholder="Décrivez en détail l'exercice, ses objectifs et ses consignes..."
-              description="Décrivez précisément l'exercice, ses objectifs et les consignes à suivre"
+              placeholder="Décrivez les objectifs et les consignes..."
+              description="Décrivez précisément les objectifs et les consignes à suivre"
               className="min-h-[120px]"
             />
           </CardContent>
@@ -144,11 +149,20 @@ export default function CreateExerciceStep1({
               Configuration
             </CardTitle>
             <CardDescription>
-              {"Définissez l'usage, le niveau de difficulté et le type d'exercice."}
+              {isKindFixed
+                ? "Définissez le niveau de difficulté et le format."
+                : "Définissez l'usage, le niveau de difficulté et le format."}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <ExerciceKindField form={form} isEditing={isEditing} />
+            {isKindFixed ? (
+              <p className="flex items-center gap-2 text-sm">
+                Usage :
+                <ExerciceKindBadge kind={form.getValues("kind")} />
+              </p>
+            ) : (
+              <ExerciceKindField form={form} isEditing={isEditing} />
+            )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <CustomSelect
                 isRequired={true}
@@ -157,18 +171,18 @@ export default function CreateExerciceStep1({
                 name="exerciceLevelId"
                 control={form.control}
                 placeholder="Sélectionnez un niveau"
-                description="Définissez la difficulté de l'exercice"
+                description="Définissez la difficulté"
                 onChange={handleSelectLevel}
               />
               <CustomSelect
                 disabled={isEditing}
                 isRequired={true}
-                label="Type d'exercice"
+                label="Format"
                 options={exerciceTypeData?.data}
                 name="exerciceTypeId"
                 control={form.control}
-                placeholder="Sélectionnez un type"
-                description="Choisissez le type d'exercice"
+                placeholder="Sélectionnez un format"
+                description="Cartes, vrai ou faux, texte à trou ou choix multiple"
                 onChange={handleSelectType}
               />
             </div>

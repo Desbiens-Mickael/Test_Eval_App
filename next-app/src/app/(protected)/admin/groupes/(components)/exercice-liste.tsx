@@ -43,43 +43,67 @@ export default function ExerciceListe({ groupId, lessonId }: ExerciceListeProps)
         animate={{ opacity: 1, y: 0 }}
         className="p-4 text-center text-muted-foreground bg-muted/30 rounded-lg"
       >
-        Aucun exercice trouvé pour cette leçon.
+        Aucun contrôle ni exercice pour cette leçon.
       </motion.div>
     );
   }
 
+  // Contrôles et exercices dans deux listes distinctes, pour ne pas les confondre
+  const sections = [
+    { kind: "CONTROL" as const, title: "Contrôles (notés)" },
+    { kind: "PRACTICE" as const, title: "Exercices (non notés)" },
+  ];
+
   return (
-    <div className="space-y-2">
-      <AnimatePresence>
-        {exercices.map((exercice, index) => {
-          const isActive = !!exercice.groups?.some(
-            (group) => group.id === groupId
-          );
-          
-          return (
-            <motion.div
-              key={exercice.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              exit={{ opacity: 0, height: 0 }}
-              className="relative"
-            >
-              <ExerciceListeItem
-                exerciceId={exercice.id}
-                groupId={groupId}
-                title={exercice.title}
-                kind={exercice.kind}
-                description={exercice.description}
-                level={exercice.level}
-                levelColor={exercice.levelColor}
-                type={exercice.type}
-                isActive={isActive}
-              />
-            </motion.div>
-          );
-        })}
-      </AnimatePresence>
+    <div className="space-y-5">
+      {sections.map((section) => {
+        const items = exercices.filter((e) => e.kind === section.kind);
+        return (
+          <div key={section.kind} className="space-y-2">
+            <h4 className="text-sm font-semibold text-muted-foreground">
+              {section.title}
+            </h4>
+            {items.length === 0 ? (
+              <p className="rounded-lg bg-muted/30 p-3 text-sm text-muted-foreground">
+                {section.kind === "CONTROL"
+                  ? "Aucun contrôle pour cette leçon."
+                  : "Aucun exercice pour cette leçon."}
+              </p>
+            ) : (
+              <AnimatePresence>
+                {items.map((exercice, index) => {
+                  const isActive = !!exercice.groups?.some(
+                    (group) => group.id === groupId
+                  );
+
+                  return (
+                    <motion.div
+                      key={exercice.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="relative"
+                    >
+                      <ExerciceListeItem
+                        exerciceId={exercice.id}
+                        groupId={groupId}
+                        title={exercice.title}
+                        kind={exercice.kind}
+                        description={exercice.description}
+                        level={exercice.level}
+                        levelColor={exercice.levelColor}
+                        type={exercice.type}
+                        isActive={isActive}
+                      />
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

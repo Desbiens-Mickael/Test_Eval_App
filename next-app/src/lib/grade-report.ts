@@ -155,7 +155,7 @@ export const buildStudentGradeReport = (input: StudentReportInput): StudentGrade
     .map((r) => ({
       date: r.createdAt.toISOString(),
       subject: r.subject,
-      title: r.exerciceTitle ?? "Exercice supprimé",
+      title: r.exerciceTitle ?? "Contrôle supprimé",
       note: r.note,
       coeficient: r.coeficient,
       score: toScore20(r.note, r.coeficient),
@@ -200,7 +200,7 @@ export const groupReportToCsv = (report: GroupGradeReport) =>
       "Élève",
       "Identifiant",
       ...report.exercises.map((e) => `${e.title} (${e.subject}, /20)`),
-      "Exercices faits",
+      "Contrôles faits",
       "Moyenne /20",
     ],
     ...report.students.map((s) => [
@@ -221,7 +221,7 @@ export const groupReportToCsv = (report: GroupGradeReport) =>
 
 export const studentReportToCsv = (report: StudentGradeReport) =>
   toCsv([
-    ["Date", "Matière", "Exercice", "Note", "Barème", "Note /20", "Note ajustée", "Commentaire du professeur"],
+    ["Date", "Matière", "Contrôle", "Note", "Barème", "Note /20", "Note ajustée", "Commentaire du professeur"],
     ...report.rows.map((r) => [
       formatDateFr(r.date),
       r.subject,

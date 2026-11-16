@@ -107,10 +107,10 @@ export const contentTrueOrFalseSchema = z
     }
   });
 
-// Contrôle : noté, une seule tentative. Entraînement : non noté, essais illimités.
+// Contrôle : noté, une seule tentative. Exercice (PRACTICE) : non noté, essais illimités.
 export const EXERCICE_KINDS = ["CONTROL", "PRACTICE"] as const;
 export const exerciceKindSchema = z.enum(EXERCICE_KINDS, {
-  errorMap: () => ({ message: "Choisissez entraînement ou contrôle" }),
+  errorMap: () => ({ message: "Choisissez exercice ou contrôle" }),
 });
 export type ExerciceKindInput = z.infer<typeof exerciceKindSchema>;
 

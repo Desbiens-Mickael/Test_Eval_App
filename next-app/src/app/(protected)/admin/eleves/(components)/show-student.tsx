@@ -9,6 +9,7 @@ import { generateUserInitials } from "@/lib/utils";
 import Image from "next/image";
 import { toast } from "sonner";
 import AccountStatusBadge from "./account-status-badge";
+import PracticeTrackingSection from "./practice-tracking-section";
 import StudentAccountCard from "./student-account-card";
 
 interface ShowStudentProps {
@@ -67,17 +68,7 @@ export default function ShowStudent({ studentId }: ShowStudentProps) {
       )}
 
       <div className="w-full flex flex-col gap-10">
-        {/* Box pour les graphiques */}
-        {/* TODO: créer un composant pour les graphiques réutilisable */}
-        <h2 className="text-2xl font-bold">
-          Box pour les graphique (prochainement)
-        </h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-4">
-          <div className="bg-slate-500 p-4 rounded-lg shadow-sm h-40"></div>
-          <div className="bg-slate-500 p-4 rounded-lg shadow-sm h-40"></div>
-          <div className="bg-slate-500 p-4 rounded-lg shadow-sm h-40"></div>
-          <div className="bg-slate-500 p-4 rounded-lg shadow-sm h-40"></div>
-        </div>
+        <PracticeTrackingSection studentId={studentId} />
         {/* Afficher tout les correction de l'élève */}
         <ExerciseDoneDashboard studentId={studentId} />
       </div>

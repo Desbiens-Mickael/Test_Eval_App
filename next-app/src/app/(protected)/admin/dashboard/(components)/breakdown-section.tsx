@@ -74,7 +74,7 @@ export function GroupProgress({ groups }: { groups: TeacherDashboard["groups"] }
   return (
     <ChartCard
       title="Avancement des groupes"
-      description="Exercices faits sur exercices attribués"
+      description="Contrôles faits sur contrôles attribués"
       table={{
         headers: ["Groupe", "Élèves", "Faits / attribués", "Complétion", "Moyenne /20"],
         rows: groups.map((g) => [
@@ -121,7 +121,7 @@ export function GroupProgress({ groups }: { groups: TeacherDashboard["groups"] }
                     </div>
                     <div className="mt-1.5 text-xs text-muted-foreground">
                       {g.studentCount} élève{g.studentCount > 1 ? "s" : ""} ·{" "}
-                      {g.exerciceCount} exercice{g.exerciceCount > 1 ? "s" : ""} ·
+                      {g.exerciceCount} contrôle{g.exerciceCount > 1 ? "s" : ""} ·
                       moyenne {formatScore(g.average)}/20
                     </div>
                   </div>

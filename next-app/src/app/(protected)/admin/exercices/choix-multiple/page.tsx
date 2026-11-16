@@ -1,17 +1,10 @@
-import PageTitle from "@/components/page-title";
-import { ExerciceType } from "@/type/exercice";
 import { Metadata } from "next";
-import ExercicesTable from "../(components)/exercices-table";
+import KindFormatPage, { kindPageTitle } from "../(components)/kind-format-page";
 
 export const metadata: Metadata = {
-  title: "Exercices à choix multiple",
+  title: kindPageTitle("PRACTICE", "choix-multiple"),
 };
 
-export default function MultipleChoiceGamePage() {
-  return (
-    <>
-      <PageTitle title="Exercices à choix multiple" />
-      <ExercicesTable exerciceType={ExerciceType.MultipleChoice} />
-    </>
-  );
+export default function PracticeFormatPage() {
+  return <KindFormatPage kind="PRACTICE" format="choix-multiple" />;
 }

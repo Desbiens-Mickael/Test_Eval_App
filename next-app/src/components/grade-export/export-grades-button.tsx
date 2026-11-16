@@ -53,7 +53,7 @@ export default function ExportGradesButton({
         if (!response.data) throw new Error(response.error);
         const report = response.data;
         if (report.students.length === 0 || report.exercises.length === 0) {
-          toast.info("Ce groupe n'a pas encore d'élève ou d'exercice attribué : rien à exporter.");
+          toast.info("Ce groupe n'a pas encore d'élève ou de contrôle attribué : rien à exporter.");
           return;
         }
         if (format === "csv") {

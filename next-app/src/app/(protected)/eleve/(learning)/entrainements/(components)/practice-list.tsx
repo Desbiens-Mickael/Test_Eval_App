@@ -36,7 +36,7 @@ export default function PracticeList() {
 
   return (
     <LearningDashboard
-      title="Mes entraînements"
+      title="Mes exercices"
       description="Exerce-toi sans être noté : tu peux réessayer autant de fois que tu veux."
       selectedSubject={subject}
       onSubjectChange={setSubject}
@@ -48,11 +48,11 @@ export default function PracticeList() {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
             <BookOpen className="h-7 w-7 text-primary" aria-hidden="true" />
           </div>
-          <h2 className="text-xl font-semibold">Aucun entraînement</h2>
+          <h2 className="text-xl font-semibold">Aucun exercice</h2>
           <p className="mt-2 max-w-md text-muted-foreground">
             {subject
-              ? `Ton professeur ne t'a pas encore donné d'entraînement en ${subject}.`
-              : "Ton professeur ne t'a pas encore donné d'entraînement."}
+              ? `Ton professeur ne t'a pas encore donné d'exercice en ${subject}.`
+              : "Ton professeur ne t'a pas encore donné d'exercice."}
           </p>
         </div>
       ) : (

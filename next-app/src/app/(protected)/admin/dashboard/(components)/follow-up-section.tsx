@@ -72,7 +72,7 @@ export function StudentsToHelp({
   return (
     <Card
       title="Élèves à accompagner"
-      description="Moyenne basse, baisse récente ou exercices en attente sans activité"
+      description="Moyenne basse, baisse récente ou contrôles en attente sans activité"
       footer={
         <Link href="/admin/eleves" className="font-medium text-primary hover:underline">
           {students.length > MAX_STUDENTS
@@ -143,7 +143,7 @@ export function HardestExercises({
 }) {
   return (
     <Card
-      title="Exercices à revoir"
+      title="Contrôles à revoir"
       description="Les moyennes les plus basses (au moins 2 copies)"
     >
       {exercises.length === 0 ? (
@@ -209,7 +209,7 @@ export function RecentSubmissions({
             <thead>
               <tr className="text-left text-xs text-muted-foreground">
                 <th className="px-2 pb-2 font-medium">Élève</th>
-                <th className="px-2 pb-2 font-medium">Exercice</th>
+                <th className="px-2 pb-2 font-medium">Contrôle</th>
                 <th className="hidden px-2 pb-2 font-medium md:table-cell">Matière</th>
                 <th className="px-2 pb-2 text-right font-medium">Note</th>
                 <th className="hidden px-2 pb-2 text-right font-medium sm:table-cell">Rendue</th>

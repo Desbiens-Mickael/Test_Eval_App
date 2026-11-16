@@ -95,7 +95,7 @@ export const createTeacherNotificationData = async (
 
 // Récupération de toutes les notifications d'un élève
 export const getStudentNotificationsData = async (studentId: string) => {
-  return await prisma.studentNotification.findMany({
+  const notifications = await prisma.studentNotification.findMany({
     where: {
       studentId,
       isRead: false,
@@ -107,6 +107,25 @@ export const getStudentNotificationsData = async (studentId: string) => {
       createdAt: "desc",
     },
   });
+
+  // Usage de chaque exercice notifié : « Nouveau contrôle » ou « Nouvel exercice »
+  const exerciseIds = notifications
+    .map((n) => n.notification.exerciseId)
+    .filter((id): id is string => !!id);
+  const kinds = exerciseIds.length
+    ? await prisma.exercice.findMany({
+        where: { id: { in: exerciseIds } },
+        select: { id: true, kind: true },
+      })
+    : [];
+  const kindById = new Map(kinds.map((e) => [e.id, e.kind]));
+
+  return notifications.map((n) => ({
+    ...n,
+    exerciseKind: n.notification.exerciseId
+      ? kindById.get(n.notification.exerciseId) ?? null
+      : null,
+  }));
 };
 
 // Récupération de toutes les notifications d'un professeur

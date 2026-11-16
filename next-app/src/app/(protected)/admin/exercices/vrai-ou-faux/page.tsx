@@ -1,17 +1,10 @@
-import PageTitle from "@/components/page-title";
-import { ExerciceType } from "@/type/exercice";
 import { Metadata } from "next";
-import ExercicesTable from "../(components)/exercices-table";
+import KindFormatPage, { kindPageTitle } from "../(components)/kind-format-page";
 
 export const metadata: Metadata = {
-  title: "Exercices Vrai / Faux",
+  title: kindPageTitle("PRACTICE", "vrai-ou-faux"),
 };
 
-export default function BooleanGamePage() {
-  return (
-    <>
-      <PageTitle title="Exercices Vrai / Faux" />
-      <ExercicesTable exerciceType={ExerciceType.True_or_False} />
-    </>
-  );
+export default function PracticeFormatPage() {
+  return <KindFormatPage kind="PRACTICE" format="vrai-ou-faux" />;
 }

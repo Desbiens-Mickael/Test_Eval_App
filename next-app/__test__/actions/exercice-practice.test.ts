@@ -88,16 +88,16 @@ describe("accès", () => {
 
   it("refuse un contrôle : il ne se joue pas en entraînement", async () => {
     mockedExercice.mockResolvedValue({ ...practice, kind: "CONTROL" });
-    expect((await getPracticeAction("ex1")).error).toBe("Entraînement non trouvé");
-    expect((await submitPracticeAttemptAction(answers)).error).toBe("Entraînement non trouvé");
+    expect((await getPracticeAction("ex1")).error).toBe("Exercice non trouvé");
+    expect((await submitPracticeAttemptAction(answers)).error).toBe("Exercice non trouvé");
     expect(mockedCreate).not.toHaveBeenCalled();
   });
 
   it("refuse un entraînement qui n'est pas attribué au groupe de l'élève", async () => {
     mockedExercice.mockResolvedValue({ ...practice, groups: [{ id: "autre" }] });
-    expect((await getPracticeAction("ex1")).error).toBe("Entraînement non trouvé");
+    expect((await getPracticeAction("ex1")).error).toBe("Exercice non trouvé");
     mockedGroup.mockResolvedValue(null);
-    expect((await revealPracticeCorrectionAction("ex1")).error).toBe("Entraînement non trouvé");
+    expect((await revealPracticeCorrectionAction("ex1")).error).toBe("Exercice non trouvé");
   });
 });
 

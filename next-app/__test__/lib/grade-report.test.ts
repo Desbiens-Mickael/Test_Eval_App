@@ -61,7 +61,7 @@ describe("groupReportToCsv", () => {
 
   it("utilise ; et la virgule décimale", () => {
     expect(lines[0]).toBe(
-      "Élève;Identifiant;Les fractions (Mathématique, /20);Le présent (Français, /20);Exercices faits;Moyenne /20"
+      "Élève;Identifiant;Les fractions (Mathématique, /20);Le présent (Français, /20);Contrôles faits;Moyenne /20"
     );
     expect(lines[1]).toBe("Élodie Bernard;e.bernard;16;12;2/2;14");
     expect(lines[2]).toBe("Zoé Martin;z.martin;10;;1/2;10");
@@ -96,7 +96,7 @@ describe("buildStudentGradeReport / studentReportToCsv", () => {
   });
 
   it("trie les copies par date et repère les notes ajustées", () => {
-    expect(report.rows.map((r) => r.title)).toEqual(["Exercice supprimé", "Le présent"]);
+    expect(report.rows.map((r) => r.title)).toEqual(["Contrôle supprimé", "Le présent"]);
     expect(report.rows[1]).toMatchObject({ score: 18, adjusted: true });
   });
 
@@ -110,7 +110,7 @@ describe("buildStudentGradeReport / studentReportToCsv", () => {
 
   it("protège les cellules contenant ; ou des guillemets", () => {
     const csv = studentReportToCsv(report);
-    expect(csv).toContain('20/10/2026;Mathématique;Exercice supprimé;5;10;10;;');
+    expect(csv).toContain('20/10/2026;Mathématique;Contrôle supprimé;5;10;10;;');
     expect(csv).toContain('02/11/2026;Français;Le présent;4,5;5;18;oui;"Bravo ; relis ""avoir"""');
   });
 });

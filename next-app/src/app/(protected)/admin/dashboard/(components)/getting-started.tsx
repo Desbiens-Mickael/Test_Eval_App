@@ -28,7 +28,7 @@ export default function GettingStarted({
     },
     {
       done: hasAssignments,
-      title: "Attribuez leçons et exercices",
+      title: "Attribuez leçons, exercices et contrôles",
       text: "Les résultats apparaîtront ici dès les premières copies.",
       href: "/admin/groupes",
       cta: "Ouvrir les groupes",

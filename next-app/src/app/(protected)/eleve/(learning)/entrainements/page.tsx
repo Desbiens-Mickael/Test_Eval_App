@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import PracticeList from "./(components)/practice-list";
 
 export const metadata: Metadata = {
-  title: "Mes entraînements",
+  title: "Mes exercices",
 };
 
 export default function PracticePage() {

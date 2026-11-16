@@ -60,7 +60,7 @@ export const reviewStudentExerciceAction = async (
 
     // Notification à l'élève (une erreur ici n'annule pas la relecture)
     try {
-      const title = studentExercice.exercice?.title ?? "ton exercice";
+      const title = studentExercice.exercice?.title ?? "ton contrôle";
       const noteChanged = note !== studentExercice.note;
       const notification = await createNotificationCorrectionData({
         completionId: studentExerciceId,

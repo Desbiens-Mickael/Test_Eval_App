@@ -40,7 +40,7 @@ export default function ShowExercise({ exerciceId }: ShowExerciseProps) {
 
   return (
     <>
-      <PageTitle title={data?.title || "Exercice"} />
+      <PageTitle title={data?.title || "Contrôle"} />
       <motion.div
         className="space-y-4 mb-6 px-4 sm:px-6 py-8"
         initial="hidden"

@@ -11,6 +11,7 @@ interface Notification {
   id: string;
   message: string;
   type: string;
+  exerciseKind?: "CONTROL" | "PRACTICE" | null;
   itemId: string;
   createdAt: Date;
   createdStudentId?: string;
@@ -22,7 +23,7 @@ const getNotificationHref = (
   type: string,
   itemId: string,
   createdStudentId?: string,
-  createdTeacherId?: string
+  exerciseKind?: "CONTROL" | "PRACTICE" | null
 ) => {
   switch (type) {
     case "LESSON":
@@ -34,13 +35,16 @@ const getNotificationHref = (
     case "EXERCISE":
       return {
         image: "/assets/images/new-exercise.png",
-        title: "Nouvel exercice ajouté",
-        href: `/eleve/exercices/${itemId}`,
+        title: exerciseKind === "PRACTICE" ? "Nouvel exercice ajouté" : "Nouveau contrôle ajouté",
+        href:
+          exerciseKind === "PRACTICE"
+            ? `/eleve/entrainements/${itemId}`
+            : `/eleve/exercices/${itemId}`,
       };
     case "COMPLETION":
       return {
         image: "/assets/images/new-completion.png",
-        title: "Exercice terminé",
+        title: "Contrôle terminé",
         href: `/admin/eleves/${createdStudentId}/exercices/correction/${itemId}`,
       };
     case "CORRECTION":
@@ -62,6 +66,7 @@ export default function NotificationItem({
   id,
   itemId,
   type,
+  exerciseKind,
   message,
   createdAt,
   createdStudentId,
@@ -79,7 +84,8 @@ export default function NotificationItem({
   const { image, title, href } = getNotificationHref(
     type,
     itemId,
-    createdStudentId
+    createdStudentId,
+    exerciseKind
   );
 
   return (

@@ -38,7 +38,7 @@ export default async function StudentDashboard() {
           <Button asChild className="self-start lg:self-auto">
             <Link href="/eleve/exercices">
               <ListTodo className="mr-2 h-4 w-4" aria-hidden="true" />
-              {toDo} exercice{toDo > 1 ? "s" : ""} à faire
+              {toDo} contrôle{toDo > 1 ? "s" : ""} à faire
             </Link>
           </Button>
         )}

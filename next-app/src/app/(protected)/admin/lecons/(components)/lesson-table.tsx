@@ -115,10 +115,19 @@ export default function LessonTable({ subject }: { subject: string }) {
               className="cursor-pointer"
               onSelect={() => {
                 router.push(
-                  `/admin/lecons/${row.original.slug}/exercices/ajout`
+                  `/admin/lecons/${row.original.slug}/exercices/ajout?usage=controle`
                 );
               }}
-              aria-label="Ajouter un exercice"
+            >
+              Ajouter un contrôle
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onSelect={() => {
+                router.push(
+                  `/admin/lecons/${row.original.slug}/exercices/ajout?usage=exercice`
+                );
+              }}
             >
               Ajouter un exercice
             </DropdownMenuItem>

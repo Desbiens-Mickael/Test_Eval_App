@@ -8,6 +8,7 @@ import {
   revealPracticeCorrectionData,
 } from "@/data/exercice/practice-data";
 import { getGroupByStudentIdData } from "@/data/group.data";
+import { getLessonInGroupData } from "@/data/lesson/lesson-activities.data";
 import { currentUser } from "@/lib/auth";
 import { formatExercice } from "@/lib/exercice-format";
 import { gradeExercice } from "@/lib/exercice-grading";
@@ -70,7 +71,7 @@ const loadPractice = async (exerciceId: string) => {
     return { error: NOT_FOUND } as const;
   }
 
-  return { studentId: student.id, exercice } as const;
+  return { studentId: student.id, exercice, groupId: group.id } as const;
 };
 
 const correctionOf = (
@@ -93,8 +94,12 @@ export const getPracticeAction = async (exerciceId: string) => {
     const loaded = await loadPractice(exerciceId);
     if ("error" in loaded) return { error: loaded.error, data: null };
 
-    const { exercice, studentId } = loaded;
-    const state = await getPracticeStateData(studentId, exerciceId);
+    const { exercice, studentId, groupId } = loaded;
+    const [state, lesson] = await Promise.all([
+      getPracticeStateData(studentId, exerciceId),
+      // « Revoir la leçon » seulement si la leçon est attribuée au groupe
+      getLessonInGroupData(exercice.lesson.id, groupId),
+    ]);
     const summary = summarizePractice(state.attempts, state.correctionSeenAt);
     const last = state.attempts[state.attempts.length - 1];
 
@@ -102,6 +107,7 @@ export const getPracticeAction = async (exerciceId: string) => {
       success: "Exercice trouvé",
       data: {
         exercice: formatExercice(exercice, { withSolutions: false }),
+        lesson,
         summary,
         attempts: state.attempts.map((a) => ({
           note: a.note,

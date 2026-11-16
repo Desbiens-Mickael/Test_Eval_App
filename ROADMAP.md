@@ -18,6 +18,7 @@ Comme en classe : le professeur décide ce qui sert à s'exercer (exercice, non 
 
 - [ ] **Lien leçon ↔ exercices** : depuis une leçon, accéder directement à ses exercices, et inversement,
       uniquement pour ce que le professeur a attribué au groupe de l'élève
+      *(en cours — branche `feat/lien-lecon-exercices`)*
 - [ ] **Accessibilité**
   - glisser-déposer des cartes utilisable au clavier et sur écran tactile ;
   - vérifier les contrastes en mode sombre.

@@ -700,6 +700,7 @@ export const getStudentExerciceByIdData = async (studentExerciceId: string) => {
           description: true,
           content: true,
           closesAt: true,
+          lessonID: true,
           type: {
             select: {
               name: true,

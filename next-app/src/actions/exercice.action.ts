@@ -18,6 +18,7 @@ import {
 } from "@/data/exercice/exercice-data";
 import { closeExpiredControlsSafeData } from "@/data/exercice/control-closure.data";
 import { getExerciceTypeByNameData } from "@/data/exercice/exercice-type.data";
+import { getLessonInGroupData } from "@/data/lesson/lesson-activities.data";
 import { countExerciceSubmissionsData } from "@/data/exercice/practice-data";
 import {
   getGroupByIdAndAuthorIdData,
@@ -806,9 +807,21 @@ export const getStudentExerciceByIdAction = async (
       };
     }
 
+    // « Revoir la leçon » pour l'élève, si la leçon est attribuée à son groupe
+    let lesson: { id: string; title: string } | null = null;
+    if (user.role === "STUDENT" && studentExercice.exercice) {
+      const group = await getGroupByStudentIdData(user.id);
+      if (group) {
+        lesson = await getLessonInGroupData(
+          studentExercice.exercice.lessonID,
+          group.id
+        );
+      }
+    }
+
     return {
       success: "Correction trouvée",
-      data: studentExercice,
+      data: { ...studentExercice, lesson },
     };
   } catch (error) {
     console.error("Error fetching studentExercice by ID:", error);

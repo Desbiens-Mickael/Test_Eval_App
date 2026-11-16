@@ -20,6 +20,9 @@ import { currentUser } from "@/lib/auth";
 
 jest.mock("@/lib/auth", () => ({ currentUser: jest.fn() }));
 jest.mock("@/data/group.data", () => ({ getGroupByStudentIdData: jest.fn() }));
+jest.mock("@/data/lesson/lesson-activities.data", () => ({
+  getLessonInGroupData: jest.fn().mockResolvedValue(null),
+}));
 jest.mock("@/data/exercice/exercice-data", () => ({ getExerciceByIdData: jest.fn() }));
 jest.mock("@/data/exercice/practice-data", () => ({
   getPracticeStateData: jest.fn(),

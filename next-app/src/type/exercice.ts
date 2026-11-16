@@ -63,6 +63,7 @@ export type StudentExerciceById = {
     description: string;
     content: JsonValue;
     closesAt: Date | null;
+    lessonID: string;
     type: {
       name: string;
     };
@@ -72,6 +73,8 @@ export type StudentExerciceById = {
     name: string;
     professorId: string;
   };
+  /** Leçon à revoir (élève uniquement, si elle est attribuée à son groupe) */
+  lesson: { id: string; title: string } | null;
 } | null;
 
 export type noteExerciceStudent = {

@@ -22,6 +22,7 @@ Rien en attente : voir « Déjà fait ».
       *(en cours — branche `feat/pagination`)*
 - [ ] **Tri alphabétique des noms accentués** : la base trie « Léa » après « Lucas »
       (collation binaire de l'image Postgres Alpine) ; utiliser une collation française (ICU)
+      *(en cours — branche `feat/tri-accents`)*
 - [ ] **Ménage**
   - retirer `next-app/dist/` du dépôt ;
   - réécrire le README (il parle encore de Django) ;

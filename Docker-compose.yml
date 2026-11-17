@@ -7,6 +7,10 @@ services:
       PGUSER: postgres
     ports:
       - 5432:5432
+    # Les données survivent à `docker compose down` ;
+    # `docker compose down -v` repart d'une base vide.
+    volumes:
+      - db-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready"]
       interval: 10s
@@ -64,3 +68,5 @@ services:
       - "1025:1025" # Port SMTP
       - "8025:8025" # Interface Web
 
+volumes:
+  db-data:

@@ -559,13 +559,14 @@ const main = async () => {
     }
   }
 
-  // L'élève du seed de base rejoint le premier groupe
+  // Les élèves sans groupe rejoignent le premier groupe de démo
+  // (ceux du seed de base gardent le leur)
   const firstGroup = await prisma.group.findFirst({
     where: { authorId: teacher.id, name: GROUPS[0].name },
   });
   if (firstGroup) {
     await prisma.student.updateMany({
-      where: { professorId: teacher.id, identifier: { not: { startsWith: "demo." } } },
+      where: { professorId: teacher.id, groupId: null, identifier: { not: { startsWith: "demo." } } },
       data: { groupId: firstGroup.id },
     });
   }

@@ -36,7 +36,7 @@
   - `_test_` : tests Jest/RTL, calqués sur l’arborescence des composants/pages ciblés.
   - `actions`, `animations`, `app`, `components`, `config`, `data`, `hooks`, `lib`, `schema-zod`, `style`, `type` comme décrit dans les règles d’équipe.
 - **Actions serveur** : dossier `src/actions/` centralise les mutations sécurisées ; toutes préfixées par `"use server"` et contrôlent `currentUser` (`src/lib/auth.ts`).
-- **Accès données** : dossier `src/data/` encapsule Prisma et hashage (`src/lib/hash-password.ts` via bcrypt).  
+- **Accès données** : dossier `src/data/` encapsule Prisma et hashage (`src/lib/hash-password.ts` via bcryptjs).  
 - **Seed & scripts** : `src/data/dev-data/seed.ts`, `src/data/prod-data/seed.ts` + scripts `npm run resetDB`, `npm run build:seed`, `npm run seedDB`.
 - **Protection des routes** : middleware NextAuth + layout `(protected)` avec `SidebarProvider`, `AppSidebar`, `Header` personnalisés.
 - **Tests** : Jest + Testing Library (`jest.config.ts`, `_test_/`). Couverture cible > 80 %, lancer via `npm run test[:watch|:coverage]`.
@@ -74,7 +74,7 @@
 - **État & données** : TanStack Query pour la lecture serveur, Server Actions pour les mutations, Zustand pour l’état global partagé. Couples form-data validés avec Zod (`schema-zod` + `@hookform/resolvers/zod`).
 - **Formulaires** : `react-hook-form` obligatoire, schémas dans `schema-zod`, validations testées dans `_test_`.
 - **UI/UX** : Tailwind + Radix UI pour l’accessibilité, variants via class-variance-authority, mode sombre avec `next-themes`, notifications via Sonner, `next/image` + Sharp pour l’optimisation.
-- **Sécurité** : NextAuth + Prisma Adapter, mots de passe hashés avec bcrypt, toutes les entrées validées Zod côté client et serveur.
+- **Sécurité** : NextAuth + Prisma Adapter, mots de passe hashés avec bcryptjs, toutes les entrées validées Zod côté client et serveur.
 - **Performance** : `loading.tsx`, streaming, pagination des listes, `React.lazy` pour les blocs lourds et import dynamique côté client.
 - **Tests** : Jest + React Testing Library ; viser >80% couverture, couvrir logique critique, formulaires et schémas Zod. Les mocks résident dans `_mocks_`.
 - **TypeScript** : strict, pas de `any`. Déclarer interfaces/types globaux dans `src/type`, recourir aux génériques lorsque pertinent.

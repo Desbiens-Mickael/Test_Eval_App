@@ -39,3 +39,6 @@ next-env.d.ts
 
 # windsurf
 /.windsurf/
+
+# seed de production compilé (npm run build:seed)
+/dist

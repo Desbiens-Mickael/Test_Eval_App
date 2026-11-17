@@ -54,7 +54,7 @@ export default function DataTableDeleteSelectionButton<
         >
           <AlertDialog>
             <AlertDialogTrigger
-              className="h-8 w-8 p-0 border-none text-destructive hover:bg-destructive hover:text-white rounded-md"
+              className="h-8 w-8 p-0 border-none text-destructive hover:bg-destructive hover:text-destructive-foreground rounded-md"
               aria-label="Supprimer la sélection"
             >
               <Trash2 className="mx-auto" />

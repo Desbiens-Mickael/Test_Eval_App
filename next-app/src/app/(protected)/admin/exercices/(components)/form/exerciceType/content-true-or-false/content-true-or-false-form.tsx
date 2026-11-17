@@ -189,8 +189,8 @@ export default function ContentTrueFalseForm({
                       className={cn(
                         "flex h-6 w-6 items-center justify-center rounded-full",
                         question.answer
-                          ? "bg-green-100 text-green-600"
-                          : "bg-red-100 text-red-600"
+                          ? "bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300"
+                          : "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300"
                       )}
                     >
                       {question.answer ? (

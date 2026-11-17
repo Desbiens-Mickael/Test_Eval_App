@@ -86,7 +86,7 @@ export function DataTableRowActions({
           {children}
           {children && <DropdownMenuSeparator />}
           <DropdownMenuItem
-            className="text-red-500 focus:text-red-500 focus:bg-red-100 hover:bg-red-100 cursor-pointer w-full"
+            className="text-destructive focus:text-destructive focus:bg-destructive/10 hover:bg-destructive/10 cursor-pointer w-full"
             onSelect={() => setOpenId(elementId)} // Ouvre uniquement pour cet élément
             aria-label="Supprimer la sélection"
           >

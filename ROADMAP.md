@@ -7,19 +7,11 @@ Cocher une case quand la fonctionnalité est fusionnée dans `dev`.
 
 Comme en classe : le professeur décide ce qui sert à s'exercer (exercice, non noté) et ce qui est évalué (contrôle, noté).
 
-- [ ] **Contrôles avec période de validité** : dates d'ouverture et de clôture fixées par le professeur.
-      *(en cours — branche `feat/periode-controles`)*
-      À la clôture :
-  - les contrôles non rendus sont notés 0 ;
-  - les notes et les corrections deviennent visibles pour les élèves (pas avant) ;
-  - chaque élève reçoit une notification.
+Rien en attente : voir « Déjà fait ».
 
 ## 🧒 Côté élève
 
-- [ ] **Lien leçon ↔ exercices** : depuis une leçon, accéder directement à ses exercices, et inversement,
-      uniquement pour ce que le professeur a attribué au groupe de l'élève
-      *(en cours — branche `feat/lien-lecon-exercices`)*
-- [ ] **Accessibilité**
+- [ ] **Accessibilité** *(en cours — branche `feat/accessibilite`)*
   - glisser-déposer des cartes utilisable au clavier et sur écran tactile ;
   - vérifier les contrastes en mode sombre.
 
@@ -59,3 +51,6 @@ Comme en classe : le professeur décide ce qui sert à s'exercer (exercice, non 
       essais illimités, note seule après chaque essai, correction qui met fin aux essais (#61)
 - [x] Suivi des exercices par le professeur (courbe des notes, essais, correction vue) ;
       « exercices » et « contrôles » séparés partout dans l'application (#62)
+- [x] Contrôles avec période de validité : dates d'ouverture et de clôture ; à la clôture, copies non rendues
+      notées 0, notes et corrections visibles pour les élèves, qui sont notifiés (#63)
+- [x] Lien leçon ↔ exercices côté élève, limité à ce qui est attribué à son groupe (#64)

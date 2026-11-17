@@ -24,7 +24,7 @@ export default function QuestionCard({
       initial="hidden"
       animate="show"
       variants={container}
-      className="bg-white rounded-lg shadow-md p-6"
+      className="bg-card text-card-foreground border rounded-lg shadow-md p-6"
     >
       <motion.h2
         initial="hidden"
@@ -53,7 +53,7 @@ export default function QuestionCard({
               className={`p-4 rounded-lg border-2 cursor-pointer block ${
                 isAnswerSelected(answerIndex)
                   ? "border-primary border-l-8 bg-primary/5"
-                  : "border-gray-200 hover:border-primary"
+                  : "border-border hover:border-primary"
               }`}
             >
               <div className="flex items-center">

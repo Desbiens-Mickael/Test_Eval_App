@@ -39,14 +39,14 @@ export default function ShowPReviewMUltipleChoice({
                   className={cn(
                     "flex items-center gap-3 p-4 rounded-lg border transition-colors",
                     isCorrect 
-                      ? "bg-green-50 border-green-200" 
+                      ? "bg-green-50 border-green-200 dark:bg-green-950/40 dark:border-green-800" 
                       : "bg-muted/30 border-border"
                   )}
                 >
                   <div className={cn(
                     "flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full text-xs font-medium",
                     isCorrect 
-                      ? "bg-green-100 text-green-600 border border-green-200"
+                      ? "bg-green-100 text-green-700 border border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800"
                       : "bg-muted text-muted-foreground"
                   )}>
                     {String.fromCharCode(65 + answerIndex)}
@@ -60,7 +60,7 @@ export default function ShowPReviewMUltipleChoice({
                   </span>
                   
                   {isCorrect ? (
-                    <div className="flex items-center gap-1 text-sm text-green-600">
+                    <div className="flex items-center gap-1 text-sm text-green-700 dark:text-green-400">
                       <Check className="h-4 w-4" />
                       <span>Bonne réponse</span>
                     </div>

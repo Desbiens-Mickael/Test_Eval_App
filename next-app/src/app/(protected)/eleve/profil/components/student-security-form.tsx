@@ -35,8 +35,8 @@ export default function StudentSecurityForm() {
     <div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <div className="relative flex flex-col space-y-4 border-dashed border-2 border-gray-300 rounded-md p-4">
-            <span className="absolute -top-4 left-2 text-xl font-bold text-gray-400 bg-background px-1">
+          <div className="relative flex flex-col space-y-4 border-dashed border-2 border-border rounded-md p-4">
+            <span className="absolute -top-4 left-2 text-xl font-bold text-muted-foreground bg-background px-1">
               Modification du mot de passe
             </span>
             <PasswordInput

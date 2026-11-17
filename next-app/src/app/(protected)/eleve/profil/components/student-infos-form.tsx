@@ -54,7 +54,7 @@ export default function StudentInfosForm({ student }: StudentInfosFormProps) {
                 <Input
                   value={student?.identifier}
                   readOnly
-                  className="bg-gray-100 text-gray-600"
+                  className="bg-muted text-muted-foreground"
                 />
               </FormControl>
             </FormItem>

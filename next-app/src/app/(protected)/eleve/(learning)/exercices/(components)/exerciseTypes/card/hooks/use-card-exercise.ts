@@ -3,7 +3,7 @@ import { cardResponseItemType } from "@/shema-zod/exercice-corection.shema";
 import { cardItemInput, contentCardInput } from "@/shema-zod/exercice.shema";
 import { DropResult } from "@hello-pangea/dnd";
 import { useCallback, useEffect, useState } from "react";
-import { shuffleArray } from "../lib/lib";
+import { moveCardToZone, shuffleArray, zoneLabel } from "../lib/lib";
 
 interface UseCardExerciseProps {
   exerciceId: string;
@@ -18,6 +18,8 @@ export function useCardExercise({
 }: UseCardExerciseProps) {
   const [startCards, setStartCards] = useState<cardItemInput[]>([]);
   const [response, setResponse] = useState<cardResponseItemType[]>([]);
+  // Message lu par les lecteurs d'écran après un déplacement par le menu
+  const [announcement, setAnnouncement] = useState("");
 
   const {
     mutateAsync: addExerciceResponse,
@@ -35,86 +37,30 @@ export function useCardExercise({
     resetExercise();
   }, [resetExercise]);
 
+  const applyMove = (cardId: string, destination: string, index?: number) => {
+    const board = moveCardToZone({ startCards, response }, cardId, destination, index);
+    setStartCards(board.startCards);
+    setResponse(board.response);
+  };
+
+  // Glisser-déposer (souris, clavier, tactile)
   const handleDragEnd = (result: DropResult) => {
-    const { source, destination } = result;
-    if (!destination) return;
-
-    if (source.droppableId === "start" && destination.droppableId === "start") {
-      const newCards = Array.from(startCards);
-      const [removed] = newCards.splice(source.index, 1);
-      newCards.splice(destination.index, 0, removed);
-      setStartCards(newCards);
-      return;
-    }
-
-    if (source.droppableId === "start") {
-      const card = startCards[source.index];
-      const newStart = Array.from(startCards);
-      newStart.splice(source.index, 1);
-      const newResponse = response.map((col) => {
-        if (destination.droppableId === col.column) {
-          return {
-            ...col,
-            cards: [
-              ...col.cards.slice(0, destination.index),
-              card,
-              ...col.cards.slice(destination.index),
-            ],
-          };
-        }
-        return col;
-      });
-      setStartCards(newStart);
-      setResponse(newResponse);
-      return;
-    }
-
-    if (destination.droppableId === "start") {
-      const sourceColIdx = response.findIndex(
-        (col) => col.column === source.droppableId
-      );
-      if (sourceColIdx !== -1) {
-        const sourceCol = response[sourceColIdx];
-        const card = sourceCol.cards[source.index];
-        setStartCards([
-          ...startCards.slice(0, destination.index),
-          card,
-          ...startCards.slice(destination.index),
-        ]);
-        const newResponse = [...response];
-        newResponse[sourceColIdx] = {
-          ...sourceCol,
-          cards: sourceCol.cards.filter((_, i) => i !== source.index),
-        };
-        setResponse(newResponse);
-        return;
-      }
-    }
-
-    const sourceColIdx = response.findIndex(
-      (col) => col.column === source.droppableId
+    if (!result.destination) return;
+    applyMove(
+      result.draggableId,
+      result.destination.droppableId,
+      result.destination.index
     );
-    const destColIdx = response.findIndex(
-      (col) => col.column === destination.droppableId
-    );
+  };
 
-    if (sourceColIdx !== -1 && destColIdx !== -1) {
-      const sourceCol = response[sourceColIdx];
-      const card = sourceCol.cards[source.index];
-      let newResponse = [...response];
-      newResponse[sourceColIdx] = {
-        ...sourceCol,
-        cards: sourceCol.cards.filter((_, i) => i !== source.index),
-      };
-      newResponse[destColIdx] = {
-        ...newResponse[destColIdx],
-        cards: [
-          ...newResponse[destColIdx].cards.slice(0, destination.index),
-          card,
-          ...newResponse[destColIdx].cards.slice(destination.index),
-        ],
-      };
-      setResponse(newResponse);
+  // Bouton « Déplacer » : alternative sans glisser
+  const moveCard = (cardId: string, destination: string) => {
+    const card = [...startCards, ...response.flatMap((col) => col.cards)].find(
+      (c) => c.id === cardId
+    );
+    applyMove(cardId, destination);
+    if (card) {
+      setAnnouncement(`Carte « ${card.content} » déplacée dans ${zoneLabel(destination)}.`);
     }
   };
 
@@ -129,10 +75,12 @@ export function useCardExercise({
   return {
     startCards,
     response,
+    announcement,
     isPending,
     isSuccess,
     data,
     handleDragEnd,
+    moveCard,
     handleSubmit,
     resetExercise,
   };

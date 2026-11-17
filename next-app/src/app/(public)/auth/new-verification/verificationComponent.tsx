@@ -58,7 +58,7 @@ export default function VerificationComponent({
           <p className="text-lg">Comfirmation de votre email</p>
           {loading && <CircleLoader className="my-4" size={60} />}
           {error && <p className="text-destructive">{error}</p>}
-          {success && <p className="text-green-600">{success}</p>}
+          {success && <p className="text-green-700 dark:text-green-400">{success}</p>}
         </CardContent>
         <CardFooter className="flex justify-center items-center">
           <Button asChild variant={"link"}>

@@ -15,16 +15,14 @@ Rien en attente : voir « Déjà fait ».
 
 ## 🛠 Technique et fiabilité
 
-- [ ] **Limiter les tentatives de connexion** (rate limiting), surtout pour les élèves
-      *(en cours — branche `feat/limite-connexion`)*
 - [ ] **Volume Docker pour la base de dev** (les données sont perdues à chaque `docker compose down`)
       et **seed plus complet** par défaut (groupe, élèves, leçons attribuées) — voir aussi `npm run seedDemo`
+      *(en cours — branche `feat/seed-dev-volume`)*
 - [ ] **Pagination** des listes : élèves, exercices, résultats
 - [ ] **Ménage**
   - retirer `next-app/dist/` du dépôt ;
   - réécrire le README (il parle encore de Django) ;
-  - garder une seule des deux librairies `bcrypt` / `bcryptjs` ;
-  - corriger la leçon d'histoire du seed (« troisième guerre mondiale »).
+  - garder une seule des deux librairies `bcrypt` / `bcryptjs`.
 - [ ] **Images de leçon** : conversion WebP avec taille maximale, et suppression automatique des images inutilisées
 - [ ] **Notifications en temps réel** (SSE ou WebSocket) au lieu du rechargement de la page
 
@@ -55,3 +53,4 @@ Rien en attente : voir « Déjà fait ».
 - [x] Lien leçon ↔ exercices côté élève, limité à ce qui est attribué à son groupe (#64)
 - [x] Accessibilité : cartes déplaçables au clavier et au tactile (bouton « Déplacer »),
       contrastes du mode sombre conformes WCAG AA (#65)
+- [x] Limite des tentatives de connexion : par compte et par adresse IP (#66)

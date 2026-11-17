@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useReadNotification } from "@/hooks/mutations/notification/use-read-notification";
 import useGetNotification from "@/hooks/queries/notification/use-get-notification";
+import { useNotificationStream } from "@/hooks/use-notification-stream";
 import { Bell, CheckCheck } from "lucide-react";
 import { useState } from "react";
 import NotificationItem from "./notification-item";
@@ -17,6 +18,8 @@ export default function Notification() {
   const [open, setOpen] = useState(false);
   const { data } = useGetNotification();
   const { mutate } = useReadNotification();
+  // Nouvelles notifications affichées sans recharger la page
+  useNotificationStream();
 
   const handleOpen = () => {
     setOpen(!open);

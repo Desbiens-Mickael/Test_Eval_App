@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { publishNotification } from "@/lib/notification-hub";
 import { NotificationType } from "@prisma/client";
 
 interface CreateNotificationInput {
@@ -78,6 +79,8 @@ export const createStudentNotificationData = async (
     })),
     skipDuplicates: true, // pour éviter les doublons si tu rejoues le script
   });
+  // Les élèves connectés voient la notification sans recharger la page
+  publishNotification(studentsIds.map(({ id }) => ({ kind: "student", id })));
 };
 
 // Création des TeacherNotification
@@ -91,6 +94,7 @@ export const createTeacherNotificationData = async (
       notificationId,
     },
   });
+  publishNotification([{ kind: "teacher", id: teacherId }]);
 };
 
 // Récupération de toutes les notifications d'un élève

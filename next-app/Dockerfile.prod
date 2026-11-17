@@ -38,6 +38,9 @@ RUN \
   else echo "Lockfile not found." && exit 1; \
   fi
 
+# Seed de production compilé (dist/ n'est plus versionné) : npm run seedDB
+RUN npm run build:seed
+
 # Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app

@@ -10,6 +10,11 @@ import {
   getTwoFactorTokenByIdentifierData,
 } from "@/data/two-factor-token.data";
 import { getUserByEmailData } from "@/data/user-data";
+import {
+  checkLoginLock,
+  getClientIp,
+  recordLoginFailure,
+} from "@/lib/login-guard";
 import { sendTwoFactorCodeEmail, sendVerificationEmail } from "@/lib/mail";
 import {
   generateTwoFactorToken,
@@ -18,6 +23,7 @@ import {
 import { loginUserFormSchema, loginUserFormType } from "@/shema-zod/auth.shema";
 import { signIn } from "auth";
 import { AuthError } from "next-auth";
+import { headers } from "next/headers";
 
 const loginAction = async (credentials: loginUserFormType) => {
   const isCredentialsValide = loginUserFormSchema.safeParse(credentials);
@@ -26,9 +32,19 @@ const loginAction = async (credentials: loginUserFormType) => {
 
   const { email, password, code } = isCredentialsValide.data;
 
+  // Trop d'échecs récents sur ce compte ou depuis cette adresse : bloqué
+  const attempt = {
+    kind: "user" as const,
+    login: email,
+    ip: getClientIp(headers()),
+  };
+  const lock = await checkLoginLock(attempt);
+  if (lock) return { error: lock };
+
   const existingUser = await getUserByEmailData(email);
 
   if (!existingUser || !existingUser.email || !existingUser.password) {
+    await recordLoginFailure(attempt);
     return { error: "identifiant invalide!" };
   }
 
@@ -50,8 +66,12 @@ const loginAction = async (credentials: loginUserFormType) => {
       const twoFactorToken = await getTwoFactorTokenByIdentifierData(
         existingUser.email
       );
-      if (!twoFactorToken || twoFactorToken.token !== code)
+      // Un code faux compte comme un échec : un code à 6 chiffres
+      // ne doit pas pouvoir être deviné en série
+      if (!twoFactorToken || twoFactorToken.token !== code) {
+        await recordLoginFailure(attempt);
         return { error: "Code non valide!" };
+      }
 
       const hasExpired = new Date(twoFactorToken.expires) < new Date();
       if (hasExpired) return { error: "Code expirer!" };

@@ -6,6 +6,12 @@ import {
 } from "@/data/student-data";
 import { verifyPassword } from "@/lib/hash-password";
 import {
+  checkLoginLock,
+  getClientIp,
+  recordLoginFailure,
+} from "@/lib/login-guard";
+import { headers } from "next/headers";
+import {
   loginStudentFormSchema,
   loginStudentFormType,
 } from "@/shema-zod/auth.shema";
@@ -19,21 +25,25 @@ const loginStudentAction = async (credentials: loginStudentFormType) => {
 
   const { identifier, password } = isCredentialsValide.data;
 
+  // Trop d'échecs récents sur ce compte ou depuis cette adresse : bloqué
+  const attempt = {
+    kind: "student" as const,
+    login: identifier,
+    ip: getClientIp(headers()),
+  };
+  const lock = await checkLoginLock(attempt);
+  if (lock) return { error: lock };
+
   const existingStudent = await getStudentByIdentifierlData(identifier);
 
-  if (
-    !existingStudent ||
-    !existingStudent.identifier ||
-    !existingStudent.password
-  ) {
-    return { error: "identifiant ou mot de passe invalide !" };
+  // Même message et même comptage, que l'identifiant existe ou non
+  const veriedPassword =
+    !!existingStudent?.password &&
+    (await verifyPassword(existingStudent.password, password));
+  if (!existingStudent || !veriedPassword) {
+    await recordLoginFailure(attempt);
+    return { error: "Identifiant ou mot de passe invalide !" };
   }
-
-  const veriedPassword = await verifyPassword(
-    existingStudent.password,
-    password
-  );
-  if (!veriedPassword) return { error: "Données non valide !" };
 
   // Compte désactivé par le professeur (vérifié après le mot de passe,
   // pour ne pas révéler l'état d'un compte à quelqu'un qui devine)

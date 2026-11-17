@@ -7,6 +7,7 @@ import {
 } from "@/data/student-data";
 import { currentUser } from "@/lib/auth";
 import { hashPassword } from "@/lib/hash-password";
+import { clearAccountFailures } from "@/lib/login-guard";
 import { sendCredentialStudentEmail } from "@/lib/mail";
 import { generateStudentPassword } from "@/lib/student-password";
 
@@ -35,6 +36,8 @@ export const resetStudentPasswordAction = async (studentId: string) => {
   try {
     const password = generateStudentPassword();
     await updateStudentPasswordData(student.id, await hashPassword(password));
+    // Un élève bloqué après trop d'essais peut se reconnecter tout de suite
+    await clearAccountFailures("student", student.identifier);
 
     // L'email est un plus : son échec n'annule pas la réinitialisation
     let emailSent = false;

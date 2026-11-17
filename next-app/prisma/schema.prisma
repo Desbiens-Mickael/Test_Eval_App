@@ -350,3 +350,16 @@ model PracticeCorrection {
 
   @@unique([studentId, exerciceId])
 }
+
+// Compteur de tentatives de connexion ratées (par compte ou par adresse IP)
+// pour bloquer temporairement les essais de mots de passe en série
+model LoginThrottle {
+  // « user:<email> », « student:<identifiant> » ou « ip:<adresse> »
+  key                     String   @id
+  failures                Int      @default(0)
+  windowStart             DateTime @default(now())
+  lockedUntil             DateTime?
+  updatedAt               DateTime @updatedAt
+
+  @@index([updatedAt])
+}

@@ -11,13 +11,12 @@ Rien en attente : voir « Déjà fait ».
 
 ## 🧒 Côté élève
 
-- [ ] **Accessibilité** *(en cours — branche `feat/accessibilite`)*
-  - glisser-déposer des cartes utilisable au clavier et sur écran tactile ;
-  - vérifier les contrastes en mode sombre.
+Rien en attente : voir « Déjà fait ».
 
 ## 🛠 Technique et fiabilité
 
 - [ ] **Limiter les tentatives de connexion** (rate limiting), surtout pour les élèves
+      *(en cours — branche `feat/limite-connexion`)*
 - [ ] **Volume Docker pour la base de dev** (les données sont perdues à chaque `docker compose down`)
       et **seed plus complet** par défaut (groupe, élèves, leçons attribuées) — voir aussi `npm run seedDemo`
 - [ ] **Pagination** des listes : élèves, exercices, résultats
@@ -54,3 +53,5 @@ Rien en attente : voir « Déjà fait ».
 - [x] Contrôles avec période de validité : dates d'ouverture et de clôture ; à la clôture, copies non rendues
       notées 0, notes et corrections visibles pour les élèves, qui sont notifiés (#63)
 - [x] Lien leçon ↔ exercices côté élève, limité à ce qui est attribué à son groupe (#64)
+- [x] Accessibilité : cartes déplaçables au clavier et au tactile (bouton « Déplacer »),
+      contrastes du mode sombre conformes WCAG AA (#65)

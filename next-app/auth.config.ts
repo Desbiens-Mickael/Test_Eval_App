@@ -20,6 +20,12 @@ import {
 } from "@/data/verification-token-data";
 import { verifyPassword } from "@/lib/hash-password";
 import {
+  checkLoginLock,
+  clearAccountFailures,
+  getClientIp,
+  recordLoginFailure,
+} from "@/lib/login-guard";
+import {
   loginStudentFormSchema,
   loginUserFormSchema,
 } from "@/shema-zod/auth.shema";
@@ -56,7 +62,10 @@ export default {
   basePath: "/api/auth",
   providers: [
     Credentials({
-      authorize: async (credentials) => {
+      // La limite des tentatives est aussi appliquée ici : l'API de NextAuth
+      // peut être appelée directement, sans passer par les actions de connexion
+      authorize: async (credentials, request) => {
+        const ip = request ? getClientIp(request.headers) : null;
         const isCredentialsAdminValide =
           loginUserFormSchema.safeParse(credentials); // Vérification Admin
         const isCredentialsStudentValide =
@@ -65,30 +74,36 @@ export default {
         // Vérification Admin
         if (isCredentialsAdminValide.success) {
           const { email, password } = isCredentialsAdminValide.data;
+          const attempt = { kind: "user" as const, login: email, ip };
+          if (await checkLoginLock(attempt)) return null;
 
           const user = await getUserByEmailData(email);
-          if (!user || !user.password) return null;
-
-          const passwordMatch = await verifyPassword(user.password, password);
-          if (passwordMatch) {
+          const passwordMatch =
+            !!user?.password && (await verifyPassword(user.password, password));
+          if (user && passwordMatch) {
+            await clearAccountFailures("user", email);
             return user;
           }
+          await recordLoginFailure(attempt);
+          return null;
         }
 
         // Vérification student
         if (isCredentialsStudentValide.success) {
           const { identifier, password } = isCredentialsStudentValide.data;
+          const attempt = { kind: "student" as const, login: identifier, ip };
+          if (await checkLoginLock(attempt)) return null;
 
           const student = await getStudentByIdentifierlData(identifier);
-          if (!student || !student.password) return null;
-
-          const passwordMatch = await verifyPassword(
-            student.password,
-            password
-          );
-          if (passwordMatch) {
+          const passwordMatch =
+            !!student?.password &&
+            (await verifyPassword(student.password, password));
+          if (student && passwordMatch) {
+            await clearAccountFailures("student", identifier);
             return student;
           }
+          await recordLoginFailure(attempt);
+          return null;
         }
 
         // Si rien n'est bon on retourne null

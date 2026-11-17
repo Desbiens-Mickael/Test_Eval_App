@@ -23,6 +23,7 @@ export default function ExerciseDoneDashboard({
       onSubjectChange={setSelectedSubject}
     >
       <ListExercisesDone
+        key={selectedSubject ?? "toutes"}
         selectedSubject={selectedSubject}
         studentId={studentId}
       />

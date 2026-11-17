@@ -6,18 +6,20 @@ import {
   createExerciceData,
   deleteExercicesData,
   getAllExercicesByLessonIdData,
-  getAllExercicesByTypeData,
+  getExercicesPageData,
   getExerciceByIdData,
   getExercicesInfoBeforeDelete,
   getExercicesWithAuthor,
   getExercisesByGroupIdAndSubjectData,
   getStudentExerciceByIdData,
   getStudentExerciceByStudentIdData,
+  getStudentExercicesPageData,
   removeExerciceFromGroupData,
   updateExerciceData,
 } from "@/data/exercice/exercice-data";
 import { closeExpiredControlsSafeData } from "@/data/exercice/control-closure.data";
 import { getExerciceTypeByNameData } from "@/data/exercice/exercice-type.data";
+import { PageQueryInput, pageQuerySchema } from "@/shema-zod/pagination.shema";
 import { getLessonInGroupData } from "@/data/lesson/lesson-activities.data";
 import { countExerciceSubmissionsData } from "@/data/exercice/practice-data";
 import {
@@ -441,35 +443,33 @@ export const addExerciceResultAction = async (
 };
 
 // Récupération de tous les exercices d'un type donné
-export const getAllExercicesByTypeAction = async (
-  type: ExerciceType
-): Promise<Exercice[]> => {
-  try {
-    // Vérifier que l'utilisateur est connecté
-    const user = await currentUser();
-    if (!user || !user?.id || user.role !== "ADMIN") {
-      throw new Error("Action non autoriser !");
-    }
+// Une page des exercices ou contrôles du professeur pour un type donné
+// (pagination, recherche, filtres et tri côté serveur)
+export const getExercicesPageAction = async (
+  type: ExerciceType,
+  kind: "CONTROL" | "PRACTICE",
+  input: PageQueryInput
+) => {
+  const user = await currentUser();
+  if (!user || !user?.id || user.role !== "ADMIN") {
+    return { error: "Action non autoriser !" };
+  }
 
-    // Recherche du type d'exercice par son nom
+  const parsed = pageQuerySchema.safeParse(input);
+  if (!parsed.success || !["CONTROL", "PRACTICE"].includes(kind)) {
+    return { error: "Paramètres de pagination invalides." };
+  }
+
+  try {
     const exerciceType = await getExerciceTypeByNameData(type);
     if (!exerciceType) {
-      throw new Error(`Type d'exercice ${type} non trouvé`);
+      return { error: `Type d'exercice ${type} non trouvé` };
     }
-
-    // Récupération des exercices selon leur type
-    const exercicesData = await getAllExercicesByTypeData(
-      exerciceType,
-      user.id
-    );
-
-    // Formatage des exercices (vue professeur : avec les solutions)
-    return exercicesData.map((exercice) =>
-      formatExercice(exercice, { withSolutions: true })
-    );
+    const page = await getExercicesPageData(user.id, exerciceType, kind, parsed.data);
+    return { success: "", data: page };
   } catch (error) {
     console.error("Error fetching exercises:", error);
-    throw Error("Échec de la récupération des exercices et contrôles");
+    return { error: "Échec de la récupération des exercices et contrôles" };
   }
 };
 
@@ -682,9 +682,13 @@ export const getExercisesToDoAction = async (subject?: string) => {
 };
 
 // Récupération de tout les exercices d'un groupe qui ont été fait par l'élève
+// Copies affichées par page (grille de 4 colonnes × 3 lignes)
+const DONE_PAGE_SIZE = 12;
+
 export const getExercisesDoneAction = async (
   subject?: string,
-  studentId?: string
+  studentId?: string,
+  pagination: { page?: number; pageSize?: number } = {}
 ) => {
   // Récupération de l'utilisateur connecté en session
   const user = await currentUser();
@@ -725,14 +729,18 @@ export const getExercisesDoneAction = async (
 
     await closeExpiredControlsSafeData();
 
-    // Récupération des exercices fait par l'élève
-    const studentExercises = await getStudentExerciceByStudentIdData(
-      studentIdToUse,
-      subject
-    );
+    const parsed = pageQuerySchema
+      .pick({ page: true, pageSize: true })
+      .safeParse({ page: pagination.page, pageSize: pagination.pageSize ?? DONE_PAGE_SIZE });
+    if (!parsed.success) {
+      return { error: "Paramètres de pagination invalides." };
+    }
 
-    // Récupération des exercices qui ont été fait par l'élève ou que l'exerciceId est null
-    const exercisesDone = studentExercises
+    // Une page des copies de l'élève, de la plus récente à la plus ancienne
+    const page = await getStudentExercicesPageData(studentIdToUse, subject, parsed.data);
+
+    // Copies, y compris celles dont l'exercice a été supprimé (exerciceId null)
+    const exercisesDone = page.items
       .map((studentExercice) => {
         // L'élève ne voit sa note qu'à la clôture du contrôle ;
         // le professeur la voit toujours
@@ -758,7 +766,7 @@ export const getExercisesDoneAction = async (
 
     return {
       success: "Exercices trouvés",
-      data: exercisesDone,
+      data: { ...page, items: exercisesDone },
     };
   } catch (error) {
     console.error("Error fetching exercises by group ID:", error);

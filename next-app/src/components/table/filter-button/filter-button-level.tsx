@@ -23,5 +23,5 @@ export default function FilterBUttonLevel<TData>({ table }: FilterBUttonLevelPro
     return;
   }
 
-  if (data) return <DataTAbleBUttonFilter column={column} title="Niveau" templateComponent={LevelLayout} data={data} />;
+  if (data) return <DataTAbleBUttonFilter column={column} title="Niveau" templateComponent={LevelLayout} data={data} counts={table.options.meta?.facets?.["Niveau"]} />;
 }

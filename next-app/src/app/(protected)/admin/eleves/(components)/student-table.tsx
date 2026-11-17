@@ -5,15 +5,16 @@ import { DataTableColumnHeader } from "@/components/table/data-table-column-head
 import TableSkeleton from "@/components/table/table-skeleton";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { DataTableRowActions } from "@/components/table/data-table-row-action";
 import { useDeleteStudents } from "@/hooks/mutations/student/use-delete-students";
 import {
-  StudentResponse,
-  useGetAllStudentsByProfessorId,
-} from "@/hooks/queries/student/use-get-all-students-by-professorId ";
+  StudentRow,
+  useGetStudentsPage,
+} from "@/hooks/queries/student/use-get-students-page";
+import { useServerTable } from "@/hooks/use-server-table";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
 import { FileUp } from "lucide-react";
@@ -21,10 +22,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AccountStatusBadge from "./account-status-badge";
 import CreateStudentButton from "./create-student-button";
-interface StudentTableProps extends StudentResponse {}
 
 export default function StudentTable() {
-  const { data: studentData, isLoading } = useGetAllStudentsByProfessorId();
+  const { query, alignPage, tableOptions } = useServerTable({ searchColumnId: "Nom" });
+  const { data: studentPage, isLoading, isError, error } = useGetStudentsPage(query);
+  useEffect(() => alignPage(studentPage?.page), [alignPage, studentPage?.page]);
+  useEffect(() => {
+    if (isError) toast.error(error.message);
+  }, [isError, error]);
   const { mutateAsync: mutateAsyncDelete, isPending } = useDeleteStudents();
   const [openId, setOpenId] = useState<string | null>(null);
 
@@ -45,7 +50,7 @@ export default function StudentTable() {
     [mutateAsyncDelete]
   );
 
-  const columns: ColumnDef<StudentTableProps>[] = [
+  const columns: ColumnDef<StudentRow>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -139,7 +144,8 @@ export default function StudentTable() {
   return (
     <DataTable
       columns={columns}
-      data={studentData ?? []}
+      data={studentPage?.items ?? []}
+      server={{ ...tableOptions, rowCount: studentPage?.total ?? 0 }}
       viewOptionsButton
       inputSearchColumnId="Nom"
       handleDelete={handleDelete}

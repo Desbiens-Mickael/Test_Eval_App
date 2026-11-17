@@ -3,13 +3,14 @@
 import { getGroupByIdAndAuthorIdData } from "@/data/group.data";
 import {
   deleteStudentsData,
-  getAllStudentsByAuthorIdData,
+  getStudentsPageData,
   getAllStudentsByAuthorIdwhoDontBelongToTheGroupIdData,
   getStudentByIdData,
   getStudentPublicByIdentifierData,
   UpdateStudentData,
 } from "@/data/student-data";
 import { currentUser } from "@/lib/auth";
+import { PageQueryInput, pageQuerySchema } from "@/shema-zod/pagination.shema";
 import { z } from "zod";
 
 // Seuls ces champs peuvent être modifiés par l'élève lui-même
@@ -75,15 +76,21 @@ export const deleteStudentsAction = async (studentIds: string[]) => {
 };
 
 // Récupérer tout les élèves de l'utilisateur connecté
-export const getAllStudentsByAuthorIdAction = async () => {
+// Une page des élèves du professeur connecté (pagination, recherche et tri côté serveur)
+export const getStudentsPageAction = async (input: PageQueryInput) => {
   const user = await currentUser();
   if (!user || !user.id || user.role !== "ADMIN") {
     return { error: "Action non autoriser !" };
   }
 
+  const parsed = pageQuerySchema.safeParse(input);
+  if (!parsed.success) {
+    return { error: "Paramètres de pagination invalides." };
+  }
+
   try {
-    const students = await getAllStudentsByAuthorIdData(user.id);
-    return { success: "", data: students };
+    const page = await getStudentsPageData(user.id, parsed.data);
+    return { success: "", data: page };
   } catch (error) {
     console.error(error);
     return {

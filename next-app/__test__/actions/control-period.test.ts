@@ -16,6 +16,7 @@ import {
   getExercisesByGroupIdAndSubjectData,
   getStudentExerciceByIdData,
   getStudentExerciceByStudentIdData,
+  getStudentExercicesPageData,
   updateExerciceData,
 } from "@/data/exercice/exercice-data";
 import { getGroupByStudentIdData } from "@/data/group.data";
@@ -62,6 +63,9 @@ const control = (period: {
   groups: [{ id: "g1" }],
   ...period,
 });
+
+// Une seule page de copies
+const onePage = <T,>(items: T[]) => ({ items, total: items.length, page: 1, pageSize: 12, pageCount: 1 });
 
 const asStudent = () => mockedUser.mockResolvedValue({ id: "s1", role: "STUDENT", name: "Léa" });
 const asTeacher = () => mockedUser.mockResolvedValue({ id: "t1", role: "ADMIN" });
@@ -145,16 +149,16 @@ describe("notes avant la clôture", () => {
   it("l'élève ne voit pas sa note avant la clôture", async () => {
     asStudent();
     const closesAt = future();
-    (getStudentExerciceByStudentIdData as jest.Mock).mockResolvedValue([copy(closesAt)]);
-    const [card] = (await getExercisesDoneAction()).data ?? [];
+    (getStudentExercicesPageData as jest.Mock).mockResolvedValue(onePage([copy(closesAt)]));
+    const [card] = (await getExercisesDoneAction()).data?.items ?? [];
     expect(card.note).toBeNull();
     expect(card.resultsAvailableAt).toEqual(closesAt);
   });
 
   it("l'élève voit sa note après la clôture", async () => {
     asStudent();
-    (getStudentExerciceByStudentIdData as jest.Mock).mockResolvedValue([copy(past())]);
-    const [card] = (await getExercisesDoneAction()).data ?? [];
+    (getStudentExercicesPageData as jest.Mock).mockResolvedValue(onePage([copy(past())]));
+    const [card] = (await getExercisesDoneAction()).data?.items ?? [];
     expect(card.note).toBe(4);
     expect(card.resultsAvailableAt).toBeNull();
   });
@@ -162,8 +166,8 @@ describe("notes avant la clôture", () => {
   it("le professeur voit toujours la note", async () => {
     asTeacher();
     (getStudentByIdData as jest.Mock).mockResolvedValue({ id: "s1", professorId: "t1" });
-    (getStudentExerciceByStudentIdData as jest.Mock).mockResolvedValue([copy(future())]);
-    const [card] = (await getExercisesDoneAction(undefined, "s1")).data ?? [];
+    (getStudentExercicesPageData as jest.Mock).mockResolvedValue(onePage([copy(future())]));
+    const [card] = (await getExercisesDoneAction(undefined, "s1")).data?.items ?? [];
     expect(card.note).toBe(4);
   });
 

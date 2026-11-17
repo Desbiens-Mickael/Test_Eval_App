@@ -18,7 +18,10 @@ Rien en attente : voir « Déjà fait ».
 - [ ] **Volume Docker pour la base de dev** (les données sont perdues à chaque `docker compose down`)
       et **seed plus complet** par défaut (groupe, élèves, leçons attribuées) — voir aussi `npm run seedDemo`
       *(en cours — branche `feat/seed-dev-volume`)*
-- [ ] **Pagination** des listes : élèves, exercices, résultats
+- [ ] **Pagination côté serveur** des listes : élèves, exercices, résultats
+      *(en cours — branche `feat/pagination`)*
+- [ ] **Tri alphabétique des noms accentués** : la base trie « Léa » après « Lucas »
+      (collation binaire de l'image Postgres Alpine) ; utiliser une collation française (ICU)
 - [ ] **Ménage**
   - retirer `next-app/dist/` du dépôt ;
   - réécrire le README (il parle encore de Django) ;

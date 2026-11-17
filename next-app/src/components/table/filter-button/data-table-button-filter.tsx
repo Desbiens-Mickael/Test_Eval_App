@@ -27,6 +27,8 @@ export interface DataTAbleBUttonFilterProps<TData, TValue> {
   title: string;
   templateComponent: React.ElementType<TemplateComponentProps>;
   data: TemplateComponentProps[];
+  /** Mode serveur : nombre d'éléments par valeur (sinon calculé sur les lignes chargées) */
+  counts?: Record<string, number>;
 }
 
 /**
@@ -44,12 +46,15 @@ export default function DataTAbleBUttonFilter<TData, TValue>({
   title,
   data,
   templateComponent: TemplateComponent,
+  counts,
 }: DataTAbleBUttonFilterProps<TData, TValue>) {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
 
   const filters = column?.getFilterValue() as string[] | undefined;
-  const valuesofSelection = column?.getFacetedUniqueValues();
+  const valuesofSelection = counts
+    ? new Map(Object.entries(counts))
+    : column?.getFacetedUniqueValues();
   const matchingFilter = useMemo(
     () =>
       data.filter((value) =>
@@ -161,7 +166,8 @@ export default function DataTAbleBUttonFilter<TData, TValue>({
             data.map((value, index) => {
               const label = value.label;
               const valueCount = valuesofSelection?.get(label) ?? 0;
-              return valueCount > 0 ? (
+              // Une valeur cochée reste visible même sans résultat, pour pouvoir la décocher
+              return valueCount > 0 || isChecked(label) ? (
                 <DropdownMenuCheckboxItem
                   slot="item"
                   key={index}

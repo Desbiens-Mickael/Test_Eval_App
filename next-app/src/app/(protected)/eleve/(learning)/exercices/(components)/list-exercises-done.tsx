@@ -5,6 +5,7 @@ import {
   item,
   titleVariants,
 } from "@/animations/exercice-and-lesson-list";
+import ListPagination from "@/components/list-pagination";
 import { NoteDisplay } from "@/components/note-display";
 import SubjectLayout from "@/components/subject-layout";
 import { Alert, AlertTitle } from "@/components/ui/alert";
@@ -29,6 +30,7 @@ import {
   FileX,
 } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 import ExerciceListSkeleton from "./exercice-list-skeleton";
 
 interface ListExercisesDoneProps {
@@ -40,10 +42,14 @@ export default function ListExercisesDone({
   selectedSubject,
   studentId,
 }: ListExercisesDoneProps) {
-  const { data, isLoading, isError } = useGetExercisesDone({
+  // La liste est remontée (clé = matière) quand la matière change : retour en page 1
+  const [page, setPage] = useState(1);
+  const { data: donePage, isLoading, isError, isPlaceholderData } = useGetExercisesDone({
     subject: selectedSubject,
     studentId,
+    page,
   });
+  const data = donePage?.items;
 
   const baseUrlShowCorrection = !studentId
     ? "/eleve/exercices/correction/"
@@ -130,7 +136,7 @@ export default function ListExercisesDone({
           initial="hidden"
           animate="show"
         >
-          {data?.map((exercice) => (
+          {data.map((exercice) => (
             <motion.div
               key={exercice.studentExerciceId}
               variants={item}
@@ -214,6 +220,17 @@ export default function ListExercisesDone({
           ))}
         </motion.div>
       </AnimatePresence>
+
+      {donePage && (
+        <ListPagination
+          page={donePage.page}
+          pageCount={donePage.pageCount}
+          total={donePage.total}
+          itemsLabel="copies"
+          disabled={isPlaceholderData}
+          onPageChange={setPage}
+        />
+      )}
     </motion.div>
   );
 }

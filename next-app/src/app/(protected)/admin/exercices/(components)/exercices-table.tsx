@@ -8,10 +8,14 @@ import { DataTableColumnHeader } from "@/components/table/data-table-column-head
 import { DataTableRowActions } from "@/components/table/data-table-row-action";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useDeleteExercices } from "@/hooks/mutations/exercice/use-delete-exercice";
-import useGetAllExercicesByType from "@/hooks/queries/exercice/use-get-all-exercices-by-type";
-import { Exercice, ExerciceType } from "@/type/exercice";
+import {
+  ExerciceRow,
+  useGetExercicesPage,
+} from "@/hooks/queries/exercice/use-get-exercices-page";
+import { useServerTable } from "@/hooks/use-server-table";
+import { ExerciceType } from "@/type/exercice";
 import { ColumnDef } from "@tanstack/react-table";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { DataTable } from "../../../../../components/table/data-table";
 import FilterBUttonLessonSubject from "../../../../../components/table/filter-button/filter-button-lesson-subject";
@@ -26,13 +30,17 @@ export default function ExercicesTable({
   /** Contrôles (notés) ou exercices (non notés) : jamais mélangés */
   kind: "CONTROL" | "PRACTICE";
 }) {
+  const { query, alignPage, tableOptions } = useServerTable({ searchColumnId: "Titre" });
   const {
-    data: allExercices,
+    data: exercicePage,
     isLoading,
     isError,
     error,
-  } = useGetAllExercicesByType(exerciceType);
-  const exerciceData = allExercices?.filter((e) => e.kind === kind);
+  } = useGetExercicesPage(exerciceType, kind, query);
+  useEffect(() => alignPage(exercicePage?.page), [alignPage, exercicePage?.page]);
+  useEffect(() => {
+    if (isError) toast.error(error.message);
+  }, [isError, error]);
 
   const { mutateAsync: mutateAsyncDelete } = useDeleteExercices();
   const [openId, setOpenId] = useState<string | null>(null);
@@ -52,7 +60,7 @@ export default function ExercicesTable({
     [mutateAsyncDelete]
   );
 
-  const columns: ColumnDef<Exercice>[] = [
+  const columns: ColumnDef<ExerciceRow>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -131,7 +139,7 @@ export default function ExercicesTable({
                 closesAt={row.original.closesAt}
               />
             ),
-          } satisfies ColumnDef<Exercice>,
+          } satisfies ColumnDef<ExerciceRow>,
         ]
       : []),
     {
@@ -155,23 +163,15 @@ export default function ExercicesTable({
 
   if (isLoading) return <TableSkeleton />;
 
-  if (isError) {
-    toast.error(error.message);
-    return (
-      <DataTable
-        columns={columns}
-        data={exerciceData ?? []}
-        viewOptionsButton
-        inputSearchColumnId="Titre"
-        handleDelete={async () => {}}
-      />
-    );
-  }
-
   return (
     <DataTable
       columns={columns}
-      data={exerciceData ?? []}
+      data={exercicePage?.items ?? []}
+      server={{
+        ...tableOptions,
+        rowCount: exercicePage?.total ?? 0,
+        facets: exercicePage?.facets,
+      }}
       viewOptionsButton
       inputSearchColumnId="Titre"
       // createLink="/admin/exercices/creation"

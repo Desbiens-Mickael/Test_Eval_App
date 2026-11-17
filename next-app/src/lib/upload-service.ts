@@ -30,3 +30,37 @@ export const getUploadServiceConfig = () => {
 
   return { baseUrl: baseUrl.replace(/\/$/, ""), apiKey };
 };
+
+/** Supprime une image du service ; une image déjà absente n'est pas une erreur */
+export const deleteUploadedImage = async (kind: UploadKind, name: string) => {
+  if (!IMAGE_NAME_REGEX.test(name)) return;
+  const { baseUrl, apiKey } = getUploadServiceConfig();
+  const response = await fetch(`${baseUrl}/${kind}/${name}`, {
+    method: "DELETE",
+    headers: { "X-Upload-Key": apiKey },
+  });
+  if (!response.ok && response.status !== 404) {
+    throw new Error(`Suppression de l'image ${name} impossible (${response.status})`);
+  }
+};
+
+/** Images de leçon enregistrées par le service, avec leur date de dépôt */
+export const listLessonImages = async (): Promise<
+  { name: string; modifiedAt: Date }[]
+> => {
+  const { baseUrl, apiKey } = getUploadServiceConfig();
+  const response = await fetch(`${baseUrl}/lesson`, {
+    headers: { "X-Upload-Key": apiKey },
+    cache: "no-store",
+  });
+  if (!response.ok) {
+    throw new Error(`Liste des images impossible (${response.status})`);
+  }
+  const { images } = (await response.json()) as {
+    images: { name: string; modified_at: number }[];
+  };
+  return images.map((image) => ({
+    name: image.name,
+    modifiedAt: new Date(image.modified_at * 1000),
+  }));
+};

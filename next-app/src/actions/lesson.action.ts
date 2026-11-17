@@ -19,8 +19,10 @@ import {
   getLessonsWithAuthor,
   updateLessonData,
 } from "@/data/lesson/lesson-data";
+import { cleanUpLessonImagesSafeData } from "@/data/lesson/lesson-images.data";
 import { getStudentByIdData } from "@/data/student-data";
 import { currentUser } from "@/lib/auth";
+import { lessonImageNames, removedImages } from "@/lib/lesson-images";
 import { stringToSlug } from "@/lib/utils";
 import {
   CreateLessonInput,
@@ -183,6 +185,8 @@ export const createLessonAction = async (data: CreateLessonInput) => {
 
   try {
     const lesson = await createLessonData({ ...parsedData, authorId: user.id });
+    // Balayage périodique des images déposées mais jamais enregistrées
+    await cleanUpLessonImagesSafeData();
     return { success: "La leçon a été créée avec succès.", data: lesson };
   } catch (err) {
     console.error(err);
@@ -236,6 +240,13 @@ export const updateLessonAction = async (
       authorId: user.id,
     });
     if (!lesson) return { error: "Cette leçon n'existe pas !" };
+
+    // Images retirées de la leçon (contenu ou bannière remplacée) : supprimées
+    // seulement maintenant que la leçon est enregistrée, et si aucune autre
+    // leçon ne les utilise
+    await cleanUpLessonImagesSafeData(
+      removedImages(lessonImageNames(existingLesson), lessonImageNames(parsedData))
+    );
     return { success: "La leçon a bien été mise à jour.", data: lesson };
   } catch (err) {
     console.error(err);
@@ -284,6 +295,12 @@ export async function deleteLessonsAction(lessonIds: string[]) {
 
     // Delete the lessons
     await deleteLessonsData(lessonIds, user.id);
+
+    // Images des leçons supprimées (bannière et contenu), si aucune autre
+    // leçon ne les utilise
+    const lessonImages = new Set<string>();
+    lessons.forEach((lesson) => lessonImageNames(lesson).forEach((name) => lessonImages.add(name)));
+    await cleanUpLessonImagesSafeData(lessonImages);
 
     return {
       success:

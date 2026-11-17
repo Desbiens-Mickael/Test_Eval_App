@@ -1,7 +1,7 @@
 // hooks/use-lesson-form-submission.ts
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -45,7 +45,6 @@ export const useLessonFormSubmission = ({
   const serverDomainApi = process.env.NEXT_PUBLIC_SERVER_DOMAIN_API;
 
   const router = useRouter();
-  const previousImagesRef = useRef<string[]>([]);
 
   /**
    * Memoize certaines valeurs coûteuses
@@ -77,30 +76,10 @@ export const useLessonFormSubmission = ({
   const { mutateAsync: mutateAsyncUpdate, isPending: isPendingUpdate } =
     useUpdateLesson();
 
-  /**
-   * Extraction des URLs des images
-   * @param content - Le contenu JSON de la leçon
-   * @returns {string[]} Un tableau d'URLs des images
-   */
-  const extractImagesUrls = (content: JSONContent) => {
-    const images: string[] =
-      content?.content
-        ?.filter((node) => node.type === "image")
-        .map((node) => node.attrs?.src) || [];
-    return images;
-  };
-
-  const getImagesUrlsSource = extractImagesUrls(form.getValues("content"));
-  useEffect(() => {
-    previousImagesRef.current = getImagesUrlsSource;
-  }, []);
-
-  const watchedContent = form.watch("content");
-  useEffect(() => {
-    handleImagesChange();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [watchedContent]);
-
+  // Les images retirées d'une leçon sont supprimées par le serveur, une fois
+  // la leçon enregistrée. Ici, on ne supprime que les images envoyées pendant
+  // cette édition puis abandonnées (page quittée sans enregistrer) ; les
+  // autres oublis sont rattrapés par le nettoyage périodique du serveur.
   // Nettoyage lors d'un rafraîchissement (F5), fermeture d'onglet ou navigation
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -139,42 +118,16 @@ export const useLessonFormSubmission = ({
   };
 
   /**
-   * Suppression d'une image
+   * Suppression silencieuse d'une image envoyée puis abandonnée
    * @param image - L'URL de l'image à supprimer
-   * @returns {Promise<void>}
    */
-  const handleDeleteImage = async (image: string) => {
+  const handleDeleteImage = (image: string) => {
     const img = image.split("/").pop();
-    const response = await fetch(`/api/upload/lesson/${img}`, {
-      method: "DELETE",
-      // keepalive permet l'envoi même lors d'un rafraîchissement / fermeture onglet
-      keepalive: true,
-    });
-    if (!response.ok) {
-      toast.error(
-        "Une erreur c'est produite lors de la suppression de l'image !"
-      );
-      return;
-    }
-    toast.success("Image supprimée avec succès !");
     pendingUploads.delete(image);
-  };
-
-  /**
-   * Gestion des images à supprimer
-   * @returns {void}
-   */
-  const handleImagesChange = () => {
-    const images = extractImagesUrls(form.getValues("content"));
-
-    const imagesToDelete = previousImagesRef.current.filter(
-      (image) => !images.includes(image)
+    // keepalive permet l'envoi même lors d'un rafraîchissement / fermeture onglet
+    fetch(`/api/upload/lesson/${img}`, { method: "DELETE", keepalive: true }).catch(
+      () => undefined
     );
-
-    if (imagesToDelete.length > 0) {
-      imagesToDelete.forEach((image) => handleDeleteImage(image));
-    }
-    previousImagesRef.current = images;
   };
 
   /**
@@ -184,7 +137,6 @@ export const useLessonFormSubmission = ({
   const resetForm = () => {
     form.reset();
     setImageBannerFile({ formData: null, preview: "" });
-    previousImagesRef.current = [];
   };
 
   /**
@@ -194,18 +146,8 @@ export const useLessonFormSubmission = ({
    */
   const onSubmit = async () => {
     try {
-      // Suppression de l'ancienne image si nécessaire
-      if (imageBanner && imageBannerFile.formData !== null) {
-        try {
-          await handleDeleteImage(imageBanner);
-        } catch (error) {
-          toast.error(
-            "Une erreur c'est produite lors de la suppression de l'image !"
-          );
-          console.error(error);
-          return;
-        }
-      }
+      // Upload de la nouvelle bannière ; l'ancienne est supprimée par le
+      // serveur une fois la leçon enregistrée
       // Upload de l'image de la banière
       if (imageBannerFile.formData) {
         try {

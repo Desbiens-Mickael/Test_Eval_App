@@ -15,19 +15,8 @@ Rien en attente : voir « Déjà fait ».
 
 ## 🛠 Technique et fiabilité
 
-- [ ] **Volume Docker pour la base de dev** (les données sont perdues à chaque `docker compose down`)
-      et **seed plus complet** par défaut (groupe, élèves, leçons attribuées) — voir aussi `npm run seedDemo`
-      *(en cours — branche `feat/seed-dev-volume`)*
-- [ ] **Pagination côté serveur** des listes : élèves, exercices, résultats
-      *(en cours — branche `feat/pagination`)*
-- [ ] **Tri alphabétique des noms accentués** : la base trie « Léa » après « Lucas »
-      (collation binaire de l'image Postgres Alpine) ; utiliser une collation française (ICU)
-      *(en cours — branche `feat/tri-accents`)*
-- [ ] **Ménage** *(en cours — branche `chore/menage`)*
-  - retirer `next-app/dist/` du dépôt ;
-  - réécrire le README (il parle encore de Django) ;
-  - garder une seule des deux librairies `bcrypt` / `bcryptjs`.
 - [ ] **Images de leçon** : conversion WebP avec taille maximale, et suppression automatique des images inutilisées
+      *(en cours — branche `feat/images-lecon`)*
 - [ ] **Notifications en temps réel** (SSE ou WebSocket) au lieu du rechargement de la page
 
 ## 💡 Pour plus tard
@@ -58,3 +47,7 @@ Rien en attente : voir « Déjà fait ».
 - [x] Accessibilité : cartes déplaçables au clavier et au tactile (bouton « Déplacer »),
       contrastes du mode sombre conformes WCAG AA (#65)
 - [x] Limite des tentatives de connexion : par compte et par adresse IP (#66)
+- [x] Volume Docker pour la base de dev et seed de base plus complet (#67)
+- [x] Pagination côté serveur des élèves, exercices et copies (#68)
+- [x] Tri alphabétique français des noms et titres (collation ICU) (#69)
+- [x] Ménage : `dist/` retiré du dépôt, `bcryptjs` seul, README réécrit (#70)

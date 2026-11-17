@@ -24,7 +24,7 @@ export default function PublicHeader() {
             width={80}
             height={40}
             type="horizontal"
-            className="w-auto h-12 lg:h-16"
+            className="h-12 lg:h-16"
           />
         </Link>
       </div>

@@ -144,7 +144,7 @@ export default function DataTAbleBUttonFilter<TData, TValue>({
                     onCheckedChange={() => handleFilter(label)}
                     checked={isChecked(label)}
                     className={
-                      "hover:bg-slate-100 data-[state=checked]:bg-slate-100 data-[state=checked]:text-slate-900"
+                      "hover:bg-accent data-[state=checked]:bg-accent data-[state=checked]:text-accent-foreground"
                     }
                   >
                     <TemplateComponent label={label} color={value.color} />
@@ -153,7 +153,7 @@ export default function DataTAbleBUttonFilter<TData, TValue>({
                 );
               })
             ) : (
-              <DropdownMenuItem className="text-slate-400">
+              <DropdownMenuItem className="text-muted-foreground">
                 Aucun resultat
               </DropdownMenuItem>
             )
@@ -168,7 +168,7 @@ export default function DataTAbleBUttonFilter<TData, TValue>({
                   onCheckedChange={() => handleFilter(label)}
                   checked={isChecked(label)}
                   className={
-                    "hover:bg-slate-100 data-[state=checked]:bg-slate-100 data-[state=checked]:text-slate-900"
+                    "hover:bg-accent data-[state=checked]:bg-accent data-[state=checked]:text-accent-foreground"
                   }
                 >
                   <TemplateComponent label={label} color={value.color} />
@@ -178,7 +178,7 @@ export default function DataTAbleBUttonFilter<TData, TValue>({
             })
           )}
           {filters !== undefined && filters?.length > 0 && (
-            <DropdownMenuItem className="text-slate-400">
+            <DropdownMenuItem className="text-muted-foreground">
               <Button
                 variant="outline"
                 className="w-full"

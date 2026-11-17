@@ -31,7 +31,7 @@ export default function AnswerComponent({
           <div className={cn(
             "flex items-center justify-center h-6 w-6 rounded-full text-xs font-medium",
             isCorrect 
-              ? "bg-green-100 text-green-600 border border-green-200"
+              ? "bg-green-100 text-green-700 border border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800"
               : "bg-muted text-muted-foreground"
           )}>
             {String.fromCharCode(65 + answerIndex)}
@@ -77,7 +77,7 @@ export default function AnswerComponent({
               htmlFor={`correct-${index}-${answerIndex}`}
               className={cn(
                 "text-sm font-medium cursor-pointer",
-                isCorrect ? "text-green-600" : "text-muted-foreground"
+                isCorrect ? "text-green-700 dark:text-green-400" : "text-muted-foreground"
               )}
             >
               {isCorrect ? "Bonne réponse" : "Marquer comme bonne réponse"}
@@ -85,7 +85,7 @@ export default function AnswerComponent({
           </div>
           
           {isCorrect && (
-            <div className="flex items-center gap-1 text-sm text-green-600">
+            <div className="flex items-center gap-1 text-sm text-green-700 dark:text-green-400">
               <Check className="h-4 w-4" />
               <span>Réponse correcte</span>
             </div>

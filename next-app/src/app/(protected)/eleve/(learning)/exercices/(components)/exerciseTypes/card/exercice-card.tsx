@@ -2,13 +2,26 @@
 
 import { container, item } from "@/animations/exercice-and-lesson-list";
 import { cardItemInput, contentCardInput } from "@/shema-zod/exercice.shema";
-import { DragDropContext } from "@hello-pangea/dnd";
+import {
+  DragDropContext,
+  DragStart,
+  DragUpdate,
+  DropResult,
+  ResponderProvided,
+} from "@hello-pangea/dnd";
 import { motion } from "framer-motion";
 import { redirect } from "next/navigation";
 import { ExerciseActions } from "../../exercise-actions";
 import CardColumn from "./components/card-column";
 import StartZone from "./components/start-zone";
 import { useCardExercise } from "./hooks/use-card-exercise";
+import { zoneLabel } from "./lib/lib";
+
+// Consignes et annonces du glisser-déposer au clavier, lues par les
+// lecteurs d'écran (par défaut en anglais)
+const DRAG_INSTRUCTIONS =
+  "Appuyez sur Espace pour prendre la carte, utilisez les flèches pour la déplacer, Espace pour la déposer, Échap pour annuler. Vous pouvez aussi utiliser le bouton Déplacer.";
+
 
 interface CardExerciseProps {
   exerciceId: string;
@@ -26,6 +39,8 @@ export default function ExerciceCard({
     response,
     resetExercise,
     handleDragEnd,
+    moveCard,
+    announcement,
     handleSubmit,
     isPending,
     isSuccess,
@@ -35,6 +50,29 @@ export default function ExerciceCard({
     content,
     cards,
   });
+
+  const columns = response.map((col) => col.column);
+  const cardContent = (id: string) =>
+    [...startCards, ...response.flatMap((col) => col.cards)].find((c) => c.id === id)
+      ?.content ?? "";
+
+  const onDragStart = (start: DragStart, provided: ResponderProvided) =>
+    provided.announce(`Carte « ${cardContent(start.draggableId)} » prise.`);
+  const onDragUpdate = (update: DragUpdate, provided: ResponderProvided) =>
+    provided.announce(
+      update.destination
+        ? `Au-dessus de ${zoneLabel(update.destination.droppableId)}, position ${update.destination.index + 1}.`
+        : "Hors des zones de dépôt."
+    );
+  const onDragEnd = (result: DropResult, provided: ResponderProvided) => {
+    const content = cardContent(result.draggableId);
+    provided.announce(
+      result.destination
+        ? `Carte « ${content} » déposée dans ${zoneLabel(result.destination.droppableId)}.`
+        : `Déplacement annulé, la carte « ${content} » reste à sa place.`
+    );
+    handleDragEnd(result);
+  };
 
   if (isSuccess && data?.data) {
     redirect(`/eleve/exercices/correction/${data?.data.id}`);
@@ -53,14 +91,25 @@ export default function ExerciceCard({
           Cartes à classer
         </h1>
         <p className="text-muted-foreground text-base md:text-lg">
-          Glissez et déposez les éléments dans les colonnes correspondantes
+          Glissez chaque carte dans la bonne colonne, ou utilisez le bouton
+          « Déplacer » de la carte (clavier et écran tactile).
         </p>
       </motion.div>
 
-      <DragDropContext onDragEnd={handleDragEnd}>
+      {/* Annonce des déplacements faits avec le bouton « Déplacer » */}
+      <p className="sr-only" role="status" aria-live="polite">
+        {announcement}
+      </p>
+
+      <DragDropContext
+        onDragStart={onDragStart}
+        onDragUpdate={onDragUpdate}
+        onDragEnd={onDragEnd}
+        dragHandleUsageInstructions={DRAG_INSTRUCTIONS}
+      >
         {/* Zone de départ avec toutes les cartes à placer */}
         <motion.div variants={item}>
-          <StartZone startCards={startCards} />
+          <StartZone startCards={startCards} columns={columns} onMove={moveCard} />
         </motion.div>
 
         {/* Affichage des colonnes où déposer les cartes */}
@@ -70,7 +119,12 @@ export default function ExerciceCard({
         >
           {response.map((col, idx) => (
             <motion.div key={idx} variants={item}>
-              <CardColumn column={col.column} cards={col.cards} />
+              <CardColumn
+                column={col.column}
+                cards={col.cards}
+                columns={columns}
+                onMove={moveCard}
+              />
             </motion.div>
           ))}
         </motion.div>

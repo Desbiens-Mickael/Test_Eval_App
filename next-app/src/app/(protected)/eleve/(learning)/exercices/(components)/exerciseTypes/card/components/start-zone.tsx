@@ -2,16 +2,20 @@
 
 import { cardItemInput } from "@/shema-zod/exercice.shema";
 import { Draggable, Droppable } from "@hello-pangea/dnd";
+import { START_ZONE } from "../lib/lib";
 import DraggableCard from "./draggable-card";
 
 interface StartZoneProps {
   startCards: cardItemInput[];
+  /** Colonnes où déposer les cartes, pour le bouton « Déplacer » */
+  columns: string[];
+  onMove: (cardId: string, destination: string) => void;
 }
 
-export default function StartZone({ startCards }: StartZoneProps) {
+export default function StartZone({ startCards, columns, onMove }: StartZoneProps) {
   return (
     <div className="mb-10 relative z-50">
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
         <h2 className="font-bold text-lg md:text-xl text-foreground tracking-tight flex items-center gap-2 bg-card px-4 py-2 rounded-full border border-border">
           <span className="flex items-center justify-center w-6 h-6 bg-primary/10 text-primary rounded-full text-sm font-bold mr-1">
             {startCards.length}
@@ -20,11 +24,11 @@ export default function StartZone({ startCards }: StartZoneProps) {
         </h2>
         {startCards.length > 0 && (
           <span className="text-sm text-muted-foreground bg-card/50 px-3 py-1 rounded-full border border-border">
-            Glissez vers les colonnes ci-dessous
+            Glissez-les ou utilisez le bouton « Déplacer »
           </span>
         )}
       </div>
-      <Droppable droppableId="start" direction="horizontal">
+      <Droppable droppableId={START_ZONE} direction="horizontal">
         {(provided, snapshot) => (
           <div
             ref={provided.innerRef}
@@ -40,6 +44,7 @@ export default function StartZone({ startCards }: StartZoneProps) {
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
                     className="h-8 w-8 text-primary"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -67,16 +72,16 @@ export default function StartZone({ startCards }: StartZoneProps) {
                     <div
                       ref={provided.innerRef}
                       {...provided.draggableProps}
-                      style={{
-                        ...provided.draggableProps.style,
-                        touchAction: "none",
-                      }}
+                      style={provided.draggableProps.style}
                     >
                       <DraggableCard
                         card={card}
                         index={idx}
                         isDragging={snapshot.isDragging}
                         dragHandleProps={provided.dragHandleProps}
+                        zone={START_ZONE}
+                        columns={columns}
+                        onMove={onMove}
                       />
                     </div>
                   )}

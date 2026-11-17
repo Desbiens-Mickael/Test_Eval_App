@@ -108,8 +108,9 @@ export default function ExerciceResultMultipleChoice({
                     textColor = "text-destructive";
                   } else if (!isSelected && isCorrect) {
                     borderColor = "border-yellow-500";
-                    bgColor = "bg-yellow-50";
-                    textColor = "text-yellow-500";
+                    bgColor = "bg-yellow-50 dark:bg-yellow-950/40";
+                    // (jaune 500 sur fond pâle : contraste insuffisant)
+                    textColor = "text-yellow-800 dark:text-yellow-300";
                   }
 
                   return (

@@ -8,7 +8,7 @@ interface ExerciceTypeBadgeProps {
 
 export default function ExerciceTypeBadge({ type }: ExerciceTypeBadgeProps) {
   return (
-    <Badge className="text-slate-500 border-slate-500 bg-background rounded-md">
+    <Badge className="text-muted-foreground border-muted-foreground bg-background rounded-md">
       {type}
     </Badge>
   );

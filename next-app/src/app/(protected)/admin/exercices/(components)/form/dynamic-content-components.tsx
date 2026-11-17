@@ -87,7 +87,7 @@ export const DynamicComponent = <T extends ComponentType>({
   return (
     <Suspense
       fallback={
-        <div className="w-fit h-fit p-4 text-xl text-slate-800">
+        <div className="w-fit h-fit p-4 text-xl text-muted-foreground">
           Chargement...
         </div>
       }

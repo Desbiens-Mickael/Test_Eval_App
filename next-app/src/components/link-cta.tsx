@@ -13,7 +13,7 @@ interface linkCtaProps {
 
 const classLink = {
   default: "bg-gradient-to-r from-primary  to-amber-500  text-primary-foreground",
-  outline: "bg-primary-foreground text-primary border border-primary hover:bg-orange-500 hover:text-white",
+  outline: "bg-primary-foreground text-primary border border-primary hover:bg-primary hover:text-primary-foreground",
 };
 
 export default function LinkCta({ href, text, className, onClick, LinkType = "default" }: linkCtaProps) {

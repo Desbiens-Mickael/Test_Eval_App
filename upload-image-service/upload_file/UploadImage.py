@@ -3,7 +3,7 @@ import os
 import tempfile
 import uuid
 
-from PIL import Image
+from PIL import Image, ImageOps
 
 
 
@@ -26,6 +26,10 @@ class UploadImage():
         self.__file_type_check(file)
         
         self.image = Image.open(self.temp_file.name)
+        # Applique l'orientation EXIF (photos de téléphone prises de côté)
+        self.image = ImageOps.exif_transpose(self.image)
+        # Options d'enregistrement définies par la conversion de format
+        self.save_options = {}
     
     def __file_type_check(self, file):
         """
@@ -94,7 +98,7 @@ class UploadImage():
         try:
             final_path = os.path.join(self.destination_path, self.file_name)
             os.makedirs(os.path.dirname(final_path), exist_ok=True)
-            self.image.save(final_path)
+            self.image.save(final_path, **self.save_options)
         except Exception as e:
             raise ValueError("500: Failed to save image")
         finally:
@@ -125,6 +129,13 @@ class UploadImage():
         self.image.save(self.temp_file.name)
     
 
+    def limit_size(self, max_side=1600):
+        """
+        Réduit l'image pour que son plus grand côté ne dépasse pas max_side,
+        en gardant ses proportions. Une image plus petite n'est pas agrandie.
+        """
+        self.image.thumbnail((max_side, max_side), Image.LANCZOS)
+
     def __convert_image(self, format):
         """
         Convert the image to the specified format and save it to the destination path with the provided quality.
@@ -136,11 +147,21 @@ class UploadImage():
         """
         self.__change_extension(format.lower())
         
-        if format.upper() in ['JPEG', 'WEBP']:
-            # Convert image to RGB if it's in a mode that supports transparency
+        if format.upper() == 'WEBP':
+            # Le WebP gère la transparence : on la garde (logos, schémas)
+            if self.image.mode not in ('RGB', 'RGBA'):
+                has_alpha = self.image.mode in ('LA', 'PA') or (
+                    self.image.mode == 'P' and 'transparency' in self.image.info
+                )
+                self.image = self.image.convert('RGBA' if has_alpha else 'RGB')
+            self.save_options = {'format': 'WEBP', 'quality': self.quality, 'method': 6}
+            self.image.save(self.temp_file.name, **self.save_options)
+        elif format.upper() == 'JPEG':
+            # Le JPEG ne gère pas la transparence
             if self.image.mode in ('RGBA', 'P', 'LA'):
                 self.image = self.image.convert('RGB')
-            self.image.save(self.temp_file.name, format=format, quality=self.quality)
+            self.save_options = {'format': 'JPEG', 'quality': self.quality}
+            self.image.save(self.temp_file.name, **self.save_options)
         elif format.upper() == 'PNG':
             # PNG uses compress_level instead of quality
             self.image.save(self.temp_file.name, format=format, compress_level=9)

@@ -58,8 +58,9 @@ export const uploadFn = createImageUpload({
       toast.error("Type de fichier incorrect (accepte uniquement des images).");
       return false;
     }
-    if (file.size / 1024 / 1024 > 20) {
-      toast.error("Taille du fichier trop grande (max 20MB).");
+    // Même limite que le serveur ; l'image est ensuite convertie en WebP
+    if (file.size / 1024 / 1024 > 10) {
+      toast.error("Image trop volumineuse (10 Mo maximum).");
       return false;
     }
     return true;

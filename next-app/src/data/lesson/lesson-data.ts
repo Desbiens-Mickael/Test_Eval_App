@@ -130,6 +130,7 @@ export const getLessonsWithAuthor = async (lessonIds: string[]) => {
       id: true,
       authorId: true,
       imageBanner: true,
+      content: true,
     },
   });
 };
@@ -192,6 +193,7 @@ export const createLessonData = async (data: CreateLessonType) => {
   return await prisma.lesson.create({
     data: {
       title: data.title,
+      imageBanner: data.imageBanner || null,
       content: data.content,
       slug: data.slug,
       authorId: data.authorId,
@@ -253,5 +255,15 @@ export const getLessonsInfoBeforeDelete = async (lessonIds: string[]) => {
         select: { label: true },
       },
     },
+  });
+};
+
+/**
+ * Bannières et contenus de toutes les leçons, pour savoir quelles images
+ * sont encore utilisées (une image peut avoir été copiée d'une leçon à l'autre).
+ */
+export const getAllLessonImageSourcesData = async () => {
+  return await prisma.lesson.findMany({
+    select: { imageBanner: true, content: true },
   });
 };

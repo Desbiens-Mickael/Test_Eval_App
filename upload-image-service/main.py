@@ -15,7 +15,9 @@ load_dotenv()
 app = FastAPI()
 
 UPLOAD_ROOT = "./uploads/images"
-MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 Mo
+MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 Mo (avant conversion)
+# Plus grand côté d'une image de leçon après conversion
+LESSON_MAX_SIDE = 1600
 # Noms générés par le service : uuid4 + extension (empêche "../" et autres chemins)
 IMAGE_NAME_REGEX = re.compile(r"^[0-9a-fA-F-]{36}\.[a-zA-Z0-9]{2,5}$")
 
@@ -70,7 +72,10 @@ def save_upload(file: Union[UploadFile, None], folder: str, avatar: bool):
         uploader = UploadImage(file, os.path.join(UPLOAD_ROOT, folder) + "/")
         if avatar:
             uploader.resize_image((150, 150))
-            uploader.convert_to_webp()
+        else:
+            uploader.limit_size(LESSON_MAX_SIDE)
+        # Toutes les images sont enregistrées en WebP, plus léger
+        uploader.convert_to_webp()
         new_image_path = uploader.save()
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -113,6 +118,24 @@ async def delete_avatar(image_path: str):
 @app.get("/lesson/{image_path}")
 async def get_lesson_image(image_path: str):
     return FileResponse(image_path_or_404("lessons", image_path))
+
+
+@app.get("/lesson", dependencies=[Depends(require_upload_key)])
+async def list_lesson_images():
+    """
+    Liste les images de leçon enregistrées, avec leur date de dépôt
+    (secondes depuis l'époque Unix). Sert au nettoyage des images
+    qu'aucune leçon n'utilise.
+    """
+    folder = os.path.join(UPLOAD_ROOT, "lessons")
+    if not os.path.isdir(folder):
+        return {"images": []}
+    images = [
+        {"name": entry.name, "modified_at": entry.stat().st_mtime}
+        for entry in os.scandir(folder)
+        if entry.is_file() and IMAGE_NAME_REGEX.match(entry.name)
+    ]
+    return {"images": images}
 
 
 @app.post("/lesson", dependencies=[Depends(require_upload_key)])

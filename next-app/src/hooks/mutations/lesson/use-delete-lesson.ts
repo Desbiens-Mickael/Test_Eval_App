@@ -1,6 +1,5 @@
 import { deleteLessonsAction } from "@/actions/lesson.action";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 
 export const useDeleteLessons = () => {
   const queryClient = useQueryClient();
@@ -33,23 +32,7 @@ export const useDeleteLessons = () => {
           });
         });
 
-        // Delete the images
-        data.data.forEach(async (lesson) => {
-          if (lesson.imageBanner) {
-            const img = lesson.imageBanner.split("/").pop();
-            if (img) {
-              const response = await fetch(`/api/upload/lesson/${img}`, {
-                method: "DELETE",
-              });
-              if (!response.ok) {
-                toast.error(
-                  "Une erreur c'est produite lors de la suppression de l'image !"
-                );
-                return;
-              }
-            }
-          }
-        });
+        // Les images des leçons supprimées sont effacées par le serveur
       }
       return data;
     },

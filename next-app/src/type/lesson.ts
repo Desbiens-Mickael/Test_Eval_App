@@ -2,6 +2,7 @@ import { JSONContent } from "novel";
 
 export type CreateLessonType = {
   title: string;
+  imageBanner?: string | null;
   content: JSONContent;
   authorId: string;
   slug: string;

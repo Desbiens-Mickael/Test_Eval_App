@@ -2,8 +2,8 @@ import { currentUser } from "@/lib/auth";
 import { getUploadServiceConfig, isUploadKind } from "@/lib/upload-service";
 import { NextResponse } from "next/server";
 
-// Taille maximale d'une image envoyée (5 Mo)
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+// Taille maximale d'une image envoyée (10 Mo), avant sa conversion en WebP
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 /**
  * Envoie une image au service d'upload.
@@ -37,7 +37,7 @@ export async function POST(
   }
   if (file.size > MAX_FILE_SIZE) {
     return NextResponse.json(
-      { message: "Image trop volumineuse (5 Mo maximum)." },
+      { message: "Image trop volumineuse (10 Mo maximum)." },
       { status: 413 }
     );
   }

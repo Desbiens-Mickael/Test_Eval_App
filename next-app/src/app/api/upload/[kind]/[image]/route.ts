@@ -1,3 +1,4 @@
+import { getUsedLessonImagesData } from "@/data/lesson/lesson-images.data";
 import { getStudentByIdData } from "@/data/student-data";
 import { getUserByIdData } from "@/data/user-data";
 import { currentUser } from "@/lib/auth";
@@ -34,6 +35,15 @@ export async function DELETE(
     return NextResponse.json(
       { message: "Action non autorisée." },
       { status: 401 }
+    );
+  }
+
+  // Seule une image qu'aucune leçon n'utilise peut être supprimée ici (envoi
+  // abandonné) ; les autres le sont à l'enregistrement de la leçon
+  if (kind === "lesson" && (await getUsedLessonImagesData()).has(image.toLowerCase())) {
+    return NextResponse.json(
+      { message: "Image utilisée par une leçon." },
+      { status: 409 }
     );
   }
 

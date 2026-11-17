@@ -4,6 +4,9 @@ import {
   ColumnDef,
   ColumnFiltersState,
   flexRender,
+  OnChangeFn,
+  PaginationState,
+  RowData,
   getCoreRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
@@ -23,7 +26,7 @@ import {
   TableRow,
   Table as TableUI,
 } from "@/components/ui/table";
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import DataTAbleBUttonCreate from "./data-table-button-create";
 import DataTableButtonReset from "./data-table-button-reset";
 import DataTableDeleteSelectionButton from "./data-table-delete-selection-button";
@@ -36,6 +39,31 @@ export interface Identifier {
   id: string;
 }
 
+declare module "@tanstack/react-table" {
+  interface TableMeta<TData extends RowData> {
+    /** Mode serveur : nombre d'éléments par valeur de filtre, par colonne */
+    facets?: Record<string, Record<string, number>>;
+  }
+}
+
+/**
+ * Mode serveur : le tableau n'affiche qu'une page ; la pagination, le tri et
+ * les filtres sont envoyés au serveur (voir `useServerTable`).
+ */
+export interface ServerTableOptions {
+  /** Nombre total d'éléments correspondant aux filtres */
+  rowCount: number;
+  state: {
+    pagination: PaginationState;
+    sorting: SortingState;
+    columnFilters: ColumnFiltersState;
+  };
+  onPaginationChange: OnChangeFn<PaginationState>;
+  onSortingChange: OnChangeFn<SortingState>;
+  onColumnFiltersChange: OnChangeFn<ColumnFiltersState>;
+  facets?: Record<string, Record<string, number>>;
+}
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -46,6 +74,7 @@ interface DataTableProps<TData, TValue> {
   handleDelete?: (ids: string[]) => Promise<void>;
   handleValidate?: (ids: string[]) => Promise<void>;
   children?: (table: Table<TData>) => ReactElement[];
+  server?: ServerTableOptions;
 }
 
 /**
@@ -69,22 +98,46 @@ export function DataTable<TData extends Identifier, TValue>({
   handleValidate,
   children,
   createChildren,
+  server,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const table = useReactTable({
+  const serverStateKey = server ? JSON.stringify(server.state) : "";
+
+  // Mode serveur : la sélection ne porte que sur la page affichée ; on la vide
+  // dès que la page, le tri ou les filtres changent, pour ne jamais agir sur
+  // des lignes que l'on ne voit plus
+  useEffect(() => {
+    if (server) setRowSelection({});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [serverStateKey]);
+
+  const table = useReactTable<TData>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
-    getFacetedRowModel: getFacetedRowModel(),
+    ...(server
+      ? {
+          manualPagination: true,
+          manualSorting: true,
+          manualFiltering: true,
+          rowCount: server.rowCount,
+          onPaginationChange: server.onPaginationChange,
+          onSortingChange: server.onSortingChange,
+          onColumnFiltersChange: server.onColumnFiltersChange,
+          meta: { facets: server.facets },
+        }
+      : {
+          getPaginationRowModel: getPaginationRowModel(),
+          onSortingChange: setSorting,
+          getSortedRowModel: getSortedRowModel(),
+          onColumnFiltersChange: setColumnFilters,
+          getFilteredRowModel: getFilteredRowModel(),
+          getFacetedUniqueValues: getFacetedUniqueValues(),
+          getFacetedRowModel: getFacetedRowModel(),
+        }),
     getRowId(originalRow) {
       return originalRow.id;
     },
@@ -93,11 +146,13 @@ export function DataTable<TData extends Identifier, TValue>({
       minSize: 50, //enforced during column resizing
       maxSize: 500, //enforced during column resizing
     },
-    state: {
-      sorting,
-      rowSelection,
-      columnFilters,
-    },
+    state: server
+      ? { ...server.state, rowSelection }
+      : {
+          sorting,
+          rowSelection,
+          columnFilters,
+        },
   });
 
   return (

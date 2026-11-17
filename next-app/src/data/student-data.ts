@@ -3,6 +3,9 @@
 // une server action appelable depuis le navigateur sans contrôle d'accès.
 import { prisma } from "@/lib/db";
 import { hashPassword } from "@/lib/hash-password";
+import { orderByFrom, paginate } from "@/lib/pagination";
+import { PageQuery } from "@/type/pagination";
+import { Prisma } from "@prisma/client";
 
 export const createStudentData = async (
   professorId: string,
@@ -77,24 +80,43 @@ export const getStudentByIdentifierlData = async (identifier: string) => {
 };
 
 // Récupérer tout les élèves de l'utilisateur connecté
-export const getAllStudentsByAuthorIdData = async (authorId: string) => {
-  return await prisma.student.findMany({
-    where: { professorId: authorId },
-    select: {
-      id: true,
-      identifier: true,
-      name: true,
-      isActive: true,
-      disabledAt: true,
-      createdAt: true,
-      groupStudent: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
-    },
-  });
+const studentRowSelect = {
+  id: true,
+  identifier: true,
+  name: true,
+  isActive: true,
+  disabledAt: true,
+  createdAt: true,
+  groupStudent: { select: { id: true, name: true } },
+} satisfies Prisma.StudentSelect;
+
+// Colonnes triables du tableau des élèves
+const studentSortColumns: Record<string, (d: Prisma.SortOrder) => Prisma.StudentOrderByWithRelationInput> = {
+  Nom: (d) => ({ name: d }),
+  Identifiant: (d) => ({ identifier: d }),
+  Groupe: (d) => ({ groupStudent: { name: d } }),
+  Compte: (d) => ({ isActive: d }),
+  "Date de création": (d) => ({ createdAt: d }),
+};
+
+/** Une page des élèves d'un professeur, avec recherche sur le nom et l'identifiant */
+export const getStudentsPageData = async (authorId: string, query: PageQuery) => {
+  const where: Prisma.StudentWhereInput = {
+    professorId: authorId,
+    ...(query.search && {
+      OR: [
+        { name: { contains: query.search, mode: "insensitive" } },
+        { identifier: { contains: query.search, mode: "insensitive" } },
+      ],
+    }),
+  };
+  const orderBy = orderByFrom(query.sort, studentSortColumns, { name: "asc" });
+
+  return paginate(
+    query,
+    () => prisma.student.count({ where }),
+    ({ skip, take }) => prisma.student.findMany({ where, select: studentRowSelect, orderBy, skip, take })
+  );
 };
 
 // Récupérer tout les élèves de l'utilisateur connecté qui ne se trouvent dans le groupe demandé

@@ -1,7 +1,9 @@
 import { prisma } from "@/lib/db";
 import { globalExerciceCorectionType } from "@/shema-zod/exercice-corection.shema";
 import { createExerciceFormInput } from "@/shema-zod/exercice.shema";
-import { Exercice, ExerciceKind, ExerciceType } from "@prisma/client";
+import { facetCounts, filterValues, orderByFrom, paginate } from "@/lib/pagination";
+import { PageQuery } from "@/type/pagination";
+import { Exercice, ExerciceKind, ExerciceType, Prisma } from "@prisma/client";
 import { JsonValue } from "@prisma/client/runtime/library";
 
 export type ExerciceOutput = {
@@ -356,69 +358,92 @@ export const getAllExercicesData = async (): Promise<ExerciceOutput[]> => {
   }
 };
 
+// Colonnes triables du tableau des exercices
+const exerciceSortColumns: Record<string, (d: Prisma.SortOrder) => Prisma.ExerciceOrderByWithRelationInput> = {
+  Titre: (d) => ({ title: d }),
+  Niveau: (d) => ({ level: { label: d } }),
+  Leçon: (d) => ({ lesson: { title: d } }),
+  Matière: (d) => ({ lesson: { LessonSubject: { label: d } } }),
+};
+
 /**
- * Récupère tous les exercices selon leur type
- *
- * @param {ExerciceType} type - Le type d'exercice à récupérer. Valeurs possibles : "Card" | "True_or_False" | "List" | "Fill_blank".
- * @returns {Promise<ExerciceOutput[]>} - Une promesse qui résout à une liste d'exercices contenant l'ID, le titre, le nom de la leçon, le sujet de la leçon et le niveau.
- *
- * @example
- * // Récupérer tous les exercices de type "Card"
- * const exercises = await getAllExerciceByType("Card");
- *
- * @description
- * La fonction récupère une liste d'exercices filtrée par le type donné. Les champs retournés pour chaque exercice sont :
- * - `id`: L'identifiant unique de l'exercice
- * - `title`: Le titre de l'exercice
- * - `lesson.name`: Le nom de la leçon associée à l'exercice
- * - `lesson.LessonSubject.label`: Le sujet de la leçon
- * - `level.label`: Le niveau de difficulté de l'exercice
+ * Une page des exercices (ou contrôles) d'un professeur pour un type donné.
+ * Ne charge que les colonnes du tableau : ni contenu ni solutions.
+ * Filtres : recherche sur le titre, niveaux (« Niveau ») et matières (« Matière »).
+ * Les compteurs de chaque filtre tiennent compte des autres filtres.
  */
-export const getAllExercicesByTypeData = async (
+export const getExercicesPageData = async (
+  authorId: string,
   type: ExerciceType,
-  authorId: string
-): Promise<ExerciceOutput[]> => {
-  return prisma.exercice.findMany({
-    where: {
-      type: type,
-      authorId: authorId,
-    },
-    select: {
-      id: true,
-      title: true,
-      kind: true,
-      opensAt: true,
-      closesAt: true,
-      closedAt: true,
-      description: true,
-      content: true,
-      lesson: {
-        select: {
-          id: true,
-          title: true,
-          LessonSubject: {
-            select: { label: true, color: true },
+  kind: ExerciceKind,
+  query: PageQuery
+) => {
+  const levels = filterValues(query, "Niveau");
+  const subjects = filterValues(query, "Matière");
+  const base: Prisma.ExerciceWhereInput = {
+    authorId,
+    typeID: type.id,
+    kind,
+    ...(query.search && { title: { contains: query.search, mode: "insensitive" } }),
+  };
+  const byLevel = (labels?: string[]): Prisma.ExerciceWhereInput =>
+    labels ? { level: { label: { in: labels } } } : {};
+  const bySubject = (labels?: string[]): Prisma.ExerciceWhereInput =>
+    labels ? { lesson: { LessonSubject: { label: { in: labels } } } } : {};
+  const where = { AND: [base, byLevel(levels), bySubject(subjects)] };
+
+  const [page, allLevels, allSubjects] = await Promise.all([
+    paginate(
+      query,
+      () => prisma.exercice.count({ where }),
+      ({ skip, take }) =>
+        prisma.exercice.findMany({
+          where,
+          orderBy: orderByFrom(query.sort, exerciceSortColumns, { createdAt: "desc" }),
+          skip,
+          take,
+          select: {
+            id: true,
+            title: true,
+            kind: true,
+            opensAt: true,
+            closesAt: true,
+            lesson: { select: { title: true, LessonSubject: { select: { label: true, color: true } } } },
+            level: { select: { label: true, color: true } },
           },
-        },
-      },
-      level: {
-        select: {
-          id: true,
-          label: true,
-          color: true,
-        },
-      },
-      type: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+        })
+    ),
+    prisma.exerciceLevel.findMany({ select: { label: true } }),
+    prisma.lessonSubject.findMany({ select: { label: true } }),
+  ]);
+
+  const [levelFacets, subjectFacets] = await Promise.all([
+    facetCounts(
+      allLevels.map((l) => l.label),
+      (label) => prisma.exercice.count({ where: { AND: [base, byLevel([label]), bySubject(subjects)] } })
+    ),
+    facetCounts(
+      allSubjects.map((s) => s.label),
+      (label) => prisma.exercice.count({ where: { AND: [base, byLevel(levels), bySubject([label])] } })
+    ),
+  ]);
+
+  return {
+    ...page,
+    items: page.items.map((exercice) => ({
+      id: exercice.id,
+      title: exercice.title,
+      kind: exercice.kind,
+      opensAt: exercice.opensAt,
+      closesAt: exercice.closesAt,
+      lesson: exercice.lesson.title,
+      level: exercice.level.label,
+      levelColor: exercice.level.color,
+      subject: exercice.lesson.LessonSubject.label,
+      subjectColor: exercice.lesson.LessonSubject.color,
+    })),
+    facets: { Niveau: levelFacets, Matière: subjectFacets },
+  };
 };
 
 /**
@@ -627,6 +652,39 @@ export const getStudentExerciceByStudentIdData = async (
       },
     },
   });
+};
+
+/**
+ * Une page des copies d'un élève, de la plus récente à la plus ancienne,
+ * éventuellement limitée à une matière.
+ */
+export const getStudentExercicesPageData = async (
+  studentId: string,
+  subject: string | undefined,
+  query: Pick<PageQuery, "page" | "pageSize">
+) => {
+  const where: Prisma.StudentExerciceWhereInput = { studentId, subject };
+  return paginate(
+    query,
+    () => prisma.studentExercice.count({ where }),
+    ({ skip, take }) =>
+      prisma.studentExercice.findMany({
+        where,
+        orderBy: [{ createdAt: "desc" }, { id: "asc" }],
+        skip,
+        take,
+        include: {
+          exercice: {
+            select: {
+              id: true,
+              title: true,
+              closesAt: true,
+              lesson: { select: { LessonSubject: { select: { label: true, color: true } } } },
+            },
+          },
+        },
+      })
+  );
 };
 
 /**

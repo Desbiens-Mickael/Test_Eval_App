@@ -23,5 +23,5 @@ export default function FilterBUttonLessonSubject<TData>({ table }: FilterBUtton
     return;
   }
 
-  if (data) return <DataTAbleBUttonFilter column={column} title="Matière" templateComponent={SubjectLayout} data={data} />;
+  if (data) return <DataTAbleBUttonFilter column={column} title="Matière" templateComponent={SubjectLayout} data={data} counts={table.options.meta?.facets?.["Matière"]} />;
 }

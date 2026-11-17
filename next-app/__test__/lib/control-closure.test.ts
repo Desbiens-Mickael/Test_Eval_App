@@ -3,6 +3,9 @@
  */
 import { closeExpiredControlsData } from "@/data/exercice/control-closure.data";
 import { prisma } from "@/lib/db";
+import { publishNotification } from "@/lib/notification-hub";
+
+jest.mock("@/lib/notification-hub", () => ({ publishNotification: jest.fn() }));
 
 jest.mock("@/lib/db", () => {
   const tx = {
@@ -97,4 +100,22 @@ it("ne crée aucune copie si tous les élèves ont rendu", async () => {
   await closeExpiredControlsData(now);
   expect(tx.studentExercice.createMany).not.toHaveBeenCalled();
   expect(tx.notification.create).toHaveBeenCalled();
+});
+
+it("prévient en temps réel les élèves notifiés, après la transaction", async () => {
+  await closeExpiredControlsData(now);
+  expect(publishNotification).toHaveBeenCalledWith([
+    { kind: "student", id: "s1" },
+    { kind: "student", id: "s2" },
+    { kind: "student", id: "s3" },
+  ]);
+  expect((prisma.$transaction as jest.Mock).mock.invocationCallOrder[0]).toBeLessThan(
+    (publishNotification as jest.Mock).mock.invocationCallOrder[0]
+  );
+});
+
+it("ne prévient personne si le contrôle était déjà clos", async () => {
+  tx.exercice.updateMany.mockResolvedValue({ count: 0 });
+  await closeExpiredControlsData(now);
+  expect(publishNotification).not.toHaveBeenCalled();
 });

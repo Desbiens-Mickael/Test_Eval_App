@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { publishNotification } from "@/lib/notification-hub";
 import { calculateNote } from "@/lib/utils";
 import { NotificationType } from "@prisma/client";
 
@@ -32,13 +33,26 @@ export const closeExpiredControlsData = async (now: Date = new Date()) => {
 
 /** Clôture un contrôle. Renvoie false s'il était déjà clos (ou en cours). */
 const closeControlData = async (exerciceId: string, now: Date) => {
+  const result = await closeControlTransaction(exerciceId, now);
+  // Après la validation de la transaction : les élèves connectés sont
+  // prévenus que leurs résultats sont disponibles
+  if (result.notifiedStudentIds.length) {
+    publishNotification(result.notifiedStudentIds.map((id) => ({ kind: "student", id })));
+  }
+  return result.closed;
+};
+
+const closeControlTransaction = async (
+  exerciceId: string,
+  now: Date
+): Promise<{ closed: boolean; notifiedStudentIds: string[] }> => {
   return prisma.$transaction(async (tx) => {
     // Réservation : un seul appel concurrent passe cette mise à jour
     const claimed = await tx.exercice.updateMany({
       where: { id: exerciceId, closedAt: null },
       data: { closedAt: now },
     });
-    if (claimed.count === 0) return false;
+    if (claimed.count === 0) return { closed: false, notifiedStudentIds: [] };
 
     const exercice = await tx.exercice.findUniqueOrThrow({
       where: { id: exerciceId },
@@ -59,7 +73,7 @@ const closeControlData = async (exerciceId: string, now: Date) => {
           select: { id: true },
         })
       : [];
-    if (students.length === 0) return true;
+    if (students.length === 0) return { closed: true, notifiedStudentIds: [] };
 
     const submitted = await tx.studentExercice.findMany({
       where: { exerciceId, studentId: { in: students.map((s) => s.id) } },
@@ -105,7 +119,7 @@ const closeControlData = async (exerciceId: string, now: Date) => {
       skipDuplicates: true,
     });
 
-    return true;
+    return { closed: true, notifiedStudentIds: students.map((s) => s.id) };
   });
 };
 

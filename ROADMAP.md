@@ -15,9 +15,8 @@ Rien en attente : voir « Déjà fait ».
 
 ## 🛠 Technique et fiabilité
 
-- [ ] **Images de leçon** : conversion WebP avec taille maximale, et suppression automatique des images inutilisées
-      *(en cours — branche `feat/images-lecon`)*
 - [ ] **Notifications en temps réel** (SSE ou WebSocket) au lieu du rechargement de la page
+      *(en cours — branche `feat/notifications-temps-reel`)*
 
 ## 💡 Pour plus tard
 
@@ -51,3 +50,4 @@ Rien en attente : voir « Déjà fait ».
 - [x] Pagination côté serveur des élèves, exercices et copies (#68)
 - [x] Tri alphabétique français des noms et titres (collation ICU) (#69)
 - [x] Ménage : `dist/` retiré du dépôt, `bcryptjs` seul, README réécrit (#70)
+- [x] Images de leçon en WebP (1600 px max) et suppression automatique des images inutilisées (#71)

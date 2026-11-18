@@ -59,8 +59,11 @@ services:
           action: sync
           ignore:
             - uploads/images
+            - uploads/audio
     volumes:
       - ./upload-image-service/uploads/images:/app/uploads/images
+      # Audio des dictées, à part des images
+      - ./upload-image-service/uploads/audio:/app/uploads/audio
 
   mailhog:
     image: mailhog/mailhog

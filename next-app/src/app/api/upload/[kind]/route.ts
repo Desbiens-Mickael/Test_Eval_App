@@ -6,9 +6,10 @@ import { NextResponse } from "next/server";
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 /**
- * Envoie une image au service d'upload.
+ * Envoie un fichier au service d'upload.
  * - avatar : tout utilisateur connecté
- * - lesson : professeurs uniquement
+ * - lesson : image de leçon, professeurs uniquement
+ * - dictation : audio d'une dictée, professeurs uniquement
  */
 export async function POST(
   request: Request,
@@ -20,7 +21,7 @@ export async function POST(
   }
 
   const user = await currentUser();
-  if (!user?.id || (kind === "lesson" && user.role !== "ADMIN")) {
+  if (!user?.id || (kind !== "avatar" && user.role !== "ADMIN")) {
     return NextResponse.json(
       { message: "Action non autorisée." },
       { status: 401 }
@@ -37,7 +38,12 @@ export async function POST(
   }
   if (file.size > MAX_FILE_SIZE) {
     return NextResponse.json(
-      { message: "Image trop volumineuse (10 Mo maximum)." },
+      {
+        message:
+          kind === "dictation"
+            ? "Fichier audio trop volumineux (10 Mo maximum)."
+            : "Image trop volumineuse (10 Mo maximum).",
+      },
       { status: 413 }
     );
   }

@@ -212,8 +212,8 @@ export default function CreateExerciceStep1({
                 placeholder="Sélectionnez un format"
                 description={
                   kind === "PRACTICE"
-                    ? "Cartes, vrai ou faux, texte à trou, choix multiple, paires ou remettre dans l'ordre"
-                    : "Cartes, vrai ou faux, texte à trou, choix multiple, paires, remettre dans l'ordre ou réponse libre"
+                    ? "Cartes, vrai ou faux, texte à trou, choix multiple, paires, remettre dans l'ordre ou dictée"
+                    : "Cartes, vrai ou faux, texte à trou, choix multiple, paires, remettre dans l'ordre, réponse libre ou dictée"
                 }
                 onChange={handleSelectType}
               />

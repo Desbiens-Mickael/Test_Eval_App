@@ -19,7 +19,9 @@ export async function DELETE(
   { params }: { params: { kind: string; image: string } }
 ) {
   const { kind, image } = params;
-  if (!isUploadKind(kind) || !IMAGE_NAME_REGEX.test(image)) {
+  // L'audio d'une dictée n'est supprimé que par le serveur, quand plus aucun
+  // exercice ne l'utilise
+  if (!isUploadKind(kind) || kind === "dictation" || !IMAGE_NAME_REGEX.test(image)) {
     return NextResponse.json({ message: "Not found." }, { status: 404 });
   }
 

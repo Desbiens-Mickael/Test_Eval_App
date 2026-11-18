@@ -31,6 +31,7 @@ export enum ExerciceType {
   MatchingPairs = "Associer par paires",
   Ordering = "Remettre dans l'ordre",
   FreeResponse = "Réponse libre",
+  Dictation = "Dictée",
 }
 
 export type StudentExerciceCard = {

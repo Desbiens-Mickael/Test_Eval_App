@@ -80,6 +80,7 @@ describe("schéma global", () => {
         "Associer par paires",
         "Carte",
         "Choix multiple",
+        "Dictée",
         "Remettre dans l'ordre",
         "Réponse libre",
         "Texte à trou",

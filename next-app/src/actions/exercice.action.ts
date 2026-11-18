@@ -19,6 +19,11 @@ import {
 } from "@/data/exercice/exercice-data";
 import { closeExpiredControlsSafeData } from "@/data/exercice/control-closure.data";
 import {
+  cleanUpDictationAudioSafeData,
+  dictationAudioName,
+  getDictationAudioOfExercicesData,
+} from "@/data/exercice/dictation-audio.data";
+import {
   getExerciceTypeByIdData,
   getExerciceTypeByNameData,
 } from "@/data/exercice/exercice-type.data";
@@ -135,6 +140,11 @@ export const createExerciceAction = async (
       lesson.id
     );
 
+    // Balaye l'audio des dictées abandonnées (sans effet sur la création)
+    if (dictationAudioName(validatedData.data.content)) {
+      await cleanUpDictationAudioSafeData();
+    }
+
     return {
       success:
         newExercice.kind === "PRACTICE"
@@ -209,6 +219,12 @@ export const updateExerciceAction = async (
     }
 
     const exercice = await updateExerciceData(id, user.id, validatedData.data);
+
+    // Audio de dictée remplacé : l'ancien fichier est supprimé s'il ne sert plus
+    const previousAudio = dictationAudioName(current.content);
+    if (previousAudio && previousAudio !== dictationAudioName(validatedData.data.content)) {
+      await cleanUpDictationAudioSafeData(new Set([previousAudio]));
+    }
     return {
       success:
         exercice.kind === "PRACTICE"
@@ -253,9 +269,13 @@ export async function deleteExercicesAction(exerciceIds: string[]) {
 
     // Get lesson info before deletion for cache invalidation
     const lessonsInfo = await getExercicesInfoBeforeDelete(exerciceIds);
+    const dictationAudio = await getDictationAudioOfExercicesData(exerciceIds);
 
     // Delete the lessons
     await deleteExercicesData(exerciceIds, user.id);
+
+    // L'audio des dictées supprimées est retiré du service s'il ne sert plus
+    await cleanUpDictationAudioSafeData(dictationAudio);
 
     return {
       success:

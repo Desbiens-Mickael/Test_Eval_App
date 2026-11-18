@@ -21,9 +21,9 @@ Rien en attente : voir « Déjà fait ».
 
 - [ ] **Nouveaux types d'exercices**, en trois étapes :
   - [x] Associer par paires et remettre dans l'ordre (corrigés automatiquement) (#73)
-  - [ ] Réponse libre corrigée par le professeur (contrôles seulement, note par question)
-        *(en cours — branche `feat/reponse-libre`)*
-  - [ ] Dictée audio (fichier enregistré par le professeur)
+  - [x] Réponse libre corrigée par le professeur (contrôles seulement, note par question) (#74)
+  - [ ] Dictée audio (fichier enregistré par le professeur, correction mot à mot)
+        *(en cours — branche `feat/dictee-audio`)*
 - [ ] **Espace parent** : suivi de la progression de son enfant, en lecture seule
 - [ ] **Aide de l'IA pour le professeur** : brouillon d'exercice généré à partir d'une leçon,
       à relire et valider avant publication

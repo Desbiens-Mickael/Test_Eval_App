@@ -2,6 +2,7 @@
 
 import {
   cardResponseItemType,
+  dictationResponseType,
   gapFillTextResponseType,
   matchingPairsResponseType,
   multipleChoiceResponseType,
@@ -10,6 +11,7 @@ import {
 } from "@/shema-zod/exercice-corection.shema";
 import {
   contentCardInput,
+  contentDictationInput,
   contentGapFillInput,
   contentMatchingPairsInput,
   contentMultipleChoiceInput,
@@ -18,6 +20,7 @@ import {
 } from "@/shema-zod/exercice.shema";
 import { JsonValue } from "@prisma/client/runtime/library";
 import ExerciceResultCard from "./exercice-result-card";
+import ExerciceResultDictation from "./exercice-result-dictation";
 import ExerciceResultMatchingPairs from "./exercice-result-matching-pairs";
 import ExerciceResultMultipleChoice from "./exercice-result-multiple-choice";
 import ExerciceResultOrdering from "./exercice-result-ordering";
@@ -74,6 +77,13 @@ export default function CorrectionByType({ type, content, response }: Correction
         <ExerciceResultOrdering
           content={content as contentOrderingInput}
           response={response as orderingResponseType}
+        />
+      );
+    case "Dictée":
+      return (
+        <ExerciceResultDictation
+          content={content as contentDictationInput}
+          response={response as dictationResponseType}
         />
       );
     default:

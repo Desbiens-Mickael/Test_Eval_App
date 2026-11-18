@@ -1,6 +1,7 @@
 import {
   columnInput,
   contentGapFillInput,
+  contentDictationInput,
   contentInput,
   freeResponseQuestionInput,
   matchingPairInput,
@@ -19,7 +20,8 @@ export type ComponentType =
   | "Texte à trou"
   | "Associer par paires"
   | "Remettre dans l'ordre"
-  | "Réponse libre";
+  | "Réponse libre"
+  | "Dictée";
 
 // Typage spécifique pour chaque type de composant
 type ComponentProps = {
@@ -30,6 +32,7 @@ type ComponentProps = {
   "Associer par paires": matchingPairInput[];
   "Remettre dans l'ordre": orderingSequenceInput[];
   "Réponse libre": freeResponseQuestionInput[];
+  Dictée: contentDictationInput;
 };
 
 // Chargement dynamique des composants
@@ -73,6 +76,11 @@ const FreeResponseForm = dynamic(
   { ssr: false }
 );
 
+const DictationForm = dynamic(
+  () => import("./exerciceType/content-dictation/content-dictation-form"),
+  { ssr: false }
+);
+
 // Mapping des composants
 const componentMap = {
   Carte: ContentCardForm,
@@ -82,6 +90,7 @@ const componentMap = {
   "Associer par paires": MatchingPairsForm,
   "Remettre dans l'ordre": OrderingForm,
   "Réponse libre": FreeResponseForm,
+  Dictée: DictationForm,
 };
 
 // Définition des props pour le composant dynamique

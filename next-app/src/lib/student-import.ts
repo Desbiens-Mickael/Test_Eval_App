@@ -8,7 +8,8 @@
 
 export const MAX_IMPORT_ROWS = 100;
 export const MAX_NAME_LENGTH = 50;
-export const IMPORT_TEMPLATE_HEADERS = ["Prénom", "Nom", "Groupe"];
+export const IMPORT_TEMPLATE_HEADERS = ["Prénom", "Nom", "Groupe", "E-mail du parent"];
+export const MAX_EMAIL_LENGTH = 254;
 
 export type ImportRow = {
   /** Numéro de ligne dans le fichier d'origine (1 = première ligne) */
@@ -16,6 +17,8 @@ export type ImportRow = {
   firstname: string;
   lastname: string;
   group: string;
+  /** Facultatif : renseigné, l'espace parent est créé et ses accès envoyés */
+  parentEmail?: string;
 };
 
 export type ImportIssue = { type: "error" | "warning"; message: string };
@@ -123,6 +126,25 @@ const HEADER_ALIASES: Record<keyof Omit<ImportRow, "line">, string[]> = {
   firstname: ["prenom", "prenoms", "first name", "firstname", "prenom de l'eleve"],
   lastname: ["nom", "nom de famille", "last name", "lastname", "nom de l'eleve"],
   group: ["groupe", "classe", "group", "class", "division"],
+  // Les élèves n'ont pas d'e-mail : une colonne « E-mail » est celle du parent
+  parentEmail: [
+    "e-mail du parent",
+    "email du parent",
+    "e-mail parent",
+    "email parent",
+    "e-mail des parents",
+    "email des parents",
+    "mail du parent",
+    "mail parent",
+    "courriel du parent",
+    "courriel parent",
+    "courriel des parents",
+    "mail des parents",
+    "e-mail",
+    "email",
+    "mail",
+    "courriel",
+  ],
 };
 
 const findColumn = (headers: string[], aliases: string[]) =>
@@ -156,8 +178,13 @@ export const tableToRows = (table: string[][]): ParsedImport => {
   }
 
   const columns = hasHeader
-    ? { firstname: firstnameCol, lastname: lastnameCol, group: findColumn(headers, HEADER_ALIASES.group) }
-    : { firstname: 0, lastname: 1, group: 2 };
+    ? {
+        firstname: firstnameCol,
+        lastname: lastnameCol,
+        group: findColumn(headers, HEADER_ALIASES.group),
+        parentEmail: findColumn(headers, HEADER_ALIASES.parentEmail),
+      }
+    : { firstname: 0, lastname: 1, group: 2, parentEmail: 3 };
 
   const dataRows = hasHeader ? nonEmpty.slice(1) : nonEmpty;
   const rows = dataRows.map(({ cells, line }) => ({
@@ -165,6 +192,7 @@ export const tableToRows = (table: string[][]): ParsedImport => {
     firstname: cells[columns.firstname] ?? "",
     lastname: cells[columns.lastname] ?? "",
     group: columns.group === -1 ? "" : cells[columns.group] ?? "",
+    parentEmail: columns.parentEmail === -1 ? "" : cells[columns.parentEmail] ?? "",
   }));
 
   if (rows.length === 0) {
@@ -186,6 +214,9 @@ export const parseImportText = (text: string) => tableToRows(parseDelimitedText(
 // ---------------------------------------------------------------------------
 // Validation
 // ---------------------------------------------------------------------------
+
+// Adresse e-mail simple : quelque chose@domaine.extension, sans espace
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Lettres de toutes les langues (accents compris), espaces, apostrophes, points et tirets
 const NAME_PATTERN = new RegExp("^\\p{L}[\\p{L}\\p{M} '’.-]*$", "u");
@@ -212,6 +243,11 @@ export const checkImportRows = (
     };
     check(row.firstname, "Prénom");
     check(row.lastname, "Nom");
+
+    const parentEmail = row.parentEmail?.trim() ?? "";
+    if (parentEmail && (parentEmail.length > MAX_EMAIL_LENGTH || !EMAIL_PATTERN.test(parentEmail))) {
+      issues.push({ type: "error", message: `E-mail du parent invalide : « ${parentEmail} »` });
+    }
 
     if (row.group && !knownGroups.has(normalizeLabel(row.group))) {
       issues.push({
@@ -288,4 +324,4 @@ export const assignIdentifiers = (bases: string[], taken: Iterable<string>) => {
 };
 
 /** Contenu du modèle CSV à télécharger (séparateur « ; » comme un Excel français) */
-export const IMPORT_TEMPLATE_CSV = `﻿${IMPORT_TEMPLATE_HEADERS.join(";")}\r\nLéa;Martin;CM1 Explorateurs\r\nHugo;Bernard;CM1 Explorateurs\r\n`;
+export const IMPORT_TEMPLATE_CSV = `﻿${IMPORT_TEMPLATE_HEADERS.join(";")}\r\nLéa;Martin;CM1 Explorateurs;parent.martin@exemple.fr\r\nHugo;Bernard;CM1 Explorateurs;\r\n`;

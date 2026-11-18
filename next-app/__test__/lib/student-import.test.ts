@@ -51,7 +51,7 @@ describe("parseImportText", () => {
     const result = parseImportText("Classe;NOM;Prénom\nCM1;Martin;Léa\n");
     expect(result.hasHeader).toBe(true);
     expect(result.rows).toEqual([
-      { line: 2, firstname: "Léa", lastname: "Martin", group: "CM1" },
+      { line: 2, firstname: "Léa", lastname: "Martin", group: "CM1", parentEmail: "" },
     ]);
   });
 
@@ -67,7 +67,9 @@ describe("parseImportText", () => {
 
   it("ignore les lignes vides et garde le bon numéro de ligne", () => {
     const result = parseImportText("Prénom;Nom\n\nLéa;Martin\n;\n");
-    expect(result.rows).toEqual([{ line: 3, firstname: "Léa", lastname: "Martin", group: "" }]);
+    expect(result.rows).toEqual([
+      { line: 3, firstname: "Léa", lastname: "Martin", group: "", parentEmail: "" },
+    ]);
   });
 
   it("signale un en-tête incomplet ou un tableau vide", () => {
@@ -84,6 +86,24 @@ describe("parseImportText", () => {
     const result = parseImportText(decodeTextFile(new TextEncoder().encode(IMPORT_TEMPLATE_CSV)));
     expect(result.error).toBeUndefined();
     expect(result.rows).toHaveLength(2);
+    expect(result.rows.map((r) => r.parentEmail)).toEqual(["parent.martin@exemple.fr", ""]);
+  });
+
+  it.each(["E-mail du parent", "Email parent", "Courriel des parents", "Mail", "EMAIL"])(
+    "reconnaît la colonne de l'e-mail du parent « %s »",
+    (header) => {
+      const result = parseImportText(`Prénom;Nom;${header}\nLéa;Martin;maman@exemple.fr\n`);
+      expect(result.rows[0].parentEmail).toBe("maman@exemple.fr");
+    }
+  );
+
+  it("sans en-tête, l'e-mail du parent est la 4e colonne", () => {
+    const result = parseImportText("Léa\tMartin\tCM1\tmaman@exemple.fr\nHugo\tBernard\t\t\n");
+    expect(result.rows.map((r) => r.parentEmail)).toEqual(["maman@exemple.fr", ""]);
+  });
+
+  it("une colonne d'e-mail absente laisse l'e-mail vide", () => {
+    expect(parseImportText("Prénom;Nom\nLéa;Martin\n").rows[0].parentEmail).toBe("");
   });
 });
 
@@ -103,6 +123,31 @@ describe("readXlsxTable", () => {
       ["Hugo", "Bernard", ""],
     ]);
   });
+});
+
+describe("checkImportRows : e-mail du parent", () => {
+  const withEmail = (parentEmail: string) => ({
+    line: 2,
+    firstname: "Léa",
+    lastname: "Martin",
+    group: "",
+    parentEmail,
+  });
+
+  it("accepte une adresse valide ou un champ vide", () => {
+    expect(checkImportRows([withEmail("maman@exemple.fr")], [])[0].issues).toEqual([]);
+    expect(checkImportRows([withEmail("")], [])[0].issues).toEqual([]);
+    expect(checkImportRows([withEmail("   ")], [])[0].issues).toEqual([]);
+  });
+
+  it.each(["maman", "maman@", "maman@exemple", "ma man@exemple.fr"])(
+    "refuse l'adresse « %s »",
+    (email) => {
+      const [issue] = checkImportRows([withEmail(email)], [])[0].issues;
+      expect(issue).toMatchObject({ type: "error" });
+      expect(issue.message).toMatch(/E-mail du parent invalide/);
+    }
+  );
 });
 
 describe("checkImportRows", () => {

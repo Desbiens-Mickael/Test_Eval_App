@@ -10,6 +10,7 @@ import Image from "next/image";
 import { toast } from "sonner";
 import AccountStatusBadge from "./account-status-badge";
 import PracticeTrackingSection from "./practice-tracking-section";
+import ParentAccessCard from "./parent-access-card";
 import StudentAccountCard from "./student-account-card";
 
 interface ShowStudentProps {
@@ -63,6 +64,11 @@ export default function ShowStudent({ studentId }: ShowStudentProps) {
             identifier={data.identifier}
             isActive={data.isActive}
             disabledAt={data.disabledAt}
+          />
+          <ParentAccessCard
+            studentId={studentId}
+            studentName={data.name}
+            parentEmail={data.parentEmail}
           />
         </div>
       )}

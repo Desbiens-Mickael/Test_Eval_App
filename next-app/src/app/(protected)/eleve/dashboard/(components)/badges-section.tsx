@@ -27,16 +27,27 @@ const ICONS: Record<BadgeIcon, LucideIcon> = {
   "trending-up": TrendingUp,
 };
 
-export default function BadgesSection({ badges }: { badges: StudentProgress["badges"] }) {
+export default function BadgesSection({
+  badges,
+  forParent = false,
+}: {
+  badges: StudentProgress["badges"];
+  /** Textes pour un parent (pas de tutoiement) */
+  forParent?: boolean;
+}) {
   const earned = badges.filter((b) => b.earnedAt).length;
 
   return (
     <section className="viz h-full rounded-xl border bg-card p-5 text-card-foreground shadow-sm">
       <header className="mb-4">
-        <h2 className="text-base font-semibold leading-tight">Mes badges</h2>
+        <h2 className="text-base font-semibold leading-tight">
+          {forParent ? "Badges" : "Mes badges"}
+        </h2>
         <p className="mt-1 text-sm text-muted-foreground">
           {earned === 0
-            ? "Fais des contrôles pour gagner tes premiers badges."
+            ? forParent
+              ? "Pas encore de badge gagné."
+              : "Fais des contrôles pour gagner tes premiers badges."
             : `${earned} badge${earned > 1 ? "s" : ""} gagné${earned > 1 ? "s" : ""} sur ${badges.length}`}
         </p>
       </header>

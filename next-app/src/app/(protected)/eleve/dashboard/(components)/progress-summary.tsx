@@ -3,7 +3,14 @@ import { cn } from "@/lib/utils";
 import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 import { formatRate, rateTone } from "./format";
 
-export default function ProgressSummary({ progress }: { progress: StudentProgress }) {
+/** forParent : textes pour un parent (pas de tutoiement) */
+export default function ProgressSummary({
+  progress,
+  forParent = false,
+}: {
+  progress: StudentProgress;
+  forParent?: boolean;
+}) {
   const { summary, badges } = progress;
   const earned = badges.filter((b) => b.earnedAt).length;
   const completion =
@@ -39,13 +46,17 @@ export default function ProgressSummary({ progress }: { progress: StudentProgres
       </section>
 
       <section className="flex flex-col rounded-xl border bg-card p-5 shadow-sm">
-        <h2 className="text-sm font-medium text-muted-foreground">Mes 5 derniers contrôles</h2>
+        <h2 className="text-sm font-medium text-muted-foreground">
+          {forParent ? "5 derniers contrôles" : "Mes 5 derniers contrôles"}
+        </h2>
         <p className="mt-3 text-3xl font-semibold tracking-tight">
           {formatRate(summary.recentRate)}
         </p>
         <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
           {delta === null ? (
-            "Fais encore quelques contrôles pour voir ta tendance"
+            forParent
+              ? "Encore quelques contrôles avant de voir la tendance"
+              : "Fais encore quelques contrôles pour voir ta tendance"
           ) : (
             <>
               <Trend delta={delta} />
@@ -63,6 +74,8 @@ export default function ProgressSummary({ progress }: { progress: StudentProgres
         <p className="mt-1 text-sm text-muted-foreground">
           {summary.perfect > 0
             ? `${summary.perfect} contrôle${summary.perfect > 1 ? "s" : ""} réussi${summary.perfect > 1 ? "s" : ""} à 100 %`
+            : forParent
+            ? "Pas encore de contrôle réussi à 100 %"
             : "Vise un 100 % pour un nouveau badge"}
         </p>
       </section>

@@ -23,6 +23,7 @@ import {
   FREE_RESPONSE_TYPE,
   contentFreeResponseShema,
 } from "@/shema-zod/exercice.shema";
+import { notifyParentsOfResultsSafe } from "@/data/parent-notify.data";
 
 /**
  * Le professeur ajuste la note d'une copie et/ou laisse un commentaire.
@@ -89,6 +90,11 @@ export const reviewStudentExerciceAction = async (
         await createStudentNotificationData(notification.id, [
           { id: studentExercice.studentId },
         ]);
+        if (noteChanged) {
+          await notifyParentsOfResultsSafe([
+            { studentId: studentExercice.studentId, title: `${title} (note ajustée)` },
+          ]);
+        }
       }
     } catch (error) {
       console.error("Error notifying student about review:", error);
@@ -167,6 +173,12 @@ export const reviewFreeResponseAction = async (
         });
         await createStudentNotificationData(notification.id, [
           { id: studentExercice.studentId },
+        ]);
+        await notifyParentsOfResultsSafe([
+          {
+            studentId: studentExercice.studentId,
+            title: wasPending ? title : `${title} (correction modifiée)`,
+          },
         ]);
       }
     } catch (error) {

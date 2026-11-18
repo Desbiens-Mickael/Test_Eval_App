@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db";
 import { publishNotification } from "@/lib/notification-hub";
 import { calculateNote } from "@/lib/utils";
 import { NotificationType } from "@prisma/client";
+import { notifyParentsOfResultsSafe } from "@/data/parent-notify.data";
 
 /**
  * Clôture des contrôles dont la date de clôture est passée.
@@ -39,20 +40,31 @@ const closeControlData = async (exerciceId: string, now: Date) => {
   if (result.notifiedStudentIds.length) {
     publishNotification(result.notifiedStudentIds.map((id) => ({ kind: "student", id })));
   }
+  // Les parents sont prévenus par e-mail des notes désormais visibles
+  await notifyParentsOfResultsSafe(
+    result.gradedStudentIds.map((studentId) => ({ studentId, title: result.title }))
+  );
   return result.closed;
 };
 
 const closeControlTransaction = async (
   exerciceId: string,
   now: Date
-): Promise<{ closed: boolean; notifiedStudentIds: string[] }> => {
+): Promise<{
+  closed: boolean;
+  notifiedStudentIds: string[];
+  /** Élèves dont la note est désormais visible (sans les copies à corriger) */
+  gradedStudentIds: string[];
+  title: string;
+}> => {
   return prisma.$transaction(async (tx) => {
     // Réservation : un seul appel concurrent passe cette mise à jour
     const claimed = await tx.exercice.updateMany({
       where: { id: exerciceId, closedAt: null },
       data: { closedAt: now },
     });
-    if (claimed.count === 0) return { closed: false, notifiedStudentIds: [] };
+    if (claimed.count === 0)
+      return { closed: false, notifiedStudentIds: [], gradedStudentIds: [], title: "" };
 
     const exercice = await tx.exercice.findUniqueOrThrow({
       where: { id: exerciceId },
@@ -73,12 +85,15 @@ const closeControlTransaction = async (
           select: { id: true },
         })
       : [];
-    if (students.length === 0) return { closed: true, notifiedStudentIds: [] };
+    if (students.length === 0)
+      return { closed: true, notifiedStudentIds: [], gradedStudentIds: [], title: exercice.title };
 
     const submitted = await tx.studentExercice.findMany({
       where: { exerciceId, studentId: { in: students.map((s) => s.id) } },
-      select: { studentId: true },
+      select: { studentId: true, pendingReview: true },
     });
+    // Réponse libre pas encore corrigée : pas de note à annoncer
+    const pendingIds = new Set(submitted.filter((s) => s.pendingReview).map((s) => s.studentId));
     const submittedIds = new Set(submitted.map((s) => s.studentId));
     const missing = students.filter((s) => !submittedIds.has(s.id));
 
@@ -119,7 +134,12 @@ const closeControlTransaction = async (
       skipDuplicates: true,
     });
 
-    return { closed: true, notifiedStudentIds: students.map((s) => s.id) };
+    return {
+      closed: true,
+      notifiedStudentIds: students.map((s) => s.id),
+      gradedStudentIds: students.map((s) => s.id).filter((id) => !pendingIds.has(id)),
+      title: exercice.title,
+    };
   });
 };
 

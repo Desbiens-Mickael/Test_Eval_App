@@ -38,12 +38,17 @@ import ExerciceListSkeleton from "./exercice-list-skeleton";
 interface ListExercisesDoneProps {
   selectedSubject: string | undefined;
   studentId?: string;
+  /** Liste vue par un parent (lecture seule) plutôt que par le professeur */
+  forParent?: boolean;
 }
 
 export default function ListExercisesDone({
   selectedSubject,
   studentId,
+  forParent = false,
 }: ListExercisesDoneProps) {
+  // Le professeur corrige ; l'élève et ses parents consultent
+  const isTeacher = !!studentId && !forParent;
   // La liste est remontée (clé = matière) quand la matière change : retour en page 1
   const [page, setPage] = useState(1);
   const { data: donePage, isLoading, isError, isPlaceholderData } = useGetExercisesDone({
@@ -53,7 +58,9 @@ export default function ListExercisesDone({
   });
   const data = donePage?.items;
 
-  const baseUrlShowCorrection = !studentId
+  const baseUrlShowCorrection = forParent
+    ? `/parent/enfants/${studentId}/copies/`
+    : !studentId
     ? "/eleve/exercices/correction/"
     : `/admin/eleves/${studentId}/exercices/correction/`;
 
@@ -169,7 +176,7 @@ export default function ListExercisesDone({
                     ) : exercice.pendingReview && !exercice.resultsAvailableAt ? (
                       <span className="inline-flex items-center gap-1.5 text-sm font-medium text-primary">
                         <Hourglass className="h-4 w-4" aria-hidden="true" />
-                        {studentId ? "À corriger" : "En attente de correction"}
+                        {isTeacher ? "À corriger" : "En attente de correction"}
                       </span>
                     ) : (
                       <span className="text-sm font-medium text-muted-foreground">
@@ -203,15 +210,17 @@ export default function ListExercisesDone({
                       <Link
                         href={`${baseUrlShowCorrection}${exercice.studentExerciceId}`}
                       >
-                        {exercice.pendingReview && studentId ? (
+                        {exercice.pendingReview && isTeacher ? (
                           <PenLine className="h-4 w-4" />
                         ) : (
                           <Check className="h-4 w-4" />
                         )}
                         <span>
                           {exercice.pendingReview
-                            ? studentId
+                            ? isTeacher
                               ? "Corriger la copie"
+                              : forParent
+                              ? "Voir la copie"
                               : "Voir ma copie"
                             : "Voir la correction"}
                         </span>

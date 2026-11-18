@@ -29,6 +29,7 @@ import {
 } from "@/data/exercice/exercice-type.data";
 import { PageQueryInput, pageQuerySchema } from "@/shema-zod/pagination.shema";
 import { getLessonInGroupData } from "@/data/lesson/lesson-activities.data";
+import { isParentOfStudentData } from "@/data/parent-data";
 import { countExerciceSubmissionsData } from "@/data/exercice/practice-data";
 import {
   getGroupByIdAndAuthorIdData,
@@ -74,6 +75,7 @@ import {
   globalExerciceSchema,
 } from "@/shema-zod/exercice.shema";
 import { Exercice, ExerciceType, StudentExerciceCard } from "@/type/exercice";
+import { notifyParentsOfResultsSafe } from "@/data/parent-notify.data";
 
 /**
  * Vérifie que le contenu correspond bien au type d'exercice choisi,
@@ -511,6 +513,12 @@ export const addExerciceResultAction = async (
     // Créer des notifications pour chaque professeur
     await createTeacherNotificationData(notification.id, group.authorId);
 
+    // Contrôle sans date de clôture : la note est visible tout de suite,
+    // les parents sont prévenus
+    if (!result.pendingReview && areResultsVisible({ closesAt: exercice.closesAt })) {
+      await notifyParentsOfResultsSafe([{ studentId: student.id, title: exercice.title }]);
+    }
+
     return {
       success: "Votre réponse a bien été enregistrée",
       data: createdExerciceResult,
@@ -707,16 +715,27 @@ export const getExercicesByLessonIdAction = async (lessonId: string) => {
 };
 
 // Récupération de tout les exercices d'un groupe qui n'ont pas encore été fait par l'élève
-export const getExercisesToDoAction = async (subject?: string) => {
+export const getExercisesToDoAction = async (subject?: string, childId?: string) => {
   // Récupération de l'utilisateur connecté en session
-  const student = await currentUser();
+  const user = await currentUser();
 
-  // Vérification que l'utilisateur est connecté et qu'il est bien un élève
-  if (!student || !student?.id || student.role !== "STUDENT") {
+  // L'élève lui-même, ou un parent pour l'un de ses enfants
+  let studentId: string | null = null;
+  if (user?.id && user.role === "STUDENT") studentId = user.id;
+  if (
+    user?.id &&
+    user.role === "PARENT" &&
+    childId &&
+    (await isParentOfStudentData(user.id, childId))
+  ) {
+    studentId = childId;
+  }
+  if (!studentId) {
     return {
       error: "Action non autoriser !",
     };
   }
+  const student = { id: studentId };
 
   try {
     // Récupération du groupe de l'élève
@@ -778,7 +797,7 @@ export const getExercisesDoneAction = async (
   if (
     !user ||
     !user?.id ||
-    !(user.role === "STUDENT" || user.role === "ADMIN")
+    !(user.role === "STUDENT" || user.role === "ADMIN" || user.role === "PARENT")
   ) {
     return {
       error: "Action non autoriser !",
@@ -787,6 +806,14 @@ export const getExercisesDoneAction = async (
 
   // Si l'utilisateur est un élève, on utilise son id
   let studentIdToUse = user.id;
+
+  // Un parent ne voit que les copies de ses enfants
+  if (user.role === "PARENT") {
+    if (!studentId || !(await isParentOfStudentData(user.id, studentId))) {
+      return { error: "Action non autoriser !" };
+    }
+    studentIdToUse = studentId;
+  }
 
   // Si l'utilisateur est un professeur et qu'il a spécifié un id d'élève
   if (user.role === "ADMIN" && studentId) {
@@ -828,7 +855,7 @@ export const getExercisesDoneAction = async (
         // le professeur la voit toujours
         const closesAt = studentExercice.exercice?.closesAt ?? null;
         const hidden =
-          user.role === "STUDENT" && !areResultsVisible({ closesAt });
+          user.role !== "ADMIN" && !areResultsVisible({ closesAt });
         return {
           exerciceId: studentExercice.exerciceId || null,
           title: studentExercice.exercice?.title || null,
@@ -875,9 +902,12 @@ export const getStudentExerciceByIdAction = async (
   try {
     const studentExercice = await getStudentExerciceByIdData(studentExerciceId);
 
-    // Seul l'élève concerné ou son professeur peuvent voir la correction
+    // Seuls l'élève concerné, ses parents et son professeur peuvent voir la correction
     const isOwner =
       (user.role === "STUDENT" && studentExercice?.studentId === user.id) ||
+      (user.role === "PARENT" &&
+        !!studentExercice &&
+        (await isParentOfStudentData(user.id, studentExercice.studentId))) ||
       (user.role === "ADMIN" &&
         studentExercice?.student.professorId === user.id);
 
@@ -888,9 +918,9 @@ export const getStudentExerciceByIdAction = async (
       };
     }
 
-    // Pas de note ni de correction pour l'élève avant la clôture
+    // Pas de note ni de correction pour l'élève (ni ses parents) avant la clôture
     const closesAt = studentExercice.exercice?.closesAt ?? null;
-    if (user.role === "STUDENT" && !areResultsVisible({ closesAt })) {
+    if (user.role !== "ADMIN" && !areResultsVisible({ closesAt })) {
       return {
         error: closesAt
           ? `La correction sera disponible le ${formatControlDate(closesAt)}.`
@@ -915,7 +945,7 @@ export const getStudentExerciceByIdAction = async (
     // réponses attendues (il pourrait sinon les recopier ailleurs)
     let exercice = studentExercice.exercice;
     if (
-      user.role === "STUDENT" &&
+      user.role !== "ADMIN" &&
       studentExercice.pendingReview &&
       exercice &&
       isTeacherGraded(exercice.type.name)

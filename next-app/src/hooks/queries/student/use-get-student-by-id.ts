@@ -12,6 +12,8 @@ interface StudentResponse {
   identifier: string;
   isActive: boolean;
   disabledAt: Date | null;
+  /** E-mail du parent (facultatif) : renseigné, l'espace parent existe */
+  parentEmail: string | null;
   professorId: string;
   groupStudent: {
     name: string;

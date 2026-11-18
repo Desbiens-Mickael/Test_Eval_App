@@ -69,7 +69,11 @@ export default function NavUser() {
             <DropdownMenuItem asChild>
               <Link
                 href={
-                  user?.role === "ADMIN" ? "/admin/profil" : "/eleve/profil"
+                  user?.role === "ADMIN"
+                    ? "/admin/profil"
+                    : user?.role === "PARENT"
+                    ? "/parent/parametres"
+                    : "/eleve/profil"
                 }
                 className="flex items-center gap-2 focus:bg-sidebar-accent focus:text-sidebar-accent-foreground cursor-pointer"
               >

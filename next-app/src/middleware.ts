@@ -13,6 +13,7 @@ export default auth((req) => {
   const isHomeRoutes = !!req.nextUrl.pathname.match("^/$");
   const isAdminRoutes = !!req.nextUrl.pathname.startsWith("/admin");
   const isStudentRoutes = !!req.nextUrl.pathname.startsWith("/eleve");
+  const isParentRoutes = !!req.nextUrl.pathname.startsWith("/parent");
   const isAuthRoutes = !!(
     req.nextUrl.pathname.startsWith("/auth") &&
     !req.nextUrl.pathname.endsWith("/reset-email")
@@ -20,7 +21,7 @@ export default auth((req) => {
   const isAcountRoute = !!req.nextUrl.pathname.startsWith("/profil");
 
   // Utilisateur non connecter
-  if ((isAdminRoutes || isStudentRoutes || isAcountRoute) && !isLoggedIn)
+  if ((isAdminRoutes || isStudentRoutes || isParentRoutes || isAcountRoute) && !isLoggedIn)
     return NextResponse.redirect(new URL("/auth/connexion", nextUrl));
 
   if (req.nextUrl.pathname.startsWith("/api/auth/auth/")) {
@@ -32,12 +33,26 @@ export default auth((req) => {
   }
 
   // Rôle User
-  if (userRole === "STUDENT" && (isHomeRoutes || isAdminRoutes || isAuthRoutes))
+  if (
+    userRole === "STUDENT" &&
+    (isHomeRoutes || isAdminRoutes || isParentRoutes || isAuthRoutes)
+  )
     return NextResponse.redirect(new URL("/eleve/dashboard", nextUrl));
 
   // Rôle Admin
-  if (userRole === "ADMIN" && (isHomeRoutes || isStudentRoutes || isAuthRoutes))
+  if (userRole === "ADMIN" && (isHomeRoutes || isStudentRoutes || isParentRoutes || isAuthRoutes))
     return NextResponse.redirect(new URL("/admin/dashboard", nextUrl));
+
+  // Rôle Parent : uniquement son espace
+  if (
+    userRole === "PARENT" &&
+    (isHomeRoutes || isAdminRoutes || isStudentRoutes || isAcountRoute || isAuthRoutes)
+  )
+    return NextResponse.redirect(new URL("/parent", nextUrl));
+
+  // Espace parent réservé aux parents
+  if (isParentRoutes && userRole !== "PARENT")
+    return NextResponse.redirect(new URL("/", nextUrl));
 });
 
 export const config = {

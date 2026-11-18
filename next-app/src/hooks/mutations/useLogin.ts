@@ -15,7 +15,8 @@ const useLogin = () => {
         toast.success(data.success);
       }
       if (data?.redirect) {
-        window.location.replace("/admin/dashboard");
+        // Le middleware envoie chacun vers son espace (professeur ou parent)
+        window.location.replace("/");
       }
       if (data?.error) {
         toast.error(data.error);

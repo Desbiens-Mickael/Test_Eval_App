@@ -156,6 +156,12 @@ export default {
         return true;
       }
 
+      // Parent : compte créé par le professeur, adresse déjà vérifiée
+      if (user.role === "PARENT") {
+        const existingUser = await getUserByIdData(user.id as string);
+        return !!existingUser?.emailVerified;
+      }
+
       // Vérification si role est STUDENT
       if (user.role === "STUDENT") {
         const existingUser = await getStudentByIdData(user.id as string);

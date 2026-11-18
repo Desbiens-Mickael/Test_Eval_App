@@ -10,10 +10,20 @@ export const registerUserFormSchema = z
   })
   .required();
 
-export const registerStudentFormSchema = registerUserFormSchema.omit({
-  email: true,
-  password: true,
-});
+export const registerStudentFormSchema = registerUserFormSchema
+  .omit({
+    email: true,
+    password: true,
+  })
+  .extend({
+    // Facultatif : renseigné, l'espace parent est créé et ses accès envoyés
+    parentEmail: z
+      .string()
+      .trim()
+      .email("Adresse e-mail du parent invalide")
+      .optional()
+      .or(z.literal("")),
+  });
 
 export const loginUserFormSchema = registerUserFormSchema
   .omit({ firstname: true, lastname: true })
@@ -60,7 +70,8 @@ export const userInfosFormSchema = z.object({
       message: "Adresse email non valide!",
     })
   ),
-  role: z.enum([UserRole.ADMIN, UserRole.USER, UserRole.STUDENT]),
+  // Affiché seulement : le rôle n'est jamais modifié par ce formulaire
+  role: z.nativeEnum(UserRole),
 });
 
 export const studentInfosFormSchema = z.object({

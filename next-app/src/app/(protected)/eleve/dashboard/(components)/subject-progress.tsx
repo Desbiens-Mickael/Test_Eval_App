@@ -7,13 +7,20 @@ import { formatRate, rateTone } from "./format";
 /** Réussite par matière : barre sur l'échelle 0–100 %, valeur au bout */
 export default function SubjectProgress({
   bySubject,
+  forParent = false,
 }: {
   bySubject: StudentProgress["bySubject"];
+  /** Textes pour un parent (pas de tutoiement) */
+  forParent?: boolean;
 }) {
   return (
     <ChartCard
       title="Réussite par matière"
-      description="Moyenne de tes contrôles dans chaque matière"
+      description={
+        forParent
+          ? "Moyenne des contrôles dans chaque matière"
+          : "Moyenne de tes contrôles dans chaque matière"
+      }
       className="h-full"
       table={{
         headers: ["Matière", "Réussite", "Meilleur résultat", "Contrôles faits", "Attribués faits"],

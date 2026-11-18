@@ -34,6 +34,7 @@ export default function CreateStudentButton() {
     defaultValues: {
       firstname: "",
       lastname: "",
+      parentEmail: "",
     },
   });
 
@@ -94,6 +95,14 @@ export default function CreateStudentButton() {
               label="Nom"
               placeholder="Nom"
               description="Le nom doit contenir au maximum de 20 caractères"
+            />
+            <CustomInput
+              type="email"
+              control={form.control}
+              name="parentEmail"
+              label="E-mail du parent (facultatif)"
+              placeholder="parent@exemple.fr"
+              description="Renseigné, un espace parent est créé et ses accès lui sont envoyés. Laissez vide si vous suivez vous-même l'élève : vous pourrez l'ajouter plus tard sur sa fiche."
             />
           </form>
         </Form>

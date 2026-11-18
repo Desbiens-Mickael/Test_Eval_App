@@ -433,8 +433,23 @@ const seed = async () => {
     },
   });
 
+  // --- Un parent qui suit le premier élève ------------------------------------
+  // (connexion : parent@gmail.com / azerty22, onglet « Professeur ou parent »)
+  const parent = await prisma.user.create({
+    data: {
+      email: "parent@gmail.com",
+      password: await hashPassword(STUDENT_PASSWORD),
+      role: "PARENT",
+      emailVerified: new Date(),
+    },
+  });
+  await prisma.student.update({
+    where: { id: students[0].id },
+    data: { parentEmail: parent.email, parents: { create: { parentId: parent.id } } },
+  });
+
   console.log(
-    `Base prête : 1 professeur, ${students.length} élèves dans « ${group.name} », 4 leçons, 10 exercices et contrôles, 1 copie à corriger.`
+    `Base prête : 1 professeur, ${students.length} élèves dans « ${group.name} », 1 parent, 4 leçons, 10 exercices et contrôles, 1 copie à corriger.`
   );
 };
 

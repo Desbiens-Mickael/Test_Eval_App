@@ -1,5 +1,7 @@
 "use server";
 
+import { applyStudentParentEmail } from "@/lib/parent-access";
+import { parentEmailShema } from "@/shema-zod/parent.shema";
 import {
   createStudentData,
   getTakenIdentifiersData,
@@ -80,8 +82,21 @@ export const createNewStudentAction = async (
       password
     );
 
+    // E-mail du parent renseigné : son espace est créé et ses accès envoyés
+    let parentMessage = "";
+    const parentEmail = parentEmailShema.safeParse(valuesVerified.data.parentEmail);
+    if (parentEmail.success && parentEmail.data) {
+      const parent = await applyStudentParentEmail({
+        studentId: student.id,
+        studentName: name,
+        email: parentEmail.data,
+        teacherEmail: user.email,
+      });
+      parentMessage = " " + ("error" in parent ? `Espace parent non créé : ${parent.error}` : parent.message);
+    }
+
     return {
-      success: `Un email contenant les informations de connexion pour ${firstname} ${lastname} viens de vous etre envoyé !`,
+      success: `Un email contenant les informations de connexion pour ${firstname} ${lastname} viens de vous etre envoyé !${parentMessage}`,
       data: {
         authorId: user.id,
         identifier,

@@ -19,12 +19,8 @@ Rien en attente : voir « Déjà fait ».
 
 ## 💡 Pour plus tard
 
-- [ ] **Nouveaux types d'exercices**, en trois étapes :
-  - [x] Associer par paires et remettre dans l'ordre (corrigés automatiquement) (#73)
-  - [x] Réponse libre corrigée par le professeur (contrôles seulement, note par question) (#74)
-  - [ ] Dictée audio (fichier enregistré par le professeur, correction mot à mot)
-        *(en cours — branche `feat/dictee-audio`)*
 - [ ] **Espace parent** : suivi de la progression de son enfant, en lecture seule
+      *(en cours — branche `feat/espace-parent`)*
 - [ ] **Aide de l'IA pour le professeur** : brouillon d'exercice généré à partir d'une leçon,
       à relire et valider avant publication
 
@@ -54,3 +50,6 @@ Rien en attente : voir « Déjà fait ».
 - [x] Ménage : `dist/` retiré du dépôt, `bcryptjs` seul, README réécrit (#70)
 - [x] Images de leçon en WebP (1600 px max) et suppression automatique des images inutilisées (#71)
 - [x] Notifications en temps réel (SSE) au lieu du rechargement de la page (#72)
+- [x] Nouveaux types d'exercices : associer par paires et remettre dans l'ordre (#73),
+      réponse libre corrigée par le professeur, note par question (#74),
+      dictée audio corrigée mot à mot (#75)

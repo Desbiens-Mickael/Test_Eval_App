@@ -13,12 +13,19 @@ import { formatLongDate, formatRate, formatShortDate, rateTone } from "./format"
 const CHART_SIZE = 20;
 const LIST_SIZE = 8;
 
-export function ResultsChart({ history }: { history: StudentProgress["history"] }) {
+export function ResultsChart({
+  history,
+  forParent = false,
+}: {
+  history: StudentProgress["history"];
+  /** Textes pour un parent (pas de tutoiement) */
+  forParent?: boolean;
+}) {
   const shown = history.slice(-CHART_SIZE);
 
   return (
     <ChartCard
-      title="Mes résultats au fil du temps"
+      title={forParent ? "Résultats au fil du temps" : "Mes résultats au fil du temps"}
       description={
         history.length > CHART_SIZE
           ? `Tes ${CHART_SIZE} derniers contrôles, du plus ancien au plus récent`
@@ -52,7 +59,20 @@ export function ResultsChart({ history }: { history: StudentProgress["history"] 
   );
 }
 
-export function RecentResults({ history }: { history: StudentProgress["history"] }) {
+export function RecentResults({
+  history,
+  allHref = "/eleve/exercices/faits",
+  copyBasePath = "/eleve/exercices/correction/",
+  forParent = false,
+}: {
+  history: StudentProgress["history"];
+  /** Liste de toutes les copies */
+  allHref?: string;
+  /** Début du lien vers une copie corrigée (suivi de son id) */
+  copyBasePath?: string;
+  /** Textes pour un parent (pas de tutoiement) */
+  forParent?: boolean;
+}) {
   const recent = [...history].reverse().slice(0, LIST_SIZE);
 
   return (
@@ -60,11 +80,13 @@ export function RecentResults({ history }: { history: StudentProgress["history"]
       <header className="mb-3 flex items-start justify-between gap-3">
         <div>
           <h2 className="text-base font-semibold leading-tight">Historique</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Tes derniers contrôles corrigés</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {forParent ? "Derniers contrôles corrigés" : "Tes derniers contrôles corrigés"}
+          </p>
         </div>
         {history.length > 0 && (
           <Link
-            href="/eleve/exercices/faits"
+            href={allHref}
             className="inline-flex shrink-0 items-center gap-1 text-sm font-medium text-primary hover:underline"
           >
             Tout voir <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -79,7 +101,7 @@ export function RecentResults({ history }: { history: StudentProgress["history"]
           {recent.map((h) => (
             <li key={h.id}>
               <Link
-                href={`/eleve/exercices/correction/${h.id}`}
+                href={`${copyBasePath}${h.id}`}
                 className="flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <span

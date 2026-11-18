@@ -41,6 +41,7 @@ export const getStudentByIdData = async (id: string) => {
       professorId: true,
       isActive: true,
       disabledAt: true,
+      parentEmail: true,
       createdAt: true,
       groupStudent: {
         select: {

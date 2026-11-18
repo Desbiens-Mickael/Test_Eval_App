@@ -19,13 +19,13 @@ export default function LoginPage() {
     >
       <Tabs defaultValue="teacher" className="w-full">
         <TabsList className="grid w-full grid-cols-2 bg-foreground text-background">
-          <TabsTrigger value="teacher">Professeur</TabsTrigger>
+          <TabsTrigger value="teacher">Professeur ou parent</TabsTrigger>
           <TabsTrigger value="student">Élève</TabsTrigger>
         </TabsList>
         <TabsContent value="teacher">
           <Card className="justify-center">
             <CardHeader>
-              <CardTitle>Professeur</CardTitle>
+              <CardTitle>Professeur ou parent</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
               <FormLoginProfessor />

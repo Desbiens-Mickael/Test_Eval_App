@@ -19,6 +19,10 @@
   - Leçons (`src/data/lesson`, `src/app/(protected)/admin/lecons/**`), exercices (`src/data/exercice*`, `src/app/(protected)/admin/exercices/**`).  
   - Editeur riche basé sur Tiptap (`src/components/block-editor/**`) avec upload d'images vers le service FastAPI.  
   - Gestion des sujets (`LessonSubject`), niveaux (`GradeLevels`, `ExerciceLevel`), types (`ExerciceType`) via actions dédiées.
+- **Agent Espace parent**  
+  - `src/data/parent-data.ts`, `src/lib/parent-access.ts`, `src/actions/parent*.action.ts`, `src/app/(protected)/parent/**`.  
+  - E-mail du parent facultatif sur la fiche élève (`Student.parentEmail`) : renseigné (à la création ou plus tard), un compte `PARENT` est créé automatiquement et ses accès (mot de passe provisoire) lui sont envoyés ; vide, aucun accès (le professeur peut être lui-même le parent).  
+  - Le parent (`ParentLink`) voit en lecture seule la progression, les contrôles à faire et les copies de ses enfants, aux mêmes conditions que l'élève ; e-mail à chaque nouvelle note (désactivable).
 - **Agent Notifications & Suivi**  
   - `src/data/notification/notification.data.ts`, `src/actions/notification.action.ts`.  
   - Dispatche notifications à destination des professeurs et/ou élèves (`Notification`, `TeacherNotification`, `StudentNotification` dans `prisma/schema.prisma`).  
@@ -87,7 +91,7 @@
 - Docker : `docker compose up --build` lance PostgreSQL, Next.js, upload-service, Mailhog.
 
 ## Points de vigilance & axes d’amélioration
-- Cohérence des rôles (`UserRole`) : seul ADMIN accède aux écrans `/admin/**`. STUDENT renvoyé vers `/eleve/dashboard`.  
+- Cohérence des rôles (`UserRole`) : seul ADMIN accède aux écrans `/admin/**`. STUDENT renvoyé vers `/eleve/dashboard`, PARENT vers `/parent`.  
 - Les actions serveur retournent souvent `{ error | success }` en texte libre : harmoniser pour internationalisation future.  
 - Upload d’images : suppression du fichier existant côté service via `DELETE /avatar/{img}`. Gérer retours 404 du service pour éviter état cassé.  
 - Vérifier que `origin` CORS de l’upload autorise bien toutes URLs nécessaires (valeur unique attendue).  

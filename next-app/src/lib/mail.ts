@@ -25,9 +25,9 @@ if (NODE_ENV === "production") {
     },
   });
 } else {
-  // Pour le dev sous Docker
+  // Pour le dev sous Docker (MAILHOG_HOST=localhost quand Next tourne hors Docker)
   transporter = nodemailer.createTransport({
-    host: "mailhog",
+    host: process.env.MAILHOG_HOST ?? "mailhog",
     port: 1025,
     secure: false,
   });
@@ -146,4 +146,70 @@ export async function sendImportedStudentsCredentialsEmail(
   } catch (error) {
     throw new Error("Echec lors de l'envoi de l'email.");
   }
+}
+
+// ---------------------------------------------------------------------------
+// Espace parent
+// ---------------------------------------------------------------------------
+
+const parentLoginLink = () => `${NEXT_BASE_URL}/auth/connexion`;
+const parentSettingsLink = () => `${NEXT_BASE_URL}/parent/parametres`;
+
+/** Accès d'un nouveau compte parent : adresse et mot de passe provisoire */
+export async function sendParentAccessEmail(
+  destinationEmail: string,
+  childName: string,
+  password: string
+) {
+  await transporter.sendMail({
+    from: MAILER_FROM_ADDRESS,
+    to: destinationEmail,
+    subject: `Vos accès pour suivre ${childName} sur EduCraft`,
+    html:
+      `<p>Bonjour,</p>` +
+      `<p>Un espace parent a été créé pour vous : vous pouvez y suivre la progression de ` +
+      `<strong>${escapeHtml(childName)}</strong>, ses notes et ses copies corrigées.</p>` +
+      `<p>Connectez-vous sur <a href="${parentLoginLink()}">${parentLoginLink()}</a> ` +
+      `(onglet « Professeur ou parent ») avec :</p>` +
+      `<p>Adresse e-mail : <code>${escapeHtml(destinationEmail)}</code><br>` +
+      `Mot de passe provisoire : <code>${escapeHtml(password)}</code></p>` +
+      `<p>Pensez à le changer dans vos paramètres après votre première connexion.</p>`,
+  });
+}
+
+/** Un enfant de plus dans l'espace d'un parent qui a déjà un compte */
+export async function sendParentChildAddedEmail(destinationEmail: string, childName: string) {
+  await transporter.sendMail({
+    from: MAILER_FROM_ADDRESS,
+    to: destinationEmail,
+    subject: `${childName} a été ajouté à votre espace parent`,
+    html:
+      `<p>Bonjour,</p>` +
+      `<p>Vous pouvez désormais suivre <strong>${escapeHtml(childName)}</strong> dans votre ` +
+      `espace parent, avec vos accès habituels : ` +
+      `<a href="${parentLoginLink()}">${parentLoginLink()}</a>.</p>`,
+  });
+}
+
+/** Nouvelles notes disponibles pour les enfants d'un parent */
+export async function sendParentResultsEmail(
+  destinationEmail: string,
+  results: { childName: string; title: string }[]
+) {
+  const items = results
+    .map((r) => `<li><strong>${escapeHtml(r.childName)}</strong> : ${escapeHtml(r.title)}</li>`)
+    .join("");
+  await transporter.sendMail({
+    from: MAILER_FROM_ADDRESS,
+    to: destinationEmail,
+    subject:
+      results.length > 1 ? "Nouvelles notes disponibles" : "Nouvelle note disponible",
+    html:
+      `<p>Bonjour,</p>` +
+      `<p>${results.length > 1 ? "De nouvelles notes sont disponibles" : "Une nouvelle note est disponible"} :</p>` +
+      `<ul>${items}</ul>` +
+      `<p><a href="${parentLoginLink()}">Voir dans votre espace parent</a></p>` +
+      `<p style="color:#666;font-size:12px">Vous ne souhaitez plus ces e-mails ? ` +
+      `<a href="${parentSettingsLink()}">Désactivez-les dans vos paramètres</a>.</p>`,
+  });
 }

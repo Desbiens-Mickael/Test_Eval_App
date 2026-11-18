@@ -187,7 +187,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
   {
     id: "premier-pas",
     title: "Premier pas",
-    description: "Faire ton premier contrôle",
+    description: "Faire un premier contrôle",
     icon: "footprints",
     ...countBadge(1, (s) => s.count),
   },
@@ -243,7 +243,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
   {
     id: "en-progres",
     title: "En progrès",
-    description: "Gagner 15 points sur tes 3 derniers contrôles par rapport aux 3 d'avant",
+    description: "Gagner 15 points sur les 3 derniers contrôles par rapport aux 3 d'avant",
     icon: "trending-up",
     isEarned: (s) => s.improvement !== null && s.improvement >= 15,
   },

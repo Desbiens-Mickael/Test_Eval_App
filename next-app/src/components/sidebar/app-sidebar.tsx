@@ -1,5 +1,6 @@
 "use client";
 import adminMenus from "@/config/admin-menu";
+import parentMenus from "@/config/parent-menu";
 import studentMenus from "@/config/student-menu";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import Link from "next/link";
@@ -25,7 +26,12 @@ export default function AppSidebar() {
 
   const { isMobile, state } = useSidebar();
 
-  const menus = userRole?.role === "ADMIN" ? adminMenus : studentMenus;
+  const menus =
+    userRole?.role === "ADMIN"
+      ? adminMenus
+      : userRole?.role === "PARENT"
+      ? parentMenus
+      : studentMenus;
 
   return (
     <Sidebar variant="inset" collapsible="icon">

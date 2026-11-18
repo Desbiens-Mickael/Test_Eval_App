@@ -2,10 +2,12 @@
  * @jest-environment node
  */
 import { closeExpiredControlsData } from "@/data/exercice/control-closure.data";
+import { notifyParentsOfResultsSafe } from "@/data/parent-notify.data";
 import { prisma } from "@/lib/db";
 import { publishNotification } from "@/lib/notification-hub";
 
 jest.mock("@/lib/notification-hub", () => ({ publishNotification: jest.fn() }));
+jest.mock("@/data/parent-notify.data", () => ({ notifyParentsOfResultsSafe: jest.fn() }));
 
 jest.mock("@/lib/db", () => {
   const tx = {
@@ -118,4 +120,33 @@ it("ne prévient personne si le contrôle était déjà clos", async () => {
   tx.exercice.updateMany.mockResolvedValue({ count: 0 });
   await closeExpiredControlsData(now);
   expect(publishNotification).not.toHaveBeenCalled();
+});
+
+describe("parents", () => {
+  it("prévient les parents de toutes les notes visibles, copies non rendues comprises", async () => {
+    await closeExpiredControlsData(now);
+    expect(notifyParentsOfResultsSafe).toHaveBeenCalledWith([
+      { studentId: "s1", title: "Les fractions" },
+      { studentId: "s2", title: "Les fractions" },
+      { studentId: "s3", title: "Les fractions" },
+    ]);
+  });
+
+  it("n'annonce pas une réponse libre encore à corriger", async () => {
+    tx.studentExercice.findMany.mockResolvedValue([
+      { studentId: "s1", pendingReview: true },
+      { studentId: "s2", pendingReview: false },
+    ]);
+    await closeExpiredControlsData(now);
+    expect(notifyParentsOfResultsSafe).toHaveBeenCalledWith([
+      { studentId: "s2", title: "Les fractions" },
+      { studentId: "s3", title: "Les fractions" },
+    ]);
+  });
+
+  it("ne prévient personne si le contrôle était déjà clos", async () => {
+    tx.exercice.updateMany.mockResolvedValue({ count: 0 });
+    await closeExpiredControlsData(now);
+    expect(notifyParentsOfResultsSafe).toHaveBeenCalledWith([]);
+  });
 });

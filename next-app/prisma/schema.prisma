@@ -73,6 +73,8 @@ enum UserRole {
   ADMIN 
   USER
   STUDENT
+  // Parent d'élève : suit la progression de ses enfants, en lecture seule
+  PARENT
 } 
 
 model User {
@@ -95,6 +97,9 @@ model User {
   updatedAt               DateTime  @updatedAt
   notifications           TeacherNotification[]
   createdNotifications    Notification[] @relation("TeacherNotifications")
+  // Parent : enfants suivis et e-mail à chaque nouvelle note
+  children                ParentLink[]
+  parentEmailNotifications Boolean @default(true)
 }
 
 model Student {
@@ -108,6 +113,10 @@ model Student {
   isActive                Boolean @default(false)
   // Compte désactivé par le professeur (null = compte actif)
   disabledAt              DateTime?
+  // E-mail d'un parent (facultatif). Renseigné, le compte parent est créé
+  // automatiquement et ses accès lui sont envoyés. Vide quand le professeur
+  // est lui-même le parent.
+  parentEmail             String?
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
   professorId             String
@@ -119,6 +128,20 @@ model Student {
   studentExercices        StudentExercice[]
   practiceAttempts        PracticeAttempt[]
   practiceCorrections     PracticeCorrection[]
+  parents                 ParentLink[]
+}
+
+// Parent qui suit un élève (lecture seule)
+model ParentLink {
+  id                      String @id @default(cuid())
+  parent                  User @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  parentId                String
+  student                 Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId               String
+  createdAt               DateTime @default(now())
+
+  @@unique([parentId, studentId])
+  @@index([studentId])
 }
 
 model Group {

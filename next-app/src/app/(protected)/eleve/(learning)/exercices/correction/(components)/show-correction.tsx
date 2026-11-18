@@ -25,12 +25,16 @@ import TeacherReviewPanel from "./teacher-review-panel";
 interface ShowCorrectionProps {
   studentExerciceId: string;
   /** "teacher" affiche le panneau de relecture (note ajustée, commentaire) */
-  mode?: "student" | "teacher";
+  /** parent : comme l'élève, en lecture seule, sans lien vers la leçon */
+  mode?: "student" | "teacher" | "parent";
+  /** Parent : enfant concerné, pour le retour à sa page */
+  childId?: string;
 }
 
 export default function ShowCorrection({
   studentExerciceId,
   mode = "student",
+  childId,
 }: ShowCorrectionProps) {
   const router = useRouter();
   const { data, isLoading, error } = useGetStudentExerciceById({
@@ -39,9 +43,18 @@ export default function ShowCorrection({
 
   useEffect(() => {
     if (!isLoading && !data) {
-      router.replace(mode === "teacher" ? "/admin/eleves" : "/eleve/exercices");
+      router.replace(
+        mode === "teacher"
+          ? "/admin/eleves"
+          : mode === "parent"
+          ? `/parent/enfants/${childId ?? ""}`
+          : "/eleve/exercices"
+      );
     }
-  }, [isLoading, data, router, mode]);
+  }, [isLoading, data, router, mode, childId]);
+
+  // Le parent voit la copie comme l'élève, sans pouvoir rien modifier
+  const readerMode = mode === "parent" ? "student" : mode;
 
   if (isLoading) {
     return <Loader />;
@@ -102,7 +115,7 @@ export default function ShowCorrection({
         </motion.div>
       </motion.div>
 
-      {mode === "student" && !data.pendingReview && (
+      {readerMode === "student" && !data.pendingReview && (
         <TeacherFeedback
           note={data.note}
           autoNote={data.autoNote}
@@ -117,6 +130,8 @@ export default function ShowCorrection({
           <p>
             {mode === "teacher"
               ? `${data.student.name} n'a pas rendu ce contrôle avant sa clôture : la copie est notée 0. Vous pouvez ajuster la note ci-dessous (absence justifiée, par exemple).`
+              : mode === "parent"
+              ? `${data.student.name} n'a pas rendu ce contrôle avant sa clôture : il est noté 0.`
               : "Tu n'as pas rendu ce contrôle avant sa clôture : il est noté 0."}
           </p>
         </div>
@@ -135,7 +150,7 @@ export default function ShowCorrection({
           teacherComment={data.teacherComment}
         />
       )}
-      {data.exercice && isFreeResponse && mode === "student" && !data.isMissing && (
+      {data.exercice && isFreeResponse && readerMode === "student" && !data.isMissing && (
         <ExerciceResultFreeResponse
           content={data.exercice.content as contentFreeResponseInput}
           response={data.response as freeResponseResponseType}

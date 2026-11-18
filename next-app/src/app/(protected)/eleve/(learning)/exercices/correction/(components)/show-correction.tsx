@@ -7,10 +7,18 @@ import PageTitle from "@/components/page-title";
 import { useGetStudentExerciceById } from "@/hooks/queries/exercice/use-get-student-exercice-by-id";
 import { motion } from "framer-motion";
 import ReviewLessonLink from "@/components/lesson/review-lesson-link";
-import { FileX } from "lucide-react";
+import { FileX, Hourglass } from "lucide-react";
+import { freeResponseResponseType } from "@/shema-zod/exercice-corection.shema";
+import { QuestionReview } from "@/shema-zod/exercice-review.shema";
+import {
+  FREE_RESPONSE_TYPE,
+  contentFreeResponseInput,
+} from "@/shema-zod/exercice.shema";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import CorrectionByType from "./correction-by-type";
+import ExerciceResultFreeResponse from "./exercice-result-free-response";
+import FreeResponseReviewPanel from "./free-response-review-panel";
 import TeacherFeedback from "./teacher-feedback";
 import TeacherReviewPanel from "./teacher-review-panel";
 
@@ -49,6 +57,9 @@ export default function ShowCorrection({
     );
   }
 
+  const isFreeResponse = data.exercice?.type.name === FREE_RESPONSE_TYPE;
+  const questionReviews = (data.questionReviews as QuestionReview[] | null) ?? null;
+
   return (
     <>
       <PageTitle title={data?.exercice?.title || "Correction"} />
@@ -75,16 +86,23 @@ export default function ShowCorrection({
           variants={item}
         >
           <motion.div variants={badgeItem}>
-            <NoteDisplay
-              note={data?.note}
-              coeficient={data?.coeficient}
-              className="text-2xl font-bold"
-            />
+            {data.pendingReview ? (
+              <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-base font-semibold text-primary">
+                <Hourglass className="h-4 w-4" aria-hidden="true" />
+                En attente de correction
+              </span>
+            ) : (
+              <NoteDisplay
+                note={data?.note}
+                coeficient={data?.coeficient}
+                className="text-2xl font-bold"
+              />
+            )}
           </motion.div>
         </motion.div>
       </motion.div>
 
-      {mode === "student" && (
+      {mode === "student" && !data.pendingReview && (
         <TeacherFeedback
           note={data.note}
           autoNote={data.autoNote}
@@ -104,8 +122,30 @@ export default function ShowCorrection({
         </div>
       )}
 
+      {/* Réponse libre : le professeur corrige question par question */}
+      {data.exercice && isFreeResponse && mode === "teacher" && (
+        <FreeResponseReviewPanel
+          studentExerciceId={studentExerciceId}
+          studentName={data.student.name}
+          content={data.exercice.content as contentFreeResponseInput}
+          response={data.response as freeResponseResponseType}
+          coeficient={data.coeficient}
+          pendingReview={data.pendingReview}
+          questionReviews={questionReviews}
+          teacherComment={data.teacherComment}
+        />
+      )}
+      {data.exercice && isFreeResponse && mode === "student" && !data.isMissing && (
+        <ExerciceResultFreeResponse
+          content={data.exercice.content as contentFreeResponseInput}
+          response={data.response as freeResponseResponseType}
+          pendingReview={data.pendingReview}
+          questionReviews={questionReviews}
+        />
+      )}
+
       {/* Une copie non rendue n'a pas de réponse à corriger */}
-      {data.exercice && !data.isMissing && (
+      {data.exercice && !isFreeResponse && !data.isMissing && (
         <CorrectionByType
           type={data.exercice.type.name}
           content={data.exercice.content}
@@ -113,7 +153,7 @@ export default function ShowCorrection({
         />
       )}
 
-      {mode === "teacher" && (
+      {mode === "teacher" && !isFreeResponse && (
         <div className="mt-8">
           <TeacherReviewPanel
             studentExerciceId={studentExerciceId}

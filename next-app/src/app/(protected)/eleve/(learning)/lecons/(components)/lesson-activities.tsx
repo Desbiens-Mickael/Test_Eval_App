@@ -194,6 +194,8 @@ function ControlRow({ control }: { control: LessonControl }) {
             <NoteDisplay note={control.note} coeficient={control.coeficient} className="px-0 py-0" />
           </span>
         );
+      } else if (control.pendingReview && control.canSeeCorrection) {
+        status = "Rendu · en attente de correction";
       } else {
         status = control.closesAt
           ? `Rendu · note et correction le ${formatControlDate(control.closesAt)}`

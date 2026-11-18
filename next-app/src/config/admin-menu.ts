@@ -12,6 +12,7 @@ import {
   ListCollapse,
   ListOrdered,
   ListTodo,
+  PenLine,
   Trello,
   Users,
   WholeWord,
@@ -62,6 +63,7 @@ const adminMenus: MenuSideBar = [
           { icon: ListCollapse, title: "Choix multiple", href: "/admin/controles/choix-multiple" },
           { icon: Link2, title: "Paires", href: "/admin/controles/paires" },
           { icon: ListOrdered, title: "Remettre dans l'ordre", href: "/admin/controles/ordre" },
+          { icon: PenLine, title: "Réponse libre", href: "/admin/controles/reponse-libre" },
         ],
       },
       {

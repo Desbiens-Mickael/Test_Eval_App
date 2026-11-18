@@ -99,8 +99,9 @@ const seed = async () => {
       { name: "Choix multiple" },
       { name: "Associer par paires" },
       { name: "Remettre dans l'ordre" },
+      { name: "Réponse libre" },
     ],
-    // Les deux derniers types sont aussi créés par une migration
+    // Les trois derniers types sont aussi créés par des migrations
     skipDuplicates: true,
   });
 
@@ -329,6 +330,27 @@ const seed = async () => {
     ],
   });
 
+  const questionsHistoire = await createExercise({
+    title: "Questions sur la guerre",
+    description: "Réponds en quelques phrases à chaque question.",
+    kind: "CONTROL",
+    lessonID: histoire.id,
+    level: "Difficile",
+    type: "Réponse libre",
+    content: [
+      {
+        question: "Pourquoi le débarquement de juin 1944 est-il important ?",
+        points: 4,
+        modelAnswer: "Il ouvre un front à l'ouest et lance la libération de la France.",
+      },
+      {
+        question: "Que s'est-il passé le 8 mai 1945 ?",
+        points: 2,
+        modelAnswer: "L'Allemagne capitule : la guerre se termine en Europe.",
+      },
+    ],
+  });
+
   // Exercice non attribué au groupe : visible côté professeur uniquement
   await createExercise({
     title: "La fusion nucléaire",
@@ -359,6 +381,7 @@ const seed = async () => {
           vraiFauxHistoire,
           pairesVerbes,
           ordreHistoire,
+          questionsHistoire,
         ].map(({ id }) => ({ id })),
       },
     },
@@ -393,8 +416,24 @@ const seed = async () => {
     },
   });
 
+  // --- Une réponse libre à corriger -----------------------------------------
+  await prisma.studentExercice.create({
+    data: {
+      studentId: students[1].id,
+      exerciceId: questionsHistoire.id,
+      subject: "Histoire",
+      note: 0,
+      coeficient: 10,
+      pendingReview: true,
+      response: [
+        { index: 0, answer: "Les Alliés arrivent en Normandie et commencent à libérer la France." },
+        { index: 1, answer: "La fin de la guerre." },
+      ],
+    },
+  });
+
   console.log(
-    `Base prête : 1 professeur, ${students.length} élèves dans « ${group.name} », 4 leçons, 9 exercices et contrôles.`
+    `Base prête : 1 professeur, ${students.length} élèves dans « ${group.name} », 4 leçons, 10 exercices et contrôles, 1 copie à corriger.`
   );
 };
 

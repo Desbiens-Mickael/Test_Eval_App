@@ -18,9 +18,12 @@ import { UseFormReturn } from "react-hook-form";
 export default function ExerciceKindField({
   form,
   isEditing,
+  practiceDisabledReason,
 }: {
   form: UseFormReturn<createExerciceFormInput>;
   isEditing: boolean;
+  /** Raison pour laquelle le format choisi ne peut pas être un exercice */
+  practiceDisabledReason?: string;
 }) {
   return (
     <FormField
@@ -36,16 +39,19 @@ export default function ExerciceKindField({
               {EXERCICE_KINDS.map((kind) => {
                 const { label, description, icon: Icon } = EXERCICE_KIND_LABELS[kind];
                 const selected = field.value === kind;
+                const disabled = kind === "PRACTICE" && !!practiceDisabledReason;
                 return (
                   <button
                     key={kind}
                     type="button"
                     role="radio"
                     aria-checked={selected}
+                    disabled={disabled}
                     onClick={() => field.onChange(kind)}
                     className={cn(
                       "relative flex items-start gap-3 rounded-lg border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                      selected ? "border-primary bg-primary/5" : "hover:bg-muted/50"
+                      selected ? "border-primary bg-primary/5" : "hover:bg-muted/50",
+                      disabled && "cursor-not-allowed opacity-50 hover:bg-transparent"
                     )}
                   >
                     <span
@@ -70,9 +76,10 @@ export default function ExerciceKindField({
             </div>
           </FormControl>
           <FormDescription>
-            {isEditing
+            {practiceDisabledReason ??
+              (isEditing
               ? "L'usage ne peut plus être changé une fois que des élèves l'ont fait."
-              : "Un exercice permet à l'élève de s'entraîner sans être noté ; un contrôle compte dans sa moyenne."}
+              : "Un exercice permet à l'élève de s'entraîner sans être noté ; un contrôle compte dans sa moyenne.")}
           </FormDescription>
           <FormMessage />
         </FormItem>

@@ -50,6 +50,15 @@ export type DashboardResultInput = {
   createdAt: Date;
 };
 
+/** Réponse libre rendue, pas encore notée par le professeur */
+export type DashboardToReviewInput = {
+  id: string;
+  studentId: string;
+  exerciceId: string | null;
+  exerciceTitle: string | null;
+  createdAt: Date;
+};
+
 export type DashboardInput = {
   now: Date;
   period: DashboardPeriod;
@@ -57,6 +66,8 @@ export type DashboardInput = {
   groups: DashboardGroupInput[];
   students: DashboardStudentInput[];
   results: DashboardResultInput[];
+  /** Copies à corriger : comptées comme rendues, mais sans note */
+  toReview?: DashboardToReviewInput[];
 };
 
 // ---------------------------------------------------------------------------
@@ -120,6 +131,14 @@ export type TeacherDashboard = {
     subject: string;
     average: number;
     count: number;
+  }[];
+  /** Réponses libres à corriger, de la plus ancienne à la plus récente */
+  toReview: {
+    id: string;
+    studentId: string;
+    studentName: string;
+    title: string;
+    createdAt: string;
   }[];
   recent: {
     id: string;
@@ -275,9 +294,14 @@ export const buildTeacherDashboard = (
         )
       : null;
 
+  // Copies à corriger : rendues (elles comptent dans la complétion) mais sans note
+  const toReview = (input.toReview ?? [])
+    .filter((r) => scopedStudentIds.has(r.studentId))
+    .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+
   // --- Complétion (état cumulé, indépendant de la période) -----------------
   const doneKeys = new Set(
-    allResults
+    [...allResults, ...toReview]
       .filter((r) => r.exerciceId)
       .map((r) => `${r.studentId}:${r.exerciceId}`)
   );
@@ -539,6 +563,13 @@ export const buildTeacherDashboard = (
     groups: groupStats,
     studentsToHelp,
     hardestExercises,
+    toReview: toReview.map((r) => ({
+      id: r.id,
+      studentId: r.studentId,
+      studentName: studentById.get(r.studentId)?.name ?? "Élève",
+      title: r.exerciceTitle ?? "Contrôle supprimé",
+      createdAt: r.createdAt.toISOString(),
+    })),
     recent,
     rhythm,
   };

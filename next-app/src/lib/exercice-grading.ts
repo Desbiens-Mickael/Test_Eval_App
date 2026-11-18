@@ -9,12 +9,15 @@ import {
   trueOrFalseResponseShema,
 } from "@/shema-zod/exercice-corection.shema";
 import {
+  FREE_RESPONSE_TYPE,
   contentCardInput,
+  contentFreeResponseInput,
   contentGapFillInput,
   contentMatchingPairsInput,
   contentMultipleChoiceInput,
   contentOrderingInput,
   contentTrueOrFalseInput,
+  studentFreeResponseContent,
   studentMatchingPairsContent,
   studentOrderingContent,
 } from "@/shema-zod/exercice.shema";
@@ -184,6 +187,9 @@ const shuffleOutOfOrder = (items: string[]): string[] => {
   return [...items.slice(1), items[0]];
 };
 
+/** La note de ce type est donnée par le professeur, pas calculée */
+export const isTeacherGraded = (type: string) => type === FREE_RESPONSE_TYPE;
+
 /**
  * Calcule la note d'un exercice à partir de la réponse de l'élève.
  * @throws {Error} si le type d'exercice est inconnu ou si la réponse ne correspond pas au type.
@@ -290,6 +296,12 @@ export const stripExerciceSolutions = (type: string, content: unknown) => {
         instruction: sequence.instruction,
         items: shuffleOutOfOrder(sequence.items),
       }));
+      return { content: studentContent };
+    }
+    case FREE_RESPONSE_TYPE: {
+      const studentContent: studentFreeResponseContent = (
+        content as contentFreeResponseInput
+      ).map(({ question, points }) => ({ question, points }));
       return { content: studentContent };
     }
     default:

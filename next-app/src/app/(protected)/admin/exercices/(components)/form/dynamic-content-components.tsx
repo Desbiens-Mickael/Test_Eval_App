@@ -2,6 +2,7 @@ import {
   columnInput,
   contentGapFillInput,
   contentInput,
+  freeResponseQuestionInput,
   matchingPairInput,
   multipleChoiceInput,
   orderingSequenceInput,
@@ -17,7 +18,8 @@ export type ComponentType =
   | "Choix multiple"
   | "Texte à trou"
   | "Associer par paires"
-  | "Remettre dans l'ordre";
+  | "Remettre dans l'ordre"
+  | "Réponse libre";
 
 // Typage spécifique pour chaque type de composant
 type ComponentProps = {
@@ -27,6 +29,7 @@ type ComponentProps = {
   "Texte à trou": contentGapFillInput;
   "Associer par paires": matchingPairInput[];
   "Remettre dans l'ordre": orderingSequenceInput[];
+  "Réponse libre": freeResponseQuestionInput[];
 };
 
 // Chargement dynamique des composants
@@ -65,6 +68,11 @@ const OrderingForm = dynamic(
   { ssr: false }
 );
 
+const FreeResponseForm = dynamic(
+  () => import("./exerciceType/content-free-response/content-free-response-form"),
+  { ssr: false }
+);
+
 // Mapping des composants
 const componentMap = {
   Carte: ContentCardForm,
@@ -73,6 +81,7 @@ const componentMap = {
   "Texte à trou": GapFillTextForm,
   "Associer par paires": MatchingPairsForm,
   "Remettre dans l'ordre": OrderingForm,
+  "Réponse libre": FreeResponseForm,
 };
 
 // Définition des props pour le composant dynamique

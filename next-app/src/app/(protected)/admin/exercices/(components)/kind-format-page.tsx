@@ -10,6 +10,8 @@ export const FORMATS = {
   "choix-multiple": { type: ExerciceType.MultipleChoice, label: "choix multiple" },
   paires: { type: ExerciceType.MatchingPairs, label: "associer par paires" },
   ordre: { type: ExerciceType.Ordering, label: "remettre dans l'ordre" },
+  // Contrôles seulement : c'est le professeur qui corrige
+  "reponse-libre": { type: ExerciceType.FreeResponse, label: "réponse libre" },
 } as const;
 
 export type FormatSlug = keyof typeof FORMATS;

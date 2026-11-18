@@ -20,9 +20,9 @@ Rien en attente : voir « Déjà fait ».
 ## 💡 Pour plus tard
 
 - [ ] **Nouveaux types d'exercices**, en trois étapes :
-  - [ ] Associer par paires et remettre dans l'ordre (corrigés automatiquement)
-        *(en cours — branche `feat/types-exercices`)*
-  - [ ] Réponse libre corrigée par le professeur
+  - [x] Associer par paires et remettre dans l'ordre (corrigés automatiquement) (#73)
+  - [ ] Réponse libre corrigée par le professeur (contrôles seulement, note par question)
+        *(en cours — branche `feat/reponse-libre`)*
   - [ ] Dictée audio (fichier enregistré par le professeur)
 - [ ] **Espace parent** : suivi de la progression de son enfant, en lecture seule
 - [ ] **Aide de l'IA pour le professeur** : brouillon d'exercice généré à partir d'une leçon,

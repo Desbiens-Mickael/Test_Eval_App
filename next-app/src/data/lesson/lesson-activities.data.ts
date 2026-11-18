@@ -29,7 +29,13 @@ export const getLessonActivitiesForStudentData = async (
       },
       studentExercices: {
         where: { studentId },
-        select: { id: true, note: true, coeficient: true, isMissing: true },
+        select: {
+          id: true,
+          note: true,
+          coeficient: true,
+          isMissing: true,
+          pendingReview: true,
+        },
       },
     },
     orderBy: { createdAt: "asc" },

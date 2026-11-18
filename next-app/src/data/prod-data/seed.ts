@@ -103,8 +103,11 @@ const seed = async () => {
       {
         name: "Remettre dans l'ordre",
       },
+      {
+        name: "Réponse libre",
+      },
     ],
-    // Les deux derniers types sont aussi créés par une migration
+    // Les trois derniers types sont aussi créés par des migrations
     skipDuplicates: true,
   });
 };

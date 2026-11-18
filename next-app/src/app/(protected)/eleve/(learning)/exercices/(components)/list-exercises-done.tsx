@@ -28,6 +28,8 @@ import {
   Check,
   Clock,
   FileX,
+  Hourglass,
+  PenLine,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -164,6 +166,11 @@ export default function ListExercisesDone({
                         coeficient={exercice.coeficient}
                         className="text-lg font-semibold"
                       />
+                    ) : exercice.pendingReview && !exercice.resultsAvailableAt ? (
+                      <span className="inline-flex items-center gap-1.5 text-sm font-medium text-primary">
+                        <Hourglass className="h-4 w-4" aria-hidden="true" />
+                        {studentId ? "À corriger" : "En attente de correction"}
+                      </span>
                     ) : (
                       <span className="text-sm font-medium text-muted-foreground">
                         Copie rendue
@@ -196,8 +203,18 @@ export default function ListExercisesDone({
                       <Link
                         href={`${baseUrlShowCorrection}${exercice.studentExerciceId}`}
                       >
-                        <Check className="h-4 w-4" />
-                        <span>Voir la correction</span>
+                        {exercice.pendingReview && studentId ? (
+                          <PenLine className="h-4 w-4" />
+                        ) : (
+                          <Check className="h-4 w-4" />
+                        )}
+                        <span>
+                          {exercice.pendingReview
+                            ? studentId
+                              ? "Corriger la copie"
+                              : "Voir ma copie"
+                            : "Voir la correction"}
+                        </span>
                         <ArrowRight className="h-4 w-4 -mr-1 group-hover/btn:translate-x-0.5 transition-transform" />
                       </Link>
                     </Button>

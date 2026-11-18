@@ -81,6 +81,7 @@ describe("schéma global", () => {
         "Carte",
         "Choix multiple",
         "Remettre dans l'ordre",
+        "Réponse libre",
         "Texte à trou",
         "Vrai ou Faux",
       ].sort()

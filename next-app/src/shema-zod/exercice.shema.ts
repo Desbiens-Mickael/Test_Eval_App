@@ -141,6 +141,32 @@ export const contentOrderingShema = z
     });
   });
 
+// Réponse libre : l'élève rédige, le professeur note chaque question
+export const FREE_RESPONSE_TYPE = "Réponse libre";
+export const FREE_RESPONSE_MAX_POINTS = 20;
+export const FREE_RESPONSE_MODEL_ANSWER_MAX_LENGTH = 2000;
+
+export const freeResponseQuestionShema = z.object({
+  question: z.string().trim().min(1, "La question ne peut pas être vide"),
+  points: z.coerce
+    .number({ invalid_type_error: "Le barème doit être un nombre" })
+    .int("Le barème doit être un nombre entier de points")
+    .min(1, "Chaque question vaut au moins 1 point")
+    .max(FREE_RESPONSE_MAX_POINTS, `Une question vaut au plus ${FREE_RESPONSE_MAX_POINTS} points`),
+  // Réponse attendue : aide le professeur à corriger, montrée à l'élève une fois noté
+  modelAnswer: z
+    .string()
+    .trim()
+    .max(
+      FREE_RESPONSE_MODEL_ANSWER_MAX_LENGTH,
+      `La réponse attendue ne peut pas dépasser ${FREE_RESPONSE_MODEL_ANSWER_MAX_LENGTH} caractères`
+    ),
+});
+
+export const contentFreeResponseShema = z
+  .array(freeResponseQuestionShema)
+  .min(1, "Ajoutez au moins une question");
+
 // Contrôle : noté, une seule tentative. Exercice (PRACTICE) : non noté, essais illimités.
 export const EXERCICE_KINDS = ["CONTROL", "PRACTICE"] as const;
 export const exerciceKindSchema = z.enum(EXERCICE_KINDS, {
@@ -184,6 +210,7 @@ const contentSchema = z.union([
   contentTrueOrFalseSchema,
   contentMatchingPairsShema,
   contentOrderingShema,
+  contentFreeResponseShema,
 ]);
 
 /**
@@ -198,6 +225,7 @@ export const contentSchemaByType: Record<string, z.ZodTypeAny> = {
   "Choix multiple": contentMultipleChoiceShema,
   "Associer par paires": contentMatchingPairsShema,
   "Remettre dans l'ordre": contentOrderingShema,
+  [FREE_RESPONSE_TYPE]: contentFreeResponseShema,
 };
 
 export const globalExerciceSchema = createExerciceBaseSchema
@@ -221,6 +249,10 @@ export type matchingPairInput = z.infer<typeof matchingPairShema>;
 export type contentMatchingPairsInput = z.infer<typeof contentMatchingPairsShema>;
 export type orderingSequenceInput = z.infer<typeof orderingSequenceShema>;
 export type contentOrderingInput = z.infer<typeof contentOrderingShema>;
+export type freeResponseQuestionInput = z.infer<typeof freeResponseQuestionShema>;
+export type contentFreeResponseInput = z.infer<typeof contentFreeResponseShema>;
+/** Contrôle « Réponse libre » vu par un élève : sans les réponses attendues */
+export type studentFreeResponseContent = { question: string; points: number }[];
 /** Exercice « Associer par paires » vu par un élève : sans les solutions */
 export type studentMatchingPairsContent = { lefts: string[]; rights: string[] };
 /** Exercice « Remettre dans l'ordre » vu par un élève : éléments mélangés */

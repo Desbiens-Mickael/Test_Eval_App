@@ -318,10 +318,17 @@ model StudentExercice {
   reviewedAt              DateTime?
   // Copie non rendue à la clôture du contrôle : note 0, aucune réponse
   isMissing               Boolean  @default(false)
+  // Réponse libre : copie rendue, en attente de la note du professeur.
+  // Elle ne compte dans aucune moyenne tant qu'elle n'est pas corrigée.
+  pendingReview           Boolean  @default(false)
+  // Réponse libre : points et commentaire du professeur pour chaque question
+  // [{ points: number, comment: string | null }]
+  questionReviews         Json?
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
 
   @@unique([studentId, exerciceId])
+  @@index([pendingReview])
 }
 
 // Essai d'un élève sur un exercice d'entraînement (non compté dans la moyenne)

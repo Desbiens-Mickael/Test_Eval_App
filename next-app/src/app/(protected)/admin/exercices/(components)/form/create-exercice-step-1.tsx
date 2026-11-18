@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { AlertCircle, Award, BookOpen, Type } from "lucide-react";
-import { Dispatch } from "react";
+import { Dispatch, useEffect } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import CustomInput from "@/components/form/custom-input";
@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/card";
 import useGetAllExerciceLevels from "@/hooks/queries/use-get-all-exercice-levels";
 import useGetAllExerciceType from "@/hooks/queries/use-get-all-exercice-type";
-import { createExerciceFormInput } from "@/shema-zod/exercice.shema";
+import { FREE_RESPONSE_TYPE, createExerciceFormInput } from "@/shema-zod/exercice.shema";
 import { ComponentType } from "./dynamic-content-components";
 import ExerciceKindBadge from "@/components/exercice-kind-badge";
 import ExerciceKindField from "./exercice-kind-field";
@@ -58,6 +58,21 @@ export default function CreateExerciceStep1({
     isError: isLevelsError,
     error: levelsError,
   } = useGetAllExerciceLevels();
+
+  // Une réponse libre est corrigée à la main : elle ne peut être qu'un contrôle
+  const typeId = form.watch("exerciceTypeId");
+  const typeName = exerciceTypeData?.data?.find((t) => t.id === typeId)?.name;
+  const isFreeResponse = typeName === FREE_RESPONSE_TYPE;
+  const typeOptions =
+    kind === "PRACTICE"
+      ? exerciceTypeData?.data?.filter((t) => t.name !== FREE_RESPONSE_TYPE)
+      : exerciceTypeData?.data;
+
+  useEffect(() => {
+    if (isFreeResponse && form.getValues("kind") !== "CONTROL") {
+      form.setValue("kind", "CONTROL", { shouldValidate: true });
+    }
+  }, [isFreeResponse, form]);
 
   const handleSelectType = (value: string) => {
     if (exerciceTypeData?.data) {
@@ -166,7 +181,15 @@ export default function CreateExerciceStep1({
                 <ExerciceKindBadge kind={form.getValues("kind")} />
               </p>
             ) : (
-              <ExerciceKindField form={form} isEditing={isEditing} />
+              <ExerciceKindField
+                form={form}
+                isEditing={isEditing}
+                practiceDisabledReason={
+                  isFreeResponse
+                    ? "Une réponse libre est corrigée par vous, copie par copie : elle ne peut être qu'un contrôle."
+                    : undefined
+                }
+              />
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <CustomSelect
@@ -183,11 +206,15 @@ export default function CreateExerciceStep1({
                 disabled={isEditing}
                 isRequired={true}
                 label="Format"
-                options={exerciceTypeData?.data}
+                options={typeOptions}
                 name="exerciceTypeId"
                 control={form.control}
                 placeholder="Sélectionnez un format"
-                description="Cartes, vrai ou faux, texte à trou, choix multiple, paires ou remettre dans l'ordre"
+                description={
+                  kind === "PRACTICE"
+                    ? "Cartes, vrai ou faux, texte à trou, choix multiple, paires ou remettre dans l'ordre"
+                    : "Cartes, vrai ou faux, texte à trou, choix multiple, paires, remettre dans l'ordre ou réponse libre"
+                }
                 onChange={handleSelectType}
               />
             </div>

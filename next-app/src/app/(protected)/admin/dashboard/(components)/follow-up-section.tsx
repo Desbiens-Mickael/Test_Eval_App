@@ -3,7 +3,14 @@ import {
   StudentAlertReason,
   TeacherDashboard,
 } from "@/lib/teacher-dashboard";
-import { AlertTriangle, ChevronRight, Clock, PartyPopper, TrendingDown } from "lucide-react";
+import {
+  AlertTriangle,
+  ChevronRight,
+  Clock,
+  PartyPopper,
+  PenLine,
+  TrendingDown,
+} from "lucide-react";
 import Link from "next/link";
 import { formatRelative, formatScore, initials } from "./format";
 
@@ -188,6 +195,45 @@ export function HardestExercises({
           ))}
         </ul>
       )}
+    </Card>
+  );
+}
+
+/** Réponses libres à corriger : affiché seulement s'il y en a */
+export function CopiesToReview({ copies }: { copies: TeacherDashboard["toReview"] }) {
+  if (copies.length === 0) return null;
+  const shown = copies.slice(0, 6);
+  return (
+    <Card
+      title={`Copies à corriger (${copies.length})`}
+      description="Réponses libres en attente de votre note : elles ne comptent pas encore dans les moyennes"
+      footer={
+        copies.length > shown.length ? (
+          <span className="text-muted-foreground">
+            Et {copies.length - shown.length} autre{copies.length - shown.length > 1 ? "s" : ""}…
+          </span>
+        ) : undefined
+      }
+    >
+      <ul className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+        {shown.map((c) => (
+          <li key={c.id}>
+            <Link
+              href={`/admin/eleves/${c.studentId}/exercices/correction/${c.id}`}
+              className="flex items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <PenLine className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+              <span className="min-w-0 flex-1">
+                <span className="block truncate font-medium">{c.studentName}</span>
+                <span className="block truncate text-sm text-muted-foreground">{c.title}</span>
+              </span>
+              <span className="shrink-0 text-xs text-muted-foreground">
+                {formatRelative(c.createdAt)}
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </Card>
   );
 }

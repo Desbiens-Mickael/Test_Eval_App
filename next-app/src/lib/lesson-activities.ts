@@ -22,6 +22,8 @@ type Row = {
     note: number;
     coeficient: number;
     isMissing: boolean;
+    /** Réponse libre pas encore corrigée (absent des anciennes données de test) */
+    pendingReview?: boolean;
   }[];
 };
 
@@ -52,6 +54,8 @@ export type LessonControl = Base & {
   note: number | null;
   coeficient: number | null;
   isMissing: boolean;
+  /** Réponse libre rendue, pas encore corrigée : pas de note */
+  pendingReview: boolean;
   /** La correction peut être ouverte */
   canSeeCorrection: boolean;
 };
@@ -98,9 +102,10 @@ export const buildLessonActivities = (
       opensAt: row.opensAt,
       closesAt: row.closesAt,
       studentExerciceId: copy?.id ?? null,
-      note: copy && visible ? copy.note : null,
+      note: copy && visible && !copy.pendingReview ? copy.note : null,
       coeficient: copy?.coeficient ?? null,
       isMissing: copy?.isMissing ?? false,
+      pendingReview: copy?.pendingReview ?? false,
       canSeeCorrection: !!copy && visible,
     });
   }

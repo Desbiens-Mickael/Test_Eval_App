@@ -23,6 +23,8 @@ export const getStudentProgressRawData = async (studentId: string) => {
       where: {
         studentId,
         OR: [{ exerciceId: null }, { exercice: notPending }],
+        // Une réponse libre pas encore corrigée n'a pas de note
+        pendingReview: false,
       },
       select: {
         id: true,
@@ -42,6 +44,9 @@ export const getStudentProgressRawData = async (studentId: string) => {
             kind: "CONTROL",
             groups: { some: { id: student.groupId } },
             ...notPending,
+            // Réponse libre rendue mais pas encore corrigée : ni faite ni à faire
+            // tant qu'elle n'a pas de note
+            NOT: { studentExercices: { some: { studentId, pendingReview: true } } },
           },
           select: {
             id: true,

@@ -50,24 +50,46 @@ import {
   getControlStatus,
 } from "@/lib/control-period";
 import { formatExercice } from "@/lib/exercice-format";
-import { gradeExercice } from "@/lib/exercice-grading";
+import {
+  gradeExercice,
+  isTeacherGraded,
+  stripExerciceSolutions,
+} from "@/lib/exercice-grading";
+import { calculateNote } from "@/lib/utils";
+import { freeResponseResponseShema } from "@/shema-zod/exercice-corection.shema";
 import { Prisma } from "@prisma/client";
 import {
   globalExerciceCorectionShema,
   globalExerciceCorectionType,
 } from "@/shema-zod/exercice-corection.shema";
 import {
+  FREE_RESPONSE_TYPE,
   contentSchemaByType,
   createExerciceFormInput,
   globalExerciceSchema,
 } from "@/shema-zod/exercice.shema";
 import { Exercice, ExerciceType, StudentExerciceCard } from "@/type/exercice";
 
-/** Vérifie que le contenu correspond bien au type d'exercice choisi */
-const isContentValidForType = async (typeId: string, content: unknown) => {
+/**
+ * Vérifie que le contenu correspond bien au type d'exercice choisi,
+ * et que ce type peut servir à cet usage.
+ * @returns un message d'erreur, ou null si tout va bien
+ */
+const checkContentForType = async (
+  typeId: string,
+  content: unknown,
+  kind: "CONTROL" | "PRACTICE"
+) => {
   const type = await getExerciceTypeByIdData(typeId);
   const schema = type && contentSchemaByType[type.name];
-  return Boolean(schema?.safeParse(content).success);
+  if (!type || !schema?.safeParse(content).success) {
+    return "Le contenu ne correspond pas au type d'exercice !";
+  }
+  // Chaque essai d'un exercice devrait être corrigé à la main
+  if (type.name === FREE_RESPONSE_TYPE && kind !== "CONTROL") {
+    return "Une réponse libre ne peut être qu'un contrôle : c'est le professeur qui la corrige.";
+  }
+  return null;
 };
 
 // Création d'un exercice
@@ -91,14 +113,12 @@ export const createExerciceAction = async (
       };
     }
 
-    if (
-      !(await isContentValidForType(
-        validatedData.data.exerciceTypeId,
-        validatedData.data.content
-      ))
-    ) {
-      return { error: "Le contenu ne correspond pas au type d'exercice !" };
-    }
+    const contentError = await checkContentForType(
+      validatedData.data.exerciceTypeId,
+      validatedData.data.content,
+      validatedData.data.kind
+    );
+    if (contentError) return { error: contentError };
 
     // Vérifier que la leçon existe
     const lesson = await getLessonBySlugData(lessonSlug, user.id);
@@ -150,14 +170,12 @@ export const updateExerciceAction = async (
       };
     }
 
-    if (
-      !(await isContentValidForType(
-        validatedData.data.exerciceTypeId,
-        validatedData.data.content
-      ))
-    ) {
-      return { error: "Le contenu ne correspond pas au type d'exercice !" };
-    }
+    const contentError = await checkContentForType(
+      validatedData.data.exerciceTypeId,
+      validatedData.data.content,
+      validatedData.data.kind
+    );
+    if (contentError) return { error: contentError };
 
     // Le type (entraînement / contrôle) ne change plus une fois que des
     // élèves ont rendu une copie ou fait un essai
@@ -395,15 +413,28 @@ export const addExerciceResultAction = async (
       };
     }
 
-    // Calcul de la note côté serveur à partir de la solution stockée en base
-    let result: { note: number; coeficient: number };
+    // Calcul de la note côté serveur à partir de la solution stockée en base.
+    // Une réponse libre est enregistrée sans note : le professeur la corrigera.
+    let result: { note: number; coeficient: number; pendingReview?: boolean };
     try {
-      result = gradeExercice({
-        type: exercice.type.name,
-        level: exercice.level.label,
-        content: exercice.content,
-        response: validatedData.data.response,
-      });
+      if (isTeacherGraded(exercice.type.name)) {
+        const answers = freeResponseResponseShema.parse(validatedData.data.response);
+        const questionCount = Array.isArray(exercice.content) ? exercice.content.length : 0;
+        if (answers.some((a) => a.index >= questionCount)) throw new Error("Question inconnue");
+        const { coeficient } = calculateNote({
+          level: exercice.level.label,
+          maxCorrectAnswers: 0,
+          correctAnswers: 0,
+        });
+        result = { note: 0, coeficient, pendingReview: true };
+      } else {
+        result = gradeExercice({
+          type: exercice.type.name,
+          level: exercice.level.label,
+          content: exercice.content,
+          response: validatedData.data.response,
+        });
+      }
     } catch {
       return {
         error: "Données non valide !",
@@ -446,7 +477,9 @@ export const addExerciceResultAction = async (
     const notification = await createNotificationCompletionData({
       completionId: createdExerciceResult.id,
       createdByStudentId: student.id,
-      message: `${student.name} a réalisé l'exercice ${exercice.title}`,
+      message: result.pendingReview
+        ? `${student.name} a rendu « ${exercice.title} » : copie à corriger`
+        : `${student.name} a réalisé l'exercice ${exercice.title}`,
     });
 
     if (!notification) {
@@ -784,10 +817,12 @@ export const getExercisesDoneAction = async (
           lessonSubjectColor:
             studentExercice.exercice?.lesson.LessonSubject.color || null,
           studentExerciceId: studentExercice.id,
-          note: hidden ? null : studentExercice.note,
+          // Réponse libre pas encore corrigée : pas de note à montrer
+          note: hidden || studentExercice.pendingReview ? null : studentExercice.note,
           coeficient: studentExercice.coeficient,
           createdAt: studentExercice.createdAt,
           isMissing: studentExercice.isMissing,
+          pendingReview: studentExercice.pendingReview,
           resultsAvailableAt: hidden ? closesAt : null,
         };
       })
@@ -856,9 +891,24 @@ export const getStudentExerciceByIdAction = async (
       }
     }
 
+    // Réponse libre pas encore corrigée : l'élève ne voit pas encore les
+    // réponses attendues (il pourrait sinon les recopier ailleurs)
+    let exercice = studentExercice.exercice;
+    if (
+      user.role === "STUDENT" &&
+      studentExercice.pendingReview &&
+      exercice &&
+      isTeacherGraded(exercice.type.name)
+    ) {
+      exercice = {
+        ...exercice,
+        content: stripExerciceSolutions(exercice.type.name, exercice.content).content,
+      };
+    }
+
     return {
       success: "Correction trouvée",
-      data: { ...studentExercice, lesson },
+      data: { ...studentExercice, exercice, lesson },
     };
   } catch (error) {
     console.error("Error fetching studentExercice by ID:", error);

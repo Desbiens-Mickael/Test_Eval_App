@@ -30,6 +30,7 @@ export enum ExerciceType {
   Fill_blank = "Texte à trou",
   MatchingPairs = "Associer par paires",
   Ordering = "Remettre dans l'ordre",
+  FreeResponse = "Réponse libre",
 }
 
 export type StudentExerciceCard = {
@@ -44,6 +45,8 @@ export type StudentExerciceCard = {
   createdAt: Date;
   /** Copie non rendue à la clôture : notée 0 */
   isMissing: boolean;
+  /** Réponse libre rendue, pas encore corrigée par le professeur */
+  pendingReview: boolean;
   /** Date à laquelle la note et la correction seront visibles, si elles ne le sont pas encore */
   resultsAvailableAt: Date | null;
 };
@@ -56,6 +59,10 @@ export type StudentExerciceById = {
   teacherComment: string | null;
   reviewedAt: Date | null;
   isMissing: boolean;
+  /** Réponse libre : copie rendue, pas encore corrigée par le professeur */
+  pendingReview: boolean;
+  /** Réponse libre : points et commentaire du professeur par question */
+  questionReviews: JsonValue | null;
   createdAt: Date;
   response: JsonValue;
   coeficient: number;

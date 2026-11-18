@@ -5,11 +5,13 @@ import {
   contentGapFillInput,
   contentMultipleChoiceInput,
   contentTrueOrFalseInput,
+  studentFreeResponseContent,
   studentMatchingPairsContent,
   studentOrderingContent,
 } from "@/shema-zod/exercice.shema";
 import { Exercice } from "@/type/exercice";
 import ExerciceCard from "./exerciseTypes/card/exercice-card";
+import ExerciceFreeResponse from "./exerciseTypes/free-response/exercice-free-response";
 import ExerciseGapFillText from "./exerciseTypes/gap-fill-text/exercise-gap-fill-text";
 import ExerciceMatchingPairs from "./exerciseTypes/matching-pairs/exercice-matching-pairs";
 import ExerciceMultipleChoice from "./exerciseTypes/multiple-choice/exercice-multiple-choice";
@@ -63,6 +65,13 @@ export default function ExerciseByType({ exercice }: { exercice: Exercice }) {
         <ExerciceOrdering
           exerciceId={exercice.id}
           content={exercice.content as studentOrderingContent}
+        />
+      );
+    case "Réponse libre":
+      return (
+        <ExerciceFreeResponse
+          exerciceId={exercice.id}
+          content={exercice.content as studentFreeResponseContent}
         />
       );
     default:

@@ -245,7 +245,7 @@ export const addExerciceResultData = async (
   studentId: string,
   subject: string,
   data: globalExerciceCorectionType,
-  result: { note: number; coeficient: number }
+  result: { note: number; coeficient: number; pendingReview?: boolean }
 ) => {
   return await prisma.studentExercice.create({
     data: {
@@ -254,8 +254,10 @@ export const addExerciceResultData = async (
       subject,
       response: data.response,
       note: result.note,
-      autoNote: result.note,
+      // Une copie à corriger par le professeur n'a pas de note automatique
+      autoNote: result.pendingReview ? null : result.note,
       coeficient: result.coeficient,
+      pendingReview: result.pendingReview ?? false,
     },
   });
 };
@@ -275,6 +277,24 @@ export const updateStudentExerciceReviewData = async (
   return await prisma.studentExercice.update({
     where: { id: studentExerciceId },
     data: { ...data, reviewedAt: new Date() },
+  });
+};
+
+/**
+ * Enregistre la correction d'une copie « Réponse libre » : la copie n'est
+ * plus en attente et compte désormais dans les moyennes.
+ */
+export const saveFreeResponseReviewData = async (
+  studentExerciceId: string,
+  data: {
+    note: number;
+    teacherComment: string | null;
+    questionReviews: { points: number; comment: string | null }[];
+  }
+) => {
+  return await prisma.studentExercice.update({
+    where: { id: studentExerciceId },
+    data: { ...data, pendingReview: false, reviewedAt: new Date() },
   });
 };
 

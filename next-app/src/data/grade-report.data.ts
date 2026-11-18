@@ -21,6 +21,8 @@ export const getGroupGradeReportData = async (groupId: string, teacherId: string
     where: {
       studentId: { in: group.students.map((s) => s.id) },
       exerciceId: { in: group.exercices.map((e) => e.id) },
+      // Une réponse libre pas encore corrigée n'a pas de note
+      pendingReview: false,
     },
     select: { studentId: true, exerciceId: true, note: true, coeficient: true },
   });
@@ -46,6 +48,8 @@ export const getStudentGradeReportData = async (studentId: string, teacherId: st
       identifier: true,
       groupStudent: { select: { name: true } },
       studentExercices: {
+        // Une réponse libre pas encore corrigée n'a pas de note
+        where: { pendingReview: false },
         select: {
           subject: true,
           note: true,

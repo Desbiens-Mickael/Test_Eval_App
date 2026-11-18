@@ -8,11 +8,17 @@ export const FORMATS = {
   "texte-a-trou": { type: ExerciceType.Fill_blank, label: "texte à trou" },
   "vrai-ou-faux": { type: ExerciceType.True_or_False, label: "vrai ou faux" },
   "choix-multiple": { type: ExerciceType.MultipleChoice, label: "choix multiple" },
+  paires: { type: ExerciceType.MatchingPairs, label: "associer par paires" },
+  ordre: { type: ExerciceType.Ordering, label: "remettre dans l'ordre" },
 } as const;
 
 export type FormatSlug = keyof typeof FORMATS;
 
 export const isFormatSlug = (value: string): value is FormatSlug => value in FORMATS;
+
+/** Segment d'URL de la liste d'un type d'exercice */
+export const formatSlugForType = (type: string): FormatSlug | undefined =>
+  (Object.keys(FORMATS) as FormatSlug[]).find((slug) => FORMATS[slug].type === type);
 
 /** Base d'URL de la bibliothèque du professeur selon l'usage */
 export const kindBasePath = (kind: "CONTROL" | "PRACTICE") =>

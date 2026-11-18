@@ -19,6 +19,7 @@ import {
   getStudentExercicesPageData,
   updateExerciceData,
 } from "@/data/exercice/exercice-data";
+import { getExerciceTypeByIdData } from "@/data/exercice/exercice-type.data";
 import { getGroupByStudentIdData } from "@/data/group.data";
 import { createNotificationCompletionData } from "@/data/notification/notification.data";
 import { getStudentByIdData } from "@/data/student-data";
@@ -38,6 +39,10 @@ jest.mock("@/data/student-data");
 
 const mockedUser = currentUser as jest.Mock;
 const mockedExercice = getExerciceByIdData as jest.Mock;
+
+beforeEach(() => {
+  (getExerciceTypeByIdData as jest.Mock).mockResolvedValue({ id: "ty1", name: "Vrai ou Faux" });
+});
 
 const DAY = 24 * 60 * 60 * 1000;
 const past = () => new Date(Date.now() - DAY);

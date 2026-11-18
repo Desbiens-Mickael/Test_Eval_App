@@ -38,12 +38,32 @@ const cardResponseItemShema = z.object({
 
 export const cardResponseShema = z.array(cardResponseItemShema);
 
+// Schéma de la réponse pour « Associer par paires » :
+// pour chaque élément de gauche (index), l'élément de droite choisi
+export const matchingPairsResponseShema = z.array(
+  z.object({
+    index: z.number().int().min(0),
+    answer: z.string(),
+  })
+);
+
+// Schéma de la réponse pour « Remettre dans l'ordre » :
+// pour chaque liste (index), les éléments dans l'ordre choisi par l'élève
+export const orderingResponseShema = z.array(
+  z.object({
+    index: z.number().int().min(0),
+    order: z.array(z.string()),
+  })
+);
+
 // Schéma de la réponse pour tout les types d'exercices possible
 const responseSchema = z.union([
   gapFillTextResponseShema,
   trueOrFalseResponseShema,
   multipleChoiceResponseShema,
   cardResponseShema,
+  matchingPairsResponseShema,
+  orderingResponseShema,
 ]);
 
 export const globalExerciceCorectionShema = exerciceCorectionBaseShema.extend({
@@ -61,6 +81,8 @@ export type multipleChoiceResponseType = z.infer<
 export type trueOrFalseResponseType = z.infer<typeof trueOrFalseResponseShema>;
 export type cardResponseItemType = z.infer<typeof cardResponseItemShema>;
 export type cardResponseType = z.infer<typeof cardResponseShema>;
+export type matchingPairsResponseType = z.infer<typeof matchingPairsResponseShema>;
+export type orderingResponseType = z.infer<typeof orderingResponseShema>;
 export type globalExerciceCorectionType = z.infer<
   typeof globalExerciceCorectionShema
 >;

@@ -187,7 +187,7 @@ export default function CreateExerciceStep1({
                 name="exerciceTypeId"
                 control={form.control}
                 placeholder="Sélectionnez un format"
-                description="Cartes, vrai ou faux, texte à trou ou choix multiple"
+                description="Cartes, vrai ou faux, texte à trou, choix multiple, paires ou remettre dans l'ordre"
                 onChange={handleSelectType}
               />
             </div>

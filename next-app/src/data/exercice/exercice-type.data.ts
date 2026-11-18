@@ -9,3 +9,7 @@ export const getAllExerciceTypeData = async () => {
 export const getExerciceTypeByNameData = async (name: string) => {
   return await prisma.exerciceType.findUnique({ where: { name } });
 };
+
+export const getExerciceTypeByIdData = async (id: string) => {
+  return await prisma.exerciceType.findUnique({ where: { id } });
+};

@@ -12,6 +12,7 @@ import {
   getStudentExerciceByStudentIdData,
   updateExerciceData,
 } from "@/data/exercice/exercice-data";
+import { getExerciceTypeByIdData } from "@/data/exercice/exercice-type.data";
 import { countExerciceSubmissionsData } from "@/data/exercice/practice-data";
 import { getGroupByStudentIdData } from "@/data/group.data";
 import { currentUser } from "@/lib/auth";
@@ -27,6 +28,10 @@ jest.mock("@/data/student-data");
 
 const mockedUser = currentUser as jest.Mock;
 const mockedExercice = getExerciceByIdData as jest.Mock;
+
+beforeEach(() => {
+  (getExerciceTypeByIdData as jest.Mock).mockResolvedValue({ id: "t1", name: "Vrai ou Faux" });
+});
 
 const exercice = {
   id: "ex1",
@@ -101,5 +106,22 @@ describe("changement de type par le professeur", () => {
     (countExerciceSubmissionsData as jest.Mock).mockResolvedValue(3);
     const result = await updateExerciceAction("ex1", { ...formData, kind: "PRACTICE", title: "Nouveau titre" });
     expect(result.success).toBeDefined();
+  });
+});
+
+describe("contenu et type d'exercice", () => {
+  beforeEach(() => mockedUser.mockResolvedValue({ id: "t1", role: "ADMIN" }));
+
+  it("refuse un contenu qui ne correspond pas au type choisi", async () => {
+    (getExerciceTypeByIdData as jest.Mock).mockResolvedValue({ id: "t1", name: "Associer par paires" });
+    const result = await updateExerciceAction("ex1", formData);
+    expect(result.error).toMatch(/ne correspond pas au type/);
+    expect(updateExerciceData).not.toHaveBeenCalled();
+  });
+
+  it("refuse un type d'exercice inconnu", async () => {
+    (getExerciceTypeByIdData as jest.Mock).mockResolvedValue(null);
+    const result = await updateExerciceAction("ex1", formData);
+    expect(result.error).toMatch(/ne correspond pas au type/);
   });
 });

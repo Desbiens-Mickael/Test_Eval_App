@@ -5,11 +5,15 @@ import {
   contentGapFillInput,
   contentMultipleChoiceInput,
   contentTrueOrFalseInput,
+  studentMatchingPairsContent,
+  studentOrderingContent,
 } from "@/shema-zod/exercice.shema";
 import { Exercice } from "@/type/exercice";
 import ExerciceCard from "./exerciseTypes/card/exercice-card";
 import ExerciseGapFillText from "./exerciseTypes/gap-fill-text/exercise-gap-fill-text";
+import ExerciceMatchingPairs from "./exerciseTypes/matching-pairs/exercice-matching-pairs";
 import ExerciceMultipleChoice from "./exerciseTypes/multiple-choice/exercice-multiple-choice";
+import ExerciceOrdering from "./exerciseTypes/ordering/exercice-ordering";
 import ExerciceTrueFalse from "./exerciseTypes/true-false/exercice-true-false";
 
 /** Affiche l'exercice à faire selon son type (noté ou entraînement) */
@@ -45,6 +49,20 @@ export default function ExerciseByType({ exercice }: { exercice: Exercice }) {
           exerciceId={exercice.id}
           level={exercice.level}
           content={exercice.content as contentMultipleChoiceInput}
+        />
+      );
+    case "Associer par paires":
+      return (
+        <ExerciceMatchingPairs
+          exerciceId={exercice.id}
+          content={exercice.content as studentMatchingPairsContent}
+        />
+      );
+    case "Remettre dans l'ordre":
+      return (
+        <ExerciceOrdering
+          exerciceId={exercice.id}
+          content={exercice.content as studentOrderingContent}
         />
       );
     default:

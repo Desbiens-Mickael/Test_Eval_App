@@ -18,7 +18,10 @@ import {
   updateExerciceData,
 } from "@/data/exercice/exercice-data";
 import { closeExpiredControlsSafeData } from "@/data/exercice/control-closure.data";
-import { getExerciceTypeByNameData } from "@/data/exercice/exercice-type.data";
+import {
+  getExerciceTypeByIdData,
+  getExerciceTypeByNameData,
+} from "@/data/exercice/exercice-type.data";
 import { PageQueryInput, pageQuerySchema } from "@/shema-zod/pagination.shema";
 import { getLessonInGroupData } from "@/data/lesson/lesson-activities.data";
 import { countExerciceSubmissionsData } from "@/data/exercice/practice-data";
@@ -54,10 +57,18 @@ import {
   globalExerciceCorectionType,
 } from "@/shema-zod/exercice-corection.shema";
 import {
+  contentSchemaByType,
   createExerciceFormInput,
   globalExerciceSchema,
 } from "@/shema-zod/exercice.shema";
 import { Exercice, ExerciceType, StudentExerciceCard } from "@/type/exercice";
+
+/** Vérifie que le contenu correspond bien au type d'exercice choisi */
+const isContentValidForType = async (typeId: string, content: unknown) => {
+  const type = await getExerciceTypeByIdData(typeId);
+  const schema = type && contentSchemaByType[type.name];
+  return Boolean(schema?.safeParse(content).success);
+};
 
 // Création d'un exercice
 export const createExerciceAction = async (
@@ -78,6 +89,15 @@ export const createExerciceAction = async (
       return {
         error: "Action non autoriser !",
       };
+    }
+
+    if (
+      !(await isContentValidForType(
+        validatedData.data.exerciceTypeId,
+        validatedData.data.content
+      ))
+    ) {
+      return { error: "Le contenu ne correspond pas au type d'exercice !" };
     }
 
     // Vérifier que la leçon existe
@@ -128,6 +148,15 @@ export const updateExerciceAction = async (
       return {
         error: "Action non autoriser !",
       };
+    }
+
+    if (
+      !(await isContentValidForType(
+        validatedData.data.exerciceTypeId,
+        validatedData.data.content
+      ))
+    ) {
+      return { error: "Le contenu ne correspond pas au type d'exercice !" };
     }
 
     // Le type (entraînement / contrôle) ne change plus une fois que des

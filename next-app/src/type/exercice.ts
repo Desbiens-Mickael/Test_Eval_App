@@ -28,6 +28,8 @@ export enum ExerciceType {
   True_or_False = "Vrai ou Faux",
   MultipleChoice = "Choix multiple",
   Fill_blank = "Texte à trou",
+  MatchingPairs = "Associer par paires",
+  Ordering = "Remettre dans l'ordre",
 }
 
 export type StudentExerciceCard = {

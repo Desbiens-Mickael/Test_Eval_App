@@ -15,13 +15,15 @@ Rien en attente : voir « Déjà fait ».
 
 ## 🛠 Technique et fiabilité
 
-- [ ] **Notifications en temps réel** (SSE ou WebSocket) au lieu du rechargement de la page
-      *(en cours — branche `feat/notifications-temps-reel`)*
+Rien en attente : voir « Déjà fait ».
 
 ## 💡 Pour plus tard
 
-- [ ] **Nouveaux types d'exercices** : associer par paires, remettre dans l'ordre,
-      réponse libre corrigée par le professeur, dictée audio
+- [ ] **Nouveaux types d'exercices**, en trois étapes :
+  - [ ] Associer par paires et remettre dans l'ordre (corrigés automatiquement)
+        *(en cours — branche `feat/types-exercices`)*
+  - [ ] Réponse libre corrigée par le professeur
+  - [ ] Dictée audio (fichier enregistré par le professeur)
 - [ ] **Espace parent** : suivi de la progression de son enfant, en lecture seule
 - [ ] **Aide de l'IA pour le professeur** : brouillon d'exercice généré à partir d'une leçon,
       à relire et valider avant publication
@@ -51,3 +53,4 @@ Rien en attente : voir « Déjà fait ».
 - [x] Tri alphabétique français des noms et titres (collation ICU) (#69)
 - [x] Ménage : `dist/` retiré du dépôt, `bcryptjs` seul, README réécrit (#70)
 - [x] Images de leçon en WebP (1600 px max) et suppression automatique des images inutilisées (#71)
+- [x] Notifications en temps réel (SSE) au lieu du rechargement de la page (#72)

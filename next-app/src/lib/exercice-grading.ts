@@ -3,14 +3,20 @@ import "server-only";
 import {
   cardResponseShema,
   gapFillTextResponseShema,
+  matchingPairsResponseShema,
   multipleChoiceResponseShema,
+  orderingResponseShema,
   trueOrFalseResponseShema,
 } from "@/shema-zod/exercice-corection.shema";
 import {
   contentCardInput,
   contentGapFillInput,
+  contentMatchingPairsInput,
   contentMultipleChoiceInput,
+  contentOrderingInput,
   contentTrueOrFalseInput,
+  studentMatchingPairsContent,
+  studentOrderingContent,
 } from "@/shema-zod/exercice.shema";
 import { calculateNote } from "@/lib/utils";
 
@@ -106,6 +112,78 @@ const scoreMultipleChoice = (
   return { correctAnswers, maxCorrectAnswers: content.length };
 };
 
+/** Une paire est juste si l'élément de droite choisi est le bon. */
+const scoreMatchingPairs = (
+  content: contentMatchingPairsInput,
+  rawResponse: unknown
+): Score => {
+  const response = matchingPairsResponseShema.parse(rawResponse);
+  const answersByIndex = new Map(response.map((r) => [r.index, r.answer]));
+
+  const correctAnswers = content.filter(
+    (pair, index) => (answersByIndex.get(index) ?? "").trim() === pair.right.trim()
+  ).length;
+
+  return { correctAnswers, maxCorrectAnswers: content.length };
+};
+
+/** Compare deux listes de textes sans tenir compte de l'ordre */
+const sameItems = (a: string[], b: string[]) => {
+  if (a.length !== b.length) return false;
+  const sortedA = a.map((i) => i.trim()).sort();
+  const sortedB = b.map((i) => i.trim()).sort();
+  return sortedA.every((item, i) => item === sortedB[i]);
+};
+
+/**
+ * Un point par élément placé au bon rang.
+ * Une liste qui ne contient pas exactement les éléments attendus
+ * (élément ajouté, retiré ou répété) ne rapporte aucun point.
+ */
+const scoreOrdering = (
+  content: contentOrderingInput,
+  rawResponse: unknown
+): Score => {
+  const response = orderingResponseShema.parse(rawResponse);
+  const orderByIndex = new Map(response.map((r) => [r.index, r.order]));
+
+  let correctAnswers = 0;
+  let maxCorrectAnswers = 0;
+  content.forEach((sequence, index) => {
+    maxCorrectAnswers += sequence.items.length;
+    const order = orderByIndex.get(index);
+    if (!order || !sameItems(order, sequence.items)) return;
+    correctAnswers += sequence.items.filter(
+      (item, rank) => order[rank].trim() === item.trim()
+    ).length;
+  });
+
+  return { correctAnswers, maxCorrectAnswers };
+};
+
+/** Mélange une copie du tableau (Fisher-Yates) */
+const shuffle = <T>(items: T[]): T[] => {
+  const result = [...items];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+};
+
+/**
+ * Mélange une liste en évitant de la rendre déjà dans le bon ordre,
+ * sinon l'élève n'aurait rien à faire.
+ */
+const shuffleOutOfOrder = (items: string[]): string[] => {
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const shuffled = shuffle(items);
+    if (shuffled.some((item, i) => item !== items[i])) return shuffled;
+  }
+  // Mélange malchanceux répété : on décale d'un cran
+  return [...items.slice(1), items[0]];
+};
+
 /**
  * Calcule la note d'un exercice à partir de la réponse de l'élève.
  * @throws {Error} si le type d'exercice est inconnu ou si la réponse ne correspond pas au type.
@@ -139,6 +217,12 @@ export const gradeExercice = ({
         response
       );
       break;
+    case "Associer par paires":
+      score = scoreMatchingPairs(content as contentMatchingPairsInput, response);
+      break;
+    case "Remettre dans l'ordre":
+      score = scoreOrdering(content as contentOrderingInput, response);
+      break;
     default:
       throw new Error(`Type d'exercice inconnu : ${type}`);
   }
@@ -155,11 +239,7 @@ export const stripExerciceSolutions = (type: string, content: unknown) => {
   switch (type) {
     case "Carte": {
       const columns = content as contentCardInput;
-      const cards = columns.flatMap((col) => col.cards);
-      for (let i = cards.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [cards[i], cards[j]] = [cards[j], cards[i]];
-      }
+      const cards = shuffle(columns.flatMap((col) => col.cards));
       return {
         content: columns.map((col) => ({ column: col.column, cards: [] })),
         cards,
@@ -195,6 +275,23 @@ export const stripExerciceSolutions = (type: string, content: unknown) => {
           })),
         })),
       };
+    case "Associer par paires": {
+      const pairs = content as contentMatchingPairsInput;
+      const studentContent: studentMatchingPairsContent = {
+        lefts: pairs.map((pair) => pair.left),
+        rights: shuffleOutOfOrder(pairs.map((pair) => pair.right)),
+      };
+      return { content: studentContent };
+    }
+    case "Remettre dans l'ordre": {
+      const studentContent: studentOrderingContent = (
+        content as contentOrderingInput
+      ).map((sequence) => ({
+        instruction: sequence.instruction,
+        items: shuffleOutOfOrder(sequence.items),
+      }));
+      return { content: studentContent };
+    }
     default:
       return { content: null };
   }

@@ -107,6 +107,40 @@ export const contentTrueOrFalseSchema = z
     }
   });
 
+// Associer par paires : chaque élément de gauche va avec un élément de droite
+export const matchingPairShema = z.object({
+  left: z.string().trim().min(1, "Chaque paire doit avoir un élément à gauche"),
+  right: z.string().trim().min(1, "Chaque paire doit avoir un élément à droite"),
+});
+
+export const contentMatchingPairsShema = z
+  .array(matchingPairShema)
+  .min(2, "Ajoutez au moins deux paires");
+
+// Remettre dans l'ordre : chaque liste est enregistrée dans le bon ordre
+export const orderingSequenceShema = z.object({
+  instruction: z.string().trim().min(1, "La consigne ne peut pas être vide"),
+  items: z
+    .array(z.string().trim().min(1, "Les éléments ne peuvent pas être vides"))
+    .min(2, "Chaque liste doit avoir au moins deux éléments"),
+});
+
+export const contentOrderingShema = z
+  .array(orderingSequenceShema)
+  .min(1, "Ajoutez au moins une liste à remettre dans l'ordre")
+  .superRefine((content, ctx) => {
+    // Une liste dont tous les éléments sont identiques n'a pas d'ordre à retrouver
+    content.forEach((sequence, index) => {
+      if (new Set(sequence.items.map((i) => i.trim())).size < 2) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [index, "items"],
+          message: "Les éléments d'une liste doivent être différents",
+        });
+      }
+    });
+  });
+
 // Contrôle : noté, une seule tentative. Exercice (PRACTICE) : non noté, essais illimités.
 export const EXERCICE_KINDS = ["CONTROL", "PRACTICE"] as const;
 export const exerciceKindSchema = z.enum(EXERCICE_KINDS, {
@@ -148,7 +182,23 @@ const contentSchema = z.union([
   contentMultipleChoiceShema,
   contentGapFillSchema,
   contentTrueOrFalseSchema,
+  contentMatchingPairsShema,
+  contentOrderingShema,
 ]);
+
+/**
+ * Schéma du contenu propre à chaque type d'exercice.
+ * L'union `contentSchema` accepte n'importe quel type : le serveur vérifie en
+ * plus que le contenu correspond bien au type choisi.
+ */
+export const contentSchemaByType: Record<string, z.ZodTypeAny> = {
+  Carte: contentCardSchema,
+  "Vrai ou Faux": contentTrueOrFalseSchema,
+  "Texte à trou": contentGapFillSchema,
+  "Choix multiple": contentMultipleChoiceShema,
+  "Associer par paires": contentMatchingPairsShema,
+  "Remettre dans l'ordre": contentOrderingShema,
+};
 
 export const globalExerciceSchema = createExerciceBaseSchema
   .extend({
@@ -167,5 +217,13 @@ export type contentMultipleChoiceInput = z.infer<
   typeof contentMultipleChoiceShema
 >;
 export type contentGapFillInput = z.infer<typeof contentGapFillSchema>;
+export type matchingPairInput = z.infer<typeof matchingPairShema>;
+export type contentMatchingPairsInput = z.infer<typeof contentMatchingPairsShema>;
+export type orderingSequenceInput = z.infer<typeof orderingSequenceShema>;
+export type contentOrderingInput = z.infer<typeof contentOrderingShema>;
+/** Exercice « Associer par paires » vu par un élève : sans les solutions */
+export type studentMatchingPairsContent = { lefts: string[]; rights: string[] };
+/** Exercice « Remettre dans l'ordre » vu par un élève : éléments mélangés */
+export type studentOrderingContent = { instruction: string; items: string[] }[];
 export type contentInput = z.infer<typeof contentSchema>;
 export type createExerciceFormInput = z.infer<typeof globalExerciceSchema>;

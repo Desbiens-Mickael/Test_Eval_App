@@ -97,7 +97,15 @@ const seed = async () => {
       {
         name: "Choix multiple",
       },
+      {
+        name: "Associer par paires",
+      },
+      {
+        name: "Remettre dans l'ordre",
+      },
     ],
+    // Les deux derniers types sont aussi créés par une migration
+    skipDuplicates: true,
   });
 };
 

@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useCreateExercice } from "@/hooks/mutations/exercice/use-create-exercice";
 import { useUpdateExercice } from "@/hooks/mutations/exercice/use-update-exercice";
-import { stringToSlug } from "@/lib/utils";
 import {
   contentInput,
+  contentSchemaByType,
   createExerciceFormInput,
   globalExerciceSchema,
 } from "@/shema-zod/exercice.shema";
@@ -22,7 +22,7 @@ import { toast } from "sonner";
 import CreateExerciceStep1 from "./create-exercice-step-1";
 import CreateExerciceStep2 from "./create-exercice-step-2";
 import CreateEXerciceSTep3 from "./create-exercice-step-3";
-import { kindBasePath } from "../kind-format-page";
+import { formatSlugForType, kindBasePath } from "../kind-format-page";
 import { ComponentType } from "./dynamic-content-components";
 
 interface ExerciceFormProps {
@@ -102,8 +102,8 @@ export default function ExerciceForm({
         toast.success(res.success);
         form.reset();
         // Retour à la liste du bon usage : contrôles ou exercices
-        const url = stringToSlug(type);
-        router.push(`${kindBasePath(data.kind)}/${url}`);
+        const format = formatSlugForType(type);
+        router.push(format ? `${kindBasePath(data.kind)}/${format}` : kindBasePath(data.kind));
       }
     } catch (error) {
       console.error(error);
@@ -128,7 +128,9 @@ export default function ExerciceForm({
         }
         break;
       case 2:
-        const isValid2 = await form.trigger(["content"]);
+        // Le schéma du format d'abord : son message d'erreur est plus précis
+        const isValid2 =
+          checkContentForType() && (await form.trigger(["content"]));
         if (isValid2) {
           setStep((prevStep) => prevStep + 1);
         }
@@ -136,6 +138,17 @@ export default function ExerciceForm({
       default:
         break;
     }
+  };
+
+  // Le schéma global accepte tous les formats : on vérifie aussi le contenu
+  // avec le schéma du format choisi, qui donne un message d'erreur précis
+  const checkContentForType = () => {
+    const schema = contentSchemaByType[type];
+    if (!schema) return true;
+    const result = schema.safeParse(form.getValues("content"));
+    if (result.success) return true;
+    form.setError("content", { message: result.error.issues[0]?.message });
+    return false;
   };
 
   // Contrôle des dates à l'étape 1 (le schéma complet ne les vérifie

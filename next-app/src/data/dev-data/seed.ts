@@ -92,7 +92,16 @@ const seed = async () => {
     ],
   });
   await prisma.exerciceType.createMany({
-    data: [{ name: "Carte" }, { name: "Vrai ou Faux" }, { name: "Texte à trou" }, { name: "Choix multiple" }],
+    data: [
+      { name: "Carte" },
+      { name: "Vrai ou Faux" },
+      { name: "Texte à trou" },
+      { name: "Choix multiple" },
+      { name: "Associer par paires" },
+      { name: "Remettre dans l'ordre" },
+    ],
+    // Les deux derniers types sont aussi créés par une migration
+    skipDuplicates: true,
   });
 
   const [subjects, gradeLevels, levels, types] = await Promise.all([
@@ -285,6 +294,41 @@ const seed = async () => {
     ],
   });
 
+  const pairesVerbes = await createExercise({
+    title: "Associe chaque verbe à son infinitif",
+    description: "Retrouve l'infinitif de chaque verbe conjugué.",
+    kind: "PRACTICE",
+    lessonID: verbes.id,
+    level: "Facile",
+    type: "Associer par paires",
+    content: [
+      { left: "Je vais", right: "Aller" },
+      { left: "Nous faisons", right: "Faire" },
+      { left: "Ils prennent", right: "Prendre" },
+      { left: "Tu viens", right: "Venir" },
+    ],
+  });
+
+  const ordreHistoire = await createExercise({
+    title: "Remets les événements dans l'ordre",
+    description: "Classe les événements du plus ancien au plus récent.",
+    kind: "CONTROL",
+    lessonID: histoire.id,
+    level: "Difficile",
+    type: "Remettre dans l'ordre",
+    content: [
+      {
+        instruction: "Du plus ancien au plus récent",
+        items: [
+          "Invasion de la Pologne (1939)",
+          "Appel du 18 juin (1940)",
+          "Débarquement en Normandie (1944)",
+          "Capitulation de l'Allemagne (1945)",
+        ],
+      },
+    ],
+  });
+
   // Exercice non attribué au groupe : visible côté professeur uniquement
   await createExercise({
     title: "La fusion nucléaire",
@@ -306,9 +350,16 @@ const seed = async () => {
       authorId: teacher.id,
       lessons: { connect: [pythagore, verbes, histoire].map(({ id }) => ({ id })) },
       exercices: {
-        connect: [triangle, controlePythagore, conjugaison, groupesVerbes, reperes, vraiFauxHistoire].map(
-          ({ id }) => ({ id })
-        ),
+        connect: [
+          triangle,
+          controlePythagore,
+          conjugaison,
+          groupesVerbes,
+          reperes,
+          vraiFauxHistoire,
+          pairesVerbes,
+          ordreHistoire,
+        ].map(({ id }) => ({ id })),
       },
     },
   });
@@ -343,7 +394,7 @@ const seed = async () => {
   });
 
   console.log(
-    `Base prête : 1 professeur, ${students.length} élèves dans « ${group.name} », 4 leçons, 7 exercices et contrôles.`
+    `Base prête : 1 professeur, ${students.length} élèves dans « ${group.name} », 4 leçons, 9 exercices et contrôles.`
   );
 };
 

@@ -2,7 +2,9 @@ import {
   columnInput,
   contentGapFillInput,
   contentInput,
+  matchingPairInput,
   multipleChoiceInput,
+  orderingSequenceInput,
   trueOrFalseInput,
 } from "@/shema-zod/exercice.shema";
 import dynamic from "next/dynamic";
@@ -13,7 +15,9 @@ export type ComponentType =
   | "Carte"
   | "Vrai ou Faux"
   | "Choix multiple"
-  | "Texte à trou";
+  | "Texte à trou"
+  | "Associer par paires"
+  | "Remettre dans l'ordre";
 
 // Typage spécifique pour chaque type de composant
 type ComponentProps = {
@@ -21,6 +25,8 @@ type ComponentProps = {
   "Vrai ou Faux": trueOrFalseInput[];
   "Choix multiple": multipleChoiceInput[];
   "Texte à trou": contentGapFillInput;
+  "Associer par paires": matchingPairInput[];
+  "Remettre dans l'ordre": orderingSequenceInput[];
 };
 
 // Chargement dynamique des composants
@@ -49,12 +55,24 @@ const GapFillTextForm = dynamic(
   { ssr: false }
 );
 
+const MatchingPairsForm = dynamic(
+  () => import("./exerciceType/content-matching-pairs/content-matching-pairs-form"),
+  { ssr: false }
+);
+
+const OrderingForm = dynamic(
+  () => import("./exerciceType/content-ordering/content-ordering-form"),
+  { ssr: false }
+);
+
 // Mapping des composants
 const componentMap = {
   Carte: ContentCardForm,
   "Vrai ou Faux": TrueFalseForm,
   "Choix multiple": MultipleChoiceForm,
   "Texte à trou": GapFillTextForm,
+  "Associer par paires": MatchingPairsForm,
+  "Remettre dans l'ordre": OrderingForm,
 };
 
 // Définition des props pour le composant dynamique

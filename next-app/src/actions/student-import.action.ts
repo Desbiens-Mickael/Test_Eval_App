@@ -3,8 +3,11 @@
 import { getGroupsByAuthorIdData } from "@/data/group.data";
 import {
   createStudentsData,
+  getStudentsByIdentifiersData,
   getTakenIdentifiersData,
 } from "@/data/student-data";
+import { applyStudentParentEmail } from "@/lib/parent-access";
+import { parentEmailShema } from "@/shema-zod/parent.shema";
 import { currentUser } from "@/lib/auth";
 import { hashPassword } from "@/lib/hash-password";
 import { sendImportedStudentsCredentialsEmail } from "@/lib/mail";
@@ -28,6 +31,7 @@ const importRowsSchema = z
       firstname: z.string().trim(),
       lastname: z.string().trim(),
       group: z.string().trim().max(50),
+      parentEmail: z.string().trim().max(254).optional(),
     })
   )
   .min(1, "Aucun élève à importer.")
@@ -38,6 +42,14 @@ export type ImportedStudent = {
   identifier: string;
   password: string;
   group: string | null;
+};
+
+/** Espace parent d'un élève importé : créé, enfant ajouté, ou erreur */
+export type ImportedParentAccess = {
+  student: string;
+  email: string;
+  ok: boolean;
+  message: string;
 };
 
 /**
@@ -107,9 +119,46 @@ export const importStudentsAction = async (input: ImportRow[]) => {
       }
     }
 
+    // E-mails de parents renseignés : leurs espaces sont créés et leurs
+    // accès envoyés, l'un après l'autre (frères et sœurs : un seul compte)
+    const parents: ImportedParentAccess[] = [];
+    const withParent = checked
+      .map((row, i) => ({ email: parentEmailShema.safeParse(row.parentEmail), student: students[i] }))
+      .filter((r) => r.email.success && r.email.data);
+    if (withParent.length > 0) {
+      const created = await getStudentsByIdentifiersData(withParent.map((r) => r.student.identifier));
+      const idByIdentifier = new Map(created.map((s) => [s.identifier, s.id]));
+      for (const { email, student } of withParent) {
+        const studentId = idByIdentifier.get(student.identifier);
+        const address = email.success ? email.data : null;
+        if (!studentId || !address) continue;
+        try {
+          const result = await applyStudentParentEmail({
+            studentId,
+            studentName: student.name,
+            email: address,
+            teacherEmail: user.email ?? null,
+          });
+          parents.push(
+            "error" in result
+              ? { student: student.name, email: address, ok: false, message: result.error }
+              : { student: student.name, email: address, ok: true, message: result.message }
+          );
+        } catch (error) {
+          console.error("Error creating parent access on import:", error);
+          parents.push({
+            student: student.name,
+            email: address,
+            ok: false,
+            message: "Espace parent non créé : réessayez depuis la fiche de l'élève.",
+          });
+        }
+      }
+    }
+
     return {
       success: `${students.length} élève${students.length > 1 ? "s ont été créés" : " a été créé"}.`,
-      data: { students, emailSent },
+      data: { students, emailSent, parents },
     };
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {

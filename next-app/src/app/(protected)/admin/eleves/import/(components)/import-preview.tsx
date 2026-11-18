@@ -55,6 +55,7 @@ export default function ImportPreview({
               <th className="px-3 py-2 font-medium">Prénom</th>
               <th className="px-3 py-2 font-medium">Nom</th>
               <th className="px-3 py-2 font-medium">Groupe</th>
+              <th className="px-3 py-2 font-medium">E-mail du parent</th>
               <th className="px-3 py-2 font-medium">Vérification</th>
             </tr>
           </thead>
@@ -65,6 +66,9 @@ export default function ImportPreview({
                 <td className="px-3 py-2">{row.firstname ? formatPersonName(row.firstname) : "—"}</td>
                 <td className="px-3 py-2">{row.lastname ? formatPersonName(row.lastname) : "—"}</td>
                 <td className="px-3 py-2">{row.group || <span className="text-muted-foreground">—</span>}</td>
+                <td className="max-w-[14rem] truncate px-3 py-2">
+                  {row.parentEmail?.trim() || <span className="text-muted-foreground">—</span>}
+                </td>
                 <td className="px-3 py-2">
                   {row.issues.length === 0 ? (
                     <Status icon={CheckCircle2} color="text-green-600 dark:text-green-400" label="OK" />

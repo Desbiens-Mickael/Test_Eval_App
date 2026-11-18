@@ -1,8 +1,8 @@
 "use client";
 
-import type { ImportedStudent } from "@/actions/student-import.action";
+import type { ImportedParentAccess, ImportedStudent } from "@/actions/student-import.action";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Download, Printer } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Download, Printer, Users } from "lucide-react";
 import Link from "next/link";
 
 const csvCell = (value: string) => `"${value.replace(/"/g, '""')}"`;
@@ -70,10 +70,13 @@ const printCredentials = (students: ImportedStudent[]) => {
 export default function ImportResult({
   students,
   emailSent,
+  parents = [],
   onRestart,
 }: {
   students: ImportedStudent[];
   emailSent: boolean;
+  /** Espaces parents créés pour les élèves dont l'e-mail du parent était renseigné */
+  parents?: ImportedParentAccess[];
   onRestart: () => void;
 }) {
   return (
@@ -122,6 +125,33 @@ export default function ImportResult({
           </tbody>
         </table>
       </div>
+
+      {parents.length > 0 && (
+        <section aria-labelledby="import-parents-title" className="rounded-xl border bg-card p-4">
+          <h2 id="import-parents-title" className="flex items-center gap-2 font-medium">
+            <Users className="h-5 w-5 text-primary" aria-hidden="true" />
+            Espaces parents
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Les parents ont reçu leurs accès par e-mail. Une adresse refusée peut être corrigée
+            sur la fiche de l&apos;élève.
+          </p>
+          <ul className="mt-3 divide-y text-sm">
+            {parents.map((p) => (
+              <li key={`${p.student}-${p.email}`} className="flex items-start gap-2 py-2">
+                {p.ok ? (
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-green-600 dark:text-green-400" aria-hidden="true" />
+                ) : (
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" aria-hidden="true" />
+                )}
+                <span>
+                  <span className="font-medium">{p.student}</span> · {p.email} : {p.message}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <div className="flex flex-wrap justify-end gap-3">
         <Button type="button" variant="outline" onClick={onRestart}>

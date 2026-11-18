@@ -19,8 +19,6 @@ Rien en attente : voir « Déjà fait ».
 
 ## 💡 Pour plus tard
 
-- [ ] **Espace parent** : suivi de la progression de son enfant, en lecture seule
-      *(en cours — branche `feat/espace-parent`)*
 - [ ] **Aide de l'IA pour le professeur** : brouillon d'exercice généré à partir d'une leçon,
       à relire et valider avant publication
 
@@ -53,3 +51,5 @@ Rien en attente : voir « Déjà fait ».
 - [x] Nouveaux types d'exercices : associer par paires et remettre dans l'ordre (#73),
       réponse libre corrigée par le professeur, note par question (#74),
       dictée audio corrigée mot à mot (#75)
+- [x] Espace parent : e-mail du parent facultatif sur la fiche élève et à l'import, accès créés
+      et envoyés automatiquement, suivi en lecture seule et e-mail à chaque note (#76)

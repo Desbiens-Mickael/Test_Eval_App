@@ -1,6 +1,6 @@
 "use client";
 
-import type { ImportedStudent } from "@/actions/student-import.action";
+import type { ImportedParentAccess, ImportedStudent } from "@/actions/student-import.action";
 import { useImportStudents } from "@/hooks/mutations/student/use-import-students";
 import { useGetAllGroups } from "@/hooks/queries/group/use-get-all-groups";
 import { CheckedImportRow, ParsedImport, checkImportRows } from "@/lib/student-import";
@@ -14,7 +14,12 @@ import ImportSource from "./import-source";
 type Step =
   | { name: "source"; error?: string }
   | { name: "preview"; rows: CheckedImportRow[]; source: string; hasHeader: boolean }
-  | { name: "result"; students: ImportedStudent[]; emailSent: boolean };
+  | {
+      name: "result";
+      students: ImportedStudent[];
+      emailSent: boolean;
+      parents: ImportedParentAccess[];
+    };
 
 const STEPS = ["Choisir la liste", "Vérifier", "Identifiants"];
 
@@ -40,7 +45,13 @@ export default function StudentImport() {
 
   const handleImport = async (rows: CheckedImportRow[]) => {
     const response = await mutateAsync(
-      rows.map(({ line, firstname, lastname, group }) => ({ line, firstname, lastname, group }))
+      rows.map(({ line, firstname, lastname, group, parentEmail }) => ({
+        line,
+        firstname,
+        lastname,
+        group,
+        parentEmail,
+      }))
     );
     if (response?.data) {
       setStep({ name: "result", ...response.data });
@@ -101,6 +112,7 @@ export default function StudentImport() {
         <ImportResult
           students={step.students}
           emailSent={step.emailSent}
+          parents={step.parents}
           onRestart={() => setStep({ name: "source" })}
         />
       )}

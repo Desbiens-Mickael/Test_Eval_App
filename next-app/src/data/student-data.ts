@@ -194,6 +194,14 @@ export const createStudentsData = async (
   return await prisma.student.createMany({ data: students });
 };
 
+/** Élèves à partir de leurs identifiants (juste après un import) */
+export const getStudentsByIdentifiersData = async (identifiers: string[]) => {
+  return await prisma.student.findMany({
+    where: { identifier: { in: identifiers } },
+    select: { id: true, identifier: true },
+  });
+};
+
 // Nouveau mot de passe (déjà hashé) pour un élève
 export const updateStudentPasswordData = async (
   studentId: string,

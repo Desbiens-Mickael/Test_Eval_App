@@ -41,10 +41,10 @@ const downloadXlsxTemplate = async () => {
   const workbook = new ExcelJS.Workbook();
   const sheet = workbook.addWorksheet("Élèves");
   sheet.addRow(IMPORT_TEMPLATE_HEADERS);
-  sheet.addRow(["Léa", "Martin", "CM1 Explorateurs"]);
-  sheet.addRow(["Hugo", "Bernard", "CM1 Explorateurs"]);
+  sheet.addRow(["Léa", "Martin", "CM1 Explorateurs", "parent.martin@exemple.fr"]);
+  sheet.addRow(["Hugo", "Bernard", "CM1 Explorateurs", ""]);
   sheet.getRow(1).font = { bold: true };
-  sheet.columns.forEach((column) => (column.width = 22));
+  sheet.columns.forEach((column) => (column.width = 26));
   const buffer = await workbook.xlsx.writeBuffer();
   downloadBlob(
     new Blob([buffer], {
@@ -144,15 +144,18 @@ export default function ImportSource({
 
         <TabsContent value="paste" className="mt-4 space-y-3">
           <p className="text-sm text-muted-foreground">
-            Dans Excel, sélectionnez les colonnes Prénom, Nom et (si besoin) Groupe, copiez-les
-            avec Ctrl+C puis collez-les ici. La ligne d&apos;en-têtes est facultative.
+            Dans Excel, sélectionnez les colonnes Prénom, Nom et, si besoin, Groupe et E-mail du
+            parent, copiez-les avec Ctrl+C puis collez-les ici. La ligne d&apos;en-têtes est
+            facultative.
           </p>
           <Textarea
             value={pasted}
             onChange={(e) => setPasted(e.target.value)}
             rows={10}
             className="font-mono text-sm"
-            placeholder={"Prénom\tNom\tGroupe\nLéa\tMartin\tCM1 Explorateurs\nHugo\tBernard\tCM1 Explorateurs"}
+            placeholder={
+              "Prénom\tNom\tGroupe\tE-mail du parent\nLéa\tMartin\tCM1 Explorateurs\tparent.martin@exemple.fr\nHugo\tBernard\tCM1 Explorateurs\t"
+            }
             aria-label="Liste d'élèves copiée depuis un tableur"
           />
           <div className="flex justify-end">
@@ -170,8 +173,10 @@ export default function ImportSource({
       <div className="rounded-xl border bg-card p-4">
         <p className="text-sm font-medium">Besoin d&apos;un point de départ ?</p>
         <p className="mt-1 text-sm text-muted-foreground">
-          Le modèle contient les colonnes Prénom, Nom et Groupe. Le groupe est facultatif ; il
-          doit correspondre au nom d&apos;un de vos groupes.
+          Le modèle contient les colonnes Prénom, Nom, Groupe et E-mail du parent. Le groupe est
+          facultatif ; il doit correspondre au nom d&apos;un de vos groupes. L&apos;e-mail du
+          parent aussi : renseigné, l&apos;espace parent est créé et ses accès lui sont envoyés.
+          Laissez-le vide si vous suivez vous-même l&apos;élève.
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           <Button type="button" variant="outline" size="sm" onClick={downloadXlsxTemplate}>

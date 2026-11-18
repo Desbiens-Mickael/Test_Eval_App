@@ -67,6 +67,8 @@ services:
       UPLOAD_API_KEY: ${UPLOAD_API_KEY}
     volumes:
       - ./upload-images_educraft:/app/uploads/images
+      # Audio des dictées, à part des images
+      - ./upload-audio_educraft:/app/uploads/audio
     networks:
       - traefik-net
 volumes:

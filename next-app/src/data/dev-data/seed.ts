@@ -100,8 +100,9 @@ const seed = async () => {
       { name: "Associer par paires" },
       { name: "Remettre dans l'ordre" },
       { name: "Réponse libre" },
+      { name: "Dictée" },
     ],
-    // Les trois derniers types sont aussi créés par des migrations
+    // Les quatre derniers types sont aussi créés par des migrations
     skipDuplicates: true,
   });
 

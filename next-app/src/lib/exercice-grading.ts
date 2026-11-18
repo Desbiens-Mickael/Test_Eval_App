@@ -2,6 +2,7 @@ import "server-only";
 
 import {
   cardResponseShema,
+  dictationResponseShema,
   gapFillTextResponseShema,
   matchingPairsResponseShema,
   multipleChoiceResponseShema,
@@ -9,19 +10,23 @@ import {
   trueOrFalseResponseShema,
 } from "@/shema-zod/exercice-corection.shema";
 import {
+  DICTATION_TYPE,
   FREE_RESPONSE_TYPE,
   contentCardInput,
+  contentDictationInput,
   contentFreeResponseInput,
   contentGapFillInput,
   contentMatchingPairsInput,
   contentMultipleChoiceInput,
   contentOrderingInput,
   contentTrueOrFalseInput,
+  studentDictationContent,
   studentFreeResponseContent,
   studentMatchingPairsContent,
   studentOrderingContent,
 } from "@/shema-zod/exercice.shema";
 import { calculateNote } from "@/lib/utils";
+import { dictationScore, dictationWords } from "@/lib/dictation";
 
 /**
  * Correction des exercices côté serveur.
@@ -164,6 +169,13 @@ const scoreOrdering = (
   return { correctAnswers, maxCorrectAnswers };
 };
 
+/** Dictée : un point par mot attendu, moins une faute par mot faux, oublié ou ajouté */
+const scoreDictation = (content: contentDictationInput, rawResponse: unknown): Score => {
+  const response = dictationResponseShema.parse(rawResponse);
+  const { words, correct } = dictationScore(content.text, response.text);
+  return { correctAnswers: correct, maxCorrectAnswers: words };
+};
+
 /** Mélange une copie du tableau (Fisher-Yates) */
 const shuffle = <T>(items: T[]): T[] => {
   const result = [...items];
@@ -228,6 +240,9 @@ export const gradeExercice = ({
       break;
     case "Remettre dans l'ordre":
       score = scoreOrdering(content as contentOrderingInput, response);
+      break;
+    case DICTATION_TYPE:
+      score = scoreDictation(content as contentDictationInput, response);
       break;
     default:
       throw new Error(`Type d'exercice inconnu : ${type}`);
@@ -296,6 +311,15 @@ export const stripExerciceSolutions = (type: string, content: unknown) => {
         instruction: sequence.instruction,
         items: shuffleOutOfOrder(sequence.items),
       }));
+      return { content: studentContent };
+    }
+    case DICTATION_TYPE: {
+      // Le texte est la correction : l'élève ne reçoit que l'audio
+      const dictation = content as contentDictationInput;
+      const studentContent: studentDictationContent = {
+        audio: dictation.audio,
+        words: dictationWords(dictation.text).length,
+      };
       return { content: studentContent };
     }
     case FREE_RESPONSE_TYPE: {

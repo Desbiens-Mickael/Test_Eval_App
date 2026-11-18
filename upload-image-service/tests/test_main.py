@@ -17,6 +17,7 @@ API_KEY = "test-key"
 def client(tmp_path, monkeypatch):
     monkeypatch.setenv("UPLOAD_API_KEY", API_KEY)
     monkeypatch.setattr(main, "UPLOAD_ROOT", str(tmp_path))
+    monkeypatch.setattr(main, "AUDIO_ROOT", str(tmp_path / "audio"))
     return TestClient(main.app)
 
 
@@ -156,3 +157,105 @@ def test_liste_des_images_de_lecon(client):
     images = client.get("/lesson", headers={"X-Upload-Key": API_KEY}).json()["images"]
     assert [image["name"] for image in images] == [name]
     assert images[0]["modified_at"] > 0
+
+
+# ---------------------------------------------------------------------------
+# Audio des dictées
+# ---------------------------------------------------------------------------
+
+def audio_file(content=b"\x1a\x45\xdf\xa3" + b"\x00" * 200, name="dictee.webm", mime="audio/webm"):
+    return {"file": (name, io.BytesIO(content), mime)}
+
+
+def wav_bytes(size=1000):
+    data = b"\x00" * size
+    return b"RIFF" + (36 + size).to_bytes(4, "little") + b"WAVE" + data
+
+
+def upload_audio(client, files):
+    return client.post("/dictation", files=files, headers={"X-Upload-Key": API_KEY})
+
+
+def test_audio_refuse_sans_cle(client):
+    assert client.post("/dictation", files=audio_file()).status_code == 401
+
+
+@pytest.mark.parametrize(
+    "content, extension",
+    [
+        (b"\x1a\x45\xdf\xa3" + b"\x00" * 100, "webm"),
+        (b"OggS" + b"\x00" * 100, "ogg"),
+        (b"ID3" + b"\x00" * 100, "mp3"),
+        (b"\xff\xfb\x90\x00" + b"\x00" * 100, "mp3"),
+        (b"\x00\x00\x00\x20ftypM4A " + b"\x00" * 100, "m4a"),
+        (wav_bytes(100), "wav"),
+    ],
+)
+def test_audio_reconnu_par_sa_signature(client, tmp_path, content, extension):
+    # Le nom et le type annoncés ne comptent pas
+    response = upload_audio(client, audio_file(content, "fichier.bin", "application/octet-stream"))
+    assert response.status_code == 200
+    name = response.json()["image_path"]
+    assert name.endswith(f".{extension}")
+    # Rangé à part des images
+    assert (tmp_path / "audio" / name).read_bytes() == content
+
+
+def test_audio_refuse_un_autre_contenu(client):
+    response = upload_audio(client, audio_file(b"<html>pas un son</html>", "dictee.mp3", "audio/mpeg"))
+    assert response.status_code == 415
+
+
+def test_audio_refuse_un_fichier_vide(client):
+    assert upload_audio(client, audio_file(b"")).status_code == 400
+
+
+def test_audio_refuse_un_fichier_trop_gros(client, monkeypatch):
+    monkeypatch.setattr(main, "MAX_AUDIO_SIZE", 50)
+    assert upload_audio(client, audio_file(wav_bytes(100))).status_code == 413
+
+
+def test_audio_servi_avec_son_type(client):
+    content = wav_bytes(1000)
+    name = upload_audio(client, audio_file(content)).json()["image_path"]
+    response = client.get(f"/dictation/{name}")
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "audio/wav"
+    assert response.headers["accept-ranges"] == "bytes"
+    assert response.content == content
+
+
+def test_audio_requete_partielle(client):
+    content = wav_bytes(1000)
+    name = upload_audio(client, audio_file(content)).json()["image_path"]
+
+    partial = client.get(f"/dictation/{name}", headers={"Range": "bytes=10-19"})
+    assert partial.status_code == 206
+    assert partial.headers["content-range"] == f"bytes 10-19/{len(content)}"
+    assert partial.content == content[10:20]
+
+    open_end = client.get(f"/dictation/{name}", headers={"Range": "bytes=1000-"})
+    assert open_end.status_code == 206
+    assert open_end.content == content[1000:]
+
+    suffix = client.get(f"/dictation/{name}", headers={"Range": "bytes=-4"})
+    assert suffix.content == content[-4:]
+
+    beyond = client.get(f"/dictation/{name}", headers={"Range": f"bytes={len(content)}-"})
+    assert beyond.status_code == 416
+
+
+def test_audio_liste_et_suppression(client):
+    name = upload_audio(client, audio_file()).json()["image_path"]
+
+    listing = client.get("/dictation", headers={"X-Upload-Key": API_KEY}).json()["files"]
+    assert [f["name"] for f in listing] == [name]
+    assert client.get("/dictation").status_code == 401
+
+    assert client.delete(f"/dictation/{name}").status_code == 401
+    assert client.delete(f"/dictation/{name}", headers={"X-Upload-Key": API_KEY}).status_code == 200
+    assert client.get(f"/dictation/{name}").status_code == 404
+
+
+def test_audio_nom_invalide(client):
+    assert client.get("/dictation/..%2Fsecret.wav").status_code == 404

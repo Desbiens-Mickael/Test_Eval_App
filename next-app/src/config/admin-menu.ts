@@ -8,6 +8,7 @@ import {
   Dumbbell,
   Hourglass,
   LayoutDashboard,
+  Headphones,
   Link2,
   ListCollapse,
   ListOrdered,
@@ -64,6 +65,7 @@ const adminMenus: MenuSideBar = [
           { icon: Link2, title: "Paires", href: "/admin/controles/paires" },
           { icon: ListOrdered, title: "Remettre dans l'ordre", href: "/admin/controles/ordre" },
           { icon: PenLine, title: "Réponse libre", href: "/admin/controles/reponse-libre" },
+          { icon: Headphones, title: "Dictée", href: "/admin/controles/dictee" },
         ],
       },
       {
@@ -76,6 +78,7 @@ const adminMenus: MenuSideBar = [
           { icon: ListCollapse, title: "Choix multiple", href: "/admin/exercices/choix-multiple" },
           { icon: Link2, title: "Paires", href: "/admin/exercices/paires" },
           { icon: ListOrdered, title: "Remettre dans l'ordre", href: "/admin/exercices/ordre" },
+          { icon: Headphones, title: "Dictée", href: "/admin/exercices/dictee" },
         ],
       },
     ],

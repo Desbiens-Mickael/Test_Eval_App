@@ -3,7 +3,7 @@
 ## Mission du service
 - Micro-service FastAPI chargé de stocker et servir les images (avatars utilisateur & visuels de leçons) pour l’application EduCraft.
 - Offre des endpoints REST pour ajouter, récupérer et supprimer des fichiers, avec traitement de base (renommage sécurisé, conversion WebP, redimensionnement optionnel).
-- Exposé sur le port 8000 ; monté par Docker compose (`service upload-service`) avec volume persistant `./uploads/images`.
+- Exposé sur le port 8000 ; monté par Docker compose (`service upload-service`) avec volumes persistants `./uploads/images` (images) et `./uploads/audio` (audio des dictées).
 
 ## Agents fonctionnels
 - **Agent Avatar**  
@@ -14,6 +14,10 @@
   - Routes : `GET /lesson/{image_path}`, `POST /lesson`, `DELETE /lesson/{image_path}`.  
   - Laisse la taille d’origine (hooks de redimensionnement/commentaire disponibles).  
   - Identique à l’agent avatar pour la validation MIME et la réponse JSON.
+- **Agent Dictée (audio)**  
+  - Routes : `GET /dictation/{audio_path}` (requêtes partielles `Range` gérées, pour avancer/reculer dans l'audio), `GET /dictation` (liste, clé requise), `POST /dictation`, `DELETE /dictation/{audio_path}`.  
+  - Implémenté dans `upload_file/upload_audio.py` : format reconnu par la signature du fichier (WebM, Ogg, MP3, M4A, WAV), enregistré tel quel (pas de conversion), 10 Mo maximum.  
+  - Stocké dans `./uploads/audio/`, à part des images. Le serveur Next supprime l'audio qu'aucune dictée n'utilise plus.
 - **Agent Traitement & Sécurité des fichiers**  
   - Implémenté dans `upload_file/UploadImage.py`.  
   - Vérifie les types MIME (`image/jpeg`, `png`, `gif`, `bmp`, `tiff`, `webp`).  
@@ -47,7 +51,7 @@
 - Installation locale : `pip install -r requirements.txt`.  
 - Lancement : `uvicorn main:app --host 0.0.0.0 --port 8000`.  
 - Docker : inclus dans `docker compose up --build` (port mappé 8000).  
-- Dossiers à surveiller : `uploads/images/avatars`, `uploads/images/lessons` (montés en volume). Nettoyer manuellement si besoin.
+- Dossiers à surveiller : `uploads/images/avatars`, `uploads/images/lessons`, `uploads/audio` (montés en volume). Nettoyer manuellement si besoin.
 
 ## Règles internes à respecter
 - **Organisation** :  

@@ -136,6 +136,7 @@ cython_debug/
 
 # folders
 uploads/images/*
+uploads/audio/*
 
 # windsurf
 /.windsurf/

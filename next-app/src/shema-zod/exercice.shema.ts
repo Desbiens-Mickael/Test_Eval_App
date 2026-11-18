@@ -167,6 +167,30 @@ export const contentFreeResponseShema = z
   .array(freeResponseQuestionShema)
   .min(1, "Ajoutez au moins une question");
 
+// Dictée : l'élève écoute l'enregistrement du professeur et écrit le texte
+export const DICTATION_TYPE = "Dictée";
+export const DICTATION_TEXT_MAX_LENGTH = 5000;
+// Nom du fichier audio donné par le service d'upload : uuid4 + extension
+const AUDIO_NAME_REGEX = /^[0-9a-f-]{36}\.(webm|ogg|mp3|m4a|wav)$/i;
+
+export const contentDictationShema = z.object({
+  audio: z
+    .string({ required_error: "Enregistrez ou importez l'audio de la dictée" })
+    .regex(AUDIO_NAME_REGEX, "Enregistrez ou importez l'audio de la dictée"),
+  text: z
+    .string()
+    .trim()
+    .min(1, "Écrivez le texte de la dictée : il sert de correction")
+    .max(
+      DICTATION_TEXT_MAX_LENGTH,
+      `Le texte ne peut pas dépasser ${DICTATION_TEXT_MAX_LENGTH} caractères`
+    )
+    .refine(
+      (text) => new RegExp("[\\p{L}\\p{N}]", "u").test(text),
+      "Le texte doit contenir au moins un mot"
+    ),
+});
+
 // Contrôle : noté, une seule tentative. Exercice (PRACTICE) : non noté, essais illimités.
 export const EXERCICE_KINDS = ["CONTROL", "PRACTICE"] as const;
 export const exerciceKindSchema = z.enum(EXERCICE_KINDS, {
@@ -211,6 +235,7 @@ const contentSchema = z.union([
   contentMatchingPairsShema,
   contentOrderingShema,
   contentFreeResponseShema,
+  contentDictationShema,
 ]);
 
 /**
@@ -226,6 +251,7 @@ export const contentSchemaByType: Record<string, z.ZodTypeAny> = {
   "Associer par paires": contentMatchingPairsShema,
   "Remettre dans l'ordre": contentOrderingShema,
   [FREE_RESPONSE_TYPE]: contentFreeResponseShema,
+  [DICTATION_TYPE]: contentDictationShema,
 };
 
 export const globalExerciceSchema = createExerciceBaseSchema
@@ -251,6 +277,9 @@ export type orderingSequenceInput = z.infer<typeof orderingSequenceShema>;
 export type contentOrderingInput = z.infer<typeof contentOrderingShema>;
 export type freeResponseQuestionInput = z.infer<typeof freeResponseQuestionShema>;
 export type contentFreeResponseInput = z.infer<typeof contentFreeResponseShema>;
+export type contentDictationInput = z.infer<typeof contentDictationShema>;
+/** Dictée vue par un élève : l'audio et le nombre de mots, sans le texte */
+export type studentDictationContent = { audio: string; words: number };
 /** Contrôle « Réponse libre » vu par un élève : sans les réponses attendues */
 export type studentFreeResponseContent = { question: string; points: number }[];
 /** Exercice « Associer par paires » vu par un élève : sans les solutions */

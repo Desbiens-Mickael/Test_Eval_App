@@ -70,8 +70,24 @@ export const freeResponseResponseShema = z.array(
   })
 );
 
+// Schéma de la réponse pour la dictée : le texte écrit par l'élève
+export const DICTATION_ANSWER_MAX_LENGTH = 5000;
+export const dictationResponseShema = z
+  .object({
+    text: z
+      .string()
+      .max(
+        DICTATION_ANSWER_MAX_LENGTH,
+        `Ta dictée ne peut pas dépasser ${DICTATION_ANSWER_MAX_LENGTH} caractères`
+      ),
+  })
+  .strict();
+
 // Schéma de la réponse pour tout les types d'exercices possible
+// La dictée passe en premier : un objet { text } serait sinon accepté (et
+// transformé) par le schéma du texte à trou, dont les clés sont des positions
 const responseSchema = z.union([
+  dictationResponseShema,
   gapFillTextResponseShema,
   trueOrFalseResponseShema,
   multipleChoiceResponseShema,
@@ -98,6 +114,7 @@ export type cardResponseItemType = z.infer<typeof cardResponseItemShema>;
 export type cardResponseType = z.infer<typeof cardResponseShema>;
 export type matchingPairsResponseType = z.infer<typeof matchingPairsResponseShema>;
 export type orderingResponseType = z.infer<typeof orderingResponseShema>;
+export type dictationResponseType = z.infer<typeof dictationResponseShema>;
 export type freeResponseResponseType = z.infer<typeof freeResponseResponseShema>;
 export type globalExerciceCorectionType = z.infer<
   typeof globalExerciceCorectionShema

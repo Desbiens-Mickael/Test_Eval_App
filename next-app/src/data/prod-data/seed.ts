@@ -106,8 +106,11 @@ const seed = async () => {
       {
         name: "Réponse libre",
       },
+      {
+        name: "Dictée",
+      },
     ],
-    // Les trois derniers types sont aussi créés par des migrations
+    // Les quatre derniers types sont aussi créés par des migrations
     skipDuplicates: true,
   });
 };

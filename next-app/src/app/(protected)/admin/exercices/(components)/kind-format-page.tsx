@@ -12,6 +12,7 @@ export const FORMATS = {
   ordre: { type: ExerciceType.Ordering, label: "remettre dans l'ordre" },
   // Contrôles seulement : c'est le professeur qui corrige
   "reponse-libre": { type: ExerciceType.FreeResponse, label: "réponse libre" },
+  dictee: { type: ExerciceType.Dictation, label: "dictée" },
 } as const;
 
 export type FormatSlug = keyof typeof FORMATS;

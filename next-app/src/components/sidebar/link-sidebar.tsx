@@ -45,6 +45,7 @@ export default function LinkSidebar({
   title,
   className,
   isChild,
+  tourId,
 }: LinkSidebarProps): JSX.Element {
   const isActive = useIsPathActive(href);
 
@@ -68,7 +69,7 @@ export default function LinkSidebar({
       </SidebarMenuSubButton>
     </DropdownMenuItem>
   ) : (
-    <SidebarMenuItem>
+    <SidebarMenuItem data-tour={tourId}>
       <SidebarMenuButton
         asChild
         isActive={isActive}

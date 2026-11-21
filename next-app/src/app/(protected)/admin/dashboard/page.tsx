@@ -46,9 +46,9 @@ export default async function Dashboard({
     );
   }
 
-  const { teacherName, groupOptions, dashboard } = response.data;
+  const { teacherId, teacherName, groupOptions, onboarding, dashboard } =
+    response.data;
   const { summary } = dashboard;
-  const isSetUp = summary.totalStudents > 0 && groupOptions.length > 0 && summary.assigned > 0;
 
   return (
     <DashboardTransition>
@@ -59,13 +59,7 @@ export default async function Dashboard({
           period={dashboard.period}
         />
 
-        {!isSetUp && (
-          <GettingStarted
-            hasStudents={summary.totalStudents > 0}
-            hasGroups={groupOptions.length > 0}
-            hasAssignments={summary.assigned > 0}
-          />
-        )}
+        <GettingStarted teacherId={teacherId} onboarding={onboarding} />
 
         <DashboardFilters
           period={dashboard.period}

@@ -75,6 +75,8 @@ interface DataTableProps<TData, TValue> {
   handleValidate?: (ids: string[]) => Promise<void>;
   children?: (table: Table<TData>) => ReactElement[];
   server?: ServerTableOptions;
+  /** Affiché à la place du tableau vide tant qu'aucun filtre n'est actif */
+  emptyState?: React.ReactNode;
 }
 
 /**
@@ -99,6 +101,7 @@ export function DataTable<TData extends Identifier, TValue>({
   children,
   createChildren,
   server,
+  emptyState,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
@@ -154,6 +157,13 @@ export function DataTable<TData extends Identifier, TValue>({
           columnFilters,
         },
   });
+
+  // Liste vraiment vide (pas un filtre sans résultat) : on explique quoi faire
+  const isFiltered = table.getState().columnFilters.length > 0;
+  const showEmptyState =
+    !!emptyState &&
+    !isFiltered &&
+    (server ? server.rowCount === 0 : data.length === 0);
 
   return (
     <div className="w-full space-y-4">
@@ -225,9 +235,11 @@ export function DataTable<TData extends Identifier, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center text-2xl font-bold"
+                  className={
+                    showEmptyState ? "p-0" : "h-24 text-center text-2xl font-bold"
+                  }
                 >
-                  Aucun résultat trouvé.
+                  {showEmptyState ? emptyState : "Aucun résultat trouvé."}
                 </TableCell>
               </TableRow>
             )}

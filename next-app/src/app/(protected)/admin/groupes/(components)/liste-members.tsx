@@ -20,6 +20,9 @@ export default function ListeMembers({ students }: ListeMembersProps) {
         <p className="text-muted-foreground">
           {" Aucun élève n'est inscrit dans ce groupe."}
         </p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {"Ajoutez-en avec le bouton « Ajouter un élève »."}
+        </p>
       </motion.div>
     );
   }

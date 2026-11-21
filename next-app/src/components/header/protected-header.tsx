@@ -5,6 +5,7 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { Separator } from "@radix-ui/react-separator";
 import { ModeToggle } from "../dark-mode/mode-toggle";
 import Notification from "../notification/notification";
+import TourHelpButton from "../onboarding/tour-help-button";
 
 export default function ProtectedHeader() {
   // Les parents sont prévenus par e-mail : pas de cloche de notifications
@@ -21,13 +22,16 @@ export default function ProtectedHeader() {
       <div className="flex items-center gap-4">
         {showNotifications && (
           <>
-            <Notification />
+            <span data-tour="header-notifications" className="inline-flex">
+              <Notification />
+            </span>
             <Separator
               orientation="vertical"
               className="w-[2px] h-[25px] bg-border"
             />
           </>
         )}
+        <TourHelpButton />
         <ModeToggle />
       </div>
     </header>

@@ -15,6 +15,10 @@ import { toast } from "sonner";
 
 import { DataTableRowActions } from "@/components/table/data-table-row-action";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import EmptyState from "@/components/empty-state";
+import { Button } from "@/components/ui/button";
+import { BookOpenText } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function LessonTable({ subject }: { subject: string }) {
@@ -147,6 +151,17 @@ export default function LessonTable({ subject }: { subject: string }) {
       inputSearchColumnId="Titre"
       createLink="/admin/lecons/creation"
       handleDelete={handleDelete}
+      emptyState={
+        <EmptyState
+          icon={BookOpenText}
+          title={`Aucune leçon de ${subject.toLowerCase()} pour l'instant`}
+          description="Une leçon, c'est le cours que vos élèves pourront relire. Une fois créée, ajoutez-lui des exercices ou des contrôles depuis son menu « … », puis attribuez-la à un groupe depuis la fiche du groupe."
+        >
+          <Button asChild size="sm">
+            <Link href="/admin/lecons/creation">Créer une leçon</Link>
+          </Button>
+        </EmptyState>
+      }
     >
       {(table) => [<FilterGRadeLevel key="filter-grade-level" table={table} />]}
     </DataTable>

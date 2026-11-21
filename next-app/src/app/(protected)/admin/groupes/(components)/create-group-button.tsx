@@ -22,7 +22,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-export default function CreateGroupButton() {
+/** @param label - texte affiché à côté du « + » (sinon, bouton icône seul) */
+export default function CreateGroupButton({ label }: { label?: string }) {
   const [open, setOpen] = useState(false);
   const { mutateAsync, isPending } = useCreateGroup();
 
@@ -56,9 +57,16 @@ export default function CreateGroupButton() {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button size={"icon"}>
-          <Plus />
-        </Button>
+        {label ? (
+          <Button size="sm">
+            <Plus className="mr-1 h-4 w-4" aria-hidden="true" />
+            {label}
+          </Button>
+        ) : (
+          <Button size={"icon"} aria-label="Créer un groupe" title="Créer un groupe">
+            <Plus />
+          </Button>
+        )}
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

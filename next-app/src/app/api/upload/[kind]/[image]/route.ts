@@ -9,6 +9,80 @@ import {
 } from "@/lib/upload-service";
 import { NextResponse } from "next/server";
 
+// En-têtes du service recopiés dans la réponse (lecture audio par plages comprise)
+const FORWARDED_HEADERS = [
+  "content-length",
+  "content-range",
+  "accept-ranges",
+  "etag",
+  "last-modified",
+];
+
+// Le service annonce parfois « text/plain » (ex. WebP) : type déduit de
+// l'extension, les noms étant générés par le service lui-même
+const CONTENT_TYPES: Record<string, string> = {
+  webp: "image/webp",
+  png: "image/png",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  gif: "image/gif",
+  avif: "image/avif",
+  mp3: "audio/mpeg",
+  m4a: "audio/mp4",
+  ogg: "audio/ogg",
+  oga: "audio/ogg",
+  wav: "audio/wav",
+  webm: "audio/webm",
+};
+
+/**
+ * Sert un fichier du service d'upload (avatar, image de leçon, audio de dictée).
+ *
+ * Le navigateur ne joint jamais le service directement : il passe par cette
+ * route, avec une URL relative valable quelle que soit l'adresse de
+ * l'application (localhost, IP du réseau local, domaine).
+ * Lecture publique, comme sur le service : les noms sont des uuid aléatoires.
+ */
+export async function GET(
+  request: Request,
+  { params }: { params: { kind: string; image: string } }
+) {
+  const { kind, image } = params;
+  if (!isUploadKind(kind) || !IMAGE_NAME_REGEX.test(image)) {
+    return NextResponse.json({ message: "Not found." }, { status: 404 });
+  }
+
+  const { baseUrl } = getUploadServiceConfig();
+  const range = request.headers.get("range");
+  const upstream = await fetch(`${baseUrl}/${kind}/${image}`, {
+    headers: range ? { range } : undefined,
+    cache: "no-store",
+  }).catch(() => null);
+
+  if (!upstream || (!upstream.ok && upstream.status !== 206)) {
+    return NextResponse.json(
+      { message: "Not found." },
+      { status: upstream?.status === 416 ? 416 : 404 }
+    );
+  }
+
+  const headers = new Headers();
+  FORWARDED_HEADERS.forEach((name) => {
+    const value = upstream.headers.get(name);
+    if (value) headers.set(name, value);
+  });
+  const extension = image.split(".").pop()?.toLowerCase() ?? "";
+  headers.set(
+    "content-type",
+    CONTENT_TYPES[extension] ?? "application/octet-stream"
+  );
+  headers.set("x-content-type-options", "nosniff");
+  // Un nom de fichier n'est jamais réutilisé : le contenu ne change pas
+  headers.set("cache-control", "public, max-age=31536000, immutable");
+
+  return new Response(upstream.body, { status: upstream.status, headers });
+}
+
 /**
  * Supprime une image du service d'upload.
  * - avatar : uniquement l'avatar actuel de l'utilisateur connecté

@@ -1,6 +1,7 @@
 import { updateStudentAvatarAction } from "@/actions/avatar.action";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { mediaUrl } from "@/lib/media-url";
 import { toast } from "sonner";
 
 /**
@@ -10,9 +11,6 @@ import { toast } from "sonner";
  * @return {Promise} a promise resolving to the updated avatar
  */
 export const useUpdateStudentAvatar = () => {
-  const NEXT_PUBLIC_SERVER_DOMAIN_API =
-    process.env.NEXT_PUBLIC_SERVER_DOMAIN_API;
-
   const { update, data } = useSession();
   const queryClient = useQueryClient();
   return useMutation({
@@ -30,7 +28,7 @@ export const useUpdateStudentAvatar = () => {
       });
 
       const { image_path } = await res.json();
-      const imgPath = `${NEXT_PUBLIC_SERVER_DOMAIN_API}/avatar/${image_path}`;
+      const imgPath = mediaUrl("avatar", image_path);
       return updateStudentAvatarAction(imgPath);
     },
     onSuccess: (data) => {

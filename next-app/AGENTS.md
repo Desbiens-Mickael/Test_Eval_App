@@ -48,9 +48,8 @@
 ## Intégrations externes
 - **Base PostgreSQL** : via Prisma. Valider `DATABASE_URL` (compose : `postgresql://postgres:postgres@db:5432/postgres?schema=public`).
 - **Service d’upload** (`upload-image-service`) :  
-  - Côté client : `NEXT_PUBLIC_CLIENT_DOMAIN_API` pour fetch depuis le navigateur.  
-  - Côté serveur (Next Image) : `NEXT_PUBLIC_SERVER_DOMAIN_API` pour générer URLs accessibles depuis le rendu serveur.  
-  - Config images (`next.config.mjs`) autorise domaines `upload-service`, `localhost:8000`, ainsi que valeurs prod.
+  - Le navigateur ne joint jamais le service : envoi, suppression et lecture passent par `/api/upload/<type>/<nom>` (`src/app/api/upload/**`), qui relaie vers `UPLOAD_API_URL` avec la clé `UPLOAD_API_KEY`.  
+  - Les URL enregistrées sont relatives (`mediaUrl()` dans `src/lib/media-url.ts`) : elles marchent quelle que soit l'adresse de l'application (localhost, IP du réseau local, domaine).
 - **Emailing** : `src/lib/mail.ts` (Nodemailer). En dev utilise Mailhog (`mailhog:1025`), en prod SMTP sécurisé.
 - **OAuth Google** : `auth.config.ts` déclare le provider avec `prompt=consent`, `access_type=offline`.
 
@@ -64,8 +63,8 @@
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` | Paramètres SMTP production |
 | `MAILER_FROM_ADDRESS`, `MAILER_TO_ADDRESS` | Adresse expéditrice / réception test |
 | `NEXT_BASE_URL` | URL publique du front utilisée dans les emails |
-| `NEXT_PUBLIC_CLIENT_DOMAIN_API` | URL HTTP atteignable par le navigateur pour l’upload (`http://localhost:8000` en dev) |
-| `NEXT_PUBLIC_SERVER_DOMAIN_API` | URL atteignable côté serveur/Next Image (souvent host Docker) |
+| `UPLOAD_API_URL` | URL du service d'upload vue par le serveur Next (`http://upload-service:8000` sous Docker) |
+| `UPLOAD_API_KEY` | Clé partagée avec le service d'upload |
 
 > En local Docker (`docker-compose.yml`), les `.env` sont montés pour chaque service ; penser à garder les URLs cohérentes entre client/serveur pour l’upload.
 

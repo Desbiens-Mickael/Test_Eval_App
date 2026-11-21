@@ -23,6 +23,12 @@ describe("lessonImageNames", () => {
     expect(names).toEqual(new Set([A, B, C]));
   });
 
+  it("reconnaît les URL relatives servies par l'application", () => {
+    const content = doc(image(A, "/api/upload"));
+    const names = lessonImageNames({ imageBanner: `/api/upload/lesson/${C}`, content });
+    expect(names).toEqual(new Set([A, C]));
+  });
+
   it("accepte un contenu déjà sérialisé", () => {
     expect(lessonImageNames({ content: JSON.stringify(doc(image(A))) })).toEqual(new Set([A]));
   });

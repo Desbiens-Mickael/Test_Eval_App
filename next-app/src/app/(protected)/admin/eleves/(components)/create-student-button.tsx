@@ -25,7 +25,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-export default function CreateStudentButton() {
+/** @param label - texte affiché à côté du « + » (sinon, bouton icône seul) */
+export default function CreateStudentButton({ label }: { label?: string }) {
   const [open, setOpen] = useState(false);
   const { mutateAsync, isPending } = useCreateStudent();
 
@@ -61,9 +62,21 @@ export default function CreateStudentButton() {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button size="sm" className="hidden h-8 lg:flex" aria-label="Créer un élève">
-          <Plus />
-        </Button>
+        {label ? (
+          <Button size="sm" className="h-8">
+            <Plus className="mr-1 h-4 w-4" aria-hidden="true" />
+            {label}
+          </Button>
+        ) : (
+          <Button
+            size="sm"
+            className="hidden h-8 lg:flex"
+            aria-label="Créer un élève"
+            title="Créer un élève"
+          >
+            <Plus />
+          </Button>
+        )}
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

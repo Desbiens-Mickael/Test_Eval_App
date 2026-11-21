@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 
 import Header from "@/components/header/protected-header";
+import OnboardingTour from "@/components/onboarding/onboarding-tour";
 import AppSidebar from "@/components/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
@@ -30,6 +31,7 @@ export default async function AdminDashboardLayout({
           {children}
         </div>
       </SidebarInset>
+      <OnboardingTour />
     </SidebarProvider>
   );
 }

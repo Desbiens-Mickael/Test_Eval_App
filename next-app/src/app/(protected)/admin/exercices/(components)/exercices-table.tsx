@@ -14,7 +14,11 @@ import {
 } from "@/hooks/queries/exercice/use-get-exercices-page";
 import { useServerTable } from "@/hooks/use-server-table";
 import { ExerciceType } from "@/type/exercice";
+import EmptyState from "@/components/empty-state";
+import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
+import { ClipboardCheck, Dumbbell } from "lucide-react";
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { DataTable } from "../../../../../components/table/data-table";
@@ -176,6 +180,25 @@ export default function ExercicesTable({
       inputSearchColumnId="Titre"
       // createLink="/admin/exercices/creation"
       handleDelete={handleDelete}
+      emptyState={
+        <EmptyState
+          icon={kind === "CONTROL" ? ClipboardCheck : Dumbbell}
+          title={
+            kind === "CONTROL"
+              ? "Aucun contrôle de ce type pour l'instant"
+              : "Aucun exercice de ce type pour l'instant"
+          }
+          description={
+            kind === "CONTROL"
+              ? "Un contrôle est noté et peut avoir une date d'ouverture et de clôture. Pour en créer un, ouvrez la liste de vos leçons et choisissez « Ajouter un contrôle » dans le menu « … » d'une leçon."
+              : "Un exercice sert à s'entraîner : il n'est pas noté et l'élève peut réessayer autant qu'il veut. Pour en créer un, ouvrez la liste de vos leçons et choisissez « Ajouter un exercice » dans le menu « … » d'une leçon."
+          }
+        >
+          <Button asChild size="sm">
+            <Link href="/admin/lecons/francais">Voir mes leçons</Link>
+          </Button>
+        </EmptyState>
+      }
     >
       {(table) => [
         <FilterBUttonLevel key="filter-level" table={table} />,

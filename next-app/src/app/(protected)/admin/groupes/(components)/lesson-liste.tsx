@@ -66,6 +66,9 @@ export default function LessonListe({ lessons, groupId }: LessonListeProps) {
         <p className="text-muted-foreground">
           {"Aucune leçon n'a été ajoutée à ce groupe."}
         </p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {"Avec « Ajouter une leçon », ses élèves la voient aussitôt. Activez ensuite ses exercices et contrôles avec leur interrupteur."}
+        </p>
       </motion.div>
     );
   }

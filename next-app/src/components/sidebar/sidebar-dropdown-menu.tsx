@@ -51,13 +51,14 @@ export default function SidebarDRopdownMenu({
   icon: Icon,
   title,
   submenus,
+  tourId,
 }: SidebarDRopdownMenuProps): JSX.Element {
   const isActive = useIsPathActive(submenus);
 
   const { isMobile } = useSidebar();
 
   return (
-    <SidebarMenuItem>
+    <SidebarMenuItem data-tour={tourId}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <SidebarMenuButton

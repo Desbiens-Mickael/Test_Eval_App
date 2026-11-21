@@ -27,10 +27,12 @@ const adminMenus: MenuSideBar = [
         icon: LayoutDashboard,
         title: "Tableau de bord",
         href: "/admin/dashboard",
+        tourId: "nav-dashboard",
       },
       {
         icon: BookOpenText,
         title: "Leçons",
+        tourId: "nav-lecons",
         submenus: [
           {
             icon: CaseUpper,
@@ -57,6 +59,7 @@ const adminMenus: MenuSideBar = [
       {
         icon: ClipboardCheck,
         title: "Contrôles",
+        tourId: "nav-controles",
         submenus: [
           { icon: Trello, title: "Carte", href: "/admin/controles/carte" },
           { icon: WholeWord, title: "Texte à trou", href: "/admin/controles/texte-a-trou" },
@@ -71,6 +74,7 @@ const adminMenus: MenuSideBar = [
       {
         icon: Dumbbell,
         title: "Exercices",
+        tourId: "nav-exercices",
         submenus: [
           { icon: Trello, title: "Carte", href: "/admin/exercices/carte" },
           { icon: WholeWord, title: "Texte à trou", href: "/admin/exercices/texte-a-trou" },
@@ -90,11 +94,13 @@ const adminMenus: MenuSideBar = [
         icon: Users,
         title: "Groupes",
         href: "/admin/groupes",
+        tourId: "nav-groupes",
       },
       {
         icon: Users,
         title: "Éleves",
         href: "/admin/eleves",
+        tourId: "nav-eleves",
       },
     ],
   },

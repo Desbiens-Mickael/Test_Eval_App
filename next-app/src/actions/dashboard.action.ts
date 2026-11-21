@@ -2,6 +2,7 @@
 
 import { closeExpiredControlsSafeData } from "@/data/exercice/control-closure.data";
 import { getTeacherDashboardRawData } from "@/data/dashboard/teacher-dashboard.data";
+import { getTeacherOnboardingData } from "@/data/dashboard/teacher-onboarding.data";
 import { currentUser } from "@/lib/auth";
 import {
   DashboardPeriod,
@@ -25,7 +26,10 @@ export const getTeacherDashboardAction = async (
 
   try {
     await closeExpiredControlsSafeData();
-    const raw = await getTeacherDashboardRawData(user.id);
+    const [raw, onboarding] = await Promise.all([
+      getTeacherDashboardRawData(user.id),
+      getTeacherOnboardingData(user.id),
+    ]);
     const safePeriod: DashboardPeriod = isDashboardPeriod(period)
       ? period
       : "30";
@@ -43,8 +47,10 @@ export const getTeacherDashboardAction = async (
     return {
       success: true as const,
       data: {
+        teacherId: user.id,
         teacherName: user.name ?? null,
         groupOptions: raw.groups.map((g) => ({ id: g.id, name: g.name })),
+        onboarding,
         dashboard,
       },
     };

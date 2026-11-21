@@ -1,6 +1,8 @@
 "use client";
 
 import { useGetAllGroups } from "@/hooks/queries/group/use-get-all-groups";
+import EmptyState from "@/components/empty-state";
+import { Users } from "lucide-react";
 import CreateGroupButton from "./create-group-button";
 import GroupCard from "./group-card";
 
@@ -21,9 +23,14 @@ export default function GroupDashboard() {
       </div>
       <div>
         {data.length === 0 ? (
-          <div className="w-full flex justify-center items-center">
-            <p className="text-center">Aucun groupe disponible</p>
-          </div>
+          <EmptyState
+            icon={Users}
+            className="rounded-xl border"
+            title="Aucun groupe pour l'instant"
+            description="Un groupe rassemble les élèves d'une classe ou d'un niveau. Créez-en un, puis ouvrez-le pour y ajouter des élèves et lui attribuer des leçons."
+          >
+            <CreateGroupButton label="Créer un groupe" />
+          </EmptyState>
         ) : (
           <div className="w-full flex flex-wrap gap-4">
             {data.map((group) => (

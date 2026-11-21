@@ -17,7 +17,8 @@ import {
 import { useServerTable } from "@/hooks/use-server-table";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
-import { FileUp } from "lucide-react";
+import EmptyState from "@/components/empty-state";
+import { FileUp, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AccountStatusBadge from "./account-status-badge";
@@ -149,6 +150,21 @@ export default function StudentTable() {
       viewOptionsButton
       inputSearchColumnId="Nom"
       handleDelete={handleDelete}
+      emptyState={
+        <EmptyState
+          icon={UserPlus}
+          title="Aucun élève pour l'instant"
+          description="Créez les comptes de vos élèves un par un, ou importez une liste (CSV, Excel ou copier-coller). Chaque élève reçoit un identifiant et un mot de passe ; avec l'e-mail d'un parent, son accès est créé et lui est envoyé."
+        >
+          <Button asChild size="sm" variant="outline">
+            <Link href="/admin/eleves/import">
+              <FileUp className="mr-2 h-4 w-4" aria-hidden="true" />
+              Importer une liste
+            </Link>
+          </Button>
+          <CreateStudentButton label="Créer un élève" />
+        </EmptyState>
+      }
       createChildren={
         <>
           <Button asChild size="sm" variant="outline" className="ml-auto h-8">

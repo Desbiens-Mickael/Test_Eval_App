@@ -1,36 +1,19 @@
 import nodemailer from "nodemailer";
+import { getMailTransportOptions } from "./mail-transport";
 import { capitalize } from "./utils";
 
-const {
-  SMTP_HOST,
-  SMTP_PORT,
-  SMTP_USER,
-  SMTP_PASS,
-  MAILER_FROM_ADDRESS,
-  MAILER_TO_ADDRESS,
-  NODE_ENV,
-  NEXT_BASE_URL,
-} = process.env;
+const { MAILER_FROM_ADDRESS, NEXT_BASE_URL } = process.env;
 
-let transporter: nodemailer.Transporter;
+const { kind, ...transportOptions } = getMailTransportOptions(process.env);
+const transporter: nodemailer.Transporter = nodemailer.createTransport(transportOptions);
 
-if (NODE_ENV === "production") {
-  transporter = nodemailer.createTransport({
-    host: SMTP_HOST,
-    port: SMTP_PORT as unknown as number,
-    secure: true, // true for 465, false for other ports
-    auth: {
-      user: SMTP_USER,
-      pass: SMTP_PASS,
-    },
-  });
-} else {
-  // Pour le dev sous Docker (MAILHOG_HOST=localhost quand Next tourne hors Docker)
-  transporter = nodemailer.createTransport({
-    host: process.env.MAILHOG_HOST ?? "mailhog",
-    port: 1025,
-    secure: false,
-  });
+// En dev, on rappelle où partent les e-mails (MailHog ou vraies boîtes)
+if (process.env.NODE_ENV !== "production") {
+  console.info(
+    kind === "mailhog"
+      ? "[mail] Envoi vers MailHog (aucun e-mail réel)"
+      : `[mail] Envoi réel via ${transportOptions.host}`
+  );
 }
 
 export async function sendVerificationEmail(email: string, token: string) {

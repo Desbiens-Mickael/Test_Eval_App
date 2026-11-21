@@ -9,6 +9,7 @@
     "lint": "next lint",
     "resetDB": "npx prisma migrate reset --force && tsx src/data/dev-data/seed.ts",
     "seedDemo": "tsx src/data/dev-data/seed-demo.ts",
+    "mail:test": "tsx src/data/dev-data/test-mail.ts",
     "build:seed": "tsc src/data/prod-data/seed.ts --outDir dist/ --target es2017 --module commonjs --skipLibCheck",
     "seedDB": "node dist/data/prod-data/seed.js",
     "test": "jest",

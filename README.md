@@ -87,6 +87,44 @@ Les élèves de `seedDemo` ont des identifiants du type `demo.lea.martin`, avec 
 La base est conservée dans le volume Docker `db-data` : elle survit à `docker compose down`.
 Pour repartir d'une base vide : `docker compose down -v`, puis `npm run resetDB`.
 
+### Faire tester en local avec de vrais e-mails
+
+Par défaut, en développement, tous les e-mails partent dans Mailhog. Pour que des testeurs
+les reçoivent dans leur vraie boîte, renseigner un vrai serveur SMTP dans `next-app/.env`.
+Le plus simple est un compte Gmail (environ 500 e-mails par jour) :
+
+1. Activer la validation en deux étapes sur le compte Google.
+2. Créer un mot de passe d'application sur https://myaccount.google.com/apppasswords
+   (nom : « EduCraft »). Google affiche un code de 16 lettres, à copier sans les espaces.
+3. Dans `next-app/.env` :
+
+   ```env
+   SMTP_HOST="smtp.gmail.com"     # « mailhog » ou vide = retour à Mailhog
+   SMTP_PORT="465"
+   SMTP_USER="votre.adresse@gmail.com"
+   SMTP_PASS="codeapplication16l" # le mot de passe d'application, pas celui du compte
+   MAILER_FROM_ADDRESS="votre.adresse@gmail.com"  # même adresse que SMTP_USER
+   ```
+
+Tout autre serveur SMTP fonctionne de la même façon (port 465 en TLS ou 587 en STARTTLS).
+Le mot de passe d'application peut être révoqué à tout moment depuis la même page Google.
+
+Les liens des e-mails (confirmation, mot de passe, accès parent…) pointent vers `NEXT_BASE_URL`.
+Si les testeurs utilisent leur propre appareil sur le même réseau, remplacer `localhost`
+par l'adresse IP de l'ordinateur (`ipconfig` sous Windows, ligne « Adresse IPv4 ») dans
+`NEXT_BASE_URL` et `AUTH_URL`, par exemple `http://192.168.1.20:3000`, et autoriser le port 3000
+dans le pare-feu.
+
+Après modification du `.env`, relancer l'application, puis vérifier avec un e-mail d'essai :
+
+```bash
+cd next-app
+npm run mail:test -- votre.adresse@exemple.com
+```
+
+Au démarrage, le journal de l'application indique `[mail] Envoi réel via …` ou
+`[mail] Envoi vers MailHog`.
+
 ## Commandes utiles
 
 Dans `next-app/` :
@@ -99,6 +137,7 @@ Dans `next-app/` :
 | `npx prisma migrate dev --name <nom>` | Nouvelle migration après modification de `prisma/schema.prisma` |
 | `npm run resetDB` | Base recréée de zéro + seed de base |
 | `npm run seedDemo` | Données de démonstration (à lancer après `resetDB`) |
+| `npm run mail:test -- <adresse>` | E-mail d'essai avec la configuration SMTP du `.env` |
 
 Dans `upload-image-service/` :
 

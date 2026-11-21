@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { pendingUploads } from "@/components/block-editor/image-upload";
 import { useCreateLesson } from "@/hooks/mutations/lesson/use-create-lesson";
 import { useUpdateLesson } from "@/hooks/mutations/lesson/use-update-lesson";
+import { mediaUrl } from "@/lib/media-url";
 import { stringToSlug } from "@/lib/utils";
 import {
   CreateLessonFormInput,
@@ -41,9 +42,6 @@ export const useLessonFormSubmission = ({
   LessonSubjectID,
   GradeLevelsID,
 }: UseLessonFormSubmissionProps) => {
-  const clientDomainApi = process.env.NEXT_PUBLIC_CLIENT_DOMAIN_API;
-  const serverDomainApi = process.env.NEXT_PUBLIC_SERVER_DOMAIN_API;
-
   const router = useRouter();
 
   /**
@@ -101,7 +99,8 @@ export const useLessonFormSubmission = ({
       window.removeEventListener("beforeunload", handleBeforeUnload);
       window.removeEventListener("pagehide", handleBeforeUnload);
     };
-  }, [clientDomainApi]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /**
    * Gestion du téléchargement d'image
@@ -164,7 +163,7 @@ export const useLessonFormSubmission = ({
           const { image_path } = (await response.json()) as {
             image_path: string;
           };
-          const src = `${serverDomainApi}/lesson/${image_path}`;
+          const src = mediaUrl("lesson", image_path);
           form.setValue("imageBanner", src);
           setImageBannerFile({ formData: null, preview: "" });
         } catch (error) {
